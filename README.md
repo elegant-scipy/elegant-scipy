@@ -41,29 +41,29 @@ Using IPythonNotebook and accessing the book materials
 
 *hdashnow: Maybe a chapter before Image segmentation that with some easy analysis (e.g. data exploration, some graphing?) to get reader familiar with Numpy Basics and similar before introducing more domain-specific code*
 
-*Chapter 1:* Image segmentation using `ndimage.generic_filter`. This includes
+**Chapter 1:** Image segmentation using `ndimage.generic_filter`. This includes
 an introduction to the NumPy array, memory layout, strides, F- and
 C-contiguity, 1D, 2D, and nD filters, and finally filtering to produce a graph
 and segmentation from that graph. (This may be broken down into several
 smaller chapters.)
 
-*Chapter 2:* Fourier Transforms. (Need to find a killer application/use for
+**Chapter 2:** Fourier Transforms. (Need to find a killer application/use for
 this one, but it's a central enough topic that it will be a high priority to
 include such an example.)
 
-*Chapter 3:* Use of sparse matrices to evaluate clustering accuracy.
+**Chapter 3:** Use of sparse matrices to evaluate clustering accuracy.
 
-*Chapter 4:* Eigendecomposition. (Same as FTs.)
+**Chapter 4:** Eigendecomposition. (Same as FTs.)
 
-*Chapter 5:* Optimization. (idem)
+**Chapter 5:** Optimization. (idem)
 
-*Chapter 6:* Streaming data. (idem, but specifically want to include use of
+**Chapter 6:** Streaming data. (idem, but specifically want to include use of
 Matt Rocklin's Toolz)
 
-*Chapter 7:* Basic statistics. 
+**Chapter 7:** Basic statistics. 
 *hdashnow: I wonder if this would work better as a first chapter to introduce some basic concepts?*
 
-*Chapter -1:* Contributing to the SciPy ecosystem: how to use git and github,
+**Chapter -1:** Contributing to the SciPy ecosystem: how to use git and github,
 and follow best practices, to contribute to SciPy and related packages.
 
 *hdashnow: Split up this material? Introduce some of the ideas in the preface/introduction but save the more advanced stuff for a later chapter. That way the reader has a chance to get their head around SciPy before we talk them into contributing to the community.*
