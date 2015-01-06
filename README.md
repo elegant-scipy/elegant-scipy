@@ -21,9 +21,6 @@ Chapters/Ideas
 ==============
 Based on: https://github.com/jni/my-documents/blob/oreilly-book-proposal/oreilly.markdown
 
-Except for the Preface and Chapter 1, the below chapters are intended as a
-guideline.
-
 *Preface/Introduction:* 
 
 Why SciPy?
@@ -41,7 +38,8 @@ Getting Started:
 
 Installation - Anaconda
 Using IPythonNotebook and accessing the book materials
-Numpy Basics
+
+*hdashnow: Maybe a chapter before Image segmentation that with some easy analysis (e.g. data exploration, some graphing?) to get reader familiar with Numpy Basics and similar before introducing more domain-specific code*
 
 *Chapter 1:* Image segmentation using `ndimage.generic_filter`. This includes
 an introduction to the NumPy array, memory layout, strides, F- and
