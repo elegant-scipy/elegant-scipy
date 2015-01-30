@@ -14,7 +14,8 @@ graph from an n-dimensional image, which I highlighted previously
 Each chapter will have one or two snippets that we will work towards. Each of
 these will be credited as "written by/nominated by", and needs to be
 published under a permissive license such as MIT, BSD, or public domain to be
-considered for inclusion. We'd prefer nominations in the following categories:
+considered for inclusion. We would especially like nominations in the following
+categories:
 
 - statistics (using scipy.stats)
 - image processing and computer vision
