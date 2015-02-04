@@ -33,6 +33,13 @@ appreciate a small description of about one paragraph explaining what the code
 is used for and why you think it's elegant, even though this is often
 self-evident. =)
 
+### How to submit
+
+- Reach out to any of us on Twitter: [@hdashnow](),
+[@stefanvdwalt](),
+[@jnuneziglesias]().
+- Or just comment on the blog post, below.
+
 Thank you,
 
 Juan, Harriet, and Stéfan.
