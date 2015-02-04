@@ -35,9 +35,9 @@ self-evident. =)
 
 ### How to submit
 
-- Reach out to any of us on Twitter: [@hdashnow](),
-[@stefanvdwalt](),
-[@jnuneziglesias]().
+- Reach out to any of us on Twitter: [@hdashnow](https://twitter.com/hdashnow),
+[@stefanvdwalt](https://twitter.com/stefanvdwalt),
+[@jnuneziglesias](https://twitter.com/jnuneziglesias).
 - Or just comment on the blog post, below.
 
 Thank you,
