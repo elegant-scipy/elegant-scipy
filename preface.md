@@ -1,20 +1,25 @@
 #Preface
 
+> "Unlike the stereotypical wedding dress, it was—to use a technical term—elegant, like a computer algorithm that achieves an impressive outcome with just a few lines of code."
+
+> -- Graeme Simsion,‎ *The Rosie Effect*
 
 ## Who is this book for?
-Scientists seeking to take their Python to the next level will want to learn by example from the very best code.
+Elegant SciPy is intended to inspire you to take your Python to the next level. 
+You will learn SciPy by example, from the very best code.
 
-I would think our main audience is people (mostly biologists) who have a decent beginner grounding in Python and are now having to do some more serious programming for their research.
+We have pitched this book towards people who have a decent beginner grounding in Python, and are now looking to do some more serious programming for their research.
 
-A reader should be familiar with the Python programming language. There should be no other requirements to understand the book. We have two key audiences, who have similar levels of experience and understanding:
+We expect that you will be familiar with the Python programming language.
+You have seen Python, and know about variables, functions, loops, and maybe even a bit of NumPy. But you don't know about the "SciPy stack" and you aren't sure about best practices. You might not have considered joining the SciPy community and contributing code.
 
-1. Those fresh out of a Software Carpentry Python tutorial. They signed up because they want to do more sophisticated things with their data than software such as Excel allows. They have seen Python, and have ideas about variables, functions, loops, and even a bit of NumPy, but they don't know about the SciPy stack and they certainly don't know best practices, how easy it is to join the community and contribute, etc.
-2. The self-taught scientists. (This was me once upon a time.) They have read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of their own lab, and have fiddled with them. But they don't have any solid concepts about what constitutes "good code".
+Perhaps you are a scientist who has read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of their own lab, and have fiddled with them. But they don't have any solid concepts about what constitutes "good code".
 
-**Please provide some scenarios that indicate how the audience will use your book. For example, will readers refer to it daily as a reference? Will they read it once to learn the concepts and then refer to it occasionally?**
+If you are not yet familiar with Python basics, you might like to work through a beginner tutorial befor tackling this book.
+There are some great resources to get to get you started with Python, such as Software Carpentry (http://software-carpentry.org/).
 
-This will not be a reference volume. As I mentioned, the internet now provides a far better reference than any book could, especially considering the rapid pace of development in this field. Instead, a reader will learn the core concepts and capabilities of SciPy and related libraries by reading once, but may well return for inspiration to the final code examples themselves.
-
+Elegant SciPy is not a reference volume. Given the rapid rate of development, we would be remiss to write a reference book. Along the way, we will teach you how to use the internet as your reference.
+Instead, in Elegant SciPy we will introduce you to the core concepts and capabilities of SciPy and related libraries. This is a book that you will read once, but may return to for inspiration (and maybe to admire some elegant code snippits!).
 
 ## Why SciPy?
 **Summarize what the book is about, like you would pitch it to a potential reader on the back cover. What makes your book unique in the marketplace?**
