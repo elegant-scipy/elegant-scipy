@@ -15,11 +15,11 @@ You have seen Python, and know about variables, functions, loops, and maybe even
 
 Perhaps you are a scientist who has read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of their own lab, and have fiddled with them. But they don't have any solid concepts about what constitutes "good code".
 
-If you are not yet familiar with Python basics, you might like to work through a beginner tutorial befor tackling this book.
+If you are not yet familiar with Python basics, you might like to work through a beginner tutorial before tackling this book.
 There are some great resources to get to get you started with Python, such as Software Carpentry (http://software-carpentry.org/).
 
 Elegant SciPy is not a reference volume. Given the rapid rate of development, we would be remiss to write a reference book. Along the way, we will teach you how to use the internet as your reference.
-Instead, in Elegant SciPy we will introduce you to the core concepts and capabilities of SciPy and related libraries. This is a book that you will read once, but may return to for inspiration (and maybe to admire some elegant code snippits!).
+Instead, in Elegant SciPy we will introduce you to the core concepts and capabilities of SciPy and related libraries. This is a book that you will read once, but may return to for inspiration (and maybe to admire some elegant code snippets!).
 
 ## Why SciPy?
 **Summarize what the book is about, like you would pitch it to a potential reader on the back cover. What makes your book unique in the marketplace?**
