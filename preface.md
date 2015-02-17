@@ -4,6 +4,14 @@
 
 > -- Graeme Simsion,‎ *The Rosie Effect*
 
+## Welcome to Elegant SciPy
+
+NumPy and SciPy form the core of the Scientific Python ecosystem. These libraries already have excellent online documentation, so a complete reference would be pointless. Instead, in Elegant ScyPy we present the best code built using these libraries, using it as motivation to teach readers who have never used them before.
+
+The code examples will be chosen to highlight clever, elegant uses of advanced features of NumPy, SciPy, and related libraries. The beginning reader will learn to apply these libraries to real world problems using beautiful code. The book will start from first principles and provide all the necessary background to understand each example, including idioms, libraries (e.g. iterators), and scientific concepts. Examples will use actual scientific data.
+
+This book will introduce readers to Scientific Python and its community, show them the fundamental parts of SciPy and related libraries, and give them a taste for beautiful, easy-to-read code, which they can carry with them to their practice.
+
 ## Who is this book for?
 Elegant SciPy is intended to inspire you to take your Python to the next level. 
 You will learn SciPy by example, from the very best code.
@@ -22,21 +30,13 @@ Elegant SciPy is not a reference volume. Given the rapid rate of development, we
 Instead, in Elegant SciPy we will introduce you to the core concepts and capabilities of SciPy and related libraries. This is a book that you will read once, but may return to for inspiration (and maybe to admire some elegant code snippets!).
 
 ## Why SciPy?
-**Summarize what the book is about, like you would pitch it to a potential reader on the back cover. What makes your book unique in the marketplace?**
 
-NumPy and SciPy form the core of the Scientific Python ecosystem. They also have excellent online documentation, so a complete reference would be pointless. Instead, we present the best code using these libraries, using it as motivation to teach readers who have never used them before.
+NumPy and SciPy form the core of the Scientific Python ecosystem. The SciPy software library implements a set of functions for processing scientific data, such as statistics, signal processing, image processing, and function optimization. SciPy is built on top of the Python numerical array computation library NumPy. Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years [plot?], spanning disciplines as broad as astronomy, biology, meteorology and climate science, and materials science.
 
-The examples will be chosen to highlight clever, elegant uses of advanced features of NumPy, SciPy, and related libraries. The beginning reader will learn not the functionality of the library, but its application to real world problems using beautiful code. The book will start from first principles and provide all the necessary background to understand each example, including idioms, libraries (e.g. iterators), and scientific concepts. Examples will use actual scientific data.
-
-This book will introduce readers to Scientific Python and its community, show them the fundamental parts of SciPy and related libraries, and give them a taste for beautiful, easy-to-read code, which they can carry with them to their practice.
-
-**Briefly explain the technology and why it is important.**
-
-The SciPy software library implements a rather disjointed set of scientific data processing functions, such as statistics, signal processing, image processing, and function optimization. It is built on top of the numerical array computation library NumPy. On top of these two libraries, an entire ecosystem of apps and libraries has grown dramatically over the past few years (see the "how many people will use this technology" section), spanning disciplines as broad as astronomy, biology, meteorology and climate science, and materials science.
-
-This growth shows no sign of abating. The Software Carpentry organization, which teaches Python to scientists, currently cannot keep up with demand, and is running "teacher training" every quarter, with a long waitlist. (I am enrolled in the current session, finishing this year.)
+This growth shows no sign of abating. For example, the Software Carpentry organization (http://software-carpentry.org/), which teaches Python to scientists, currently cannot keep up with demand, and is running "teacher training" every quarter, with a long waitlist.
 
 In short, SciPy and related libraries will be driving much of scientific data analysis for years to come.
+
 ### Definitions: What are SciPy and NumPy?
 
 ## Ecosystem and community.
