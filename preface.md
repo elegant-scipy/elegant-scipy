@@ -6,7 +6,7 @@
 
 ## Welcome to Elegant SciPy
 
-NumPy and SciPy form the core of the Scientific Python ecosystem. These libraries already have excellent online documentation, so a complete reference would be pointless. Instead, in Elegant ScyPy we present the best code built using these libraries, using it as motivation to teach readers who have never used them before.
+NumPy and SciPy form the core of the Scientific Python ecosystem. These libraries already have excellent online documentation, so a complete reference would be pointless. Instead, in Elegant SciPy we present the best code built using these libraries, using it as motivation to teach readers who have never used them before.
 
 The code examples will be chosen to highlight clever, elegant uses of advanced features of NumPy, SciPy, and related libraries. The beginning reader will learn to apply these libraries to real world problems using beautiful code. The book will start from first principles and provide all the necessary background to understand each example, including idioms, libraries (e.g. iterators), and scientific concepts. Examples will use actual scientific data.
 
@@ -43,7 +43,7 @@ In short, SciPy and related libraries will be driving much of scientific data an
 > 
 > -- http://www.scipy.org/
 
-ScPy is a collection of Python packages. In Elegant SciPy we will see many of the main players in the SciPy ecosystem, such as:
+SciPy is a collection of Python packages. In Elegant SciPy we will see many of the main players in the SciPy ecosystem, such as:
 
 * **NumPy**
 provides efficient support for numerical computation, including linear algebra, random numbers, and Fourier transforms. 
