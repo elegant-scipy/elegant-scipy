@@ -37,7 +37,34 @@ This growth shows no sign of abating. For example, the Software Carpentry organi
 
 In short, SciPy and related libraries will be driving much of scientific data analysis for years to come.
 
-### Definitions: What are SciPy and NumPy?
+### Definitions: What is SciPy?
+
+> "SciPy (pronounced “Sigh Pie”) is a Python-based ecosystem of open-source software for mathematics, science, and engineering."
+> 
+> -- http://www.scipy.org/
+
+ScPy is a collection of Python packages. In Elegant SciPy we will see many of the main players in the SciPy ecosystem, such as:
+
+* **NumPy**
+provides efficient support for numerical computation, including linear algebra, random numbers, and Fourier transforms. 
+A key feature of NumPy is that it allows you to define "N-dimensional arrays". These are data structures that can have any number of dimensions (more about this later). 
+http://www.numpy.org/
+* **SciPy library**
+is a collection of efficient, user-friendly numerical algorithms. 
+It also contains toolboxes for specific domains such as signal processing, integration, optimization, and statistics.
+http://www.scipy.org/scipylib/index.html
+* **Matplotlib**
+is a powerful package for plotting in two dimensions (and basic 3D). It draws its name from the syntax that it shares with Matlab.
+http://matplotlib.org/
+* **IPython**
+is an interactive interface for Python, so you can quickly interact with your data and test ideas. 
+In particular, the IPython notebook runs in your browser and allows you to write code, text and mathematical expressions with inline plotting. These notebooks can easily be published with code alongside documentation and output, promoting reproducible research.
+IPython supports multiple languages, allowing you to mix Python code with for example Cython, R, Octave, Bash, Perl and Ruby, in the same notebook.
+http://ipython.org/
+* **pandas**
+provides fast, easy-to-use data structures, particularly to work with labelled data sets such as tables or relational databases, and manage time series.
+It also has some handy data analysis tools such as for data parsing and cleaning, sliding windows, aggregation and plotting.
+http://pandas.pydata.org/
 
 ## Ecosystem and community.
 * Open Source
