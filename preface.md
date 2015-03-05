@@ -67,15 +67,25 @@ It also has some handy data analysis tools such as for data parsing and cleaning
 http://pandas.pydata.org/
 
 ## Getting Started
+
 ### Installation - Anaconda
-### Accessing the book materials e.g. code
+Throughout this book we’re going to assume that you have Python 3.4 (or a later version) and have all the major SciPy packages installed: SciPy library, NumPy, Matplotlib, IPython and pandas.
+The easiest way to get all of these components is to install the Anaconda Python distribution.
+You can download Anaconda here: https://store.continuum.io/cshop/anaconda/. You will also find detailed installation instructions.
 
-## Python 3 vs Python 2
-One more thing: Python 3 vs Python 2. We're going to use Python 3.4 to teach, but will by-and-large use code that is compatible with Python 2, assuming the user has the following preface (which might grow):
+### Python 3 vs. Python 2
+We're going to use Python 3.4 to teach
 
+Pointing users to Python 2-3 resources online might be good. There's python-future.org, and Nick Coghlan's book-length guide on the topic. (Which is overkill.) Among others.
+
+However, if you're a Python 2 fan, by-and-large the code in this book is compatible with Python 2, assuming you have the following imports in your code:
+
+```
 from __future__ import division, print_function
 from six.moves import zip, map, filter
-Pointing users to Python 2-3 resources online might be good. There's python-future.org, and Nick Coghlan's book-length guide on the topic. (Which is overkill.) Among others.
+```
+
+### Accessing the book materials e.g. code
 
 ## Ecosystem and community.
 * Open Source
