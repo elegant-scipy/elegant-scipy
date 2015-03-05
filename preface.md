@@ -66,6 +66,17 @@ provides fast, easy-to-use data structures, particularly to work with labelled d
 It also has some handy data analysis tools such as for data parsing and cleaning, sliding windows, aggregation and plotting.
 http://pandas.pydata.org/
 
+## Getting Started
+### Installation - Anaconda
+### Accessing the book materials e.g. code
+
+## Python 3 vs Python 2
+One more thing: Python 3 vs Python 2. We're going to use Python 3.4 to teach, but will by-and-large use code that is compatible with Python 2, assuming the user has the following preface (which might grow):
+
+from __future__ import division, print_function
+from six.moves import zip, map, filter
+Pointing users to Python 2-3 resources online might be good. There's python-future.org, and Nick Coghlan's book-length guide on the topic. (Which is overkill.) Among others.
+
 ## Ecosystem and community.
 * Open Source
 * GitHub
@@ -78,15 +89,5 @@ Some of these here, or in a later chapter?:
 ## Conventions 
 ### NumPy docstring conventions
 
-## Getting Started
-### Installation - Anaconda
-### Accessing the book materials e.g. code
-
 ## Other stuff we could cover
 related packages, where to get help
-
-One more thing: Python 3 vs Python 2. We're going to use Python 3.4 to teach, but will by-and-large use code that is compatible with Python 2, assuming the user has the following preface (which might grow):
-
-from __future__ import division, print_function
-from six.moves import zip, map, filter
-Pointing users to Python 2-3 resources online might be good. There's python-future.org, and Nick Coghlan's book-length guide on the topic. (Which is overkill.) Among others.
