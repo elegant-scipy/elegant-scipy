@@ -31,8 +31,8 @@ can be considered "as" a numpy array. For this example we use the scikit-image
 library, a collection of image processing tools built on top of NumPy and SciPy.
 
 Here is PNG image from the scikit-image repository. It is a black and white
-(sometimes called "grayscale") picture of some ancient **GREEK** coins,
-obtained from the **WIKIMEDIA COMMONS**:
+(sometimes called "grayscale") picture of some ancient Roman coins from
+Pompeii, obtained from the Brooklyn Museum [^coins-source]:
 
 ![Coins](https://raw.githubusercontent.com/scikit-image/scikit-
 image/v0.10.1/skimage/data/coins.png)
@@ -120,24 +120,53 @@ value* of this difference.
     sigon = np.abs(sigdiff)
     print(np.nonzero(sigon) * 10, 'ms')
 
-It turns out that that can all be accomplished by *cross-correlating* the signal
-with a *difference filter*. In cross-correlation, at every point of the *signal*, we
-place the *filter* and produce the dot-product of the filter against the signal
-values at that location.
+It turns out that that can all be accomplished by *convolving* the signal
+with a *difference filter*. In convolution, at every point of the *signal*, we
+place the *filter* and produce the dot-product of the (reversed) filter against
+the signal values preceding that location:
+$s'(t) = \sum_{j=t-\tau}^{t}{s(j)f(t-j)}$
+where $s$ is the signal, $s'$ is the filtered signal, $f$ is the filter, and
+$\tau$ is the length of the filter.
 
-Now, think of what happens when the filter is (-1, 1), the difference filter: when
-adjacent values (u, v) of the signal are identical, the filter produces -u + v = 0. But
-when v > u, the signal produces some positive value.
+Now, think of what happens when the filter is (1, -1), the difference filter:
+when adjacent values (u, v) of the signal are identical, the filter produces
+-u + v = 0. But when v > u, the signal produces some positive value.
 
-    diff = np.array([-1, 1])
+    diff = np.array([1, -1])
     from scipy import ndimage as nd
-    dsig = nd.correlate(sig, diff)
+    dsig = nd.convolve(sig, diff)
     plt.plot(dsig)
 
 Signals are usually *noisy* though, not perfect as above:
 
     sig = sig + np.random.normal(0, 0.05, size=sig.shape)
     plt.plot(sig)
+
+The plain difference filter can amplify that noise:
+
+    plt.plot(nd.convolve(sig, diff))
+
+In such cases, you can add smoothing to the filter:
+
+    smoothdiff = np.array([0.2, 0.8, -0.8, -0.2])
+
+This smoothed difference filter looks for an edge in the central position,
+but also for that difference to continue. This is true in the case of a true
+edge, but not in "spurious" edges caused by noise. We then assign a
+weight of 0.8 to edges in the center, and 0.2 to the edge extension.
+Check out the result:
+
+    sdsig = nd.convolve(sig, smoothdiff)
+    plt.plot(sdsig)
+
+Now that you've seen filtering in 1D, I hope you'll find it straightforward
+to extend these concepts to 2D. Here's a 2D difference filter finding the
+edges in the coins image:
+
+** Generic filters: ** suppose you have an image that represents a map of
+property values. Politicians come up with new tax scheme on house sales based
+on the 90th percentile of house prices in a 1km radius. Why would you have
+such a filter on hand? You can instead use a *generic filter*.
 
 # Graphs and the NetworkX library
 
@@ -202,3 +231,5 @@ wanted to do 4D?
 
 # Putting it all together: mean boundary segmentation
 
+
+[^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
