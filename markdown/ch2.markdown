@@ -91,7 +91,7 @@ should be 3 pixels thick, while the minor ones should be one pixel thick.
         -------
         image_gridded : array, shape (M, N, 3)
             The original image with a red grid superimposed.
-        """"
+        """
         pass # fill in here
 
 # Image filters
@@ -159,14 +159,57 @@ Check out the result:
     sdsig = nd.convolve(sig, smoothdiff)
     plt.plot(sdsig)
 
+(Note: this operation is called filtering because, in physical electrical
+circuits, many of these operations are implemented by hardware that
+lets certain kinds of currents through, but not others; these components
+are called filters.)
+
 Now that you've seen filtering in 1D, I hope you'll find it straightforward
 to extend these concepts to 2D. Here's a 2D difference filter finding the
 edges in the coins image:
 
-** Generic filters: ** suppose you have an image that represents a map of
-property values. Politicians come up with new tax scheme on house sales based
-on the 90th percentile of house prices in a 1km radius. Why would you have
-such a filter on hand? You can instead use a *generic filter*.
+```python
+diff2d = np.array([[0, 1, 0], [1, 0, -1], [0, -1, 0]])
+coins_edges = nd.convolve(coins, diff2d)
+io.imshow(coins_edges)
+```
+
+The principle is the same as the 1D filter: at every point in the image, place the
+filter, compute the dot-product of the filter's values with the image values, and
+place the result at the same location in the output image. And, as with the 1D
+difference filter, when the filter is placed on a location with little variation, the
+dot-product cancels out to zero, whereas, placed on a location where the
+image brightness is changing, the values multiplied by 1 will be different from
+those multiplied by -1, and the filter's output will be a positive or negative
+value (depending on whether the image is brighter towards the bottom-right
+or top-left at that point).
+
+Just as with the 1D filter, you can get more sophisticated and smooth out
+noise right within the filter. The *Sobel* filter is designed to do just that:
+
+    hsobel = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
+    vsobel = hsobel.T
+    coins_h = nd.convolve(coins, hsobel)
+    coins_v = nd.convolve(coins, vsobel)
+    coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
+    io.imshow(coins_sobel)
+
+In addition to dot-products, implemented by `nd.convolve`, SciPy lets you
+define a filter that is an *arbitrary function* of the points in a neighborhood,
+implemented in `nd.generic_filter`. This can let you express arbitrarily complex
+filters.
+
+For example, suppose an image represents median house values in a county,
+with a 100m x 100m resolution. The local council decides to tax house sales as
+$10,000 plus 5% of the 90th percentile of house prices in a 1km radius. (So,
+selling a house in an expensive neighborhood costs more.) With
+`generic_filter`, we can produce the map of the tax rate everywhere in the map:
+
+    from skimage import morphology
+    def tax(prices):
+        return 10 + 0.05 * np.percentile(prices, 90)
+    footprint = morphology.disk(radius=10)
+    tax_rate_map = nd.generic_filter(house_price_map, footprint, tax)
 
 # Graphs and the NetworkX library
 
@@ -174,35 +217,59 @@ To introduce you to graphs, we will reproduce some results from the paper "Struc
 properties of the *Caenorhabditis elegans* neuronal networks", by Varshney *et al*, 2011.
 Note that in this context, "graphs" is synonymous not with "plots", but with "networks".
 Mathematicians and computer scientists invented slightly different words to discuss these,
-and, like most, we will be using them interchangeably.
+and, as most do, we will be using them interchangeably.
 
 You might be slightly more familiar with the network terminology: a network consists of
 *nodes* and *links* between the nodes. Equivalently, a graph consists of *vertices* and
-*edges* between the vertices. In NetworkX, you have `Graph` objects consisting of `nodes`
-and `edges` between the nodes. Oh well.
+*edges* between the vertices. In NetworkX, you have `Graph` objects consisting of
+`nodes` and `edges` between the nodes. Oh well.
 
 Graphs are a natural representation for a bewildering array of data. Pages on the world
 wide web, for example, can comprise nodes, while links between those pages can be,
 well, links. Or, in so-called *transcriptional networks*, nodes represent genes and edges
-connect genes that have a direct influence on each-other's expression.
+connect genes that have a direct influence on each other's expression.
 
 In our example, we will represent neurons in the nematode worm's nervous system as
 nodes, and place an edge between two nodes when a neuron makes a synapse with
 another. (*Synapses* are the chemical connections through which neurons
 communicate.) The worm is an awesome example of neural connectivity analysis
 because every worm (of this species) has the same number of neurons (302), and the
-connections between them are all known. This has resulted in the fantastic
-[Openworm](http://www.openworm.org) project, which I encourage you to follow.
+connections between them are all known. This has resulted in the fantastic Openworm
+project [^openworm], which I encourage you to follow.
 
 You can download the neuronal dataset in Excel format (yuck) from the WormAtlas
-database [here](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
+database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
 The direct link to the data is:
 [http://www.wormatlas.org/images/NeuronConnect.xls](http://www.wormatlas.org/images/NeuronConnect.xls)
-Let's start by getting a list of rows out of the file:
+Let's start by getting a list of rows out of the file. An elegant pattern from Tony
+Yu [^file-url] enables us to open a remote URL as a local file:
 
     import xlrd  # Excel-reading library in Python
-    import urllib2  # getting files from the web
-    import tempfile as tmp
+    from urllib.request import urlopen  # getting files from the web
+    import tempfile
+    @contextmanager
+    def url2filename(url):
+        _, ext = os.path.splitext(url)
+        with tempfile.NameTemporaryFile(delete=False, suffix=ext) as f:
+            remote = urlopen(url)
+            f.write(remote.read())
+        try:
+            yield f.name
+        finally:
+            os.remove(f.name)
+    connectome_url = ''http://www.wormatlas.org/images/NeuronConnect.xls"
+    with url2filename(connectome_url) as fin:
+        sheet = xlrd.open_workbook(fin).sheet_by_index(0)
+        conn = [sheet.row_values(i) for i in range(1, sheet.nrows)]
+
+`conn` now contains a list of connections of the form:
+
+[Neuron1, Neuron2, connection type, strength]
+
+We are only going to examine the connectome of chemical synapses, so we filter
+out other synapse types as follows:
+
+    conn = [(n1, n2, s) for n1, n2, t, s in conn if t.startswith('S')]
 
 # Region adjacency graphs
 
@@ -233,3 +300,5 @@ wanted to do 4D?
 
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
+[^openworm]: http://www.openworm.org
+[^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
