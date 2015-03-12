@@ -244,23 +244,26 @@ The direct link to the data is:
 Let's start by getting a list of rows out of the file. An elegant pattern from Tony
 Yu [^file-url] enables us to open a remote URL as a local file:
 
-    import xlrd  # Excel-reading library in Python
-    from urllib.request import urlopen  # getting files from the web
-    import tempfile
-    @contextmanager
-    def url2filename(url):
-        _, ext = os.path.splitext(url)
-        with tempfile.NameTemporaryFile(delete=False, suffix=ext) as f:
-            remote = urlopen(url)
-            f.write(remote.read())
-        try:
-            yield f.name
-        finally:
-            os.remove(f.name)
-    connectome_url = ''http://www.wormatlas.org/images/NeuronConnect.xls"
-    with url2filename(connectome_url) as fin:
-        sheet = xlrd.open_workbook(fin).sheet_by_index(0)
-        conn = [sheet.row_values(i) for i in range(1, sheet.nrows)]
+```python
+import xlrd  # Excel-reading library in Python
+from urllib.request import urlopen  # getting files from the web
+import tempfile
+from contextlib import contextmanager
+@contextmanager
+def url2filename(url):
+    _, ext = os.path.splitext(url)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as f:
+        remote = urlopen(url)
+        f.write(remote.read())
+    try:
+        yield f.name
+    finally:
+        os.remove(f.name)
+connectome_url = "http://www.wormatlas.org/images/NeuronConnect.xls"
+with url2filename(connectome_url) as fin:
+    sheet = xlrd.open_workbook(fin).sheet_by_index(0)
+    conn = [sheet.row_values(i) for i in range(1, sheet.nrows)]
+```
 
 `conn` now contains a list of connections of the form:
 
@@ -269,36 +272,122 @@ Yu [^file-url] enables us to open a remote URL as a local file:
 We are only going to examine the connectome of chemical synapses, so we filter
 out other synapse types as follows:
 
-    conn = [(n1, n2, s) for n1, n2, t, s in conn if t.startswith('S')]
+```python
+conn_edges = [(n1, n2, {'weight': s}) for n1, n2, t, s in conn
+              if t.startswith('S')]
+```python
 
-# Region adjacency graphs
+Finally, we build the graph using NetworkX's `DiGraph` class:
 
-# Elegant ndimage
+```python
+import networkx as nx
+wormbrain = nx.DiGraph()
+wormbrain.add_edges_from(conn)
+```
 
-To build a region adjacency graph for an image, you might use two nested for-
+We can now examine some of the properties of this network. One of the
+first things researchers ask about directed networks is which nodes are
+the most critical to information flow within it. Nodes with high
+*betweenness centrality* are those that belong the shortest path between
+many different pairs of nodes. Think of a rail network: certain stations will
+connect to many lines, so that you will be forced to change lines there
+for many different trips. They are the ones with high betweenness
+centrality.
+
+With networkx, we can find similarly important neurons with ease. In the
+networkx API documentation [^nxdoc], under "centrality", the docstring
+for `betweenness_centrality` [^bwcdoc] specifies a function that takes a
+graph as input and returns a dictionary mapping node IDs to betweenness
+centrality values (floating point values).
+
+```python
+centrality = nx.betweenness_centrality(wormbrain)
+```
+
+Now we can find the neurons with highest centrality using the Python built-in
+function `sorted`:
+
+```python
+central = sorted(centrality, key=centrality.__getitem__, reverse=True)
+print(central[:5])
+```
+
+This returns the neurons AVAR, AVAL, PVCR, PVT, and PVCL, which have been
+implicated in how the worm responds to external stimuli: the AVA neurons link
+the worm's front touch receptors (among others) to motor neurons responsible
+for backward motion, while the PVC neurons link the rear touch receptors to
+forward motion.
+
+These neurons' high centrality is a bit of an artifact of their placement
+controlling a large number of motor neurons. Yes, they are in many routes
+from sensory neurons to motor neurons. But all of the motor neurons do the same
+thing, as indicated by their generic names, VA 1-12. If we were to collapse
+them into one, the high centrality of the "command" neurons AVA R and L, and
+PVC R and L, would vanish. How do we study this systematically?
+
+Varshney *et al* study the properties of a *strongly connected component*
+of 237 neurons, out of a total of 279. In graphs, a
+*connected component* is a set of nodes that are reachable by some path
+through all the links. the connectome is a *directed* graph, meaning the
+edges *point* from one node to the other, rather than merely connecting
+them. in this case, a strongly connected component is one where all nodes
+are reachable from each other by traversing links *in the correct direction*.
+so a -> b -> c is not strongly connected, because there is no way to get to
+a from b or c. but a -> b -> c -> a *is* strongly connected.
+
+In a neuronal circuit, you can think of the strongly connected component
+as the "brain" of the circuit, where the processing happens, while nodes
+upstream of it are inputs, and nodes downstream are outputs.
+
+> **box**
+> the idea of cyclical neuronal circuits dates back to the 1950s. here's a
+> lovely paragraph about this idea from the article
+> "the man who tried to redeem the world with logic", by **author**:
+> > if one were to see a lightning bolt flash on the sky, the eyes would send a signal to the brain, shuffling it through a chain of neurons. starting with any given neuron in the chain, you could retrace the signal's steps and figure out just how long ago the lightning struck. unless, that is, the chain is a loop. in that case, the information encoding the lightning bolt just spins in circles, endlessly. it bears no connection to the time at which the lightning actually occurred. it becomes, as mcculloch put it, "an idea wrenched out of time." in other words, a memory.
+
+
+
+# region adjacency graphs
+
+i hope that chapter gave you an idea of the power of graphs as a scientific
+abstraciton. now we will study a special kind of graph, the region adjacency
+graph, or rag, a representation of an image useful for *segmentation*, the
+division of images into meaningful regions (or *segments*). if you've seen
+terminator 2, you've seen segmentation:
+
+**terminator vision image**
+
+
+
+
+# elegant ndimage
+
+to build a region adjacency graph for an image, you might use two nested for-
 loops to iterate over every pixel of the image, looking at the neighboring
 pixels, and checking for different labels:
 
 (code)
 
-This works, but if you want to segment a 3D image, you'll have to write a
+this works, but if you want to segment a 3d image, you'll have to write a
 different version:
 
 (code)
 
-Both of these are pretty ugly, too.
+both of these are pretty ugly, too.
 
-One way to simplify it is to test for 2D images, convert them to "flat" 3D
-images, and use just one piece of 3D code to generate the graph:
+one way to simplify it is to test for 2d images, convert them to "flat" 3d
+images, and use just one piece of 3d code to generate the graph:
 
-This still feels a bit hacky and inelegant. What if we had a 3D video, and
-wanted to do 4D?
+this still feels a bit hacky and inelegant. what if we had a 3d video, and
+wanted to do 4d?
 
-(Vighnesh's code)
+(vighnesh's code)
 
-# Putting it all together: mean boundary segmentation
+# putting it all together: mean boundary segmentation
 
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 [^openworm]: http://www.openworm.org
 [^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
+[^nxdoc]: http://networkx.github.io/documentation/latest/reference/index.html
+[^bwcdoc]: http://networkx.github.io/documentation/latest/reference/generated/networkx.algorithms.centrality.betweenness_centrality.html
