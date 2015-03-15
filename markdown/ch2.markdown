@@ -320,6 +320,7 @@ Let's start by getting a list of rows out of the file. An elegant pattern from T
 Yu [^file-url] enables us to open a remote URL as a local file:
 
 ```python
+import os
 import xlrd  # Excel-reading library in Python
 from urllib.request import urlopen  # getting files from the web
 import tempfile
@@ -350,14 +351,18 @@ out other synapse types as follows:
 ```python
 conn_edges = [(n1, n2, {'weight': s}) for n1, n2, t, s in conn
               if t.startswith('S')]
-```python
+```
 
-Finally, we build the graph using NetworkX's `DiGraph` class:
+(Look at the WormAtlas page for a description of the different connection types.)
+
+We use `weight` in a dictionary above because it is a special keyword for
+edge properties in NetworkX. We then build the graph using NetworkX's
+`DiGraph` class:
 
 ```python
 import networkx as nx
 wormbrain = nx.DiGraph()
-wormbrain.add_edges_from(conn)
+wormbrain.add_edges_from(conn_edges)
 ```
 
 We can now examine some of the properties of this network. One of the
