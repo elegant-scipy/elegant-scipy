@@ -5,7 +5,35 @@ graph (RAG) in just a few lines of code, with applicability to images of any num
 dimensions: images, 3D images, videos, videos of 3D images...
 
 ```python
+import networkx as nx
+import numpy as np
+from scipy import ndimage as nd
 
+
+def add_edge_filter(values, graph):
+    current = values[0]
+    neighbors = values[1:]
+    for neighbor in neighbors:
+        graph.add_edge(current, neighbor)
+    return 0.
+
+
+def build_rag(labels, image):
+    g = nx.Graph()
+    footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
+    for j in range(labels.ndim):
+        fp = np.swapaxes(footprint, j, 0)
+        fp[0, ...] = 0
+    _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
+                          mode='nearest', extra_arguments=(g,))
+    for n in g:
+        g.node[n]['total color'] = np.zeros(3, np.double)
+        g.node[n]['pixel count'] = 0
+    for index in np.ndindex(labels.shape):
+        n = labels[index]
+        g.node[n]['total color'] += image[index]
+        g.node[n]['pixel count'] += 1
+    return g
 ```
 
 There's a few things going on here: images being represented as numpy arrays,
