@@ -51,21 +51,27 @@ Here's how to create an image of white noise using just numpy, and display it
 with matplotlib. First, we import the necessary packages, and use the `matplotlib
 inline` IPython magic:
 
-    %matplotlib inline
-    import numpy as np
-    import matplotlib as mpl
-    from matplotlib import pyplot as plt, cm
+```python
+%matplotlib inline
+import numpy as np
+import matplotlib as mpl
+from matplotlib import pyplot as plt, cm
+```
 
 Next, a little bit of matplotlib parameter tuning so things display how we want them:
 
-    mpl.rcParams['image.cmap'] = 'gray'
-    mpl.rcParams['image.interpolation'] = None
-    mpl.rcParams['figure.figsize'] = (16, 12)
+```python
+mpl.rcParams['image.cmap'] = 'gray'
+mpl.rcParams['image.interpolation'] = None
+mpl.rcParams['figure.figsize'] = (16, 12)
+```
 
 Finally, "make some noise" and display it as an image:
 
-    random_image = np.random.rand(500, 500)
-    plt.imshow(random_image, cmap=cm.gray, interpolation='none');
+```python
+random_image = np.random.rand(500, 500)
+plt.imshow(random_image, cmap=cm.gray, interpolation='none');
+```
 
 This displays a numpy array "as" an image. The converse is also true: an image
 can be considered "as" a numpy array. For this example we use the scikit-image
@@ -80,11 +86,13 @@ image/v0.10.1/skimage/data/coins.png)
 
 Here it is loaded with scikit-image:
 
-    from skimage import io
-    url_coins = 'https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png'
-    coins = io.imread(url_coins)
-    print("Type:", type(coins), "Shape:", coins.shape, "Data type:", coins.dtype)
-    plt.imshow(coins)
+```python
+from skimage import io
+url_coins = 'https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png'
+coins = io.imread(url_coins)
+print("Type:", type(coins), "Shape:", coins.shape, "Data type:", coins.dtype)
+plt.imshow(coins)
+```
 
 A grayscale image can be represented as a *2-dimensional array*, with each array
 element containing the grayscale intensity at that position. So, **an image is
@@ -94,46 +102,54 @@ Color images are a *3-dimensional* array, where the first two dimensions
 represent the spatial extent of the image, while the final dimension represents
 color channels, typically the three primary colors of red, green, and blue:
 
-    url_astronaut = 'https://raw.githubusercontent.com/scikit-image/scikit-image/master/skimage/data/astronaut.png'
-    astro = io.imread(url_astronaut)
-    print("Type:", type(astro), "Shape:", astro.shape, "Data type:", astro.dtype)
-    plt.imshow(astro)
+```python
+url_astronaut = 'https://raw.githubusercontent.com/scikit-image/scikit-image/master/skimage/data/astronaut.png'
+astro = io.imread(url_astronaut)
+print("Type:", type(astro), "Shape:", astro.shape, "Data type:", astro.dtype)
+plt.imshow(astro)
+```
 
 These images are *just numpy arrays*. Adding a green square to the image is easy
 once you realize this, using simple numpy slicing:
 
-    astro_sq = np.copy(astro)
-    astro_sq[50:100, 50:100] = [0, 255, 0]  # red, green, blue
-    plt.imshow(astro_sq)
+```python
+astro_sq = np.copy(astro)
+astro_sq[50:100, 50:100] = [0, 255, 0]  # red, green, blue
+plt.imshow(astro_sq)
+```
 
 You can also superimpose a grid on the image, using a boolean mask:
 
-    astro_gr = np.copy(astro)
-    astro_gr[128::128, :] = [0, 255, 0]
-    astro_gr[:, 128::128] = [0, 255, 0]
-    plt.imshow(astro_gr, interpolation='bicubic')
+```python
+astro_gr = np.copy(astro)
+astro_gr[128::128, :] = [0, 255, 0]
+astro_gr[:, 128::128] = [0, 255, 0]
+plt.imshow(astro_gr, interpolation='bicubic')
+```
 
 **Exercise:** Create a function to draw a red major/minor grid onto a color image, and
 apply it to the `astronaut` image of Eileen Collins (above). Your function should take
 three parameters: input image, major spacing, minor spacing. The major gridlines
 should be 3 pixels thick, while the minor ones should be one pixel thick.
 
+```python
     def major_minor_grid(image, spacing_major=256, spacing_minor=128):
-        """Return an image with a major/minor grid, using the provided spacings.
-    
-        Parameters
-        ----------
-        image : array, shape (M, N, 3)
-            The input image
-        spacing_major, spacing_minor : int
-            The spacing of the major and minor gridlines.
-    
-        Returns
-        -------
-        image_gridded : array, shape (M, N, 3)
-            The original image with a red grid superimposed.
-        """
-        pass # fill in here
+    """Return an image with a major/minor grid, using the provided spacings.
+
+    Parameters
+    ----------
+    image : array, shape (M, N, 3)
+        The input image
+    spacing_major, spacing_minor : int
+        The spacing of the major and minor gridlines.
+
+    Returns
+    -------
+    image_gridded : array, shape (M, N, 3)
+        The original image with a red grid superimposed.
+    """
+    pass # fill in here
+```
 
 # Image filters
 
@@ -147,19 +163,23 @@ If you *sample* the signal every ten milliseconds for a second, you end up with 
 array of length 100. Suppose that after 300ms the light signal is turned on, and
 300ms later, it is switched off. You end up with a signal like this:
 
-    sig = np.zeros(100, np.float)
-    sig[30:60] = 1
-    plt.plot(sig)
-    plt.ylim(-0.1, 1.1)
+```python
+sig = np.zeros(100, np.float)
+sig[30:60] = 1
+plt.plot(sig)
+plt.ylim(-0.1, 1.1)
+```
 
 To find *when* the light is turned on, you can *delay* it by, say, 10ms, then
 *subtract* the delayed signal from the original, and finally *take the absolute
 value* of this difference.
 
-    sigdelta = sig[1:]  # sigd[0] equals sig[1], and so on
-    sigdiff = sig[:-1] - sigdelta
-    sigon = np.abs(sigdiff)
-    print(np.nonzero(sigon) * 10, 'ms')
+```python
+sigdelta = sig[1:]  # sigd[0] equals sig[1], and so on
+sigdiff = sig[:-1] - sigdelta
+sigon = np.abs(sigdiff)
+print(np.nonzero(sigon) * 10, 'ms')
+```
 
 It turns out that that can all be accomplished by *convolving* the signal
 with a *difference filter*. In convolution, at every point of the *signal*, we
@@ -173,23 +193,31 @@ Now, think of what happens when the filter is (1, -1), the difference filter:
 when adjacent values (u, v) of the signal are identical, the filter produces
 -u + v = 0. But when v > u, the signal produces some positive value.
 
-    diff = np.array([1, -1])
-    from scipy import ndimage as nd
-    dsig = nd.convolve(sig, diff)
-    plt.plot(dsig)
+```python
+diff = np.array([1, -1])
+from scipy import ndimage as nd
+dsig = nd.convolve(sig, diff)
+plt.plot(dsig)
+```
 
 Signals are usually *noisy* though, not perfect as above:
 
-    sig = sig + np.random.normal(0, 0.05, size=sig.shape)
-    plt.plot(sig)
+```python
+sig = sig + np.random.normal(0, 0.05, size=sig.shape)
+plt.plot(sig)
+```
 
 The plain difference filter can amplify that noise:
 
-    plt.plot(nd.convolve(sig, diff))
+```python
+plt.plot(nd.convolve(sig, diff))
+```
 
 In such cases, you can add smoothing to the filter:
 
-    smoothdiff = np.array([0.2, 0.8, -0.8, -0.2])
+```python
+smoothdiff = np.array([0.2, 0.8, -0.8, -0.2])
+```
 
 This smoothed difference filter looks for an edge in the central position,
 but also for that difference to continue. This is true in the case of a true
@@ -197,8 +225,10 @@ edge, but not in "spurious" edges caused by noise. We then assign a
 weight of 0.8 to edges in the center, and 0.2 to the edge extension.
 Check out the result:
 
-    sdsig = nd.convolve(sig, smoothdiff)
-    plt.plot(sdsig)
+```python
+sdsig = nd.convolve(sig, smoothdiff)
+plt.plot(sdsig)
+```
 
 (Note: this operation is called filtering because, in physical electrical
 circuits, many of these operations are implemented by hardware that
@@ -228,12 +258,14 @@ or top-left at that point).
 Just as with the 1D filter, you can get more sophisticated and smooth out
 noise right within the filter. The *Sobel* filter is designed to do just that:
 
-    hsobel = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
-    vsobel = hsobel.T
-    coins_h = nd.convolve(coins, hsobel)
-    coins_v = nd.convolve(coins, vsobel)
-    coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
-    io.imshow(coins_sobel)
+```python
+hsobel = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
+vsobel = hsobel.T
+coins_h = nd.convolve(coins, hsobel)
+coins_v = nd.convolve(coins, vsobel)
+coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
+io.imshow(coins_sobel)
+```
 
 In addition to dot-products, implemented by `nd.convolve`, SciPy lets you
 define a filter that is an *arbitrary function* of the points in a neighborhood,
@@ -246,11 +278,13 @@ $10,000 plus 5% of the 90th percentile of house prices in a 1km radius. (So,
 selling a house in an expensive neighborhood costs more.) With
 `generic_filter`, we can produce the map of the tax rate everywhere in the map:
 
-    from skimage import morphology
-    def tax(prices):
-        return 10 + 0.05 * np.percentile(prices, 90)
-    footprint = morphology.disk(radius=10)
-    tax_rate_map = nd.generic_filter(house_price_map, footprint, tax)
+```python
+from skimage import morphology
+def tax(prices):
+    return 10 + 0.05 * np.percentile(prices, 90)
+footprint = morphology.disk(radius=10)
+tax_rate_map = nd.generic_filter(house_price_map, footprint, tax)
+```
 
 # Graphs and the NetworkX library
 
