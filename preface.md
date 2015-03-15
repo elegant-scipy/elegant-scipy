@@ -99,6 +99,28 @@ Some of these here, or in a later chapter?:
 
 * Contributing to the SciPy ecosystem: how to use git and github, and follow best practices, to contribute to SciPy and related packages.?
 
+### Ecosystem and community notes from Juan
+
+** Open source.
+  * why open source is good: when things go wrong you can figure out why; when you need a new feature, you can easily hack it in. (if you have examples of this, that's even better. I do but will have to dig.)
+  * licensing: get some inspiration from Jake's article: http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/
+
+  * SciPy community has adopted BSD which means lots of contributions from wide array of people, including many in industry, startups, etc.
+
+** GitHub.
+  * massive effect on open source contributions, specifically in Python. Quoting Jake again: http://jakevdp.github.io/blog/2012/09/20/why-python-is-the-last/ See his github plot there.
+  * democratises development: anyone can come, fork a project, play to their heart's content, and eventually contribute via pull request.
+  * introducing thousands to code review and continuous integration.
+
+** package names
+  * airspeed velocity: continuous integration benchmarks, referencing Holy Grail http://spacetelescope.github.io/asv/using.html
+
+  * sux: use Python 2 packages from Python 3. A play on "six" (the Python 2/3 compatibility package) and also great usage syntax: "sux.to_use('my_py2_package')" (This can also segue into The Great Cataclysm)
+
+** Contributing
+[yes, leave this till the final chapter but mention it's coming, continuing from the mention of GitHub in "community", something like, "in the final chapter, we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem."]
+
+
 ## Conventions 
 ### NumPy docstring conventions
 
