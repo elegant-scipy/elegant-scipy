@@ -1,3 +1,16 @@
+# Vighnesh Birodkar: build a region adjacency graph from nD images
+
+In this chapter, we want to understand the following example, building a region adjacency
+graph (RAG) in just a few lines of code, with applicability to images of any number of
+dimensions: images, 3D images, videos, videos of 3D images...
+
+```python
+
+```
+
+There's a few things going on here: images being represented as numpy arrays,
+*filtering* of these images using `scipy.ndimage`, and building these into a
+graph (network) using the NetworkX library. We'll go over these in turn.
 
 # Images are numpy arrays
 
