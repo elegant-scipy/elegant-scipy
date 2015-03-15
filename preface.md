@@ -2,18 +2,38 @@
 
 > "Unlike the stereotypical wedding dress, it was—to use a technical term—elegant, like a computer algorithm that achieves an impressive outcome with just a few lines of code."
 
-> -- Graeme Simsion,‎ *The Rosie Effect*
+> -- Graeme Simsion, *The Rosie Effect*
 
 ## Welcome to Elegant SciPy
 
-This book is entitled Elegant SciPy. We’re going to spend rather a lot of time focusing on the “SciPy” bit of the title, so let’s take a moment to reflect on what we mean by elegant. There are plenty of manuals, tutorials and documentation websites out there describing the intricacies of SciPy. Elegant SciPy is not one of those. Instead of just teaching you how to write code that works, we want to step back and ask “is this code elegant?”.  To explain what we mean by elegant code, we’ve drawn a rather apt quote from The Rosie Effect (hilarious book, by the way; go read The Rosie Project when you’re done with Elegant SciPy). Graeme Simsion twists the connotation of elegant around. Often, you would use elegant to describe the visual simplicity of something or someone stylish or graceful. Yet here, the protagonist expresses how pleasingly simple he finds the wedding dress by likening it to the experience of reading some delightfully concise code. That’s something we want you to get out of this book. To read or write a piece of elegant code, and feel calmed in the face of its beauty and grace (note, the authors may be prone to hyperbole). Perhaps you too will complement your significant other one how their outfit reminds you of that bit of code you saw in Elegant SciPy…So, what makes code elegant? In scientific theory, you might use elegant to describe a pleasingly simple theorem. This is probably the definition of elegant that falls closest to Elegant SciPy. 
-Elegant code is a pleasure to read and is easy to understand because it is:
-* beautiful* simple* efficient
-* easy to understand
-* and often acheives these goes through creativity.
-* Is well commented* Achieves much in a few lines (generally through abstraction/functions NOT through just packing in a bunch of nested function calls!)* Is efficient, not only in terms of the number of keystrokes but in terms of speed and memory. In many cases elegant code intrigues us, because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity. Now that we’ve dealt with the elegant part of the title, let’s bring back the SciPy.
-SciPy forms the core of the Scientific Python ecosystem. 
-These libraries already have excellent online documentation, so a complete reference would be pointless. Instead, in Elegant SciPy we present the best code built using these libraries, using it as motivation to teach readers who have never used them before.
+This book is entitled Elegant SciPy. We’re going to spend rather a lot of time focusing on the “SciPy” bit of the title, so let’s take a moment to reflect on what we mean by elegant. There are plenty of manuals, tutorials and documentation websites out there describing the intricacies of SciPy. Elegant SciPy is not one of those. Instead of just teaching you how to write code that works, we want to step back and ask “is this code elegant?”.  
+
+To explain what we mean by elegant code, we’ve drawn a rather apt quote from The Rosie Effect (hilarious book, by the way; go read The Rosie Project when you’re done with Elegant SciPy). Graeme Simsion twists the connotation of elegant around. Often, you would use elegant to describe the visual simplicity of something or someone stylish or graceful. Yet here, the protagonist expresses how pleasingly simple he finds the wedding dress by likening it to the experience of reading some delightfully concise code. That’s something we want you to get out of this book. To read or write a piece of elegant code, and feel calmed in the face of its beauty and grace (note, the authors may be prone to hyperbole). Perhaps you too will complement your significant other one how their outfit reminds you of that bit of code you saw in Elegant SciPy…
+
+So, what makes code elegant? In scientific theory, you might use elegant to describe a pleasingly simple theorem. This is probably the definition of elegant that falls closest to Elegant SciPy. 
+
+Elegant code is a pleasure to read, use and understand because it is:
+
+* Simple
+* Efficient
+* Clear
+* Creative
+* Beautiful
+
+By simple, I mean that elegant code achieves much in a few lines. Note that this is generally through abstraction and functions, NOT through just packing in a bunch of nested function calls! 
+Elegant code is efficient, not only in terms of the number of keystrokes but also in terms of speed and memory. The packages and algorithms used 
+* Clear
+	* Is well commented
+* Creative
+	* and often achieves these goes through cleaverness and creativity.
+* Beautiful
+
+In many cases elegant code intrigues us, because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity. 
+
+Now that we’ve dealt with the elegant part of the title, let’s bring back the SciPy.
+
+SciPy forms the core of the Scientific Python ecosystem. 
+These libraries already have excellent online documentation, so a complete reference would be pointless. Instead, in Elegant SciPy we present the best code built using these libraries, using it as motivation to teach readers who have never used them before.
 
 The code examples will be chosen to highlight clever, elegant uses of advanced features of NumPy, SciPy, and related libraries. The beginning reader will learn to apply these libraries to real world problems using beautiful code. The book will start from first principles and provide all the necessary background to understand each example, including idioms, libraries (e.g. iterators), and scientific concepts. Examples will use actual scientific data.
 
@@ -82,7 +102,52 @@ Throughout this book we’re going to assume that you have Python 3.4 (or a late
 The easiest way to get all of these components is to install the Anaconda Python distribution.
 You can download Anaconda here: https://store.continuum.io/cshop/anaconda/. You will also find detailed installation instructions.
 
-### The Great Cataclysm: Python 2 vs. Python 3In your Python travels, you may have noticed that there is heated debate about which version of Python to use. You may wonder why they don't just use the latest.In [year] the Python developers released a major update to Python, moving from Python 2 to 3. This was a breaking change, meaning that in many cases Python 2.x code can not be interpreted by Python 3.x. Python 2.7 was to be the last version of Python 2 to be released, and all development was continued on the Python 3 branch.There were a number of reasons for making the leap to Python 3, one reason was a desire to standardise all the functions to use function notation, most notably: ```print "Hello World!"  # Python 2 print functionprint("Hello World!") # Python 3 print function```Another breaking change was the way Python 3 treats integer division. In Python 2, an integer divided by another integer always returns an integer (and rounds down to do so). Python 3 performs integer division is a way that is more intuitive to new programmers, that is, an integer divided by an integer can return a float.```# Python 2>>> 5/22# Python 3>>> 5/22.5```Another major advance of Python 3 over Python 2 was support for Unicode (an exapanded character set).```# Unicode example```Although for the most part Pythonistas agree that the changes in Python 3 were sensible, and well-intentioned, the changes have inadvertently created a schism in the Python community.The breaking changes in Python 3 mean that massive Python 2 code bases must be ported to Python 3 (which in many cases is not a trivial exercise). The inertia of these code bases is such that many developers have called for continued development of Python 2, incorporating the many non-breaking features that have been added to Python 3 in the time since it's inception. There has even be discussions of break-away development to continue on Python 2 by its proponants.Given the divided state of the community, many developers now write code that is compatible with both Python 2 and 3. This can increase the potential impact of the code, but also creates an additional burden for the programmer.New programmers must decide which version of Python to code in, which side of the fissure to join.The debate rages, and it's up to you to choose a side. There are plenty of Python 2 vs. 3 resources online to help you choose your stance.For example, you might like to check out python-future.org, and Nick Coghlan's book-length guide on the topic [ref].In Elegant SciPy, we're going to use Python 3.4.[why?]However, if you're a Python 2 fan, by-and-large the code in this book is compatible with Python 2, assuming you have the following imports in your code:
+### The Great Cataclysm: Python 2 vs. Python 3
+
+In your Python travels, you may have noticed that there is heated debate about which version of Python to use. You may wonder why they don't just use the latest.
+In [year] the Python developers released a major update to Python, moving from Python 2 to 3. 
+This was a breaking change, meaning that in many cases Python 2.x code can not be interpreted by Python 3.x. 
+Python 2.7 was to be the last version of Python 2 to be released, and all development was continued on the Python 3 branch.
+
+There were a number of reasons for making the leap to Python 3, one reason was a desire to standardise all the functions to use function notation, most notably: 
+
+```
+print "Hello World!"  # Python 2 print function
+print("Hello World!") # Python 3 print function
+```
+
+Another breaking change was the way Python 3 treats integer division. In Python 2, an integer divided by another integer always returns an integer (and rounds down to do so). Python 3 performs integer division is a way that is more intuitive to new programmers, that is, an integer divided by an integer can return a float.
+
+```
+# Python 2
+>>> 5/2
+2
+# Python 3
+>>> 5/2
+2.5
+```
+
+Another major advance of Python 3 over Python 2 was support for Unicode (an expanded character set).
+
+```
+# Unicode example
+```
+
+Although for the most part Pythonistas agree that the changes in Python 3 were sensible, and well-intentioned, the changes have inadvertently created a schism in the Python community.
+The breaking changes in Python 3 mean that massive Python 2 code bases must be ported to Python 3 (which in many cases is not a trivial exercise). 
+The inertia of these code bases is such that many developers have called for continued development of Python 2, incorporating the many non-breaking features that have been added to Python 3 in the time since it's inception. There has even be discussions of break-away development to continue on Python 2 by its proponents.
+
+Given the divided state of the community, many developers now write code that is compatible with both Python 2 and 3. This can increase the potential impact of the code, but also creates an additional burden for the programmer.
+New programmers must decide which version of Python to code in, which side of the fissure to join.
+
+The debate rages, and it's up to you to choose a side. 
+There are plenty of Python 2 vs. 3 resources online to help you choose your stance.
+For example, you might like to check out python-future.org, and Nick Coghlan's book-length guide on the topic [ref].
+
+In Elegant SciPy, we're going to use Python 3.4.
+[why?]
+However, if you're a Python 2 fan, by-and-large the code in this book is compatible with Python 2, assuming you have the following imports in your code:
+
 
 ```
 from __future__ import division, print_function
@@ -103,7 +168,7 @@ from six.moves import zip, map, filter
   * why open source is good: when things go wrong you can figure out why; when you need a new feature, you can easily hack it in. (if you have examples of this, that's even better. I do but will have to dig.)
   * licensing: get some inspiration from Jake's article: http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/
 
-  * SciPy community has adopted BSD which means lots of contributions from wide array of people, including many in industry, startups, etc.
+  * SciPy community has adopted BSD which means lots of contributions from wide array of people, including many in industry, start-ups, etc.
 
 
 ### GitHub: Taking Coding Social
@@ -137,3 +202,5 @@ Some of these here, or in a later chapter?:
 
 ## Other stuff we could cover
 related packages, where to get help
+
+
