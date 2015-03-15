@@ -19,6 +19,8 @@ The code examples will be chosen to highlight clever, elegant uses of advanced f
 
 This book will introduce readers to Scientific Python and its community, show them the fundamental parts of SciPy and related libraries, and give them a taste for beautiful, easy-to-read code, which they can carry with them to their practice.
 
+When we started writing Elegant SciPy, we first put out a call to the community, asking Pythonistas to nominate the most elegant code they have seen. Like SciPy itself, we wanted Elegant SciPy to be driven by the community. The code herein is the best code the community has offered up for your pleasure.
+
 ## Who is this book for?
 Elegant SciPy is intended to inspire you to take your Python to the next level. 
 You will learn SciPy by example, from the very best code.
@@ -89,16 +91,13 @@ from six.moves import zip, map, filter
 
 ### Accessing the book materials e.g. code
 
-## Ecosystem and community.
-* Open Source
-* GitHub
-* Include nice touches such as good package names, such as airspeed velocity and sux.
+## SciPy Ecosystem and Community
 
-Some of these here, or in a later chapter?:
+### The SciPy Ecosystem [some pun on ecosystem?]
 
-* Contributing to the SciPy ecosystem: how to use git and github, and follow best practices, to contribute to SciPy and related packages.?
+[put what is SciPy here?]
 
-### Ecosystem and community notes from Juan
+### It Pays to be Open
 
 ** Open source.
   * why open source is good: when things go wrong you can figure out why; when you need a new feature, you can easily hack it in. (if you have examples of this, that's even better. I do but will have to dig.)
@@ -106,15 +105,28 @@ Some of these here, or in a later chapter?:
 
   * SciPy community has adopted BSD which means lots of contributions from wide array of people, including many in industry, startups, etc.
 
-** GitHub.
+
+### GitHub: Taking Coding Social
+
+* GitHub.
   * massive effect on open source contributions, specifically in Python. Quoting Jake again: http://jakevdp.github.io/blog/2012/09/20/why-python-is-the-last/ See his github plot there.
   * democratises development: anyone can come, fork a project, play to their heart's content, and eventually contribute via pull request.
   * introducing thousands to code review and continuous integration.
+
+### A Touch of Whimsy with your Py
+
+* Include nice touches such as good package names, such as airspeed velocity and sux.
 
 ** package names
   * airspeed velocity: continuous integration benchmarks, referencing Holy Grail http://spacetelescope.github.io/asv/using.html
 
   * sux: use Python 2 packages from Python 3. A play on "six" (the Python 2/3 compatibility package) and also great usage syntax: "sux.to_use('my_py2_package')" (This can also segue into The Great Cataclysm)
+
+### Making your Mark on the SciPy Ecosystem
+
+Some of these here, or in a later chapter?:
+
+* Contributing to the SciPy ecosystem: how to use git and github, and follow best practices, to contribute to SciPy and related packages.?
 
 ** Contributing
 [yes, leave this till the final chapter but mention it's coming, continuing from the mention of GitHub in "community", something like, "in the final chapter, we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem."]
