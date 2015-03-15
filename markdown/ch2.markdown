@@ -133,7 +133,7 @@ three parameters: input image, major spacing, minor spacing. The major gridlines
 should be 3 pixels thick, while the minor ones should be one pixel thick.
 
 ```python
-    def major_minor_grid(image, spacing_major=256, spacing_minor=128):
+def major_minor_grid(image, spacing_major=256, spacing_minor=128):
     """Return an image with a major/minor grid, using the provided spacings.
 
     Parameters
@@ -282,8 +282,9 @@ selling a house in an expensive neighborhood costs more.) With
 from skimage import morphology
 def tax(prices):
     return 10 + 0.05 * np.percentile(prices, 90)
+house_price_map = np.ones((100, 100))
 footprint = morphology.disk(radius=10)
-tax_rate_map = nd.generic_filter(house_price_map, footprint, tax)
+tax_rate_map = nd.generic_filter(house_price_map, tax, footprint=footprint)
 ```
 
 # Graphs and the NetworkX library
@@ -322,7 +323,10 @@ Yu [^file-url] enables us to open a remote URL as a local file:
 ```python
 import os
 import xlrd  # Excel-reading library in Python
-from urllib.request import urlopen  # getting files from the web
+try:
+    from urllib.request import urlopen  # getting files from the web, Py3
+except ImportError:
+    from urllib2 import urlopen  # getting files from the web, Py2
 import tempfile
 from contextlib import contextmanager
 @contextmanager
@@ -508,7 +512,8 @@ us a decent starting point. It is available in the scikit-image library.
 url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
 tiger = io.imread(url)
 from skimage import segmentation
-seg = segmentation.slic(tiger, )
+seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
+                        enforce_connectivity=True, sigma=3)
 ```
 
 Scikit-image also has a function to *display* segmentations, which we use to
@@ -516,7 +521,7 @@ visualize the result of SLIC:
 
 ```python
 from skimage import color
-io.imshow(label2rgb(seg, tiger))
+io.imshow(color.label2rgb(seg, tiger))
 ```
 
 This shows that the tiger has been split in three parts, with the rest of the image
@@ -667,7 +672,7 @@ g = build_rag(seg, tiger)
 for n in g:
     node = g.node[n]
     node['mean'] = node['total color'] / node['pixel count']
-for u, v in g.edges_iter()
+for u, v in g.edges_iter():
     d = g.node[u]['mean'] - g.node[v]['mean']
     g[u][v]['weight'] = np.linalg.norm(d)
 ```
