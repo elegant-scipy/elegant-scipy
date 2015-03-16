@@ -225,7 +225,7 @@ plt.plot(nd.convolve(sig, diff))
 In such cases, you can add smoothing to the filter:
 
 ```python
-smoothdiff = np.array([.5, 1.5, 3, 5, -5, -3, -1.5, -0.5])
+smoothdiff = np.array([.5, 1.5, 3, 5, -5, -3, -1.5, -0.5]) / 10
 ```
 
 This smoothed difference filter looks for an edge in the central position,
