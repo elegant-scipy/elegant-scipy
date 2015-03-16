@@ -20,9 +20,18 @@ Elegant code is a pleasure to read, use and understand because it is:
 * Creative
 * Beautiful
 
-By simple, I mean that elegant code achieves much in a few lines. Note that this is generally through abstraction and functions, *not* through just packing in a bunch of nested function calls! Elegant code is efficient, not only in terms of the number of keystrokes but also in terms of speed and memory. The packages and algorithms used take care to store and process data efficiently. Elegant code should be clear and easy to understand.
-One way to ensure this is to comment often, and make sure your comments describe not just what your code is doing, but also how and why.Similarly, your variable and function names should be reasonably descriptive.To achieve simplicity, efficiency and clarity you will often need to use cleverness and creativity. 
-For example, you might use a particularly efficient data structure in a new context to which it has not yet been applied.In many cases elegant code intrigues us, because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity.It is the culmination of the elements of elegant code just described that make your code "beautiful", a pleasure to write, read and to use. This is elegant code.
+By simple, I mean that elegant code achieves much in a few lines. Note that this is generally through abstraction and functions, *not* through just packing in a bunch of nested function calls! 
+Elegant code is efficient, not only in terms of the number of keystrokes but also in terms of speed and memory. The packages and algorithms used take care to store and process data efficiently. 
+Elegant code should be clear and easy to understand.
+One way to ensure this is to comment often, and make sure your comments describe not just what your code is doing, but also how and why.
+Similarly, your variable and function names should be reasonably descriptive.
+
+To achieve simplicity, efficiency and clarity you will often need to use cleverness and creativity. 
+For example, you might use a particularly efficient data structure in a new context to which it has not yet been applied.
+In many cases elegant code intrigues us, because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity.
+It is the culmination of the elements of elegant code just described that make your code "beautiful", a pleasure to write, read and to use. 
+This is elegant code.
+
 
 Now that we’ve dealt with the elegant part of the title, let’s bring back the SciPy.
 
@@ -151,9 +160,70 @@ However, if you're a Python 2 fan, by-and-large the code in this book is compati
 from __future__ import division, print_function
 from six.moves import zip, map, filter
 ```
-As an example of the drama that has resulted from the Python 2 vs. 3 controversy, let us tell you about how this book was written. We decided on the following writing workflow:* Write the text and code of the book in Markdown format. Markdown is a simple - but sufficiently powerful - human readable text format that we can easily keep under Git version control (more on this later).* Convert the Markdown to IPython Notebook* Run the Python 3 code and save any outputs (like plots).We were pretty pleased with this plan, until we discovered that the software that converts Markdown to IPython is only able to produce Markdown format version 3. And Markdown v3 is only compatible with Python 2.7! This is what happens when half the community is using Python 2.7, and the other half is somewhere around Python 3.4...So we developed a new plan:* Write the text and code of the book in Markdown format.* Convert the Markdown to IPython Notebook v3.* Convert the IPython Notebook v3 to IPython Notebook v4 (which **is** compatible with Python 3).* Run the Python 3 code and save any outputs.And the moral of the story? A divided community is very inefficient!
 
-## SciPy Ecosystem and Community### The SciPy Ecosystem [some pun on ecosystem?][put what is SciPy here?]### It Pays to be OpenThe SciPy community embraces open source. The source code for all SciPy libraries is freely available to read, edit and reuse by anyone. So, why open? If you want others to use your code, one of the best ways to achieve this is to make it free. But what if you find some free software, but it doesn't do exactly what you want to achieve? If it's closed source, your only option is to use something else, email the developer and ask them to add a new feature (this often doesn't work!), or write it your self. If code is open source, it is much easier to add functionality to an existing code base than to write the whole thing again from scratch.Similarly, if you find a bug in a piece of software, having access to the source code can make things a lot easier for both the user and the developer. With source code access, you can identify the source of the error, fix it, and then you have solved your problem. For close source code you would have to tell the developer about the bug, wait for them to get around to working on it, then probably have a lengthy email conversation back and forth trying to recreate the error.From the developer's perspective, this is a big win. Imagine booting up your computer in the morning to find that one of your users has found a bug, reported it, tracked down the source of the error, fix it and then sent you the fix! This has certainly happened to me, and is quite a lovely experience.Here's the last time this happened to me https://github.com/katholt/srst2/pull/32. [there are surely better examples]If all the thoroughly practical reasons for making your code open source have failed to convince you, perhaps an altruistic argument will work.Making your code open source and freely available means than others can use and build on it without paying. Perhaps you remember being a poor graduate student and having to decide between paying rent or buying a Matlab license. Or maybe you care about making your code accessible to researchers in developing nations. Maybe you even want to support struggling start-ups.Making your code free and open then seeing it used by people who might have not been able to pay for it will give you a really nice warm fuzzy feeling. Trust us.#### Open Source, Open ScienceWhy is SciPy open? Well, SciPy is primarily aimed a scientists. And a growing number of scientific developers really care about doing open science. Why? Well, for all the reasons above, open is awesome. In the scientific context there is yet another layer. In many parts of the world, the bulk of scientific research is paid for by grants and much of this funding comes directly or indirectly from taxpayers.So if the public is paying for science, should they also be able to access the produces of science? There is a strong movement in science to make scientific products of all kinds (mostly papers, but also code and data) freely available to access, edit and redistribute. This is the Open Access movement, which is intricately linked with the scientific open source movement.In science, another great reason for making code open source is to promote reproducible research. Many of us have had the experience of reading a really cool paper, and then downloading the code to try it out on our own data. Only we find, that the executable isn't compiled for our system. Or we can't work out how to run it. Or it has bugs, missing features, or produces unexpected results.My making scientific software open source, we not only increase the quality of that software, but we make it possible to see exactly how the science was done.How were the figures in the paper produced?Does the software actually follow the algorithm that was described in the paper?What assumptions were made, and even hard coded?Open source helps to solve many of these issues. It also enables other scientists to build on the code of their peers, fostering new collaborations and speeding up scientific progress.
+As an example of the drama that has resulted from the Python 2 vs. 3 controversy, let us tell you about how this book was written. 
+We decided on the following writing workflow:
+
+* Write the text and code of the book in Markdown format. Markdown is a simple - but sufficiently powerful - human readable text format that we can easily keep under Git version control (more on this later).
+* Convert the Markdown to IPython Notebook
+* Run the Python 3 code and save any outputs (like plots).
+
+We were pretty pleased with this plan, until we discovered that the software that converts Markdown to IPython is only able to produce Markdown format version 3. And Markdown v3 is only compatible with Python 2.7! 
+This is what happens when half the community is using Python 2.7, and the other half is somewhere around Python 3.4...
+
+So we developed a new plan:
+
+* Write the text and code of the book in Markdown format.
+* Convert the Markdown to IPython Notebook v3.
+* Convert the IPython Notebook v3 to IPython Notebook v4 (which **is** compatible with Python 3).
+* Run the Python 3 code and save any outputs.
+
+And the moral of the story? A divided community is very inefficient!
+
+## SciPy Ecosystem and Community
+
+### The SciPy Ecosystem [some pun on ecosystem?]
+
+[put what is SciPy here?]
+
+### It Pays to be Open
+
+The SciPy community embraces open source. The source code for all SciPy libraries is freely available to read, edit and reuse by anyone. 
+
+So, why open? If you want others to use your code, one of the best ways to achieve this is to make it free. 
+But what if you find some free software, but it doesn't do exactly what you want to achieve? 
+If it's closed source, your only option is to use something else, email the developer and ask them to add a new feature (this often doesn't work!), or write it your self. 
+If code is open source, it is much easier to add functionality to an existing code base than to write the whole thing again from scratch.
+
+Similarly, if you find a bug in a piece of software, having access to the source code can make things a lot easier for both the user and the developer. 
+With source code access, you can identify the source of the error, fix it, and then you have solved your problem. 
+For close source code you would have to tell the developer about the bug, wait for them to get around to working on it, then probably have a lengthy email conversation back and forth trying to recreate the error.
+From the developer's perspective, this is a big win. 
+Imagine booting up your computer in the morning to find that one of your users has found a bug, reported it, tracked down the source of the error, fix it and then sent you the fix! This has certainly happened to me, and is quite a lovely experience.
+Here's the last time this happened to me https://github.com/katholt/srst2/pull/32. [there are surely better examples]
+
+If all the thoroughly practical reasons for making your code open source have failed to convince you, perhaps an altruistic argument will work.
+Making your code open source and freely available means than others can use and build on it without paying. 
+Perhaps you remember being a poor graduate student and having to decide between paying rent or buying a Matlab license. Or maybe you care about making your code accessible to researchers in developing nations. Maybe you even want to support struggling start-ups.
+Making your code free and open then seeing it used by people who might have not been able to pay for it will give you a really nice warm fuzzy feeling. Trust us.
+
+#### Open Source, Open Science
+
+Why is SciPy open? Well, SciPy is primarily aimed a scientists. And a growing number of scientific developers really care about doing open science. 
+Why? Well, for all the reasons above, open is awesome. 
+In the scientific context there is yet another layer. 
+In many parts of the world, the bulk of scientific research is paid for by grants and much of this funding comes directly or indirectly from taxpayers.
+So if the public is paying for science, should they also be able to access the produces of science? 
+There is a strong movement in science to make scientific products of all kinds (mostly papers, but also code and data) freely available to access, edit and redistribute. This is the Open Access movement, which is intricately linked with the scientific open source movement.
+
+In science, another great reason for making code open source is to promote reproducible research. 
+Many of us have had the experience of reading a really cool paper, and then downloading the code to try it out on our own data. Only we find, that the executable isn't compiled for our system. Or we can't work out how to run it. Or it has bugs, missing features, or produces unexpected results.
+My making scientific software open source, we not only increase the quality of that software, but we make it possible to see exactly how the science was done.
+How were the figures in the paper produced?
+Does the software actually follow the algorithm that was described in the paper?
+What assumptions were made, and even hard coded?
+Open source helps to solve many of these issues. It also enables other scientists to build on the code of their peers, fostering new collaborations and speeding up scientific progress.
+
 
 #### Open Source Licenses
 
