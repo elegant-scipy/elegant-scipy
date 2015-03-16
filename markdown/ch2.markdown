@@ -249,8 +249,9 @@ plt.plot(sdsig)
 
 (Note: this operation is called filtering because, in physical electrical
 circuits, many of these operations are implemented by hardware that
-lets certain kinds of currents through, but not others; these components
-are called filters.)
+lets certain kinds of current through, but not others; these components
+are called filters. For example, a common filter that removes high-frequency
+voltage fluctuations from a current is called a *low-pass filter*.)
 
 Now that you've seen filtering in 1D, I hope you'll find it straightforward
 to extend these concepts to 2D. Here's a 2D difference filter finding the
