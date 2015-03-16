@@ -1,3 +1,9 @@
+```python
+# set up Py 2-3 compatibility
+from __future__ import print_function, division
+from six.moves import map, range, zip, filter
+```
+
 # Vighnesh Birodkar: build a region adjacency graph from nD images
 
 In this chapter, we want to understand the following example, building a region adjacency
