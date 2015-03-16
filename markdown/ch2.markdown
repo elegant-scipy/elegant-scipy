@@ -320,7 +320,7 @@ You might be slightly more familiar with the network terminology: a network cons
 *edges* between the vertices. In NetworkX, you have `Graph` objects consisting of
 `nodes` and `edges` between the nodes. Oh well.
 
-Graphs are a natural representation for a bewildering array of data. Pages on the world
+Graphs are a natural representation for a bewildering variety of data. Pages on the world
 wide web, for example, can comprise nodes, while links between those pages can be,
 well, links. Or, in so-called *transcriptional networks*, nodes represent genes and edges
 connect genes that have a direct influence on each other's expression.
@@ -343,12 +343,15 @@ Yu [^file-url] enables us to open a remote URL as a local file:
 ```python
 import os
 import xlrd  # Excel-reading library in Python
+
 try:
     from urllib.request import urlopen  # getting files from the web, Py3
 except ImportError:
     from urllib2 import urlopen  # getting files from the web, Py2
+
 import tempfile
 from contextlib import contextmanager
+
 @contextmanager
 def url2filename(url):
     _, ext = os.path.splitext(url)
@@ -359,7 +362,9 @@ def url2filename(url):
         yield f.name
     finally:
         os.remove(f.name)
+
 connectome_url = "http://www.wormatlas.org/images/NeuronConnect.xls"
+
 with url2filename(connectome_url) as fin:
     sheet = xlrd.open_workbook(fin).sheet_by_index(0)
     conn = [sheet.row_values(i) for i in range(1, sheet.nrows)]
@@ -427,7 +432,12 @@ controlling a large number of motor neurons. Yes, they are in many routes
 from sensory neurons to motor neurons. But all of the motor neurons do essentially
 the same thing, as hinted at by their generic names, VA 1-12. If we were to collapse
 them into one, the high centrality of the "command" neurons AVA R and L, and
-PVC R and L, might vanish.
+PVC R and L, might vanish. Returning to the rail lines example, suppose trains
+between Grand Central Station in New York City and Washington DC's Union
+Station could end up at one of 12 different platforms, *and we counted each of
+those as a separate train line*. The betweenness centrality of Grand Central
+would be inflated because from it you could get to Union Station platform 1,
+platform 2, etc. That's not necessarily very interesting.
 
 Varshney *et al* study the properties of a *strongly connected component*
 of 237 neurons, out of a total of 279. In graphs, a
@@ -489,9 +499,10 @@ plt.ylim(0.002, 1.0)
 plt.show()
 ```
 
-We leave the red curve fit from the figure as an exercise for the reader.
-Here, again, the SciPy library is invaluable: use `scipy.optimize.curve_fit`
-for this task.
+**Exercise**: Use `scipy.optimize.curve_fit` to fit the tail of the
+in-degree survival function to a power-law, $f(d) \tilde d^{-\gamma}, d > d_0$,
+for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
+to include that line.
 
 # Region adjacency graphs
 
