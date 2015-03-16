@@ -6,16 +6,17 @@ from six.moves import map, range, zip, filter
 
 # Vighnesh Birodkar: build a region adjacency graph from nD images
 
-You probably know that digital images are made up of *pixels*,
-point samples of a light signal *sampled on a regular grid*. When computing
+You probably know that digital images are made up of *pixels*. These are
+the light signal *sampled on a regular grid*. When computing
 on images, we often deal with objects much larger than individual pixels.
-In a landscape, the sky, the earth, trees, rocks, and so on, each span many
+In a landscape, the sky, earth, trees, rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
 or RAG. It holds the properties of each region in the image, and the spatial
 relationships between them. Building such a structure could be a complicated
-affair; more so when images are not two-dimensional but 3D and even 4D, as is
+affair, and even more difficult 
+when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
-here we will show you how to do it in a few lines of code using NetworkX and
+here we will show you how to produce an RAG in a few lines of code using NetworkX and
 a generalized filter from SciPy's N-dimensional image processing submodule.
 
 ```python
@@ -50,14 +51,14 @@ def build_rag(labels, image):
     return g
 ```
 
-There's a few things going on here: images being represented as numpy arrays,
+There are a few things going on here: images being represented as numpy arrays,
 *filtering* of these images using `scipy.ndimage`, and building these into a
 graph (network) using the NetworkX library. We'll go over these in turn.
 
 # Images are numpy arrays
 
 In the previous chapter, we saw that numpy arrays can efficiently represent
-tabular data, as well as perform computations on it.
+tabular data, and are a convenient way to perform computations on it.
 
 It turns out that arrays are equally adept at representing images.
 
@@ -97,7 +98,7 @@ Pompeii, obtained from the Brooklyn Museum [^coins-source]:
 ![Coins](https://raw.githubusercontent.com/scikit-image/scikit-
 image/v0.10.1/skimage/data/coins.png)
 
-Here it is loaded with scikit-image:
+Here is the coin image loaded with scikit-image:
 
 ```python
 from skimage import io
@@ -112,8 +113,9 @@ element containing the grayscale intensity at that position. So, **an image is
 just a numpy array**.
 
 Color images are a *3-dimensional* array, where the first two dimensions
-represent the spatial extent of the image, while the final dimension represents
-color channels, typically the three primary colors of red, green, and blue:
+represent the spatial positions of the image, while the final dimension represents
+color channels, typically the three primary additive colors of red, green, and blue.
+To show what we can do with these dimensions, let's play with this photo of an astronaut:
 
 ```python
 url_astronaut = 'https://raw.githubusercontent.com/scikit-image/scikit-image/master/skimage/data/astronaut.png'
@@ -122,7 +124,7 @@ print("Type:", type(astro), "Shape:", astro.shape, "Data type:", astro.dtype)
 plt.imshow(astro);
 ```
 
-These images are *just numpy arrays*. Adding a green square to the image is easy
+This image is *just numpy arrays*. Adding a green square to the image is easy
 once you realize this, using simple numpy slicing:
 
 ```python
@@ -144,6 +146,7 @@ plt.imshow(astro_sq);
 **Exercise:** Create a function to draw a green grid onto a color image, and
 apply it to the `astronaut` image of Eileen Collins (above). Your function should take
 two parameters: the input image, and the grid spacing.
+Use the following template to help you get started.
 
 ```python
 def overlay_grid(image, spacing=128):
@@ -162,7 +165,7 @@ def overlay_grid(image, spacing=128):
         The original image with a grid superimposed.
     """
     image_gridded = image.copy()
-    pass  # fill in here...
+    pass  # replace this line with your code...
     return image_gridded
 
 # plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line
@@ -170,7 +173,7 @@ def overlay_grid(image, spacing=128):
 
 # Image filters
 
-Filtering is one of the most fundamental and common image operations in image
+Filtering is one of the most fundamental and common operations in image
 processing. You can filter an image to remove noise, to enhance features, or to
 detect edges between objects in the image.
 
@@ -181,8 +184,8 @@ array of length 100. Suppose that after 300ms the light signal is turned on, and
 300ms later, it is switched off. You end up with a signal like this:
 
 ```python
-sig = np.zeros(100, np.float)
-sig[30:60] = 1
+sig = np.zeros(100, np.float) # 
+sig[30:60] = 1 # signal is 1 during the period 300-600ms because light is observed
 plt.plot(sig);
 plt.ylim(-0.1, 1.1);
 ```
