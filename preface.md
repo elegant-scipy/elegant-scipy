@@ -20,15 +20,9 @@ Elegant code is a pleasure to read, use and understand because it is:
 * Creative
 * Beautiful
 
-By simple, I mean that elegant code achieves much in a few lines. Note that this is generally through abstraction and functions, NOT through just packing in a bunch of nested function calls! 
-Elegant code is efficient, not only in terms of the number of keystrokes but also in terms of speed and memory. The packages and algorithms used 
-* Clear
-	* Is well commented
-* Creative
-	* and often achieves these goes through cleaverness and creativity.
-* Beautiful
-
-In many cases elegant code intrigues us, because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity. 
+By simple, I mean that elegant code achieves much in a few lines. Note that this is generally through abstraction and functions, *not* through just packing in a bunch of nested function calls! Elegant code is efficient, not only in terms of the number of keystrokes but also in terms of speed and memory. The packages and algorithms used take care to store and process data efficiently. Elegant code should be clear and easy to understand.
+One way to ensure this is to comment often, and make sure your comments describe not just what your code is doing, but also how and why.Similarly, your variable and function names should be reasonably descriptive.To achieve simplicity, efficiency and clarity you will often need to use cleverness and creativity. 
+For example, you might use a particularly efficient data structure in a new context to which it has not yet been applied.In many cases elegant code intrigues us, because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity.It is the culmination of the elements of elegant code just described that make your code "beautiful", a pleasure to write, read and to use. This is elegant code.
 
 Now that we’ve dealt with the elegant part of the title, let’s bring back the SciPy.
 
