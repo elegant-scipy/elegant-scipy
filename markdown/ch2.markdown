@@ -123,37 +123,39 @@ astro_sq[50:100, 50:100] = [0, 255, 0]  # red, green, blue
 plt.imshow(astro_sq)
 ```
 
-You can also superimpose a grid on the image, using a boolean mask:
+You can also use a boolean mask:
 
 ```python
-astro_gr = np.copy(astro)
-astro_gr[128::128, :] = [0, 255, 0]
-astro_gr[:, 128::128] = [0, 255, 0]
-plt.imshow(astro_gr, interpolation='bicubic')
+astro_sq = np.copy(astro)
+sq_mask = np.zeros(astro.shape, bool)
+sq_mask[50:100, 50:100] = True
+astro_sq[sq_mask] = [0, 255, 0]
+plt.imshow(astro_sq)
 ```
 
-**Exercise:** Create a function to draw a red major/minor grid onto a color image, and
+**Exercise:** Create a function to draw a green grid onto a color image, and
 apply it to the `astronaut` image of Eileen Collins (above). Your function should take
-three parameters: input image, major spacing, minor spacing. The major gridlines
-should be 3 pixels thick, while the minor ones should be one pixel thick.
+two parameters: the input image, and the grid spacing.
 
 ```python
-def major_minor_grid(image, spacing_major=256, spacing_minor=128):
-    """Return an image with a major/minor grid, using the provided spacings.
+def overlay_grid(image, spacing=128):
+    """Return an image with a grid overlay, using the provided spacing.
 
     Parameters
     ----------
     image : array, shape (M, N, 3)
-        The input image
-    spacing_major, spacing_minor : int
-        The spacing of the major and minor gridlines.
+        The input image.
+    spacing : int
+        The spacing between the grid lines.
 
     Returns
     -------
     image_gridded : array, shape (M, N, 3)
-        The original image with a red grid superimposed.
+        The original image with a grid superimposed.
     """
-    pass # fill in here
+    pass  # fill in here
+
+plt.imshow(overlay_grid(astro, 128))
 ```
 
 # Image filters
