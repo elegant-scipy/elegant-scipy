@@ -69,13 +69,13 @@ This growth shows no sign of abating. For example, the Software Carpentry organi
 
 In short, SciPy and related libraries will be driving much of scientific data analysis for years to come.
 
-### Definitions: What is SciPy?
+### What is the SciPy Ecosystem?
 
 > "SciPy (pronounced “Sigh Pie”) is a Python-based ecosystem of open-source software for mathematics, science, and engineering."
 > 
 > -- http://www.scipy.org/
 
-SciPy is a collection of Python packages. In Elegant SciPy we will see many of the main players in the SciPy ecosystem, such as:
+The SciPy ecosystem is a collection of Python packages. In Elegant SciPy we will see many of the main players in the SciPy ecosystem, such as:
 
 * **NumPy**
 provides efficient support for numerical computation, including linear algebra, random numbers, and Fourier transforms. 
@@ -315,18 +315,25 @@ As a side effect, you will learn how to use Git and GitHub, which are very usefu
 You may even find interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
 
 Later in Elegant SciPy we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem.
-In the meantime we want you to start thinking about being more than just a SciPy user. You are joining a community and we hope you will keep making it a better place for scientific coders.
+In the meantime we want you to start thinking about being more than just a SciPy user. You are joining a community and we hope you will keep making it a better place for all scientific coders.
 
 ### A Touch of Whimsy with your Py
 
-* Include nice touches such as good package names, such as airspeed velocity and sux.
+In case you were worried that the SciPy community might be an imposing place to the newcomer, remember that the ecosystem is built by a group of scientific developers, with their own quirks and humor. 
 
-** package names
-  * airspeed velocity: continuous integration benchmarks, referencing Holy Grail http://spacetelescope.github.io/asv/using.html
+As we're in the land of Python, it is perhaps inevitable that we should find some Monty Python references. The package Airspeed Velocity (http://spacetelescope.github.io/asv/using.html) which is used for continuous integration (more on this later) refers to the line "what is the airspeed velocity of an unladen swallow?" from *Monty Python and the Holy Grail*.
 
-  * sux: use Python 2 packages from Python 3. A play on "six" (the Python 2/3 compatibility package) and also great usage syntax: "sux.to_use('my_py2_package')" (This can also segue into The Great Cataclysm)
+Another amusingly titled package is "Sux", which allows you to use Python 2 packages from Python 3. This is a play on saying "six" with a New Zealand accent (six is also a Python 2/3 compatibility library). Sux allows you to write the following line of code:
+```
+sux.to_use('my_py2_package')
+```
+.
 
 ## Getting Help
+
+http://www.scipy.org/
+
+Stack Overflow
 
 ## Conventions 
 ### NumPy docstring conventions
