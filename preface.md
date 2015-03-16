@@ -184,6 +184,8 @@ And the moral of the story? A divided community is very inefficient!
 
 ### The SciPy Ecosystem [some pun on ecosystem?]
 
+[Get Juan or Stefan to write this]
+
 [put what is SciPy here?]
 
 ### It Pays to be Open
@@ -227,26 +229,52 @@ Open source helps to solve many of these issues. It also enables other scientist
 
 #### Open Source Licenses
 
-If you want others to be able to use your code, you *must* license it.
+If you want others to be able to use your code, then you *must* license it.
 If you don't license your code, it is closed by default.
-Even if you publish your code (for example by placing it in a publish GitHub repository), without a software license, no one is allowed to use, edit or redesribute your code.
+Even if you publish your code (for example by placing it in a publish GitHub repository), without a software license, no one is allowed to use, edit or redistribute your code.
 
+Let's assume that we've convinced you, and you have decided to license your code under a Free and Open Source Software (FOSS) license (yay!).
+When choosing which of the many license options, you should first decide what you want people to be able to do with your code. 
+Do you want people to be able to sell your code for profit (or sell other code that uses your code), or do you want to restrict your code to be used only in free software?
 
-Free and Open Source Software (FOSS) Licenses
- 
+There are two broad categories of FOSS license:
 
-Types of FOSS licenses:
-* free
-* copy left
- 
+* Permissive
+* Copy-left
 
-  * licensing: get some inspiration from Jake's article: http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/
+A permissive license means that you are giving anyone the write to use, edit and redistribute your code in any way that they like. 
+This includes using your code as part of software that they are selling. 
+Some popular choices include the MIT and BSD licenses. 
+The SciPy community has adopted BSD.
+Using a permission license for SciPy means that they receive lots of code contributions from wide array of people, including many in industry and start-ups.
 
-* Licenses
-  * SciPy community has adopted BSD which means lots of contributions from wide array of people, including many in industry, start-ups, etc.
+Copy-left licences also allow others use, edit and redistribute your code. The main difference is that they say that your code cannot be used or redestribted for commercial purposed. 
+People are not allowed to directly make money off copy-left code. 
+These license also say that if you edit and redistribute the code, the new code must also be distributed under a copy-left license.
+So copy-left licenses restrict the rights of the user. Any code they produce based of copy-left code must itself be copy-left. So the license is "sticky" or "viral".
+The most popular copy-left license is GPL.
+The main disadvantage to using a copy-left license is that you are effectively putting your code off-limits to any potential users or contributors from the private sector. 
+This can substantially reduce your user base and thus the success of your software.
+In the scientific context, is probably means fewer citations.
+And fewer users means fewer developers to submit new features and bug fixes.
+
+For more help choosing a license, you might like to check out the Choose a License website http://choosealicense.com/. 
+For licensing in a scientific context, we recommend this blog post by Jake VanderPlas http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/.
+In fact we would like to quote Jake here, to drive home the key points of software licensing.
+
+> ...if you only take three pieces of information away from the article, let them be these:
+> 
+> 1. Always license your code.  Unlicensed code is closed code, so any open license is better than none (but see #2).
+> 2. Always use a GPL-compatible license. GPL-compatible licenses ensure broad compatibility for your code, and include GPL, new BSD, MIT, and others (but see #3).
+> 3. Always use a permissive, BSD-style license. A permissive license such as new BSD or MIT is preferable to a copyleft license such as GPL or LGPL.
+
+> -- Jake VanderPlas http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/
+
+How do you actually specify which license your code is distributed under?
+One strategy is to include the full license text at the top of each file as a comment. 
+A less tedious strategy (particularly for larger projects) is to create a single file called LICENSE.txt containing the full license text and distribute it with your software. You should also at least mention the license type at the top of each page.
   
-All the code in this book that was written by us is available under a BSD license. Where we have sourced code snippets from other people, the code will generally be under an open license of some varity (although not necessarily BSD).
-
+All the code in this book that was written by us is available under a BSD license. Where we have sourced code snippets from other people, the code will generally be under an open license of some variety (although not necessarily BSD).
 
 ### GitHub: Taking Coding Social
 
@@ -273,11 +301,15 @@ Some of these here, or in a later chapter?:
 ** Contributing
 [yes, leave this till the final chapter but mention it's coming, continuing from the mention of GitHub in "community", something like, "in the final chapter, we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem."]
 
+## Getting Help
 
 ## Conventions 
 ### NumPy docstring conventions
 
 ## Other stuff we could cover
-related packages, where to get help
+related packages
+
+
+
 
 
