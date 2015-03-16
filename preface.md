@@ -278,10 +278,44 @@ All the code in this book that was written by us is available under a BSD licens
 
 ### GitHub: Taking Coding Social
 
-* GitHub.
-  * massive effect on open source contributions, specifically in Python. Quoting Jake again: http://jakevdp.github.io/blog/2012/09/20/why-python-is-the-last/ See his github plot there.
-  * democratises development: anyone can come, fork a project, play to their heart's content, and eventually contribute via pull request.
-  * introducing thousands to code review and continuous integration.
+We've talked a little about releasing your source code under an open source license. 
+This will hopefully result in hung numbers of people downloading your code, using it, fixing bugs and adding new features.
+Where will you host your code so people can find it?
+How will those bug fixes and features get back into your code? How will you keep track of all the issues and changes?
+You can imagine how this could get out of control quite quickly.
+
+Enter GitHub. 
+
+GitHub (https://github.com/) is a website for hosting, sharing and developing code.
+It is based on Git version control software (http://git-scm.com/).
+
+GitHub has had a massive effect on open source contributions, particularly in Python. 
+GitHub allows users to publish code publically.
+Anyone can come along and create a copy (fork) of the code and edit it to their heart's content.
+They can eventually contribute those changes back into the original.
+There are some nice features like managing issues and change requests, as well as who can directly edit your code. You can even keep track of editing statistics and other fun stats. 
+There are a whole bunch of other great GitHub features, but we will leave many them for you to discover and some for you to read in later chapters.
+In essence, GitHub has democratized software development. It has substantially reduced the barrier to entry.
+
+[There's a nice plot showing how Python development takes off after introduction of GitHub, but we need to email Jake VanderPlas to ask if we can use it. http://jakevdp.github.io/blog/2012/09/20/why-python-is-the-last/]
+
+### Making your Mark on the SciPy Ecosystem
+
+Some of these here, or in a later chapter?:
+
+Once you have become more comfortable with SciPy and started using it for your research, you may find that a particular package is lacking a feature you need, or you think you can do something for efficiently, or perhaps you've found a bug.
+When you reach this point, it's time to start contributing to the SciPy Ecosystem.
+
+We strongly encourage you to try doing this.
+The community lives because people are willing to share their code and improve existing code.
+Beyond any altruistic reasons for contributing, there are some very practical personal benefits.
+Buy engaging with the community you will become a better coder.
+Any code you contribute will be generally be reviewed by others and you will receive feedback.
+As a side effect, you will learn how to use Git and GitHub, which are very useful tools for maintaining and sharing your own code.
+You may even find interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
+
+Later in Elegant SciPy we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem.
+In the meantime we want you to start thinking about being more than just a SciPy user. You are joining a community and we hope you will keep making it a better place for scientific coders.
 
 ### A Touch of Whimsy with your Py
 
@@ -291,15 +325,6 @@ All the code in this book that was written by us is available under a BSD licens
   * airspeed velocity: continuous integration benchmarks, referencing Holy Grail http://spacetelescope.github.io/asv/using.html
 
   * sux: use Python 2 packages from Python 3. A play on "six" (the Python 2/3 compatibility package) and also great usage syntax: "sux.to_use('my_py2_package')" (This can also segue into The Great Cataclysm)
-
-### Making your Mark on the SciPy Ecosystem
-
-Some of these here, or in a later chapter?:
-
-* Contributing to the SciPy ecosystem: how to use git and github, and follow best practices, to contribute to SciPy and related packages.?
-
-** Contributing
-[yes, leave this till the final chapter but mention it's coming, continuing from the mention of GitHub in "community", something like, "in the final chapter, we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem."]
 
 ## Getting Help
 
