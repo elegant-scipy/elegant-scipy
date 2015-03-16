@@ -127,7 +127,7 @@ You can also use a boolean mask:
 
 ```python
 astro_sq = np.copy(astro)
-sq_mask = np.zeros(astro.shape, bool)
+sq_mask = np.zeros(astro.shape[:2], bool)
 sq_mask[50:100, 50:100] = True
 astro_sq[sq_mask] = [0, 255, 0]
 plt.imshow(astro_sq)
@@ -153,7 +153,9 @@ def overlay_grid(image, spacing=128):
     image_gridded : array, shape (M, N, 3)
         The original image with a grid superimposed.
     """
+    image_gridded = image.copy()
     pass  # fill in here
+    return image_gridded
 
 plt.imshow(overlay_grid(astro, 128))
 ```
@@ -223,7 +225,7 @@ plt.plot(nd.convolve(sig, diff))
 In such cases, you can add smoothing to the filter:
 
 ```python
-smoothdiff = np.array([0.2, 0.8, -0.8, -0.2])
+smoothdiff = np.array([.5, 1.5, 3, 5, -5, -3, -1.5, -0.5])
 ```
 
 This smoothed difference filter looks for an edge in the central position,
@@ -247,6 +249,7 @@ to extend these concepts to 2D. Here's a 2D difference filter finding the
 edges in the coins image:
 
 ```python
+coins = coins.astype(float) / 255  # prevents overflow errors
 diff2d = np.array([[0, 1, 0], [1, 0, -1], [0, -1, 0]])
 coins_edges = nd.convolve(coins, diff2d)
 io.imshow(coins_edges)
@@ -444,7 +447,7 @@ connected component from our `wormbrain` network:
 sccs = nx.strongly_connected_component_subgraphs(wormbrain)
 sccs = sorted(sccs, key=len, reverse=True)
 giantscc = sccs[0]
-print('The largest strongly connected component has %i nodes, ' %
+print('The largest strongly connected component has %i nodes,' %
       giantscc.number_of_nodes(), 'out of %i total.' %
       wormbrain.number_of_nodes())
 ```
@@ -541,8 +544,9 @@ from scikit-image — indeed, the library that contains this chapter's code snip
 
 ```python
 from skimage.future import graph
-g = graph.rag_mean_color(seg, tiger)
-io.imshow(graph.draw_rag(seg, g, tiger, desaturate=True, cmap=plt.cm.YlGnBu))
+g = graph.rag_mean_color(tiger, seg)
+io.imshow(graph.draw_rag(seg, g, tiger, desaturate=True,
+                         colormap=plt.cm.YlGnBu))
 ```
 
 Here, you can see the nodes corresponding to each segment, and the edges
@@ -692,7 +696,7 @@ def threshold_graph(g, t):
     to_remove = ((u, v) for (u, v, d) in g.edges(data=True)
                  if d['weight'] > t)
     g.remove_edges_from(to_remove)
-threshold_graph(g, 85)
+threshold_graph(g, 80)
 ```
 
 Finally, we use the numpy index-with-an-array trick we learned in chapter 1:
@@ -703,7 +707,7 @@ for i, segment in enumerate(nx.connected_components(g)):
     for initial in segment:
         map_array[initial] = i
 segmented = map_array[seg]
-plt.imshow(color.label2rgb(segmented, tiger, method='avg'))
+plt.imshow(color.label2rgb(segmented, tiger))
 ```
 
 Oops! Looks like the cat lost its tail!
