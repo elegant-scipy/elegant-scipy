@@ -6,9 +6,17 @@ from six.moves import map, range, zip, filter
 
 # Vighnesh Birodkar: build a region adjacency graph from nD images
 
-In this chapter, we want to understand the following example, building a region adjacency
-graph (RAG) in just a few lines of code, with applicability to images of any number of
-dimensions: images, 3D images, videos, videos of 3D images...
+You probably know that digital images are made up of *pixels*,
+point samples of a light signal *sampled on a regular grid*. When computing
+on images, we often deal with objects much larger than individual pixels.
+In a landscape, the sky, the earth, trees, rocks, and so on, each span many
+pixels. A common structure to represent these is the Region Adjacency Graph,
+or RAG. It holds the properties of each region in the image, and the spatial
+relationships between them. Building such a structure could be a complicated
+affair; more so when images are not two-dimensional but 3D and even 4D, as is
+common in microscopy, materials science, and climatology, among others. But
+here we will show you how to do it in a few lines of code using NetworkX and
+a generalized filter from SciPy's N-dimensional image processing submodule.
 
 ```python
 import networkx as nx
@@ -64,7 +72,7 @@ import matplotlib as mpl
 from matplotlib import pyplot as plt, cm
 ```
 
-Next, a little bit of matplotlib parameter tuning so things display how we want them:
+Next, we set the default matplotlib colormap and interpolation method:
 
 ```python
 mpl.rcParams['image.cmap'] = 'gray'
@@ -78,7 +86,7 @@ random_image = np.random.rand(500, 500)
 plt.imshow(random_image, cmap=cm.gray, interpolation='none');
 ```
 
-This displays a numpy array "as" an image. The converse is also true: an image
+This displays a numpy array as an image. The converse is also true: an image
 can be considered "as" a numpy array. For this example we use the scikit-image
 library, a collection of image processing tools built on top of NumPy and SciPy.
 
@@ -302,8 +310,9 @@ tax_rate_map = nd.generic_filter(house_price_map, tax, footprint=footprint)
 To introduce you to graphs, we will reproduce some results from the paper "Structural
 properties of the *Caenorhabditis elegans* neuronal networks", by Varshney *et al*, 2011.
 Note that in this context, "graphs" is synonymous not with "plots", but with "networks".
-Mathematicians and computer scientists invented slightly different words to discuss these,
-and, as most do, we will be using them interchangeably.
+Mathematicians and computer scientists invented slightly different words to discuss these:
+graph vs network, vertex vs node, and edge vs link.
+As most people do, we will be using them interchangeably.
 
 You might be slightly more familiar with the network terminology: a network consists of
 *nodes* and *links* between the nodes. Equivalently, a graph consists of *vertices* and
