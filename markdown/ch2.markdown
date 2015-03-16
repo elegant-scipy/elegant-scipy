@@ -69,7 +69,6 @@ Next, a little bit of matplotlib parameter tuning so things display how we want 
 ```python
 mpl.rcParams['image.cmap'] = 'gray'
 mpl.rcParams['image.interpolation'] = None
-mpl.rcParams['figure.figsize'] = (16, 12)
 ```
 
 Finally, "make some noise" and display it as an image:
