@@ -500,7 +500,8 @@ plt.show()
 ```
 
 **Exercise**: Use `scipy.optimize.curve_fit` to fit the tail of the
-in-degree survival function to a power-law, $f(d) \tilde d^{-\gamma}, d > d_0$,
+in-degree survival function to a power-law,
+$f(d) \sim d^{-\gamma}, d > d_0$,
 for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
 to include that line.
 
