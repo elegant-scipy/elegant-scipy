@@ -104,7 +104,7 @@ from skimage import io
 url_coins = 'https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png'
 coins = io.imread(url_coins)
 print("Type:", type(coins), "Shape:", coins.shape, "Data type:", coins.dtype)
-plt.imshow(coins)
+plt.imshow(coins);
 ```
 
 A grayscale image can be represented as a *2-dimensional array*, with each array
@@ -119,7 +119,7 @@ color channels, typically the three primary colors of red, green, and blue:
 url_astronaut = 'https://raw.githubusercontent.com/scikit-image/scikit-image/master/skimage/data/astronaut.png'
 astro = io.imread(url_astronaut)
 print("Type:", type(astro), "Shape:", astro.shape, "Data type:", astro.dtype)
-plt.imshow(astro)
+plt.imshow(astro);
 ```
 
 These images are *just numpy arrays*. Adding a green square to the image is easy
@@ -128,7 +128,7 @@ once you realize this, using simple numpy slicing:
 ```python
 astro_sq = np.copy(astro)
 astro_sq[50:100, 50:100] = [0, 255, 0]  # red, green, blue
-plt.imshow(astro_sq)
+plt.imshow(astro_sq);
 ```
 
 You can also use a boolean mask:
@@ -138,7 +138,7 @@ astro_sq = np.copy(astro)
 sq_mask = np.zeros(astro.shape[:2], bool)
 sq_mask[50:100, 50:100] = True
 astro_sq[sq_mask] = [0, 255, 0]
-plt.imshow(astro_sq)
+plt.imshow(astro_sq);
 ```
 
 **Exercise:** Create a function to draw a green grid onto a color image, and
@@ -165,7 +165,7 @@ def overlay_grid(image, spacing=128):
     pass  # fill in here...
     return image_gridded
 
-# plt.imshow(overlay_grid(astro, 128))  # ... and uncomment this line
+# plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line
 ```
 
 # Image filters
@@ -183,8 +183,8 @@ array of length 100. Suppose that after 300ms the light signal is turned on, and
 ```python
 sig = np.zeros(100, np.float)
 sig[30:60] = 1
-plt.plot(sig)
-plt.ylim(-0.1, 1.1)
+plt.plot(sig);
+plt.ylim(-0.1, 1.1);
 ```
 
 To find *when* the light is turned on, you can *delay* it by, say, 10ms, then
@@ -214,20 +214,20 @@ when adjacent values (u, v) of the signal are identical, the filter produces
 diff = np.array([1, -1])
 from scipy import ndimage as nd
 dsig = nd.convolve(sig, diff)
-plt.plot(dsig)
+plt.plot(dsig);
 ```
 
 Signals are usually *noisy* though, not perfect as above:
 
 ```python
 sig = sig + np.random.normal(0, 0.05, size=sig.shape)
-plt.plot(sig)
+plt.plot(sig);
 ```
 
 The plain difference filter can amplify that noise:
 
 ```python
-plt.plot(nd.convolve(sig, diff))
+plt.plot(nd.convolve(sig, diff));
 ```
 
 In such cases, you can add smoothing to the filter:
@@ -244,7 +244,7 @@ Check out the result:
 
 ```python
 sdsig = nd.convolve(sig, smoothdiff)
-plt.plot(sdsig)
+plt.plot(sdsig);
 ```
 
 (Note: this operation is called filtering because, in physical electrical
@@ -261,7 +261,7 @@ edges in the coins image:
 coins = coins.astype(float) / 255  # prevents overflow errors
 diff2d = np.array([[0, 1, 0], [1, 0, -1], [0, -1, 0]])
 coins_edges = nd.convolve(coins, diff2d)
-io.imshow(coins_edges)
+io.imshow(coins_edges);
 ```
 
 The principle is the same as the 1D filter: at every point in the image, place the
@@ -283,7 +283,8 @@ vsobel = hsobel.T
 coins_h = nd.convolve(coins, hsobel)
 coins_v = nd.convolve(coins, vsobel)
 coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
-io.imshow(coins_sobel)
+plt.imshow(coins_sobel, cmap=plt.cm.YlGnBu);
+plt.colorbar();
 ```
 
 In addition to dot-products, implemented by `nd.convolve`, SciPy lets you
@@ -458,7 +459,8 @@ upstream of it are inputs, and nodes downstream are outputs.
 > The idea of cyclical neuronal circuits dates back to the 1950s. Here's a
 > lovely paragraph about this idea from an article in *Nautilus*,
 > "The Man Who Tried to Redeem the World With Logic", by Amanda Gefter:
-> > If one were to see a lightning bolt flash on the sky, the eyes would send a signal to the brain, shuffling it through a chain of neurons. Starting with any given neuron in the chain, you could retrace the signal's steps and figure out just how long ago the lightning struck. Unless, that is, the chain is a loop. In that case, the information encoding the lightning bolt just spins in circles, endlessly. It bears no connection to the time at which the lightning actually occurred. It becomes, as McCulloch put it, "an idea wrenched out of time." In other words, a memory.
+> 
+> If one were to see a lightning bolt flash on the sky, the eyes would send a signal to the brain, shuffling it through a chain of neurons. Starting with any given neuron in the chain, you could retrace the signal's steps and figure out just how long ago the lightning struck. Unless, that is, the chain is a loop. In that case, the information encoding the lightning bolt just spins in circles, endlessly. It bears no connection to the time at which the lightning actually occurred. It becomes, as McCulloch put it, "an idea wrenched out of time." In other words, a memory.
 
 NetworkX makes straightforward work out of getting the largest strongly
 connected component from our `wormbrain` network:
@@ -770,7 +772,7 @@ for i, segment in enumerate(nx.connected_components(g)):
     for initial in segment:
         map_array[initial] = i
 segmented = map_array[seg]
-plt.imshow(color.label2rgb(segmented, tiger))
+plt.imshow(color.label2rgb(segmented, tiger));
 ```
 
 Oops! Looks like the cat lost its tail!
