@@ -162,10 +162,10 @@ def overlay_grid(image, spacing=128):
         The original image with a grid superimposed.
     """
     image_gridded = image.copy()
-    pass  # fill in here
+    pass  # fill in here...
     return image_gridded
 
-plt.imshow(overlay_grid(astro, 128))
+# plt.imshow(overlay_grid(astro, 128))  # ... and uncomment this line
 ```
 
 # Image filters
@@ -188,14 +188,14 @@ plt.ylim(-0.1, 1.1)
 ```
 
 To find *when* the light is turned on, you can *delay* it by, say, 10ms, then
-*subtract* the delayed signal from the original, and finally *take the absolute
-value* of this difference.
+*subtract* the delayed signal from the original, and finally *clip* this
+difference to be nonzero.
 
 ```python
-sigdelta = sig[1:]  # sigd[0] equals sig[1], and so on
-sigdiff = sig[:-1] - sigdelta
-sigon = np.abs(sigdiff)
-print(np.nonzero(sigon) * 10, 'ms')
+sigdelta = sig[:-1]  # sigd[0] equals sig[1], and so on
+sigdiff = sig[1:] - sigdelta
+sigon = np.clip(sigdiff, 0, np.inf)
+print(10 + np.flatnonzero(sigon)[0] * 10, 'ms')
 ```
 
 It turns out that that can all be accomplished by *convolving* the signal
@@ -493,8 +493,8 @@ Then, plot using Matplotlib:
 plt.loglog(np.arange(1, len(survival) + 1), survival, c='b', lw=2)
 plt.xlabel('in-degree')
 plt.ylabel('fraction of neurons with higher in-degree')
-plt.scatter(avg_in_degree, 0.0021, marker='v')
-plt.text(avg_in_degree - 0.5, 0.0023, 'mean=%.2f' % avg_in_degree, )
+plt.scatter(avg_in_degree, 0.0022, marker='v')
+plt.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree, )
 plt.ylim(0.002, 1.0)
 plt.show()
 ```
