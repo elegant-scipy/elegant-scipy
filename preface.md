@@ -92,9 +92,14 @@ http://pandas.pydata.org/
 ## Getting Started
 
 ### Installation - Anaconda
+
 Throughout this book we’re going to assume that you have Python 3.4 (or a later version) and have all the major SciPy packages installed: SciPy library, NumPy, Matplotlib, IPython and pandas.
 The easiest way to get all of these components is to install the Anaconda Python distribution.
 You can download Anaconda here: https://store.continuum.io/cshop/anaconda/. You will also find detailed installation instructions.
+
+### Accessing the book materials e.g. code
+
+All of the code from this book is available on our GitHub repository [link]
 
 ### The Great Cataclysm: Python 2 vs. Python 3
 
@@ -142,13 +147,11 @@ In Elegant SciPy, we're going to use Python 3.4.
 [why?]
 However, if you're a Python 2 fan, by-and-large the code in this book is compatible with Python 2, assuming you have the following imports in your code:
 
-
 ```
 from __future__ import division, print_function
 from six.moves import zip, map, filter
 ```
-
-### Accessing the book materials e.g. code
+As an example of the drama that has resulted from the Python 2 vs. 3 controversy, let us tell you about how this book was written. We decided on the following writing workflow:* Write the text and code of the book in Markdown format. Markdown is a simple - but sufficiently powerful - human readable text format that we can easily keep under Git version control (more on this later).* Convert the Markdown to IPython Notebook* Run the Python 3 code and save any outputs (like plots).We were pretty pleased with this plan, until we discovered that the software that converts Markdown to IPython is only able to produce Markdown format version 3. And Markdown v3 is only compatible with Python 2.7! This is what happens when half the community is using Python 2.7, and the other half is somewhere around Python 3.4...So we developed a new plan:* Write the text and code of the book in Markdown format.* Convert the Markdown to IPython Notebook v3.* Convert the IPython Notebook v3 to IPython Notebook v4 (which **is** compatible with Python 3).* Run the Python 3 code and save any outputs.And the moral of the story? A divided community is very inefficient!
 
 ## SciPy Ecosystem and Community
 
@@ -158,11 +161,48 @@ from six.moves import zip, map, filter
 
 ### It Pays to be Open
 
-** Open source.
+The SciPy community embraces open source. The source code for all SciPy libraries is freely available to read, edit and reuse by anyone. 
+
+So, why open? If you want others to use your code, one of the best ways to acheive this is to make it free. 
+But what if you find some free software, but it doesn't do exactly what you want to acheive? 
+If it's closed source, your only option is to use something else, email the developer and ask them to add a new feature (this often doesn't work!), or write it your self. 
+If code is open source, it is much easier to add functionality to an existing code base than to write the whole thing again from scratch.
+
+Similarly, if you find a bug in a piece of software, having access to the source code can make things a lot easier for both the user and the developer. 
+With source code access, you can identify the source of the error, fix it, and then you have solved your problem. 
+For close source code you would have to tell the developer about the bug, wait for them to get around to working on it, then probably have a lengthy email conversation back and forth trying to recreate the error.
+From the developer's perspective, this is a big win. 
+Imagine booting up your computer in the morning to find that one of your users has found a bug, reported it, tracked down the source of the error, fix it and then sent you the fix! This has certainly happened to me, and is quite a lovely experience.
+Here's the last time this happened to me https://github.com/katholt/srst2/pull/32, but there are surely better examples.
+
+Open for altruism
+
+#### Open Source, Open Science
+
+* Open source.
   * why open source is good: when things go wrong you can figure out why; when you need a new feature, you can easily hack it in. (if you have examples of this, that's even better. I do but will have to dig.)
+
+#### Open Source Licenses
+
+If you want others to be able to use your code, you *must* license it.
+If you don't license your code, it is closed by default.
+Even if you publish your code (for example by placing it in a publish GitHub repository), without a software license, no one is allowed to use, edit or redesribute your code.
+
+
+Free and Open Source Software (FOSS) Licenses
+ 
+
+Types of FOSS licenses:
+* free
+* copy left
+ 
+
   * licensing: get some inspiration from Jake's article: http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/
 
+* Licenses
   * SciPy community has adopted BSD which means lots of contributions from wide array of people, including many in industry, start-ups, etc.
+  
+All the code in this book that was written by us is available under a BSD license. Where we have sourced code snippets from other people, the code will generally be under an open license of some varity (although not necessarily BSD).
 
 
 ### GitHub: Taking Coding Social
