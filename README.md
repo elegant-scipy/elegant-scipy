@@ -2,6 +2,18 @@ Planning
 =======
 Just some notes to help us plan
 
+Building chapters
+=================
+Using `notedown` to convert a markdown file to an IPython notebook, run it,
+and then convert to html:
+
+```console
+$ notedown --match fenced --run markdown/chapter.markdown > ch2.ipynb
+$ ipython nbconvert --to html ch2.ipynb
+```
+
+At some point this should be automated with a Makefile.
+
 Deadlines
 ========
 ~~Mar: 2 chs: 3/15/15~~  
