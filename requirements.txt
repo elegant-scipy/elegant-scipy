@@ -1,5 +1,5 @@
 IPython>=3,<4
-https://github.com/jni/notedown/archive/py3.zip
+notedown>=1.4
 numpy
 scipy
 scikit-image
