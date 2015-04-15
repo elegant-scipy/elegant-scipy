@@ -1,0 +1,8 @@
+IPython>=3,<4
+https://github.com/jni/notedown/archive/py3.zip
+numpy
+scipy
+scikit-image
+toolz
+networkx
+xlrd
