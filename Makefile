@@ -29,7 +29,7 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb
 # %.ipynb: How to build an IPython notebook from a source Markdown
 #     file.
 $(BUILD_NB)/%.ipynb: %.markdown
-	 notedown --match fenced --run $< > $@
+	 notedown --match fenced --run $< --output $@
 
 # .PHONY: Special Makefile variable specifying targets that don't
 #     correspond to any actual files.
