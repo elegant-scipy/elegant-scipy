@@ -31,6 +31,11 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb
 $(BUILD_NB)/%.ipynb: %.markdown
 	 notedown --match fenced --run $< --output $@
 
+# .SECONDARY: Ensure ipynb files are not deleted after being generated.
+NBS_ := $(addprefix $(BUILD_NB)/,$(TITLES))
+nbs: $(addsuffix .ipynb,$(NBS_))
+.SECONDARY: nbs
+
 # .PHONY: Special Makefile variable specifying targets that don't
 #     correspond to any actual files.
 .PHONY: all build_dirs
