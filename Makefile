@@ -42,3 +42,10 @@ build_dirs:
 
 # all: build the book.
 all: build_dirs chs
+
+# clean: remove intermediate products (IPython notebooks)
+clean:
+	 rm -rf $(BUILD_NB)
+
+clobber: clean
+	 rm -rf $(BUILD_HTML)
