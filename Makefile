@@ -36,9 +36,11 @@ $(BUILD_NB)/%.ipynb: %.markdown
 .PHONY: all build_dirs
 
 # build_dirs: directories for build products
-build_dirs:
-	 mkdir -p build_ipynb
-	 mkdir -p build_html
+build_dirs: $(BUILD_HTML) $(BUILD_NB)
+$(BUILD_HTML):
+	 mkdir -p $(BUILD_HTML)
+$(BUILD_NB):
+	 mkdir -p $(BUILD_NB)
 
 # all: build the book.
 all: build_dirs chs
