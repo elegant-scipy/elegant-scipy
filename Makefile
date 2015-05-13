@@ -19,7 +19,7 @@ TITLES := preface ch2
 #     HTML build directory, then suffixes them with the .html
 #     extension. chs then constitutes the full list of targets.
 CHS_ := $(addprefix $(BUILD_HTML)/,$(TITLES))
-chs: $(addsuffix .html,$(CHS_))
+chs: build_dirs $(addsuffix .html,$(CHS_))
 
 # %.html: How to build an HTML file from its corresponding IPython
 #     notebook.
@@ -48,7 +48,7 @@ $(BUILD_NB):
 	 mkdir -p $(BUILD_NB)
 
 # all: build the book.
-all: build_dirs chs
+all: chs
 
 # clean: remove intermediate products (IPython notebooks)
 clean:
