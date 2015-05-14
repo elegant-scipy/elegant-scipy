@@ -13,7 +13,7 @@ BUILD_NB = build_ipynb
 # TITLES: This should be an exhaustive list of all the chapters to be
 #     built, and correspond to markdown filenames in the markdown
 #     directory.
-TITLES := preface ch2
+TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue
 
 # CHS_, chs: some Makefile magic that prefixes all the titles with the
 #     HTML build directory, then suffixes them with the .html
