@@ -134,8 +134,40 @@ http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz
 - RNAseq reads also available here (for streaming chapter):
 http://eqtl.uchicago.edu/RNA_Seq_data/unmapped_reads/
 
-Explore the dataset
+```python
+import urllib
+import gzip
+import numpy as np
+import sys
 
+url = "http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz"
+
+remote_filehandle = urllib.request.urlopen(url)
+with gzip.open(remote_filehandle, 'rt') as f:
+    all_lines = []
+    for line in f:
+        line_array = np.array(line.split()[3:]) # [3:] to remove first three cols which are gene, chr, len
+        all_lines.append(line_array)
+    data = np.asarray(all_lines)
+
+    data = data[1:] # remove header row
+    data = np.array(data, dtype='int')
+    print(data)
+```
+
+Explore the dataset
+```python
+# bar plot
+%matplotlib inline
+
+small_data = data[:10] # reduce size of data
+
+from pylab import *
+figure()
+boxplot(small_data)
+show()
+
+```
 
 ### NumPy/SciPy functions to cover
 np.transpose
