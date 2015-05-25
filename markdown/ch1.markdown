@@ -138,36 +138,70 @@ http://eqtl.uchicago.edu/RNA_Seq_data/unmapped_reads/
 import urllib
 import gzip
 import numpy as np
-import sys
+import pandas as pd
 
-url = "http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz"
+# Access file remotely (uncomment to use):
+# url = "http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz"
+# filehandle = urllib.request.urlopen(url)
 
-remote_filehandle = urllib.request.urlopen(url)
-with gzip.open(remote_filehandle, 'rt') as f:
-    all_lines = []
-    for line in f:
-        line_array = np.array(line.split()[3:]) # [3:] to remove first three cols which are gene, chr, len
-        all_lines.append(line_array)
-    data = np.asarray(all_lines)
+# Access file locally:
+filehandle = "../data/final_gene_counts.gz"
 
-    data = data[1:] # remove header row
-    data = np.array(data, dtype='int')
-    print(data)
+with gzip.open(filehandle, 'rt') as f:
+    data_table = pd.read_csv(f, delim_whitespace=True)
 ```
+
+Write a tiny bit about pandas
+- it's useful for reading in data of mixed type then we can pull out the bits
+we are interested in
+- It's sort of like an R data frame
+- plug the pandas book
+- We'll see pandas again in later chapters
 
 Explore the dataset
+
+```python
+skip_cols = 3
+
+# Sample names
+samples = list(data_table.columns)[skip_cols:]
+
+# 2D ndarray containing counts for each gene in each individual
+counts = np.asarray(data_table.iloc[:, skip_cols:], dtype=int)
+
+# 1D ndarray containing the lengths of each gene
+gene_lengths = np.asarray(data_table.iloc[:, 2], dtype=int)
+```
+
+```python
+%matplotlib inline
+# Make all plots appear inline from now onwards
+
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+```
+
 ```python
 # bar plot
-%matplotlib inline
 
-small_data = data[:10] # reduce size of data
+small_data = counts[:10] # reduce size of data
 
-from pylab import *
-figure()
-boxplot(small_data)
-show()
+plt.figure()
+plt.boxplot(small_data)
+plt.show()
 
 ```
+
+Convert to RPKM: Reads per kilobase transcript per million reads
+
+C = Number of reads mapped to a gene
+
+N = Total mapped reads in the experiment
+
+L = exon length in base-pairs for a gene
+
+Equation = RPKM = (10^9 * C)/(N * L)
+
 
 ### NumPy/SciPy functions to cover
 np.transpose
@@ -189,6 +223,38 @@ the nieve way to do it is using t tests, using the stats package.
 But there are better ways to use it in R
 
 ### Normalization
+
+
+#### Between genes
+
+
+
+
+```python
+# plot of a small gene vs a big gene
+# (choose two that have otherwise similar expression levels?
+# or better yet big one looks like it has more expression but actually
+# the little one is higher afer normalisation)
+```
+
+Convert to RPKM: Reads per kilobase transcript per million reads
+
+Divide the number of reads by the size of the gene that they map to in kilobases
+(1 kb = 1000 DNA bases) then divi
+
+RPKM(X) = (10^9 * C) / (N * L)
+
+C is the number of reads mapping to that gene
+N is the total number of reads (sum all the counts for that individual)
+L is the length of the gene in base pairs (??? not kilobasepairs?)
+
+```python
+# Convert to RPKM
+# Redo plot showing new relationship between the genes
+```
+
+Between samples
+
 
 Why normalise? Show some boxplots.
 
