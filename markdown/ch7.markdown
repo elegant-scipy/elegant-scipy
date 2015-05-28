@@ -1,10 +1,19 @@
 # Big data in little laptop: streaming data analysis with Python
 
-Whenever I think about streaming data analysis, my head hurts. In traditional programming models, you pass a function some data, the function processes the data, and then returns the result. Done. But in streaming programs, a function processes *some* of the data, returns the processed chunk, then, while downstream functions are dealing with that chunk, the function receives a bit more, and so on... All these things are going on at the same time! How can one keep them straight?
+Whenever I think too hard about streaming data analysis, my head hurts.
+In traditional programming models, you pass a function some data, the function processes the data, and then returns the result.
+Done.
+But in streaming programs, a function processes *some* of the data, returns the processed chunk, then, while downstream functions are dealing with that chunk, the function receives a bit more, and so on...
+All these things are going on at the same time!
+How can one keep them straight?
 
-For many years, I didn't. But Matt Rocklin's blog posts on this topic really opened my eyes to the utility and elegance of streaming data analysis, to the point that it was impossible to contemplate writing this book without including a chapter on it, even though it is not really a SciPy feature. The Python language contains some very nice primitives for streaming data processing, and these can be combined with Matt's Toolz library to generate gorgeous, concise code that is extremely memory-efficient.
+For many years, I didn't.
+But Matt Rocklin's blog posts on this topic really opened my eyes to the utility and elegance of streaming data analysis, to the point that it was impossible to contemplate writing this book without including a chapter on it, even though it is not really a SciPy feature.
+The Python language contains some very nice primitives for streaming data processing, and these can be combined with Matt's Toolz library to generate gorgeous, concise code that is extremely memory-efficient.
 
-Let me clarify what I mean by "streaming". Suppose you have some data in a CSV text file, and you want to compute the column-wise average of $\log(x+1)$ of the values. The most common way to do this would be to use NumPy to load the values, compute the function for the full matrix, and then take the mean over the 1st axis:
+Let me clarify what I mean by "streaming".
+Suppose you have some data in a CSV text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
+The most common way to do this would be to use NumPy to load the values, compute the function for the full matrix, and then take the mean over the 1st axis:
 
 ```python
 import numpy as np
@@ -13,11 +22,18 @@ logexpr = log(expr + 1)
 np.mean(logexpr, axis=1)
 ```
 
-This works, and it follows a reassuringly familiar input-output model of computation. But it's a pretty inefficient way to go about it! We load the full matrix into memory (1), then make a copy with 1 added to it (2), then make another copy to compute the log (3), before finally passing it on to `np.mean`. That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance. It's clear that for any kind of "big data" operation, this approach won't work.
+This works, and it follows a reassuringly familiar input-output model of computation.
+But it's a pretty inefficient way to go about it!
+We load the full matrix into memory (1), then make a copy with 1 added to it (2), then make another copy to compute the log (3), before finally passing it on to `np.mean`.
+That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance.
+It's clear that for any kind of "big data" operation, this approach won't work.
 
-Python's creators knew this, and created the "yield" keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one. "Yield" is a rather nice name for it: the function *yields* control to the next function, waiting to resume processing the data until all the downstream steps have processed that data point.
+Python's creators knew this, and created the "yield" keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
+"Yield" is a rather nice name for it: the function *yields* control to the next function, waiting to resume processing the data until all the downstream steps have processed that data point.
 
-As I mentioned above, trying to think too hard about the flow of control in this paradigm is a surefire way to experience headaches, nausea, and other side effects. An awesome feature of Python is that it abstracts this complexity away, allowing you to focus on the analysis functionality. Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream:
+As I mentioned above, trying to think too hard about the flow of control in this paradigm is a surefire way to experience headaches, nausea, and other side effects.
+An awesome feature of Python is that it abstracts this complexity away, allowing you to focus on the analysis functionality.
+Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream:
 
 ```python
 def process_full(input):
@@ -31,11 +47,17 @@ def process_streaming(input)
         yield process(elem)
 ```
 
-The advantage of this approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else. This can conserve a lot of memory when you have a lot of input items, or when each item is very big. (Or both!) This quote from one of Matt's posts very succinctly summarises the utility of streaming data analysis:
+The advantage of this approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
+This can conserve a lot of memory when you have a lot of input items, or when each item is very big.
+(Or both!) This quote from one of Matt's posts very succinctly summarises the utility of streaming data analysis:
 
-> In my brief experience people rarely take this [streaming] route. They use single-threaded in-memory Python until it breaks, and then seek out Big Data Infrastructure like Hadoop/Spark at relatively high productivity overhead.
+> In my brief experience people rarely take this [streaming] route.
+They use single-threaded in-memory Python until it breaks, and then seek out Big Data Infrastructure like Hadoop/Spark at relatively high productivity overhead.
 
-Indeed, this describes my computational career perfectly, up until recent months. But the intermediate approach can get you a *lot* farther than you think. In some cases, it can get you there even faster than the supercomputing approach, by eliminating the overhead of multi-core communication and random-access to databases. (See, for example, [this post](http://www.frankmcsherry.org/graph/scalability/cost/2015/02/04/COST2.html) by Frank McSherry, processing a 128 billion edge graph on his laptop *faster* than on a graph database on a supercomputer.)
+Indeed, this describes my computational career perfectly, up until recent months.
+But the intermediate approach can get you a *lot* farther than you think.
+In some cases, it can get you there even faster than the supercomputing approach, by eliminating the overhead of multi-core communication and random-access to databases.
+(See, for example, [this post](http://www.frankmcsherry.org/graph/scalability/cost/2015/02/04/COST2.html) by Frank McSherry, processing a 128 billion edge graph on his laptop *faster* than on a graph database on a supercomputer.)
 
 To clarify the flow of control when using streaming-style functions, it's useful to make *verbose* versions of the functions, which print out a message with each operation.
 
@@ -90,7 +112,9 @@ Let's see it in action for a small sample file:
 print('the mean log-row is: {}'.format(mean))
 ```
 
-This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire human genome in 10 minutes on a laptop, using just a few lines of code. (It has been slightly edited for easier downstream processing.) Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?). This modification is almost *trivial*, which speaks to the elegance of his example.
+This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire human genome in 10 minutes on a laptop, using just a few lines of code.
+(It has been slightly edited for easier downstream processing.) Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
+This modification is almost *trivial*, which speaks to the elegance of his example.
 
 ```python
 from toolz import drop, pipe, sliding_window, merge_with, frequencies
@@ -124,9 +148,12 @@ if __name__ == '__main__':
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
 
-The first thing to note is how many functions come from the Toolz library. That's because it is written specifically to take advantage of Python's iterators, and easily manipulate streams.
+The first thing to note is how many functions come from the Toolz library.
+That's because it is written specifically to take advantage of Python's iterators, and easily manipulate streams.
 
-Let's start with `pipe`. This function is simply syntactic sugar to make nested function calls easier to read. This is important because that pattern becomes increasingly common when dealing with iterators.
+Let's start with `pipe`.
+This function is simply syntactic sugar to make nested function calls easier to read.
+This is important because that pattern becomes increasingly common when dealing with iterators.
 
 As a simple example, let's rewrite our running mean using `pipe`:
 
@@ -139,39 +166,51 @@ mean = tz.pipe(filename, open, read_csv_verbose,
 
 What was originally multiple lines, or an unwieldy mess of parentheses, is now a clean description of the sequential transformations of the input data.
 
-This strategy also has an advantage over the original NumPy implementation: if we scale our data to millions or billions of rows, our computer might struggle to hold all the data in memory. In contrast, here we are only loading lines from disk one at a time, and maintaining a single line's worth of data.
+This strategy also has an advantage over the original NumPy implementation: if we scale our data to millions or billions of rows, our computer might struggle to hold all the data in memory.
+In contrast, here we are only loading lines from disk one at a time, and maintaining a single line's worth of data.
 
 ## k-mer counting and error correction
 
-We're going to do a quick primer on genome sequencing. Your genetic information, the blueprint for making *you*, is encoded as a sequence of chemical *bases* in your *genome*.
+We're going to do a quick primer on genome sequencing.
+Your genetic information, the blueprint for making *you*, is encoded as a sequence of chemical *bases* in your *genome*.
 
 (figure of double-helix pointing to bases)
 
-Now, these are really really tiny, so you can't just look in a microscope and read them. You also can't read a long string of them: errors accumulate and the readout becomes unusable. (New technology is changing this, but for our purposes we will focus on Illumina data, the most common.)
+Now, these are really really tiny, so you can't just look in a microscope and read them.
+You also can't read a long string of them: errors accumulate and the readout becomes unusable.
+(New technology is changing this, but for our purposes we will focus on Illumina data, the most common.)
 
 Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases), and then assemble those like an enormous puzzle of 30 million pieces.
 
 (MISSISSIPPI assembly example)
 
-A necessary step prior to assembly is error correction: some bases are incorrectly read out, and must be fixed, or they will mess up the assembly. (Imagine having puzzle pieces with the wrong shape.)
+A necessary step prior to assembly is error correction: some bases are incorrectly read out, and must be fixed, or they will mess up the assembly.
+(Imagine having puzzle pieces with the wrong shape.)
 
 The obvious way to do this is that is to find similar reads in your dataset and fix the error by grabbing the correct information from those reads.
 
 (MISSISSIPI assembly with error-correction)
 
-However, this is a very inefficient way to do this, because finding similar reads takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset! (And these are not cheap operations.)
+However, this is a very inefficient way to do this, because finding similar reads takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
+(And these are not cheap operations.)
 
-There is another way. REF realised that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python). This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of k-mers, which can only be as large as the genome itself — usually 1-2 order of magnitudes smaller than the reads.
+There is another way.
+REF realised that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
+This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of k-mers, which can only be as large as the genome itself — usually 1-2 order of magnitudes smaller than the reads.
 
-Assuming we choose k large enough to ensure any k-mer appears only once in the genome, the number of times a k-mer appears is exactly the number of reads that originate from that part of the genome. This is called the *coverage* of that region.
+Assuming we choose k large enough to ensure any k-mer appears only once in the genome, the number of times a k-mer appears is exactly the number of reads that originate from that part of the genome.
+This is called the *coverage* of that region.
 
-If a read has an error in it, with high probability, the k-mers overlapping the error will be unique or close to unique in the genome [REF]. Think of the equivalent in English: if you were to take reads from Shakespeare, and one read was "to be or nob to be", the 6-mer "nob to" will appear rarely or not at all, whereas "not to" will be very frequent.
+If a read has an error in it, with high probability, the k-mers overlapping the error will be unique or close to unique in the genome [REF].
+Think of the equivalent in English: if you were to take reads from Shakespeare, and one read was "to be or nob to be", the 6-mer "nob to" will appear rarely or not at all, whereas "not to" will be very frequent.
 
 This is the basis for k-mer error correction: split the reads into k-mers, count the occurrence of each k-mer, and use some logic to replace rare k-mers in reads with similar common ones.
 
-This is also an example in which streaming is *essential*. As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.
+This is also an example in which streaming is *essential*.
+As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.
 
-Read data commonly comes in two formats: FASTA and FASTQ. These are both plaintext formats, described below:
+Read data commonly comes in two formats: FASTA and FASTQ.
+These are both plaintext formats, described below:
 
 FASTA file:
 ```
@@ -195,7 +234,8 @@ CAGT
 4321
 ```
 
-The `+` line and the one immediately after mark the *quality* of each read position, an estimate from the sequence reader of the probability of error. We will ignore these here.
+The `+` line and the one immediately after mark the *quality* of each read position, an estimate from the sequence reader of the probability of error.
+We will ignore these here.
 
 Now we have the required information to convert a stream of lines from a FASTA file to a count of k-mers:
 
@@ -229,7 +269,8 @@ with open('reads.fasta') as fin:
     counts = kmer_counter(kmer_iter)
 ```
 
-This totally works and is streaming, so reads are loaded from disk one at a time and piped through the k-mer converter and to the k-mer counter. We can then plot a histogram of the counts, and confirm that there are indeed two well-separated populations of correct and erroneous k-mers:
+This totally works and is streaming, so reads are loaded from disk one at a time and piped through the k-mer converter and to the k-mer counter.
+We can then plot a histogram of the counts, and confirm that there are indeed two well-separated populations of correct and erroneous k-mers:
 
 ```python
 from matplotlib import pyplot as plt
@@ -243,7 +284,9 @@ def integer_histogram(counts, normed=True, *args, **kwargs):
 integer_histogram(list(counts.values())
 ```
 
-But we are actually doing a bit too much work. A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end. Toolz has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
+But we are actually doing a bit too much work.
+A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end.
+Toolz has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
 
 For example, the *sliding window* function is exactly what we need to make k-mers:
 
@@ -251,7 +294,8 @@ For example, the *sliding window* function is exactly what we need to make k-mer
 print(tz.sliding_window.__doc__)
 ```
 
-Additionally, the *frequencies* function counts the appearance of individual items in a data stream! Together with pipe, we can now count k-mers in a single function call (though we will still use our FASTA parsing function):
+Additionally, the *frequencies* function counts the appearance of individual items in a data stream!
+Together with pipe, we can now count k-mers in a single function call (though we will still use our FASTA parsing function):
 
 ```python
 from toolz import curried as cur
@@ -276,7 +320,9 @@ plt.bar(np.arange(len(hist)), hist / hist.sum())
 
 ## Genome assembly
 
-We use a toy genetic sequence to demonstrate a De Bruijn graph assembler. See [this link](http://www.cs.jhu.edu/~langmea/resources/lecture_notes/assembly_dbg.pdf) for more on this topic. The sequence is derived from Fig 3 of [this paper](http://www.nature.com/nbt/journal/v29/n11/full/nbt.2023.html), but in our case it is not circular.
+We use a toy genetic sequence to demonstrate a De Bruijn graph assembler.
+See [this link](http://www.cs.jhu.edu/~langmea/resources/lecture_notes/assembly_dbg.pdf) for more on this topic.
+The sequence is derived from Fig 3 of [this paper](http://www.nature.com/nbt/journal/v29/n11/full/nbt.2023.html), but in our case it is not circular.
 
 ```python
 @tz.curry
@@ -331,14 +377,18 @@ print(seq)
 print(inferred)
 ```
 
-Note that real assembly requires lots of sophisticated error correction. But I hope this gives you an idea of the potential to stream over reads to generate a more compact view for assembly.
+Note that real assembly requires lots of sophisticated error correction.
+But I hope this gives you an idea of the potential to stream over reads to generate a more compact view for assembly.
 
 > ## tips {.callout}
 >  - (list of list -> list) with tz.concat
 >  - don’t get caught out:
->     * iterators get consumed. So if you make a generator, do some processing, and then a later step fails, you need to re-create the generator. The original is already gone.
+>     * iterators get consumed.
+So if you make a generator, do some processing, and then a later step fails, you need to re-create the generator.
+The original is already gone.
 >     * iterators are lazy; need to force evaluation sometimes.
->  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong. Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
+>  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
+Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
 
 ## Markov model from a full genome
 
@@ -354,11 +404,16 @@ Note that real assembly requires lots of sophisticated error correction. But I h
 
 [Reservoir sampling](https://github.com/microscopium/microscopium/blob/master/microscopium/preprocess.py#L639)
 
-If you take 1s/image, for 1M images you take about 12h. Totally doable. No need for cloud/compute clusters.
+If you take 1s/image, for 1M images you take about 12h.
+Totally doable.
+No need for cloud/compute clusters.
 
 ## Streaming PCA
 
-sklearn has IncrementalPCA class. But you need to chunk your data yourself. Let’s make a function that can take a stream of data samples and perform PCA. Be sure to look at the documentation for the class to understand some of the code below.
+sklearn has IncrementalPCA class.
+But you need to chunk your data yourself.
+Let’s make a function that can take a stream of data samples and perform PCA.
+Be sure to look at the documentation for the class to understand some of the code below.
 
 ```python
 import toolz as tz
@@ -402,5 +457,8 @@ plt.scatter(*components.T)
     - don’t need a bigger machine
     - if your tests pass on small data, they’ll pass on big data
 - streaming code is concise and readable using toolz (cytoolz for speed)
-- Time to reiterate my take-home: think about whether you can stream over a dataset, and if you can, do it. Your future self will thank you. Doing it later is [harder](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg). ;)
+- Time to reiterate my take-home: think about whether you can stream over a dataset, and if you can, do it.
+Your future self will thank you.
+Doing it later is [harder](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg).
+;)
 
