@@ -1,5 +1,5 @@
 
-- Code: in-memory with numpy
+## Code: in-memory with numpy
 - Requirements: all met before start of chapter
 - Rating: 5
 - Notes: needs modification for actual data. Illustrates
@@ -12,7 +12,7 @@ logexpr = log(expr + 1)
 np.mean(logexpr, axis=1)
 ```
 
-- Code: in-memory vs streaming with yield
+## Code: in-memory vs streaming with yield
 - Requirements: yield
 - Rating: 3
 - Notes: No relationship to an actual analysis; using `process` is a bit
@@ -30,7 +30,7 @@ def process_streaming(input)
         yield process(elem)
 ```
 
-- Code: verbose streaming to display output
+## Code: verbose streaming to display output
 - Requirements: yield
 - Rating: 5
 - Notes: Few requirements and great for flow comprehension. Needs same dataset
@@ -96,7 +96,7 @@ mean = tz.pipe(filename, open, read_csv_verbose,
                add1_verbose, log_verbose, running_mean_verbose)
 ```
 
-- Code: streaming iterative PCA
+## Code: streaming iterative PCA
 - Requirements: PCA (previous chapters), sklearn (?), pipe, last, iterators are
   consumed, currying, partition, np.squeeze
 - Rating: 5
@@ -138,7 +138,7 @@ from matplotlib import pyplot as plt
 plt.scatter(*components.T)
 ```
 
-- Code: nucleotide transition probabilities in a few lines
+## Code: nucleotide transition probabilities in a few lines
 - Requirements: genomes, Markov models, currying, drop, concat, str ops,
   sliding_window, glob, merge_with
 - Rating: 5
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     pipe('/home/mrocklin/data/human-genome/chr*.fa', genome, markov)
 ```
 
-- Code: k-mer counting
+## Code: k-mer counting
 - Requirements: genomics, reads, k-mers, numpy.bincount, filter, currying,
   sliding_window, concat, map, frequencies
 - Rating: 4
