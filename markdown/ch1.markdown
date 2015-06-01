@@ -1,44 +1,103 @@
 
 # 2D Array Manipulation for RNAseq
 
-## Expression data
+## Gene Expression
 
-Explain briefly about expression and microarrays
+In this chapter we’re going to work our way through a gene expression analysis to demonstrate the power of SciPy to solve a real-world biological problem that I come across everyday.
+Along the way we will use Pandas to parse tabular data, and then manipulate our data efficiently in Numpy ndarrays.
+We will then do some analysis using packages from the R statistical language called from within Python using Rpy2.
 
-Import a tiny toy example
+But before we get to the juicy code, let me fill you in about my particular biological problem.
+The central dogma of genetics says that all the information to run a cell is stored in the DNA.
+To access this information, the DNA needs to be transcribed into messenger RNA (mRNA).
+The amount of mRNA produced from a given gene is called the “expression” of that gene.
+The mRNA is in turn is translated into protein, which is the workhorse of the cell.
+Proteins can act as building blocks like the keratin that gives structure to your nails and hair, or the enzymes that allow you to digest your food.
+Unfortunately, protein is particularly difficult to detect experimentally, but mRNA is actually pretty easy to measure.
+So we make the assumption that if we measure the amount of mRNA we can gain insight into how the cells are functioning.
 
+[insert central dogma figure?]
+
+Currently, the most sensitive way to measure mRNA is to do an RNA sequencing (RNAseq) experiment. To do this we isolate all the mRNA from a sample, then we sequence it.
+Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
+We measure millions of reads and then based on their sequence we count how many reads came from each gene.
+For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
+
+[diagram/flow chart of RNAseq]
+
+Let’s have a look at what this gene expression data looks like.
+
+|        | Cell type A | Cell type B |
+|--------|-------------|-------------|
+| Gene 1 | 100         | 200         |
+| Gene 2 | 50          | 0           |
+| Gene 3 | 350         | 100         |
+
+The data is a table of counts, integers representing how many reads were observed for each gene in each cell type.
+This data is perfect to represented more efficiently as a ndarray.
 
 ## Numpy N-dimensional arrays
 
-One of the key NumPy datatypes is the N-dimensional array (ndarray).
+One of the key NumPy data types is the N-dimensional array (ndarray).
+Ndarrays must be homogenous; all items in an ndarray must be the same type and size.
+In our case we will need to store integers.
 
-All items in an ndarray must be the same type and size.
+Ndarrays are called N-dimensional because they can have any number of dimensions.
+For example a 1-dimesional array would look like this:
 
-Ndarrays are called N-dimentional because they can have any number of
-dimensions.
-For example a 1-dimesional array would look like this: [picture]
+```python
+import numpy as np
 
-A 2-dimensional array, for example a 2 by 3 array: [picture]
+one_d_array = np.array([1,2,3,4])
+print(one_d_array)
+```
 
-101
+For a 2-dimensional array, let's use our mini gene expression table from above.
 
-001
+```python
+two_d_array = np.array([
+        [100, 200],
+        [50, 0],
+        [350, 100]
+    ])
+print(two_d_array)
+```
 
-A 3-dimensional array: [picture]
+Once we get into three dimensions, things start to get trickier to imagine.
+
+```python
+three_d_array = np.array([
+        [[1,2], [3,4]],
+        [[5,6], [7,8]],
+    ])
+print(three_d_array)
+```
+
+I like to draw this as a cube.
+
+[3-dimensional array picture]
 
 
-A 4 dimensional array becomes tricky to visualise,
+A 4 dimensional array becomes tricky to visualise even with a diagram,
 so perhaps it is easier to think of it in terms of a use case.
 Let's say you have an ndarray that describes an object over time.
 You would need three dimensions to describe the position of
 the objects and a fourth to indicate time.
 
 ```python
-    # Make ndarrays of various dimensions
+# Use .shape to check the dimensions of an ndarray
+print(two_d_array.shape)
+print(len(two_d_array.shape))
 ```
 
 ```python
-    # Use .shape to check their dimensions
+print(three_d_array.shape)
+print(len(three_d_array.shape))
+```
+
+```python
+# Use .dtype to determine the data type (including allocated memory)
+print(two_d_array.dtype)
 ```
 
 ### Why use ndarrays as opposed to Python lists?
@@ -70,7 +129,7 @@ you can multiple every element in the ndarray by 5 simultaneously.
         list_array[i] = val * 5
 ```
 
-Ndarrays are also size effiecient.
+Ndarrays are also size efficient.
 In Python, each element in a list as an object and is given a health memory allocation.
 In contrast, for ndarrays you
 (or in this case the arange function)
