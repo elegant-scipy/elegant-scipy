@@ -273,53 +273,7 @@ counts = np.asarray(data_table.iloc[:, skip_cols:], dtype=int)
 gene_lengths = np.asarray(data_table.iloc[:, 2], dtype=int)
 
 # Check how many genes and individuals were measured
-print("{0} genes measured in {1} individuals".format(counts.shape[0],counts.shape[1]))
-```
-
-
-
-```python
-%matplotlib inline
-# Make all plots appear inline from now onwards
-
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')
-```
-
-```python
-# bar plot
-
-small_data = counts[:10] # reduce size of data
-
-plt.figure()
-plt.boxplot(small_data)
-plt.show()
-
-```
-
-(some simple descriptive statistics and plots PCA/MDS?)
-
-Convert to RPKM: Reads per kilobase transcript per million reads
-
-C = Number of reads mapped to a gene
-
-N = Total mapped reads in the experiment
-
-L = exon length in base-pairs for a gene
-
-Equation = RPKM = (10^9 * C)/(N * L)
-
-
-### NumPy/SciPy functions to cover
-np.transpose
-np.log2
-np.mean
-np.sort
-np.round
-
-```python
-from scipy import stats
-stats.rankdata
+print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
 ```
 
 ## Differential expression analysis
@@ -334,7 +288,37 @@ But there are better ways to use it in R
 
 #### Between genes
 
+```python
+%matplotlib inline
+# Make all plots appear inline from now onwards
 
+import matplotlib.pyplot as plt
+plt.style.use('ggplot') # Use ggplot style graphs for something a litle prettier
+```
+
+```python
+# Bar plot of expression counts by gene for the first 25 genes
+small_data = counts[:25, :] # [rows, columns] where rows are genes and columns are individuals
+small_data = small_data.transpose() # Transpose so that genes are now columns
+
+plt.figure()
+plt.boxplot(small_data, sym=".")
+plt.xlabel("Genes")
+plt.ylabel("Expression counts")
+plt.show()
+```
+
+(some simple descriptive statistics and plots PCA/MDS?)
+
+Convert to RPKM: Reads per kilobase transcript per million reads
+
+C = Number of reads mapped to a gene
+
+N = Total mapped reads in the experiment
+
+L = exon length in base-pairs for a gene
+
+Equation = RPKM = (10^9 * C)/(N * L)
 
 
 ```python
@@ -362,8 +346,20 @@ L is the length of the gene in base pairs (??? not kilobasepairs?)
 
 Between samples
 
-
 Why normalise? Show some boxplots.
+
+```python
+# Bar plot of expression counts by individual
+small_data = counts[:, :10] # [rows, columns] where rows are genes and columns are individuals
+
+plt.figure()
+plt.boxplot(small_data, sym=".")
+plt.xlabel("Individuals")
+plt.ylabel("Expression counts")
+plt.show()
+```
+
+np.mean
 
 An example of the types of plots I'd like to show:
 http://www.nature.com/nbt/journal/v32/n9/images_article/nbt.2931-F2.jpg
@@ -415,3 +411,17 @@ Diagnostic plots
 
 - P-value histogram
 - Volcano plot of results
+
+
+## Other topics that could be covered
+
+### NumPy/SciPy functions to cover
+np.log2
+np.mean
+np.sort
+np.round
+
+```python
+from scipy import stats
+stats.rankdata
+```
