@@ -217,59 +217,66 @@ for i in range(array_len):
 result = nd_array * 5
 ```
 
-## Exploring (some simple descriptive statistics and plots PCA/MDS?)
+## Exploring a gene expression data set
 
-Import a full dataset
+The data set that we'll be using is an RNAseq experiment of healthy individuals from a project called HapMap (http://hapmap.ncbi.nlm.nih.gov/).
+This is a standard reference data set to give researchers an idea of the baseline variation between healthy individuals.
+The raw sequencing reads are available at http://eqtl.uchicago.edu/RNA_Seq_data/unmapped_reads/.
+We will be using this data in a later chapter.
+However, in this chapter we will be starting from the gene count data, which can be found at http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz.
+If you are curious to see a full analysis of this data set right from raw sequencing reads, the Limma R package documentaation is a great place to start (http://www.bioconductor.org/packages/release/bioc/vignettes/limma/inst/doc/usersguide.pdf).
 
-Data set:
-
-- Hapmap RNA seq data set
-- Do Male vs. female analysis
-- This is explained in the limma voom documentation:  
-http://www.bioconductor.org/packages/release/bioc/vignettes/limma/inst/doc/usersguide.pdf
-- Here are the gene counts:
-http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz
-- RNAseq reads also available here (for streaming chapter):
-http://eqtl.uchicago.edu/RNA_Seq_data/unmapped_reads/
+We're first going to use Pandas to read in the table of counts.
+Pandas is particularly useful for reading in tabular data of mixed type.
+It uses the DataFrame type, which is a flexible tabular format based on the data frame object in R.
+For example the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so it doesn't make sense to read this data in directly as an ndarray.
+By reading the data in as a Pandas DataFrame we can let Pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
+Here we are just using Pandas briefly to import data.
+In later chapters we will give you some more insight into the world of Pandas.
 
 ```python
 import urllib
-import gzip
 import numpy as np
 import pandas as pd
+import os
+import gzip
 
-# Access file remotely (uncomment to use):
-# url = "http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz"
-# filehandle = urllib.request.urlopen(url)
+url = "http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz" # Location of remote file
+filename = "final_gene_counts.gz" # Local filename
 
-# Access file locally:
-filehandle = "data/final_gene_counts.gz"
+if not os.path.exists(filename): # Check if file exists
+    urllib.request.urlretrieve(url, filename) # Download file
 
-with gzip.open(filehandle, 'rt') as f:
-    data_table = pd.read_csv(f, delim_whitespace=True)
+with gzip.open(filename, 'rt') as f:
+    data_table = pd.read_csv(f, delim_whitespace=True) # Parse file with pandas (automatically unzips)
+
+print(data_table.iloc[:5, :5]) # print the first 5 rows and columns of the DataFrame
 ```
 
-Write a tiny bit about pandas
-- it's useful for reading in data of mixed type then we can pull out the bits
-we are interested in
-- It's sort of like an R data frame
-- plug the pandas book
-- We'll see pandas again in later chapters
+We can see that Pandas has kindly pull out the header row and used it to name the columns.
+The first three columns are information about a gene.
+The ID of the gene, what chromosome it is on, and how long the gene is.
+The remaining columns are IDs for the individual people who were tested, along with the name of the lab that performed the testing (Argonne National Laboratory for the first few).
+Let's extract out the data that we need in a more useful format.
 
-Explore the dataset
 
 ```python
-skip_cols = 3
+skip_cols = 3 #
 
 # Sample names
 samples = list(data_table.columns)[skip_cols:]
 
-# 2D ndarray containing counts for each gene in each individual
+# 2D ndarray containing expression counts for each gene in each individual
 counts = np.asarray(data_table.iloc[:, skip_cols:], dtype=int)
 
 # 1D ndarray containing the lengths of each gene
 gene_lengths = np.asarray(data_table.iloc[:, 2], dtype=int)
+
+# Check how many genes and individuals were measured
+print("{0} genes measured in {1} individuals".format(counts.shape[0],counts.shape[1]))
 ```
+
+
 
 ```python
 %matplotlib inline
@@ -289,6 +296,8 @@ plt.boxplot(small_data)
 plt.show()
 
 ```
+
+(some simple descriptive statistics and plots PCA/MDS?)
 
 Convert to RPKM: Reads per kilobase transcript per million reads
 
