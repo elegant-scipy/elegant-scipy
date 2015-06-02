@@ -173,10 +173,49 @@ when you might think you are making a copy of it.
 
 ### Broadcasting
 
-Broadcasting is ...
+One of the most powerful and often misunderstood features of the ndarray is broadcasting.
+Broadcasting is a way of performing operations between two arrays.
+Earlier when we talked about the speed of operations on ndarrays, what we were actually doing was broadcasting.
+Let's look at some examples.
 
-Broadcasting relates to vectorization ... see
-http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
+```python
+x = np.array([1, 2, 3, 4])
+
+x * 2
+```
+
+```python
+y = np.array([0, 1, 2, 1])
+x + y # add every element in x to the corresponding element in y
+```
+
+```python
+x * y # multiple every element in x by the corresponding element in y
+```
+
+Another word for this behavour is vectorisation, which is a key feature of array languages such as Matlab and R.
+Under the hood this is eqivalent to the to a for loop, but much faster because the loop is running in C rather than Python.
+Let's try the same calculation as a loop and using broadcasting to see how much of a speed up we can get.
+
+```python
+# Create an ndarray of length 10,000,000
+nd_array = np.arange(1e6)
+```
+
+```python
+%%timeit -n10
+
+array_len = len(nd_array)
+result = np.empty(shape=array_len, dtype="int64") # Create an empty ndarray
+for i in range(array_len):
+    result[i] = nd_array[i] * 5
+```
+
+```python
+%%timeit -n10
+
+result = nd_array * 5
+```
 
 ## Exploring (some simple descriptive statistics and plots PCA/MDS?)
 
@@ -204,7 +243,7 @@ import pandas as pd
 # filehandle = urllib.request.urlopen(url)
 
 # Access file locally:
-filehandle = "../data/final_gene_counts.gz"
+filehandle = "data/final_gene_counts.gz"
 
 with gzip.open(filehandle, 'rt') as f:
     data_table = pd.read_csv(f, delim_whitespace=True)
