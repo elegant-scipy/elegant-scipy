@@ -103,11 +103,11 @@ print(two_d_array.dtype)
 ### Why use ndarrays as opposed to Python lists?
 
 Ndarrays are fast because vectorized oporations can be performed on them.
-Let's say you have a list and you want to multiple every element in the list by 5.
+Let's say you have a list and you want to multiply every element in the list by 5.
 A standard Python approach would be to write a loop that iterates through the
-elements of the list and multiples each one by 5.
+elements of the list and multiply each one by 5.
 However, if your data were instead represented as an ndarray,
-you can multiple every element in the ndarray by 5 simultaneously.
+you can multiply every element in the ndarray by 5 simultaneously.
 
 ```python
     import numpy as np
@@ -119,12 +119,12 @@ you can multiple every element in the ndarray by 5 simultaneously.
 ```
 
 ```python
-    %%timeit # Use the Ipython "magic" command timeit to time how long it takes to multiply each element in the ndarray by 5
+    %%timeit -n10 # Use the Ipython "magic" command timeit to time how long it takes to multiply each element in the ndarray by 5
     x = nd_array * 5
 ```
 
 ```python
-    %%timeit # Time how long it takes to multiply each element in the list by 5
+    %%timeit -n10 # Time how long it takes to multiply each element in the list by 5
     for i, val in enumerate(list_array):
         list_array[i] = val * 5
 ```
@@ -190,7 +190,7 @@ x + y # add every element in x to the corresponding element in y
 ```
 
 ```python
-x * y # multiple every element in x by the corresponding element in y
+x * y # multiply every element in x by the corresponding element in y
 ```
 
 Another word for this behavour is vectorisation, which is a key feature of array languages such as Matlab and R.
@@ -276,17 +276,13 @@ gene_lengths = np.asarray(data_table.iloc[:, 2], dtype=int)
 print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
 ```
 
-## Differential expression analysis
+## Differential gene expression analysis
 
-Explain briefly about differential expression analysis
+The most common analysis done with RNAseq data is a differential gene expression analysis.
+The general strategy is to compare two different groups, say disease vs. normal, treatment vs. control, and ask the question; are which genes are differentially expressed between the two groups?
+In other words, which genes have significantly higher counts in one group compared with the other?
 
-the nieve way to do it is using t tests, using the stats package.
-But there are better ways to use it in R
-
-### Normalization
-
-
-#### Between genes
+If we assume gene expression counts are normally distributed, then we could do a t-test for each gene.
 
 ```python
 %matplotlib inline
@@ -297,14 +293,128 @@ plt.style.use('ggplot') # Use ggplot style graphs for something a litle prettier
 ```
 
 ```python
-# Bar plot of expression counts by gene for the first 25 genes
-small_data = counts[:25, :] # [rows, columns] where rows are genes and columns are individuals
+import matplotlib.pyplot as plt
+from scipy import stats
+
+# Plot the density of expresison counts for a gene to check if it's approximately normal
+data = counts[0, :] # expression counts for one gene
+density = stats.kde.gaussian_kde(data) # Use guassian smoothing to estimate the density
+x = np.arange(0, max(data)) # create ndarray of integers from 0 to largest expression count for that gene
+plt.plot(x, density(x))
+plt.show()
+```
+
+The expression counts are close enough to normal, so let's try the t-tests first.
+
+The problem of what is the best way to perform a differential gene expression analysis has long been a topic of debate amoungst statisticians.
+There already exists a wealth of methods, however many of them are written in R, the language of choice for many statisticians.
+Lucky for us, we can use Rpy2 to run these R commands from Python.
+
+### Normalization
+
+Before we dive into the stats, it is important to first determine if we need to normalise our data.
+
+#### Between samples
+
+The number of counts for each individual can vary substantially in RNAseq experiments.
+Let's take a look.
+
+```python
+total_counts = counts.sum(axis=0) # sum each column (axis=1 would sum rows)
+
+density = stats.kde.gaussian_kde(total_counts) # Use guassian smoothing to estimate the density
+x = np.arange(min(total_counts), max(total_counts), 10000) # create ndarray of integers from min to max in steps of 10,000
+plt.plot(x, density(x))
+plt.xlabel("Total counts per individual")
+plt.show()
+
+print("Min counts: {0}, Mean counts: {1}, Max counts: {2}".format(total_counts.min(), total_counts.mean(), total_counts.max()))
+```
+
+We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
+This means that a different number of RNAseq reads were generated for each individual.
+We say that these individuals have different library sizes.
+
+```python
+# Bar plot of expression counts by individual
+plt.figure(figsize=(20,5))
+plt.boxplot(counts, sym=".")
+plt.title("Gene expression counts raw")
+plt.xlabel("Individuals")
+plt.ylabel("Gene expression counts")
+plt.show()
+```
+
+There are obviously a lot of outliers at the high expression end of the scale and a lot of variation between individuals, but pretty hard to see because everything is clustered around zero.
+So let's do log(n + 1) of our data so it's a bit easier to look at.
+Both the log function and the n + 1 step can be done using broadcasting to simpify our code and speed things up.
+
+```python
+# Bar plot of expression counts by individual
+plt.figure(figsize=(20,5))
+plt.boxplot(np.log(counts + 1), sym=".")
+plt.title("Gene expression counts raw")
+plt.xlabel("Individuals")
+plt.ylabel("Gene expression counts")
+plt.show()
+```
+
+Now let's see what happens when we normalise by library size.
+
+```python
+# Normalise by library size
+# Divide the expression counts by the total counts for that individual
+counts_lib_norm = counts / total_counts * 1000000 # Multiply by 1 million to get things back in a similar scale
+# Notice how we just used broadcasting twice there!
+
+# Bar plot of expression counts by individual
+plt.figure(figsize=(20,5))
+plt.boxplot(np.log(counts_lib_norm + 1), sym=".")
+plt.title("Gene expression counts normalised by library size")
+plt.xlabel("Individuals")
+plt.ylabel("Gene expression counts")
+plt.show()
+```
+
+Much better!
+Also notice how we used broadcasting twice there.
+Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
+
+```python
+
+```
+
+```python
+
+```
+
+
+
+An example of the types of plots I'd like to show:
+http://www.nature.com/nbt/journal/v32/n9/images_article/nbt.2931-F2.jpg
+
+#### Between genes
+
+```python
+counts = counts_lib_norm # Use normalised counts
+
+# Bar plot log(n + 1) of expression counts by gene for the first few genes
+small_data = np.log(counts + 1)[:50, :] # [rows, columns] where rows are genes and columns are individuals
 small_data = small_data.transpose() # Transpose so that genes are now columns
 
-plt.figure()
+plt.figure(figsize=(20,5))
 plt.boxplot(small_data, sym=".")
 plt.xlabel("Genes")
 plt.ylabel("Expression counts")
+#plt.plot(gene_lengths[:50] / 1000) # Also plot corresponding gene lengths (divided by 1000 to get them into the same scale)
+plt.show()
+
+
+mean_counts = counts.mean(axis=1) # mean expression counts per gene
+plt.figure()
+plt.scatter(gene_lengths, mean_counts)
+plt.xlabel("Gene length in base pairs")
+plt.ylabel("Mean expression counts for that gene")
 plt.show()
 ```
 
@@ -344,25 +454,7 @@ L is the length of the gene in base pairs (??? not kilobasepairs?)
 # Redo plot showing new relationship between the genes
 ```
 
-Between samples
 
-Why normalise? Show some boxplots.
-
-```python
-# Bar plot of expression counts by individual
-small_data = counts[:, :10] # [rows, columns] where rows are genes and columns are individuals
-
-plt.figure()
-plt.boxplot(small_data, sym=".")
-plt.xlabel("Individuals")
-plt.ylabel("Expression counts")
-plt.show()
-```
-
-np.mean
-
-An example of the types of plots I'd like to show:
-http://www.nature.com/nbt/journal/v32/n9/images_article/nbt.2931-F2.jpg
 
 
 ## Quantile normalization with NumPy and SciPy
