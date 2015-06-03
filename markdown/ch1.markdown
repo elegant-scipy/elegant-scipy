@@ -384,9 +384,7 @@ Once to divide all the gene expression counts by the total for that column, and 
 
 ```
 
-```python
 
-```
 
 
 
@@ -394,6 +392,8 @@ An example of the types of plots I'd like to show:
 http://www.nature.com/nbt/journal/v32/n9/images_article/nbt.2931-F2.jpg
 
 #### Between genes
+
+Number of reads related to length of gene
 
 ```python
 counts = counts_lib_norm # Use normalised counts
@@ -408,15 +408,48 @@ plt.xlabel("Genes")
 plt.ylabel("Expression counts")
 #plt.plot(gene_lengths[:50] / 1000) # Also plot corresponding gene lengths (divided by 1000 to get them into the same scale)
 plt.show()
+```
 
-
+```python
 mean_counts = counts.mean(axis=1) # mean expression counts per gene
 plt.figure()
 plt.scatter(gene_lengths, mean_counts)
 plt.xlabel("Gene length in base pairs")
 plt.ylabel("Mean expression counts for that gene")
+#plt.xlim(0,40000)
+#plt.ylim(0,10000)
 plt.show()
 ```
+
+```python
+# Bin the counts by gene length and then produce boxplot for each bin
+
+def assign_bins(array, bins):
+    for value in array:
+        idx = (np.abs(bins-value)).argmin()
+        yield bins[idx]
+
+#Return evenly spaced numbers over a specified interval.
+bins = np.linspace(10, 50000, 10)
+
+print([i for i in assign_bins(bins, bins)])
+
+gene_bins = [i for i in assign_bins(gene_lengths, bins)]
+
+print(gene_lengths[:10])
+#print(bins)
+print(gene_bins[:10])
+#print(bin_means)
+#stats.binned_statistic(x, values, statistic='mean', bins=10, range=None)
+
+# I want something like this except box plots
+plt.figure()
+plt.scatter(gene_bins, mean_counts)
+plt.xlabel("Gene length in base pairs")
+plt.ylabel("Mean expression counts for that gene")
+plt.show()
+```
+
 
 (some simple descriptive statistics and plots PCA/MDS?)
 
@@ -498,6 +531,10 @@ Use rpy to call limma
 - limma takes non-count data (e.g. if you have already normalised it.)
 - use edgeR if you have count data (i.e. whole numbers)
 - limma-voom is useful if you haven’t already normalised by library size
+
+```python
+import rpy2.robjects as robjects
+```
 
 Diagnostic plots
 
