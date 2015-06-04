@@ -232,3 +232,12 @@ counts = tz.pipe('reads.fasta', open, cur.filter(is_sequence),
                  tz.frequencies)
 ```
 
+## Code: 
+Requirements: 
+Rating: 
+Notes: 
+
+## Code: 
+Requirements: 
+Rating: 
+Notes: 
