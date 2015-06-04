@@ -524,7 +524,9 @@ Xn = np.round(2**logXn - 1).astype(int)
 ```
 
 
-## Best-Practice Differential Expression Analysis: Accessing R statistical packages with RPy2
+## Community-Standard Differential Expression Analysis: Accessing R statistical packages with RPy2
+
+"R users are at the forefront of this field, so this tool [RPy] is essential to implement the state-of-the-art analyses within broader Python pipelines"
 
 Use rpy to call limma
 
@@ -533,8 +535,58 @@ Use rpy to call limma
 - limma-voom is useful if you haven’t already normalised by library size
 
 ```python
+# For this section, need to have R installed and install rpy2:
+# pip install rpy2
 import rpy2.robjects as robjects
+r = robjects.r
 ```
+
+```python
+# Example from https://github.com/thehackerwithin/Python2010/wiki/PyBCSession08
+
+# R can be called in one of three ways depending on the situation.
+print( r('pi') ) #method 1
+print( r['pi'] ) #method 2
+print( r.pi )    #method 3
+```
+
+Example from https://github.com/thehackerwithin/Python2010/wiki/PyBCSession08 continued
+"Why? Isn't this redundant?
+Each of these calls if different:
+Method 1: sends a string to R. So the word 'pi' is sent to the R command line for evaluation. This is often the easiest way to translate your code into Python; however, for big calculations and frequent interactivity with Python it can become inefficient. Method 2: uses get.item() is equivalent to calling the variable from the R command line. This if often the preferred method. Method 3: retrieves the 'pi' object."
+
+```python
+# Example from http://rpy.sourceforge.net/rpy2/doc-2.5/html/introduction.html#getting-started
+# Comments my own
+
+letters = robjects.r['letters']
+print(letters.r_repr()) # .r_repr() gives the representation of the object as it would appear in R,
+# so that you can use it to create a string of R code
+rcode = 'paste(%s, collapse="-")' %(letters.r_repr())
+res = robjects.r(rcode)
+```
+
+```python
+# Install and load limma
+r('''
+    if (!require('limma', character.only = TRUE)) { # Try to load limma
+        source("http://bioconductor.org/biocLite.R")
+        biocLite('limma') # Install limma (if loading failed)
+        library('limma') # Load limma
+    }
+''')
+```
+
+```python
+r('''
+    filename <- '../data/final_gene_counts.gz'
+    r_data <- read.table(filename,
+                       header=TRUE)
+    r_counts <- r_data[, -(1:3)]
+
+''')
+```
+
 
 Diagnostic plots
 
