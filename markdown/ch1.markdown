@@ -381,12 +381,68 @@ Also notice how we used broadcasting twice there.
 Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
 
 ```python
+import matplotlib.pyplot as plt
+import seaborn as sns
+import itertools as it
 
+def class_boxplot(data, classes, colors=None, **kwargs):
+    """Make a boxplot with boxes colored according to the class they belong to.
+
+    Parameters
+    ----------
+    data : list of array-like of float
+        The input data. One boxplot will be generated for each element
+        in `data`.
+    classes : list of string, same length as `data`
+        The class each distribution in `data` belongs to.
+    colors : list of matplotlib colorspecs
+        The color corresponding to each class. These will be cycled in
+        the order in which the classes appear in `classes`. (So it is
+        ideal to provide as many colors as there are classes! The
+        default palette contains five colors.)
+
+    Other parameters
+    ----------------
+    kwargs : dict
+        Keyword arguments to pass on to `plt.boxplot`.
+    """
+    # default color palette
+    if colors is None:
+        colors = sns.xkcd_palette(["windows blue", "amber", "greyish",
+                                   "faded green", "dusty purple"])
+    # default boxplot parameters; only updated if not specified
+    kwargs['sym'] = kwargs.get('sym', '.')
+    kwargs['whiskerprops'] = kwargs.get('whiskerprops', {'linestyle': '-'})
+
+    all_classes = sorted(set(classes))
+    class2color = dict(zip(all_classes, it.cycle(colors)))
+    # create a dictionary containing data of same length but only data
+    # from that class
+    class2data = {}
+    for i, (distrib, cls) in enumerate(zip(data, classes)):
+        for c in all_classes:
+            class2data.setdefault(c, []).append([])  # empty dataset at first
+        class2data[cls][-1] = distrib
+    # then, do each boxplot in turn with the appropriate color
+    lines = []
+    for cls in all_classes:
+        # set color for all elements of the boxplot
+        for key in ['boxprops', 'whiskerprops', 'capprops',
+                    'medianprops', 'flierprops']:
+            kwargs.setdefault(key, {}).update(color=class2color[cls])
+        # draw the boxplot
+        box = plt.boxplot(class2data[cls], **kwargs)
+        lines.append(box['caps'][0])
+    plt.legend(lines, all_classes)
 ```
 
+Now we can plot a colored boxplot according to normalized vs unnormalized samples.
+We show only three samples from each class for illustration:
 
-
-
+```python
+class_boxplot(list(counts.T[:3]) + list(counts_lib_norm.T[:3]),
+              ['raw counts'] * 3 + ['normalized by library size'] * 3)
+```
 
 An example of the types of plots I'd like to show:
 http://www.nature.com/nbt/journal/v32/n9/images_article/nbt.2931-F2.jpg
