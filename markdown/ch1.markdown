@@ -452,22 +452,7 @@ http://www.nature.com/nbt/journal/v32/n9/images_article/nbt.2931-F2.jpg
 Number of reads related to length of gene
 
 ```python
-counts = counts_lib_norm # Use normalised counts
-
-# Bar plot log(n + 1) of expression counts by gene for the first few genes
-small_data = np.log(counts + 1)[:50, :] # [rows, columns] where rows are genes and columns are individuals
-small_data = small_data.transpose() # Transpose so that genes are now columns
-
-plt.figure(figsize=(20,5))
-plt.boxplot(small_data, sym=".")
-plt.xlabel("Genes")
-plt.ylabel("Expression counts")
-#plt.plot(gene_lengths[:50] / 1000) # Also plot corresponding gene lengths (divided by 1000 to get them into the same scale)
-plt.show()
-```
-
-```python
-mean_counts = counts.mean(axis=1) # mean expression counts per gene
+mean_counts = np.mean(counts_lib_norm, axis=1)  # mean expression per gene
 plt.figure()
 plt.scatter(gene_lengths, mean_counts)
 plt.xlabel("Gene length in base pairs")
@@ -477,35 +462,42 @@ plt.ylabel("Mean expression counts for that gene")
 plt.show()
 ```
 
+Boxplot binned by gene length:
+
 ```python
-# Bin the counts by gene length and then produce boxplot for each bin
-
-def assign_bins(array, bins):
-    for value in array:
-        idx = (np.abs(bins-value)).argmin()
-        yield bins[idx]
-
-#Return evenly spaced numbers over a specified interval.
-bins = np.linspace(10, 50000, 10)
-
-print([i for i in assign_bins(bins, bins)])
-
-gene_bins = [i for i in assign_bins(gene_lengths, bins)]
-
-print(gene_lengths[:10])
-#print(bins)
-print(gene_bins[:10])
-#print(bin_means)
-#stats.binned_statistic(x, values, statistic='mean', bins=10, range=None)
-
-# I want something like this except box plots
-plt.figure()
-plt.scatter(gene_bins, mean_counts)
-plt.xlabel("Gene length in base pairs")
-plt.ylabel("Mean expression counts for that gene")
+log_counts = np.log(counts_lib_norm + 1)
+mean_log_counts = np.mean(log_counts, axis=1)
+log_gene_lengths = np.log(gene_lengths)
+# get the "optimal" bin size using astropy's histogram function
+from astropy.stats import histogram
+gene_len_hist, gene_len_bins = histogram(log_gene_lengths, bins='knuth')
+# np.digitize tells you which bin an observation belongs to.
+# we don't use the last bin edge because it breaks the right-open assumption
+# of digitize. The max observation correctly goes into the last bin.
+gene_len_idxs = np.digitize(log_gene_lengths, gene_len_bins[:-1])
+# Use those indices to create a list of arrays, each containing the log
+# counts corresponding to genes of that length. This is the input expected
+# by plt.boxplot
+binned_counts = [mean_log_counts[gene_len_idxs == i]
+                 for i in range(np.max(gene_len_idxs))]
+plt.figure(figsize=(12,3))
+# Make the x-axis labels using real gene length
+gene_len_bin_centres = (gene_len_bins[1:] + gene_len_bins[:-1]) / 2
+gene_len_labels = np.round(np.exp(gene_len_bin_centres)).astype(int)
+# use only every 5th label to prevent crowding on x-axis ticks
+labels = []
+for i, lab in enumerate(gene_len_labels):
+    if i % 5 == 0:
+        labels.append(str(lab))
+    else:
+        labels.append('')
+# make the boxplot
+plt.boxplot(binned_counts, labels=labels, sym=".")
+# Adjust the axis names
+plt.xlabel('gene length (log scale)')
+plt.ylabel('average log-counts')
 plt.show()
 ```
-
 
 (some simple descriptive statistics and plots PCA/MDS?)
 
