@@ -440,8 +440,14 @@ Now we can plot a colored boxplot according to normalized vs unnormalized sample
 We show only three samples from each class for illustration:
 
 ```python
-class_boxplot(list(counts.T[:3]) + list(counts_lib_norm.T[:3]),
-              ['raw counts'] * 3 + ['normalized by library size'] * 3)
+log_counts_3 = list(np.log(counts.T[:3] + 1))
+log_ncounts_3 = list(np.log(counts_lib_norm.T[:3] + 1))
+class_boxplot(log_counts_3 + log_ncounts_3,
+              ['raw counts'] * 3 + ['normalized by library size'] * 3,
+              labels=[1, 2, 3, 1, 2, 3])
+plt.xlabel('sample number')
+plt.ylabel('log gene expression counts')
+plt.show()
 ```
 
 An example of the types of plots I'd like to show:
