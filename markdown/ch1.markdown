@@ -662,8 +662,8 @@ r('''
 
 # Get sample info
 r('''
-    Targets = read.delim('/Users/hdashnow/Documents/git/limma/targets.txt', sep='\t')
-    Samples = read.delim('/Users/hdashnow/Documents/git/limma/samples.txt', sep='\t')
+    Targets = read.delim('data/targets.txt', sep='\t')
+    Samples = read.delim('data/samples.txt', sep='\t')
     sample_info = merge(Targets, Samples, all.x = TRUE)
 ''')
 
