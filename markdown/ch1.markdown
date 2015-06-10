@@ -631,16 +631,94 @@ r('''
 ''')
 ```
 
-```python
-r('''
-    filename <- '../data/final_gene_counts.gz'
-    r_data <- read.table(filename,
-                       header=TRUE)
-    r_counts <- r_data[, -(1:3)]
+Moving data back and forth between numpy and R
 
-''')
+```python
+# Move Python numpy array into R
+# Set up automatic conversion of all numpy arrays into R
+import rpy2.robjects.numpy2ri
+rpy2.robjects.numpy2ri.activate()
+
+data = np.random.random((2,2))
+print(data)
+r.mean(data) # Use the R mean function on the python object
 ```
 
+```python
+# Move R objects into Python as numpy arrays
+from rpy2 import robjects
+r = robjects.r
+iris = np.array(r['iris'])
+```
+
+```python
+import rpy2.robjects as robjects
+
+# Load R libraries
+r('''
+    library(limma)
+    library(edgeR)
+''')
+
+# Get sample info
+r('''
+    Targets = read.delim('/Users/hdashnow/Documents/git/limma/targets.txt', sep='\t')
+    Samples = read.delim('/Users/hdashnow/Documents/git/limma/samples.txt', sep='\t')
+    sample_info = merge(Targets, Samples, all.x = TRUE)
+''')
+
+# Read in gene counts
+r('''
+    gene_counts = read.delim('final_gene_counts.gz', sep='')
+    Counts = gene_counts[,-(1:3)]
+''')
+
+# Subset of samples where I know the sex
+r('''
+    # Subset sample info
+    sample_info_subset = sample_info[!is.na(sample_info$Sex),]
+
+    # Subset counts to the samples where I know the sex
+    Counts_subset = Counts[,sample_info_subset$ID]
+''')
+
+# Remove '_argonne' from the Count col headings
+r('''
+    names(Counts) = sapply(names(Counts), function(x){strsplit(x, split = '_')[[1]][1]})
+''')
+
+# Create gene annotations
+r('''
+    Annotation = gene_counts[,1:3]
+    names(Annotation) = c("GeneID", "Chr", "Length")
+''')
+
+# Prepare data
+r('''
+    y = DGEList(counts = Counts_subset, genes = Annotation)
+    design <- model.matrix(~ Sex + concentration, data = sample_info)
+''')
+
+# Run voom
+r('''
+    v <- voom(y, design, plot = FALSE)
+''')
+
+# Fit linear model
+r('''
+    fit <- lmFit(v, design, block = Targets$cellline)
+    fit <- eBayes(fit)
+''')
+
+# Look at results
+r('''
+    summary(decideTests(fit))
+    results <- topTable(fit, coef = "Sexmale", n = Inf, sort = "p", p = 0.05)[,-1]
+''')
+
+results_array = np.array(r['results'])
+print(results_array)
+```
 
 Diagnostic plots
 
