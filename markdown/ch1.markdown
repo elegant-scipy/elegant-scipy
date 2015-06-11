@@ -720,6 +720,73 @@ results_array = np.array(r['results'])
 print(results_array)
 ```
 
+```python
+# Code in this box written by Matt Wakefield - need to get permission to use it or just use it as inspiration.
+
+import pandas.rpy.common
+import rpy2.robjects as robjects
+import rpy2.rinterface as rinterface
+from rpy2.robjects.packages import importr
+from rpy2.robjects import pandas2ri
+
+# Import R libraries as python packages
+edgeR = importr("edgeR")
+stats = importr("stats")
+
+def fit_edgeR(dataframe, design):
+    """Given a dataframe of integer counts with genes as rows
+    and an rpy2.robjects.matrix design matrix fit with
+    edgeR with TMM norm and tagwise dispersion"""
+    y = edgeR.DGEList(counts=pandas.rpy.common.convert_to_r_dataframe(dataframe))
+    y = edgeR.calcNormFactors(y)
+    y = edgeR.estimateGLMCommonDisp(y, design)
+    y = edgeR.estimateGLMTrendedDisp(y, design)
+    y = edgeR.estimateGLMTagwiseDisp(y, design)
+    return y, edgeR.glmFit(y,design)
+
+def get_result_tuple(edgeR_glmLRT_result):
+    test_results = edgeR.decideTestsDGE(edgeR_glmLRT_result)
+    return (sum([1 for x in test_results if x == -1]),
+            sum([1 for x in test_results if x == 0]),
+            sum([1 for x in test_results if x == 1]),
+           )
+
+def get_significant_count(edgeR_glmLRT_result):
+    return sum([1 for x in edgeR.decideTestsDGE(edgeR_glmLRT_result) if x != 0])
+
+def significant_topTags(edgeR_glmLRT_result):
+    top_tags = edgeR.topTags(edgeR_glmLRT_result,n=get_significant_count(edgeR_glmLRT_result))
+    result = pandas2ri.ri2py_dataframe(top_tags[0])
+    #bug work around - rownames do not transfer correctly in 2.4.0.
+    if result.index[0] != top_tags[0].rownames[0]:
+        result.index = top_tags[0].rownames
+    return result
+```
+
+```python
+# Design must be an np array - this one is just random for now
+design = np.array( (np.random.randint(1,2,161), np.random.randint(0,2,161)) )
+# Transpose so it's two columns (can this be done on creation?)
+design = np.transpose(design)
+```
+
+```python
+y, fit = fit_edgeR(pandas.DataFrame(counts), design) # counts must be a pandas data frame
+```
+
+```python
+borderline = edgeR.glmLRT(fit)
+get_significant_count(borderline)
+```
+
+```python
+get_result_tuple(borderline)
+```
+
+```python
+significant_topTags(borderline)
+```
+
 Diagnostic plots
 
 - P-value histogram
