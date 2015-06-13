@@ -130,7 +130,67 @@ real-world problem: analyzing target detection in radar data.
 
 ## Discrete Fourier Transform concepts
 
-- Order of packing
+When executing the FFT, the returned spectrum (collection of
+frequencies, or Fourier components) is circular, and packed from
+low-to-high-to-low.  E.g., when we do the real Fourier transform of
+all ones, an input that has no variation and therefore only has the
+slowest, constant Fourier component (also known as the "DC"--for
+direct current--component), that component appears as the first entry:
+
+```python
+from scipy import fftpack
+fftpack.fft(np.ones(10))
+```
+
+Note that the FFT returns a complex spectrum which, in the case of
+real inputs, is symmetrical.
+
+When we try the FFT on a rapidly changing signal, we see a high
+frequency component appear:
+
+```python
+z = np.ones(10)
+z[::2] = -1
+
+print("Applying FFT to {}".format(z))
+fftpack.fft(z)
+```
+
+The `fftfreq` function tells us which frequencies we are looking at:
+
+```
+fftpack.fftfreq(10)
+```
+
+The result tells us that our maximum component occured at a frequency
+of 0.5 cycles per sample.  This agrees with the input, where a
+minus-one-plus-one cycle repeated every second sample.
+
+Sometimes, it is convenient to view the spectrum organized slightly
+differently, from high-to-low-to-high.  This is achieved with the
+`fftshift` function.  Let's examine the frequency components in a
+noisy image:
+
+(NOTE: get permission to reproduce the image below
+https://miac.unibas.ch/SIP/06-Restoration.html#(16), or even better
+find an alternative or reproduce)
+
+```python
+from skimage import io
+image = io.imread('images/pompei.jpg')
+
+print(image.shape, image.dtype)
+
+F = fftpack.fftn(image)
+F_magnitude = np.abs(F)
+F_magnitude = fftpack.fftshift(F_magnitude)
+
+f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
+ax0.imshow(image, cmap='gray')
+ax1.imshow(-np.log(1 + F_magnitude), cmap='gray')
+plt.show()
+```
+
 - Windowing introduction (no detail given)
 - Frequencies used (fftfreq)
 
