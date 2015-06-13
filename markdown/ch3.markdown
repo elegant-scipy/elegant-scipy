@@ -143,7 +143,7 @@ fftpack.fft(np.ones(10))
 ```
 
 Note that the FFT returns a complex spectrum which, in the case of
-real inputs, is symmetrical.
+real inputs, is conjugate symmetrical.
 
 When we try the FFT on a rapidly changing signal, we see a high
 frequency component appear:
@@ -167,17 +167,15 @@ of 0.5 cycles per sample.  This agrees with the input, where a
 minus-one-plus-one cycle repeated every second sample.
 
 Sometimes, it is convenient to view the spectrum organized slightly
-differently, from high-to-low-to-high.  This is achieved with the
-`fftshift` function.  Let's examine the frequency components in a
-noisy image:
-
-(NOTE: get permission to reproduce the image below
-https://miac.unibas.ch/SIP/06-Restoration.html#(16), or even better
-find an alternative or reproduce)
+differently, from high-negative to low to-high-positive (for now, we
+won't dive too deeply into the concept of negative frequency, other
+than saying a real-world sine wave is produced by a combination of the
+two).  This is achieved with the `fftshift` function.  Let's examine
+the frequency components in a noisy image:
 
 ```python
 from skimage import io
-image = io.imread('images/pompei.jpg')
+image = io.imread('images/moonlanding.png')
 
 print(image.shape, image.dtype)
 
@@ -187,7 +185,7 @@ F_magnitude = fftpack.fftshift(F_magnitude)
 
 f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
 ax0.imshow(image, cmap='gray')
-ax1.imshow(-np.log(1 + F_magnitude), cmap='gray')
+ax1.imshow(-np.log(1 + F_magnitude), cmap='gray', interpolation='nearest')
 plt.show()
 ```
 
