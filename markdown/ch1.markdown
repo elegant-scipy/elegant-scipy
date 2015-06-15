@@ -570,7 +570,27 @@ logXn = log_quantiles[ranks]
 Xn = np.round(2**logXn - 1).astype(int)
 ```
 
+## Principal Components Analysis
 
+```python
+from matplotlib.mlab import PCA
+#construct your numpy array of data
+myData = np.array(counts)
+results = PCA(myData)
+
+#this will return an array of variance percentages for each component
+results.fracs
+
+#this will return a 2d array of the data projected into PCA space
+results.Y
+
+# Plot the first two principal components
+plt.scatter(results.Y[0,], results.Y[1,])
+plt.title("PCA")
+plt.xlabel("PC 1")
+plt.ylabel("PC 2")
+plt.show()
+```
 
 Diagnostic plots
 
