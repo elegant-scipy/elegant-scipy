@@ -553,6 +553,8 @@ Assume we've read in the input matrix as X:
 import numpy as np
 from scipy import stats
 
+X = counts_lib_norm
+
 # log-transform the data
 logX = np.log2(X + 1)
 
@@ -560,7 +562,8 @@ logX = np.log2(X + 1)
 log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
 
 # compute the column-wise ranks; need to do a round-trip through list
-ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) for col in X.T])
+ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
+                      for col in X.T])
 # alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
 
 # index the quantiles for each rank with the ranks matrix
