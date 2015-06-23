@@ -581,19 +581,21 @@ Xn = np.round(2**logXn - 1).astype(int)
 ## Principal Components Analysis
 
 ```python
-from matplotlib.mlab import PCA
+from sklearn.decomposition import PCA
+
 #construct your numpy array of data
-myData = np.array(counts)
-results = PCA(myData)
+counts_transposed = np.array(counts).T
 
-#this will return an array of variance percentages for each component
-results.fracs
+# Set up PCA, set number of components
+pca = PCA(n_components=2)
 
-#this will return a 2d array of the data projected into PCA space
-results.Y
+# project data into PCA space
+pca_transformed = pca.fit_transform(counts_transposed)
+```
 
+```python
 # Plot the first two principal components
-plt.scatter(results.Y[0,], results.Y[1,])
+plt.scatter(x=pca_transformed[:,0], y=pca_transformed[:,1])
 plt.title("PCA")
 plt.xlabel("PC 1")
 plt.ylabel("PC 2")
