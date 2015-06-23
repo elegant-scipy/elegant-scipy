@@ -15,14 +15,19 @@ Proteins can act as building blocks like the keratin that gives structure to you
 Unfortunately, protein is particularly difficult to detect experimentally, but mRNA is actually pretty easy to measure.
 So we make the assumption that if we measure the amount of mRNA we can gain insight into how the cells are functioning.
 
-[insert central dogma figure?]
+![Central Dogma of Biology](http://www.phschool.com/science/biology_place/biocoach/images/transcription/centdog.gif)
+Note, this is an example image only, we have not checked license.
+
+![Gene expression](http://www.ncbi.nlm.nih.gov/Class/MLACourse/Original8Hour/Genetics/cgap_conceptual_tour1.gif)
+Note, this is an example image only, we have not checked license.
 
 Currently, the most sensitive way to measure mRNA is to do an RNA sequencing (RNAseq) experiment. To do this we isolate all the mRNA from a sample, then we sequence it.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
 For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
 
-[diagram/flow chart of RNAseq]
+![RNAseq](http://bio.lundberg.gu.se/courses/vt13/rna4.JPG.jpg)
+Note, this is an example image only, we have not checked license.
 
 Let’s have a look at what this gene expression data looks like.
 
