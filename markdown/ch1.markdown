@@ -602,6 +602,74 @@ plt.ylabel("PC 2")
 plt.show()
 ```
 
+## Heatmap
+
+```python
+# Subset counts to use 500 most variable genes
+
+counts_log = np.log(counts + 1)
+# Calculate variance for each gene
+gene_variance = np.var(counts_log, axis=1)
+
+sort_index = np.argsort(gene_variance)[-1000:] # Get indexes in ascending order and take the last 1000
+
+counts_variable = counts_log[sort_index,:] # use as index for counts
+```
+
+```python
+from scipy.spatial.distance import pdist, squareform
+
+# Genes by genes distances
+gene_dist = squareform(pdist(counts_variable))
+
+# Sample by sample distances (first transpose counts)
+sample_dist = squareform(pdist(counts_variable.T))
+```
+
+```python
+import scipy
+import matplotlib.pyplot as plt
+import scipy.cluster.hierarchy as sch
+
+data = counts_variable
+
+fig = plt.figure(figsize=(8,8))
+
+# Compute and plot first dendrogram.
+ax1 = fig.add_axes([0.09,0.1,0.2,0.6])
+Y1 = sch.linkage(gene_dist, method='centroid')
+Z1 = sch.dendrogram(Y1, orientation='right')
+
+# Compute and plot second dendrogram.
+ax2 = fig.add_axes([0.3,0.71,0.6,0.2])
+Y2 = sch.linkage(sample_dist, method='centroid')
+Z2 = sch.dendrogram(Y2) # color_threshold=0.7*np.max(Y2[:,2]) # To adjust number of colours decrease 0.7 e.g. 0.5
+
+# Hide axes labels
+ax1.set_xticks([])
+ax1.set_yticks([])
+ax2.set_xticks([])
+ax2.set_yticks([])
+
+# Plot data heatmap
+axmatrix = fig.add_axes([0.3,0.1,0.6,0.6])
+
+# Sort data by the dendogram leaves
+idx1 = sch.leaves_list(Y1)
+idx2 = sch.leaves_list(Y2)
+data = data[idx1,:]
+data = data[:,idx2]
+
+im = axmatrix.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu')
+axmatrix.set_xticks([])
+axmatrix.set_yticks([])
+
+# Plot legend
+axcolor = fig.add_axes([0.91,0.1,0.02,0.6])
+plt.colorbar(im, cax=axcolor)
+plt.show()
+```
+
 Diagnostic plots
 
 - P-value histogram
