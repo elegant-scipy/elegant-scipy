@@ -605,15 +605,30 @@ plt.show()
 ## Heatmap
 
 ```python
-# Subset counts to use 500 most variable genes
+def most_variable(data, n=500, axis=1):
+    """Subset counts to the n most variable genes
+    More generally, subset data to the n most variable columns
+
+    Parameters
+    ----------
+    data : 2D ndarray of counts
+    n : return the top n most variable counts
+    axis : axis to provide to np.var
+    """
+
+    # Calculate variance for each gene
+    gene_variance = np.var(counts_log, axis=1)
+
+    # Get indexes in ascending order and take the last 1000
+    sort_index = np.argsort(gene_variance)[-1000:]
+
+    # use as index for counts
+    counts_variable = counts_log[sort_index,:]
+
+    return(counts_variable)
 
 counts_log = np.log(counts + 1)
-# Calculate variance for each gene
-gene_variance = np.var(counts_log, axis=1)
-
-sort_index = np.argsort(gene_variance)[-1000:] # Get indexes in ascending order and take the last 1000
-
-counts_variable = counts_log[sort_index,:] # use as index for counts
+counts_variable = most_variable(counts_log)
 ```
 
 ```python
