@@ -586,7 +586,7 @@ def quantile_norm(X):
   Xn = np.round(2**logXn - 1).astype(int)
   return(Xn)
 
-#quantile_norm(counts_lib_norm)
+# Example usage: quantile_norm(counts_lib_norm)
 ```
 
 ## Principal Components Analysis
@@ -595,30 +595,33 @@ def quantile_norm(X):
 from sklearn.decomposition import PCA
 
 def PCA_plot(data):
-  """Plot the first two principle components of the data
+    """Plot the first two principle components of the data
 
-  Parameters
-  ----------
-  data : 2D ndarray of counts (assumed to be genes X samples)
-  """
+    Parameters
+    ----------
+    data : 2D ndarray of counts (assumed to be genes X samples)
+    """
 
-  #construct your numpy array of data
-  counts_transposed = np.array(data).T
+    #construct your numpy array of data
+    counts_transposed = np.array(data).T
 
-  # Set up PCA, set number of components
-  pca = PCA(n_components=2)
+    # Set up PCA, set number of components
+    pca = PCA(n_components=2)
 
-  # project data into PCA space
-  pca_transformed = pca.fit_transform(counts_transposed)
+    # project data into PCA space
+    pca_transformed = pca.fit_transform(counts_transposed)
 
-  # Plot the first two principal components
-  plt.scatter(x=pca_transformed[:,0], y=pca_transformed[:,1])
-  plt.title("PCA")
-  plt.xlabel("PC 1")
-  plt.ylabel("PC 2")
-  plt.show()
+    # Plot the first two principal components
+    plt.scatter(x=pca_transformed[:,0], y=pca_transformed[:,1])
+    plt.title("PCA")
+    plt.xlabel("PC 1")
+    plt.ylabel("PC 2")
+    plt.show()
+```
 
+```python
 PCA_plot(counts)
+PCA_plot(quantile_norm(counts))
 ```
 
 ## Heatmap
@@ -657,54 +660,54 @@ import scipy.cluster.hierarchy as sch
 from scipy.spatial.distance import pdist, squareform
 
 def heatmap(data, dendogram_method='centroid'):
-  """Produce a heatmap with dendograms on each axis
+    """Produce a heatmap with dendograms on each axis
 
-  Parameters
-  ----------
-  data : 2D ndarray
-  dendogram_method : method to be passed to sch.linkage()
-  """
+    Parameters
+    ----------
+    data : 2D ndarray
+    dendogram_method : method to be passed to sch.linkage()
+    """
 
-  # Genes by genes distances
-  dist1 = squareform(pdist(counts_variable))
-  # Sample by sample distances (first transpose counts)
-  dist2 = squareform(pdist(counts_variable.T))
+    # Genes by genes distances
+    dist1 = squareform(pdist(counts_variable))
+    # Sample by sample distances (first transpose counts)
+    dist2 = squareform(pdist(counts_variable.T))
 
-  fig = plt.figure(figsize=(8,8))
+    fig = plt.figure(figsize=(8,8))
 
-  # Compute and plot first dendrogram.
-  ax1 = fig.add_axes([0.09,0.1,0.2,0.6])
-  Y1 = sch.linkage(dist1, method=dendogram_method)
-  Z1 = sch.dendrogram(Y1, orientation='right')
+    # Compute and plot first dendrogram.
+    ax1 = fig.add_axes([0.09,0.1,0.2,0.6])
+    Y1 = sch.linkage(dist1, method=dendogram_method)
+    Z1 = sch.dendrogram(Y1, orientation='right')
 
-  # Compute and plot second dendrogram.
-  ax2 = fig.add_axes([0.3,0.71,0.6,0.2])
-  Y2 = sch.linkage(dist2, method=dendogram_method)
-  Z2 = sch.dendrogram(Y2) # color_threshold=0.7*np.max(Y2[:,2]) # To adjust number of colours decrease 0.7 e.g. 0.5
+    # Compute and plot second dendrogram.
+    ax2 = fig.add_axes([0.3,0.71,0.6,0.2])
+    Y2 = sch.linkage(dist2, method=dendogram_method)
+    Z2 = sch.dendrogram(Y2) # color_threshold=0.7*np.max(Y2[:,2]) # To adjust number of colours decrease 0.7 e.g. 0.5
 
-  # Hide axes labels
-  ax1.set_xticks([])
-  ax1.set_yticks([])
-  ax2.set_xticks([])
-  ax2.set_yticks([])
+    # Hide axes labels
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+    ax2.set_xticks([])
+    ax2.set_yticks([])
 
-  # Plot data heatmap
-  axmatrix = fig.add_axes([0.3,0.1,0.6,0.6])
+    # Plot data heatmap
+    axmatrix = fig.add_axes([0.3,0.1,0.6,0.6])
 
-  # Sort data by the dendogram leaves
-  idx1 = sch.leaves_list(Y1)
-  idx2 = sch.leaves_list(Y2)
-  data = data[idx1,:]
-  data = data[:,idx2]
+    # Sort data by the dendogram leaves
+    idx1 = sch.leaves_list(Y1)
+    idx2 = sch.leaves_list(Y2)
+    data = data[idx1,:]
+    data = data[:,idx2]
 
-  im = axmatrix.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu')
-  axmatrix.set_xticks([])
-  axmatrix.set_yticks([])
+    im = axmatrix.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu')
+    axmatrix.set_xticks([])
+    axmatrix.set_yticks([])
 
-  # Plot legend
-  axcolor = fig.add_axes([0.91,0.1,0.02,0.6])
-  plt.colorbar(im, cax=axcolor)
-  plt.show()
+    # Plot legend
+    axcolor = fig.add_axes([0.91,0.1,0.02,0.6])
+    plt.colorbar(im, cax=axcolor)
+    plt.show()
 
 heatmap(counts_variable)
 ```
