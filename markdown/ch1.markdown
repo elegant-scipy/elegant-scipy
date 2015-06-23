@@ -239,22 +239,15 @@ Here we are just using Pandas briefly to import data.
 In later chapters we will give you some more insight into the world of Pandas.
 
 ```python
-import urllib
 import numpy as np
 import pandas as pd
-import os
-import gzip
 
-url = "http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz" # Location of remote file
-filename = "final_gene_counts.gz" # Local filename
+# Import TCGA melanoma data
+filename = 'counts.txt'
+with open(filename, 'rt') as f:
+    data_table = pd.read_csv(f, index_col=0) # Parse file with pandas
 
-if not os.path.exists(filename): # Check if file exists
-    urllib.request.urlretrieve(url, filename) # Download file
-
-with gzip.open(filename, 'rt') as f:
-    data_table = pd.read_csv(f, delim_whitespace=True) # Parse file with pandas (automatically unzips)
-
-print(data_table.iloc[:5, :5]) # print the first 5 rows and columns of the DataFrame
+print(data_table.iloc[:5, :5])
 ```
 
 We can see that Pandas has kindly pull out the header row and used it to name the columns.
@@ -265,19 +258,38 @@ Let's extract out the data that we need in a more useful format.
 
 
 ```python
-skip_cols = 3 #
-
 # Sample names
-samples = list(data_table.columns)[skip_cols:]
+samples = list(data_table.columns)
 
 # 2D ndarray containing expression counts for each gene in each individual
-counts = np.asarray(data_table.iloc[:, skip_cols:], dtype=int)
-
-# 1D ndarray containing the lengths of each gene
-gene_lengths = np.asarray(data_table.iloc[:, 2], dtype=int)
+counts = np.asarray(data_table, dtype=int)
 
 # Check how many genes and individuals were measured
 print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
+```
+
+```python
+# Import gene lengths
+filename = 'genes.csv'
+with open(filename, 'rt') as f:
+    gene_info = pd.read_csv(f, index_col=1) # Parse file with pandas, index by GeneSymbol
+    #gene_info = gene_info.iloc[:,1:] # Remove first, numerical index column
+print(gene_info.iloc[:5, :5])
+```
+
+```python
+#Subset gene info to match the count data
+
+intersect_index = data_table.index.intersection(gene_info.index)
+print(gene_info.loc[intersect_index].shape)
+print(data_table.loc[intersect_index].shape)
+
+#Something funky going on here! Gene names not unique in gene_info?
+```
+
+```python
+# 1D ndarray containing the lengths of each gene
+gene_lengths = np.asarray(gene_info['GeneLength'], dtype=int)
 ```
 
 ## Differential gene expression analysis
@@ -335,7 +347,7 @@ We say that these individuals have different library sizes.
 
 ```python
 # Bar plot of expression counts by individual
-plt.figure(figsize=(20,5))
+plt.figure(figsize=(16,5))
 plt.boxplot(counts, sym=".")
 plt.title("Gene expression counts raw")
 plt.xlabel("Individuals")
@@ -349,7 +361,7 @@ Both the log function and the n + 1 step can be done using broadcasting to simpi
 
 ```python
 # Bar plot of expression counts by individual
-plt.figure(figsize=(20,5))
+plt.figure(figsize=(16,5))
 plt.boxplot(np.log(counts + 1), sym=".")
 plt.title("Gene expression counts raw")
 plt.xlabel("Individuals")
@@ -366,7 +378,7 @@ counts_lib_norm = counts / total_counts * 1000000 # Multiply by 1 million to get
 # Notice how we just used broadcasting twice there!
 
 # Bar plot of expression counts by individual
-plt.figure(figsize=(20,5))
+plt.figure(figsize=(16,5))
 plt.boxplot(np.log(counts_lib_norm + 1), sym=".")
 plt.title("Gene expression counts normalised by library size")
 plt.xlabel("Individuals")
@@ -627,6 +639,8 @@ PCA_plot(quantile_norm(counts))
 ## Heatmap
 
 ```python
+# Note: We might want to change this to median absolute deviation (or maybe maximum absolute deviation)?
+
 def most_variable(data, n=500, axis=1):
     """Subset counts to the n most variable genes
     More generally, subset data to the n most variable columns
@@ -659,13 +673,14 @@ import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as sch
 from scipy.spatial.distance import pdist, squareform
 
-def heatmap(data, dendogram_method='centroid'):
+def heatmap(data, dendogram_method='centroid', color_setting=0.7):
     """Produce a heatmap with dendograms on each axis
 
     Parameters
     ----------
     data : 2D ndarray
     dendogram_method : method to be passed to sch.linkage()
+    color_setting : adjust the cutoff for different colours in the dendogram
     """
 
     # Genes by genes distances
@@ -678,12 +693,12 @@ def heatmap(data, dendogram_method='centroid'):
     # Compute and plot first dendrogram.
     ax1 = fig.add_axes([0.09,0.1,0.2,0.6])
     Y1 = sch.linkage(dist1, method=dendogram_method)
-    Z1 = sch.dendrogram(Y1, orientation='right')
+    Z1 = sch.dendrogram(Y1, orientation='right', color_threshold=color_setting*np.max(Y1[:,2]))
 
     # Compute and plot second dendrogram.
     ax2 = fig.add_axes([0.3,0.71,0.6,0.2])
     Y2 = sch.linkage(dist2, method=dendogram_method)
-    Z2 = sch.dendrogram(Y2) # color_threshold=0.7*np.max(Y2[:,2]) # To adjust number of colours decrease 0.7 e.g. 0.5
+    Z2 = sch.dendrogram(Y2, color_threshold=color_setting*np.max(Y2[:,2])) # To adjust number of colours decrease 0.7 e.g. 0.5
 
     # Hide axes labels
     ax1.set_xticks([])
@@ -708,8 +723,18 @@ def heatmap(data, dendogram_method='centroid'):
     axcolor = fig.add_axes([0.91,0.1,0.02,0.6])
     plt.colorbar(im, cax=axcolor)
     plt.show()
+```
 
-heatmap(counts_variable)
+```python
+# Compare un-normalised and normalised heat maps
+
+def most_variable_heatmap(counts):
+    counts_log = np.log(counts + 1)
+    counts_variable = most_variable(counts_log)
+    heatmap(counts_variable, color_setting=0.6)
+
+most_variable_heatmap(counts)
+most_variable_heatmap(quantile_norm(counts))
 ```
 
 Diagnostic plots
