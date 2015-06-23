@@ -554,28 +554,39 @@ This can be done with numpy and scipy easily and efficiently.
 Assume we've read in the input matrix as X:
 
 ```python
-# import the goodies
 import numpy as np
 from scipy import stats
 
-X = counts_lib_norm
+def quantile_norm(X):
+  """ Given an expression matrix (microarray data, read counts, etc) of ngenes
+  by nsamples, quantile normalization ensures all samples have the same spread
+  of data (by construction).
+  The data is first log transformed. The rows are averaged and each column
+  quantile is replaced with the quantile of the average column.
 
-# log-transform the data
-logX = np.log2(X + 1)
+  Parameters
+  ----------
+  X : 2D ndarray of counts
+  """
+  # log-transform the data
+  logX = np.log2(X + 1)
 
-# compute the quantiles
-log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
+  # compute the quantiles
+  log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
 
-# compute the column-wise ranks; need to do a round-trip through list
-ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
-                      for col in X.T])
-# alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
+  # compute the column-wise ranks; need to do a round-trip through list
+  ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
+                        for col in X.T])
+  # alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
 
-# index the quantiles for each rank with the ranks matrix
-logXn = log_quantiles[ranks]
+  # index the quantiles for each rank with the ranks matrix
+  logXn = log_quantiles[ranks]
 
-# convert the data back to counts (casting to int is optional)
-Xn = np.round(2**logXn - 1).astype(int)
+  # convert the data back to counts (casting to int is optional)
+  Xn = np.round(2**logXn - 1).astype(int)
+  return(Xn)
+
+#quantile_norm(counts_lib_norm)
 ```
 
 ## Principal Components Analysis
