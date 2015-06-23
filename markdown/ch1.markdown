@@ -594,23 +594,31 @@ def quantile_norm(X):
 ```python
 from sklearn.decomposition import PCA
 
-#construct your numpy array of data
-counts_transposed = np.array(counts).T
+def PCA_plot(data):
+  """Plot the first two principle components of the data
 
-# Set up PCA, set number of components
-pca = PCA(n_components=2)
+  Parameters
+  ----------
+  data : 2D ndarray of counts (assumed to be genes X samples)
+  """
 
-# project data into PCA space
-pca_transformed = pca.fit_transform(counts_transposed)
-```
+  #construct your numpy array of data
+  counts_transposed = np.array(data).T
 
-```python
-# Plot the first two principal components
-plt.scatter(x=pca_transformed[:,0], y=pca_transformed[:,1])
-plt.title("PCA")
-plt.xlabel("PC 1")
-plt.ylabel("PC 2")
-plt.show()
+  # Set up PCA, set number of components
+  pca = PCA(n_components=2)
+
+  # project data into PCA space
+  pca_transformed = pca.fit_transform(counts_transposed)
+
+  # Plot the first two principal components
+  plt.scatter(x=pca_transformed[:,0], y=pca_transformed[:,1])
+  plt.title("PCA")
+  plt.xlabel("PC 1")
+  plt.ylabel("PC 2")
+  plt.show()
+
+PCA_plot(counts)
 ```
 
 ## Heatmap
