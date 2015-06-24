@@ -1,3 +1,18 @@
+#!/usr/bin/env python
+
+"""rnaseq.py: build a gene counts matrix from a TCGA L3 data archive.
+
+TCGA archives contain one file per sample. This script aggregates them into
+a single ngenes x nsamples expression counts matrix.
+
+This works on the data from "Genomic Classification of Cutaneous Melanoma",
+aggregated here:
+https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/
+
+And with direct link to the RNA expression Level 3 archive:
+https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/unc.edu_SKCM.IlluminaHiSeq_RNASeqV2.Level_3.1.10.0.tar.gz
+"""
+
 import numpy as np
 from toolz import curried as tz
 

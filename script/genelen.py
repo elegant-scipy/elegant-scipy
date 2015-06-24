@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+
+"""genelen.py: get the length of "gene" features from GAF annotation file.
+
+TCGA uses a specific gene annotation file for many of its projects, found at:
+https://tcga-data.nci.nih.gov/tcgafiles/ftp_auth/distro_ftpusers/anonymous/other/GAF/GAF_bundle/outputs/TCGA.Sept2010.09202010.gaf
+
+We needed to parse out the gene lengths from that file. This script extracts
+gene symbol, gene ID, and gene length from it, only for gene features. (Not,
+e.g., for SNPs.)
+"""
+
 from toolz import curried as tz
 import pandas as pd
 
