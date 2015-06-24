@@ -260,7 +260,7 @@ Let's extract out the data that we need in a more useful format.
 ```python
 # Sample names
 samples = list(data_table.columns)
-
+```
 
 ```python
 # Import gene lengths
@@ -284,6 +284,7 @@ gene_lengths = np.asarray(gene_info.loc[matched_index]['GeneLength'],
                           dtype=int)
 ```
 
+```python
 # 2D ndarray containing expression counts for each gene in each individual
 counts = np.asarray(data_table.loc[matched_index], dtype=int)
 
