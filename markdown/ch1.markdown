@@ -261,12 +261,6 @@ Let's extract out the data that we need in a more useful format.
 # Sample names
 samples = list(data_table.columns)
 
-# 2D ndarray containing expression counts for each gene in each individual
-counts = np.asarray(data_table, dtype=int)
-
-# Check how many genes and individuals were measured
-print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
-```
 
 ```python
 # Import gene lengths
@@ -279,16 +273,22 @@ print(gene_info.iloc[:5, :5])
 ```python
 #Subset gene info to match the count data
 
-intersect_index = data_table.index.intersection(gene_info.index)
-print(gene_info.loc[intersect_index].shape)
-print(data_table.loc[intersect_index].shape)
-
-#Something funky going on here! Gene names not unique in gene_info?
+matched_index = data_table.index.intersection(gene_info.index)
+print(gene_info.loc[matched_index].shape)
+print(data_table.loc[matched_index].shape)
 ```
 
 ```python
 # 1D ndarray containing the lengths of each gene
-gene_lengths = np.asarray(gene_info['GeneLength'], dtype=int)
+gene_lengths = np.asarray(gene_info.loc[matched_index]['GeneLength'],
+                          dtype=int)
+```
+
+# 2D ndarray containing expression counts for each gene in each individual
+counts = np.asarray(data_table.loc[matched_index], dtype=int)
+
+# Check how many genes and individuals were measured
+print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
 ```
 
 ## Differential gene expression analysis
