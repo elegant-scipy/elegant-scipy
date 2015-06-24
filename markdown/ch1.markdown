@@ -243,7 +243,7 @@ import numpy as np
 import pandas as pd
 
 # Import TCGA melanoma data
-filename = 'counts.txt'
+filename = 'data/counts.txt'
 with open(filename, 'rt') as f:
     data_table = pd.read_csv(f, index_col=0) # Parse file with pandas
 
@@ -270,7 +270,7 @@ print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.sha
 
 ```python
 # Import gene lengths
-filename = 'genes.csv'
+filename = 'data/genes.csv'
 with open(filename, 'rt') as f:
     gene_info = pd.read_csv(f, index_col=0) # Parse file with pandas, index by GeneSymbol
 print(gene_info.iloc[:5, :5])
