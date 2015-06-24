@@ -672,20 +672,28 @@ import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as sch
 from scipy.spatial.distance import pdist, squareform
 
-def heatmap(data, dendogram_method='centroid', color_setting=0.7):
+def heatmap(data, dendogram_method='centroid', color_setting=0.7,
+            distance_metric='correlation'):
     """Produce a heatmap with dendograms on each axis
 
     Parameters
     ----------
     data : 2D ndarray
-    dendogram_method : method to be passed to sch.linkage()
-    color_setting : adjust the cutoff for different colours in the dendogram
+        The input data to bicluster.
+    dendogram_method : string, optional
+        Method to be passed to sch.linkage()
+    color_setting : float, optional
+        Cutoff for different colours in the dendogram. Expressed as a
+        fraction of the maximum distance between clusters.
+    distance_metric : string, optional
+        Distance metric to use for clustering. Anything accepted by
+        `scipy.spatial.distance.pdist` is acceptable here.
     """
 
     # Genes by genes distances
-    dist1 = squareform(pdist(counts_variable))
+    dist1 = squareform(pdist(counts_variable, distance_metric))
     # Sample by sample distances (first transpose counts)
-    dist2 = squareform(pdist(counts_variable.T))
+    dist2 = squareform(pdist(counts_variable.T, distance_metric))
 
     fig = plt.figure(figsize=(8,8))
 
