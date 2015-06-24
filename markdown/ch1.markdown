@@ -272,8 +272,7 @@ print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.sha
 # Import gene lengths
 filename = 'genes.csv'
 with open(filename, 'rt') as f:
-    gene_info = pd.read_csv(f, index_col=1) # Parse file with pandas, index by GeneSymbol
-    #gene_info = gene_info.iloc[:,1:] # Remove first, numerical index column
+    gene_info = pd.read_csv(f, index_col=0) # Parse file with pandas, index by GeneSymbol
 print(gene_info.iloc[:5, :5])
 ```
 
