@@ -24,9 +24,20 @@ def range2len(tup):
     return (symbol, int(_id), length)
 
 
-if __name__ == '__main__':
-    import sys
-    filename = sys.argv[1]
+def gene_length_df(filename):
+    """Grab Gene Symbol, Gene ID, and Gene Length from a GAF file.
+
+    Parameters
+    ----------
+    filename : string
+        Path to a Gene Annotation Format (GAF) file.
+
+    Returns
+    -------
+    gene_lengths : pandas DataFrame
+        A data frame with three columns: gene symbol, gene id, and gene
+        length (in bases).
+    """
     with open(filename) as fin:
         header = next(fin).rstrip().split('\t')
         geneid = header.index('FeatureID')
@@ -37,4 +48,12 @@ if __name__ == '__main__':
                               tz.pluck([geneid, genelen]),
                               tz.map(range2len), list)
     df = pd.DataFrame(output, columns=['GeneSymbol', 'GeneID', 'GeneLength'])
+    df = df.drop_duplicates('GeneSymbol').set_index('GeneSymbol')
+    return df
+
+
+if __name__ == '__main__':
+    import sys
+    filename = sys.argv[1]
+    df = gene_length_df(filename)
     df.to_csv('genes.csv')
