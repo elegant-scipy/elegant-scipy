@@ -243,7 +243,7 @@ import numpy as np
 import pandas as pd
 
 # Import TCGA melanoma data
-filename = 'counts.txt'
+filename = 'data/counts.txt'
 with open(filename, 'rt') as f:
     data_table = pd.read_csv(f, index_col=0) # Parse file with pandas
 
@@ -260,36 +260,36 @@ Let's extract out the data that we need in a more useful format.
 ```python
 # Sample names
 samples = list(data_table.columns)
-
-# 2D ndarray containing expression counts for each gene in each individual
-counts = np.asarray(data_table, dtype=int)
-
-# Check how many genes and individuals were measured
-print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
 ```
 
 ```python
 # Import gene lengths
-filename = 'genes.csv'
+filename = 'data/genes.csv'
 with open(filename, 'rt') as f:
-    gene_info = pd.read_csv(f, index_col=1) # Parse file with pandas, index by GeneSymbol
-    #gene_info = gene_info.iloc[:,1:] # Remove first, numerical index column
+    gene_info = pd.read_csv(f, index_col=0) # Parse file with pandas, index by GeneSymbol
 print(gene_info.iloc[:5, :5])
 ```
 
 ```python
 #Subset gene info to match the count data
 
-intersect_index = data_table.index.intersection(gene_info.index)
-print(gene_info.loc[intersect_index].shape)
-print(data_table.loc[intersect_index].shape)
-
-#Something funky going on here! Gene names not unique in gene_info?
+matched_index = data_table.index.intersection(gene_info.index)
+print(gene_info.loc[matched_index].shape)
+print(data_table.loc[matched_index].shape)
 ```
 
 ```python
 # 1D ndarray containing the lengths of each gene
-gene_lengths = np.asarray(gene_info['GeneLength'], dtype=int)
+gene_lengths = np.asarray(gene_info.loc[matched_index]['GeneLength'],
+                          dtype=int)
+```
+
+```python
+# 2D ndarray containing expression counts for each gene in each individual
+counts = np.asarray(data_table.loc[matched_index], dtype=int)
+
+# Check how many genes and individuals were measured
+print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
 ```
 
 ## Differential gene expression analysis
@@ -673,20 +673,28 @@ import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as sch
 from scipy.spatial.distance import pdist, squareform
 
-def heatmap(data, dendogram_method='centroid', color_setting=0.7):
+def heatmap(data, dendogram_method='centroid', color_setting=0.7,
+            distance_metric='correlation'):
     """Produce a heatmap with dendograms on each axis
 
     Parameters
     ----------
     data : 2D ndarray
-    dendogram_method : method to be passed to sch.linkage()
-    color_setting : adjust the cutoff for different colours in the dendogram
+        The input data to bicluster.
+    dendogram_method : string, optional
+        Method to be passed to sch.linkage()
+    color_setting : float, optional
+        Cutoff for different colours in the dendogram. Expressed as a
+        fraction of the maximum distance between clusters.
+    distance_metric : string, optional
+        Distance metric to use for clustering. Anything accepted by
+        `scipy.spatial.distance.pdist` is acceptable here.
     """
 
     # Genes by genes distances
-    dist1 = squareform(pdist(counts_variable))
+    dist1 = squareform(pdist(counts_variable, distance_metric))
     # Sample by sample distances (first transpose counts)
-    dist2 = squareform(pdist(counts_variable.T))
+    dist2 = squareform(pdist(counts_variable.T, distance_metric))
 
     fig = plt.figure(figsize=(8,8))
 
