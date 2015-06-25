@@ -346,9 +346,16 @@ This means that a different number of RNAseq reads were generated for each indiv
 We say that these individuals have different library sizes.
 
 ```python
+# Subset data for plotting
+np.random.seed(seed=7) # Set seed so we will get consistent results
+samples_index = np.random.choice(range(counts.shape[1]), size=70, replace=False) # Randomly select 70 samples
+counts_subset = counts[:,samples_index]
+```
+
+```python
 # Bar plot of expression counts by individual
 plt.figure(figsize=(16,5))
-plt.boxplot(counts, sym=".")
+plt.boxplot(counts_subset, sym=".")
 plt.title("Gene expression counts raw")
 plt.xlabel("Individuals")
 plt.ylabel("Gene expression counts")
@@ -362,7 +369,7 @@ Both the log function and the n + 1 step can be done using broadcasting to simpi
 ```python
 # Bar plot of expression counts by individual
 plt.figure(figsize=(16,5))
-plt.boxplot(np.log(counts + 1), sym=".")
+plt.boxplot(np.log(counts_subset + 1), sym=".")
 plt.title("Gene expression counts raw")
 plt.xlabel("Individuals")
 plt.ylabel("Gene expression counts")
@@ -376,10 +383,11 @@ Now let's see what happens when we normalise by library size.
 # Divide the expression counts by the total counts for that individual
 counts_lib_norm = counts / total_counts * 1000000 # Multiply by 1 million to get things back in a similar scale
 # Notice how we just used broadcasting twice there!
+counts_subset_lib_norm = counts_lib_norm[:,samples_index]
 
 # Bar plot of expression counts by individual
 plt.figure(figsize=(16,5))
-plt.boxplot(np.log(counts_lib_norm + 1), sym=".")
+plt.boxplot(np.log(counts_subset_lib_norm + 1), sym=".")
 plt.title("Gene expression counts normalised by library size")
 plt.xlabel("Individuals")
 plt.ylabel("Gene expression counts")
@@ -642,7 +650,7 @@ PCA_plot(quantile_norm(counts))
 # Note: We might want to change this to median absolute deviation (or maybe maximum absolute deviation)?
 
 def most_variable(data, n=500, axis=1):
-    """Subset counts to the n most variable genes
+    """Subset data to the n most variable genes
     More generally, subset data to the n most variable columns
 
     Parameters
@@ -653,13 +661,13 @@ def most_variable(data, n=500, axis=1):
     """
 
     # Calculate variance for each gene
-    gene_variance = np.var(counts_log, axis=1)
+    gene_variance = np.var(data, axis=1)
 
-    # Get indexes in ascending order and take the last 1000
-    sort_index = np.argsort(gene_variance)[-1000:]
+    # Get indexes in ascending order and take the last n
+    sort_index = np.argsort(gene_variance)[-n:]
 
     # use as index for counts
-    counts_variable = counts_log[sort_index,:]
+    counts_variable = data[sort_index,:]
 
     return(counts_variable)
 
@@ -738,7 +746,7 @@ def heatmap(data, dendogram_method='centroid', color_setting=0.7,
 
 def most_variable_heatmap(counts):
     counts_log = np.log(counts + 1)
-    counts_variable = most_variable(counts_log)
+    counts_variable = most_variable(counts_log, n=500)
     heatmap(counts_variable, color_setting=0.6)
 
 most_variable_heatmap(counts)
