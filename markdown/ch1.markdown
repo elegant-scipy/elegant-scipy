@@ -700,9 +700,9 @@ def heatmap(data, dendogram_method='centroid', color_setting=0.7,
     """
 
     # Genes by genes distances
-    dist1 = squareform(pdist(counts_variable, distance_metric))
+    dist1 = squareform(pdist(data, distance_metric))
     # Sample by sample distances (first transpose counts)
-    dist2 = squareform(pdist(counts_variable.T, distance_metric))
+    dist2 = squareform(pdist(data.T, distance_metric))
 
     fig = plt.figure(figsize=(8,8))
 
