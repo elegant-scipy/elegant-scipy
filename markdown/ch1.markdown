@@ -647,7 +647,47 @@ PCA_plot(quantile_norm(counts))
 ## Heatmap
 
 ```python
-# Note: We might want to change this to median absolute deviation (or maybe maximum absolute deviation)?
+# Note: We might want to change this to maximum absolute deviation?
+
+def median_abs_dev(data, axis=None):
+    """Calculate the median absolute deviation
+
+    Parameters
+    ----------
+    data : ndarray
+    axis :
+    """
+    return np.median(np.absolute(data - np.median(data, axis)), axis)
+
+def med_abs_dev(a, axis=None):
+    """
+    Compute Median Absolute Deviation of an ndarray along given axis.
+    From http://informatique-python.readthedocs.org/en/latest/Exercices/mad.html
+    """
+
+    med = np.median(a, axis=axis)                # Median along given axis
+    if axis is None:
+        umed = med                              # med is a scalar
+    else:
+        umed = np.expand_dims(med, axis)         # Bring back the vanished axis
+    mad = np.median(np.absolute(a - umed), axis=axis)  # MAD along given axis
+
+    return mad
+
+def max_abs_dev(a, axis=None):
+    """
+    Compute Maximum Absolute Deviation of an ndarray along given axis.
+    Based on http://informatique-python.readthedocs.org/en/latest/Exercices/mad.html
+    """
+
+    med = np.max(a, axis=axis)                # Median along given axis
+    if axis is None:
+        umed = med                              # med is a scalar
+    else:
+        umed = np.expand_dims(med, axis)         # Bring back the vanished axis
+    mad = np.max(np.absolute(a - umed), axis=axis)  # MAD along given axis
+
+    return mad
 
 def most_variable(data, n=500, axis=1):
     """Subset data to the n most variable genes
@@ -661,7 +701,7 @@ def most_variable(data, n=500, axis=1):
     """
 
     # Calculate variance for each gene
-    gene_variance = np.var(data, axis=1)
+    gene_variance = max_abs_dev(data, axis=1)
 
     # Get indexes in ascending order and take the last n
     sort_index = np.argsort(gene_variance)[-n:]
@@ -750,7 +790,7 @@ def heatmap(data, dendogram_method='centroid', color_setting=0.7,
 
 def most_variable_heatmap(counts):
     counts_log = np.log(counts + 1)
-    counts_variable = most_variable(counts_log, n=500)
+    counts_variable = most_variable(counts_log, n=1500)
     heatmap(counts_variable, color_setting=0.6)
 
 most_variable_heatmap(counts)
