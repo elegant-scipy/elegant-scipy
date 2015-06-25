@@ -735,6 +735,10 @@ def heatmap(data, dendogram_method='centroid', color_setting=0.7,
     axmatrix.set_xticks([])
     axmatrix.set_yticks([])
 
+    # Axis labels
+    plt.xlabel('Samples')
+    plt.ylabel('Genes', labelpad=125)
+
     # Plot legend
     axcolor = fig.add_axes([0.91,0.1,0.02,0.6])
     plt.colorbar(im, cax=axcolor)
