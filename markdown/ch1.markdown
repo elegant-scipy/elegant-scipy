@@ -649,70 +649,51 @@ PCA_plot(quantile_norm(counts))
 ```python
 # Note: We might want to change this to maximum absolute deviation?
 
-def median_abs_dev(data, axis=None):
-    """Calculate the median absolute deviation
-
-    Parameters
-    ----------
-    data : ndarray
-    axis :
-    """
-    return np.median(np.absolute(data - np.median(data, axis)), axis)
-
-def med_abs_dev(a, axis=None):
-    """
-    Compute Median Absolute Deviation of an ndarray along given axis.
+def median_absolute_deviation(a, axis=None):
+    """Compute Median Absolute Deviation of an ndarray along given axis.
     From http://informatique-python.readthedocs.org/en/latest/Exercices/mad.html
     """
-
-    med = np.median(a, axis=axis)                # Median along given axis
-    if axis is None:
-        umed = med                              # med is a scalar
-    else:
-        umed = np.expand_dims(med, axis)         # Bring back the vanished axis
-    mad = np.median(np.absolute(a - umed), axis=axis)  # MAD along given axis
-
+    med = np.median(a, axis=axis)
+    med = np.expand_dims(med, axis or 0)
+    mad = np.median(np.abs(a - med), axis=axis)
     return mad
 
-def max_abs_dev(a, axis=None):
-    """
-    Compute Maximum Absolute Deviation of an ndarray along given axis.
-    Based on http://informatique-python.readthedocs.org/en/latest/Exercices/mad.html
-    """
 
-    med = np.max(a, axis=axis)                # Median along given axis
-    if axis is None:
-        umed = med                              # med is a scalar
-    else:
-        umed = np.expand_dims(med, axis)         # Bring back the vanished axis
-    mad = np.max(np.absolute(a - umed), axis=axis)  # MAD along given axis
+def most_variable_rows(data, n=1500, axis=1, method='mad'):
+    """Subset data to the n most variable rows
 
-    return mad
-
-def most_variable(data, n=500, axis=1):
-    """Subset data to the n most variable genes
-    More generally, subset data to the n most variable columns
+    In this case, we want the n most variable genes.
 
     Parameters
     ----------
-    data : 2D ndarray of counts
-    n : return the top n most variable counts
-    axis : axis to provide to np.var
+    data : 2D array of float
+        The data to be subset
+    n : int, optional
+        Number of rows to return.
+    axis : {0, 1}, optional
+        The axis along which to compute variability
+    method : {'mad', 'var'}, optional
+        Use MAD (median absolute deviation) or variance to compute
+        variability.
     """
+    # compute variance along the axis with the chosen method
+    # e.g. variance of each gene over the samples
+    if method == 'mad':
+        rowvar = median_absolute_deviation(data, axis=axis)
+    elif method == 'var':
+        rowvar = np.var(data, axis=axis)
 
-    # Calculate variance for each gene
-    gene_variance = max_abs_dev(data, axis=1)
+    # Get sorted indices (ascending order), take the last n
+    sort_indices = np.argsort(rowvar)[-n:]
 
-    # Get indexes in ascending order and take the last n
-    sort_index = np.argsort(gene_variance)[-n:]
+    # use as index for data
+    variable_data = data[sort_indices,:]
 
-    # use as index for counts
-    counts_variable = data[sort_index,:]
+    return variable_data
 
-    return(counts_variable)
 
 counts_log = np.log(counts + 1)
-counts_variable = most_variable(counts_log)
+counts_variable = most_variable_rows(counts_log)
 ```
 
 ```python
@@ -721,40 +702,49 @@ import matplotlib.pyplot as plt
 import scipy.cluster.hierarchy as sch
 from scipy.spatial.distance import pdist, squareform
 
-def heatmap(data, dendogram_method='centroid', color_setting=0.7,
-            distance_metric='correlation'):
-    """Produce a heatmap with dendograms on each axis
+def bicluster(data, linkage_method='average', color_t=0.7,
+              distance_metric='correlation'):
+    """Perform a biclustering, plot a heatmap with dendograms on each axis.
 
     Parameters
     ----------
     data : 2D ndarray
         The input data to bicluster.
-    dendogram_method : string, optional
+    linkage_method : string, optional
         Method to be passed to sch.linkage()
-    color_setting : float, optional
+    color_t : float, optional
         Cutoff for different colours in the dendogram. Expressed as a
         fraction of the maximum distance between clusters.
     distance_metric : string, optional
         Distance metric to use for clustering. Anything accepted by
         `scipy.spatial.distance.pdist` is acceptable here.
+
+    Returns
+    -------
+    y_rows : linkage matrix
+        The clustering of the rows of the input data.
+    y_cols : linkage matrix
+        The clustering of the cols of the input data.
     """
 
     # Genes by genes distances
-    dist1 = squareform(pdist(data, distance_metric))
+    dist_rows = pdist(data, distance_metric)
     # Sample by sample distances (first transpose counts)
-    dist2 = squareform(pdist(data.T, distance_metric))
+    dist_cols = pdist(data.T, distance_metric)
 
     fig = plt.figure(figsize=(8,8))
 
     # Compute and plot first dendrogram.
     ax1 = fig.add_axes([0.09,0.1,0.2,0.6])
-    Y1 = sch.linkage(dist1, method=dendogram_method)
-    Z1 = sch.dendrogram(Y1, orientation='right', color_threshold=color_setting*np.max(Y1[:,2]))
+    y_rows = sch.linkage(dist_rows, method=linkage_method)
+    z_rows = sch.dendrogram(y_rows, orientation='right',
+                            color_threshold=color_t * np.max(y_rows[:, 2]))
 
     # Compute and plot second dendrogram.
     ax2 = fig.add_axes([0.3,0.71,0.6,0.2])
-    Y2 = sch.linkage(dist2, method=dendogram_method)
-    Z2 = sch.dendrogram(Y2, color_threshold=color_setting*np.max(Y2[:,2])) # To adjust number of colours decrease 0.7 e.g. 0.5
+    y_cols = sch.linkage(dist_cols, method=linkage_method)
+    z_cols = sch.dendrogram(y_cols,
+                            color_threshold=color_t * np.max(y_rows[:, 2]))
 
     # Hide axes labels
     ax1.set_xticks([])
@@ -766,12 +756,12 @@ def heatmap(data, dendogram_method='centroid', color_setting=0.7,
     axmatrix = fig.add_axes([0.3,0.1,0.6,0.6])
 
     # Sort data by the dendogram leaves
-    idx1 = sch.leaves_list(Y1)
-    idx2 = sch.leaves_list(Y2)
-    data = data[idx1,:]
-    data = data[:,idx2]
+    idx_rows = sch.leaves_list(y_rows)
+    data = data[idx_rows, :]
+    idx_cols = sch.leaves_list(y_cols)
+    data = data[:, idx_cols]
 
-    im = axmatrix.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu')
+    im = axmatrix.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
     axmatrix.set_xticks([])
     axmatrix.set_yticks([])
 
@@ -790,8 +780,8 @@ def heatmap(data, dendogram_method='centroid', color_setting=0.7,
 
 def most_variable_heatmap(counts):
     counts_log = np.log(counts + 1)
-    counts_variable = most_variable(counts_log, n=1500)
-    heatmap(counts_variable, color_setting=0.6)
+    counts_variable = most_variable_rows(counts_log, n=1500, method='var')
+    bicluster(counts_variable, color_t=0.6)
 
 most_variable_heatmap(counts)
 most_variable_heatmap(quantile_norm(counts))
