@@ -581,6 +581,7 @@ def plot_col_density(data, xlabel=None):
     plt.xlabel(xlabel)
     plt.show()
 
+
 # Before normalisation
 log_counts = np.log(counts + 1)
 plot_col_density(log_counts, xlabel="Log count distribution for each individual")
@@ -600,33 +601,33 @@ import numpy as np
 from scipy import stats
 
 def quantile_norm(X):
-  """ Given an expression matrix (microarray data, read counts, etc) of ngenes
-  by nsamples, quantile normalization ensures all samples have the same spread
-  of data (by construction).
-  The data is first log transformed. The rows are averaged and each column
-  quantile is replaced with the quantile of the average column.
+    """ Given an expression matrix (microarray data, read counts, etc) of ngenes
+    by nsamples, quantile normalization ensures all samples have the same spread
+    of data (by construction).
+    The data is first log transformed. The rows are averaged and each column
+    quantile is replaced with the quantile of the average column.
 
-  Parameters
-  ----------
-  X : 2D ndarray of counts
-  """
-  # log-transform the data
-  logX = np.log2(X + 1)
+    Parameters
+    ----------
+    X : 2D ndarray of counts
+    """
+    # log-transform the data
+    logX = np.log2(X + 1)
 
-  # compute the quantiles
-  log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
+    # compute the quantiles
+    log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
 
-  # compute the column-wise ranks; need to do a round-trip through list
-  ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
+    # compute the column-wise ranks; need to do a round-trip through list
+    ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
                         for col in X.T])
-  # alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
+    # alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
 
-  # index the quantiles for each rank with the ranks matrix
-  logXn = log_quantiles[ranks]
+    # index the quantiles for each rank with the ranks matrix
+    logXn = log_quantiles[ranks]
 
-  # convert the data back to counts (casting to int is optional)
-  Xn = np.round(2**logXn - 1).astype(int)
-  return(Xn)
+    # convert the data back to counts (casting to int is optional)
+    Xn = np.round(2**logXn - 1).astype(int)
+    return(Xn)
 
 # Example usage: quantile_norm(counts_lib_norm)
 ```
