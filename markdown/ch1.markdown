@@ -564,6 +564,28 @@ L is the length of the gene in base pairs (??? not kilobasepairs?)
 
 ## Quantile normalization with NumPy and SciPy
 
+```python
+def plot_col_density(data, xlabel=None):
+    """For each column (individual) produce a density plot over all rows (genes).
+
+    data : 2d nparray
+    xlabel : x axis label
+    """
+
+    density_per_col = [stats.kde.gaussian_kde(col) for col in data.T] # Use gaussian smoothing to estimate the density
+    x = np.linspace(np.min(data), np.max(data), 100)
+
+    plt.figure()
+    for density in density_per_col:
+        plt.plot(x, density(x))
+    plt.xlabel(xlabel)
+    plt.show()
+
+# Before normalisation
+log_counts = np.log(counts + 1)
+plot_col_density(log_counts, xlabel="Log count distribution for each individual")
+```
+
 Given an expression matrix (microarray data, read counts, etc) of ngenes by nsamples, quantile normalization ensures all samples have the same spread of data (by construction). It involves:
 
 (optionally) log-transforming the data
@@ -608,6 +630,14 @@ def quantile_norm(X):
 
 # Example usage: quantile_norm(counts_lib_norm)
 ```
+
+```python
+# After normalisation
+log_quant_norm_counts = np.log(quantile_norm(counts)+1)
+
+plot_col_density(log_quant_norm_counts, xlabel="Log count distribution for each individual")
+```
+
 
 ## Principal Components Analysis
 
