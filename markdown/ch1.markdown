@@ -504,7 +504,7 @@ gene_len_idxs = np.digitize(log_gene_lengths, gene_len_bins[:-1])
 # by plt.boxplot
 binned_counts = [mean_log_counts[gene_len_idxs == i]
                  for i in range(np.max(gene_len_idxs))]
-plt.figure(figsize=(12,3))
+plt.figure(figsize=(16,3))
 # Make the x-axis labels using real gene length
 gene_len_bin_centres = (gene_len_bins[1:] + gene_len_bins[:-1]) / 2
 gene_len_labels = np.round(np.exp(gene_len_bin_centres)).astype(int)
