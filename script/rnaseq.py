@@ -33,7 +33,7 @@ def getid_counts(lines, kind='symbol'):
 
 
 def sampleid_from_filename(filename):
-    return '.'.join(filename.split('.')[:3])
+    return '.'.join(filename.split('.')[2])
 
 
 def generate_counts_matrix(files):
