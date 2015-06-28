@@ -678,8 +678,6 @@ PCA_plot(quantile_norm(counts))
 ## Heatmap
 
 ```python
-# Note: We might want to change this to maximum absolute deviation?
-
 def median_absolute_deviation(a, axis=None):
     """Compute Median Absolute Deviation of an ndarray along given axis.
     From http://informatique-python.readthedocs.org/en/latest/Exercices/mad.html
@@ -721,10 +719,6 @@ def most_variable_rows(data, n=1500, axis=1, method='mad'):
     variable_data = data[sort_indices,:]
 
     return variable_data
-
-
-counts_log = np.log(counts + 1)
-counts_variable = most_variable_rows(counts_log)
 ```
 
 ```python
@@ -757,23 +751,17 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     y_cols : linkage matrix
         The clustering of the cols of the input data.
     """
-
-    # Genes by genes distances
-    dist_rows = pdist(data, distance_metric)
-    # Sample by sample distances (first transpose counts)
-    dist_cols = pdist(data.T, distance_metric)
-
     fig = plt.figure(figsize=(8,8))
 
-    # Compute and plot first dendrogram.
+    # Compute and plot row-wise dendogram
     ax1 = fig.add_axes([0.09,0.1,0.2,0.6])
-    y_rows = sch.linkage(dist_rows, method=linkage_method)
+    y_rows = sch.linkage(data, method=linkage_method, metric=distance_metric)
     z_rows = sch.dendrogram(y_rows, orientation='right',
                             color_threshold=color_t * np.max(y_rows[:, 2]))
 
-    # Compute and plot second dendrogram.
+    # Compute and plot column-wise dendogram
     ax2 = fig.add_axes([0.3,0.71,0.6,0.2])
-    y_cols = sch.linkage(dist_cols, method=linkage_method)
+    y_cols = sch.linkage(data.T, method=linkage_method, metric=distance_metric)
     z_cols = sch.dendrogram(y_cols,
                             color_threshold=color_t * np.max(y_rows[:, 2]))
 
@@ -804,35 +792,160 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     axcolor = fig.add_axes([0.91,0.1,0.02,0.6])
     plt.colorbar(im, cax=axcolor)
     plt.show()
+
+    return y_rows, y_cols
 ```
 
 ```python
-# Compare un-normalised and normalised heat maps
-
 def most_variable_heatmap(counts):
     counts_log = np.log(counts + 1)
     counts_variable = most_variable_rows(counts_log, n=1500, method='var')
-    bicluster(counts_variable, color_t=0.6)
+    yr, yc = bicluster(counts_variable, color_t=0.6)
+    return yr, yc
 
-most_variable_heatmap(counts)
-most_variable_heatmap(quantile_norm(counts))
+yr, yc = most_variable_heatmap(quantile_norm(counts))
 ```
 
-Diagnostic plots
-
-- P-value histogram
-- Volcano plot of results
-
-
-## Other topics that could be covered
-
-### NumPy/SciPy functions to cover
-np.log2
-np.mean
-np.sort
-np.round
+We can see that the data naturally fall into NUMCLUSTERS clusters.
+Are these clusters meaningful?
+To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
+After some preprocessing, we get the [patients table]() (LINK TO FINAL PATIENTS TABLE), which contains survival information for each patient.
+We can then match these to the counts clusters, and understand whether the patients' gene expression can predict differences in their pathology.
 
 ```python
-from scipy import stats
-stats.rankdata
+patients = pd.read_csv('data/patients.csv', index_col=0)
+patients.head()
 ```
+
+Now we need to draw *survival curves* for each group of patients defined by the clustering.
+This is a plot of the fraction of a population that remains alive over a period of time.
+Note that some data is *right-censored*, which means that in some cases, don't actually know when the patient died, or the patient might have died of causes unrelated to the melanoma.
+We counts these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
+
+To obtain a survival curve from survival times, we merely create a step function that decreases by $1/n$ at each step, where $n$ is the population size.
+We then match that function against the non-censored survival times.
+
+```python
+def survival_distribution_function(lifetimes, right_censored=None):
+    """Return the survival distribution function of a set of lifetimes.
+
+    Parameters
+    ----------
+    lifetimes : array of float or int
+        The observed lifetimes of a population. These must be non-
+        -negative.
+    right_censored : array of bool, same shape as `lifetimes`
+        A value of `True` here indicates that this lifetime was not
+        observed. Values of `np.nan` in `lifetimes` are also considered
+        to be right-censored.
+
+    Returns
+    -------
+    sorted_lifetimes : array of float
+        The
+    sdf : array of float
+        Values starting at 1 and progressively decreasing, one level
+        for each observation in `lifetimes`.
+
+    Examples
+    --------
+
+    In this example, of a population of four, two die at time 1, a
+    third dies at time 2, and a final individual dies at an unknown
+    time. (Hence, ``np.nan``.)
+
+    >>> lifetimes = np.array([2, 1, 1, np.nan])
+    >>> survival_distribution_function(lifetimes)
+    (array([ 0.,  1.,  1.,  2.]), array([ 1.  ,  0.75,  0.5 ,  0.25]))
+    """
+    n_obs = len(lifetimes)
+    rc = np.isnan(lifetimes)
+    if right_censored is not None:
+        rc |= right_censored
+    observed = lifetimes[~rc]
+    xs = np.concatenate(([0], np.sort(observed)))
+    ys = np.concatenate((np.arange(1, 0, -1/n_obs), [0]))
+    ys = ys[:len(xs)]
+    return xs, ys
+```
+
+Now that we can easily obtain survival curves from the survival data, we can plot them.
+We write a function that groups the survival times by cluster identity and plots each group as a different line:
+
+```python
+
+def plot_cluster_survival_curves(clusters, sample_names, patients,
+                                 censor=True):
+    """Plot the survival data from a set of sample clusters.
+
+    Parameters
+    ----------
+    clusters : array of int or categorical pd.Series
+        The cluster identity of each sample, encoded as a simple int
+        or as a pandas categorical variable.
+    sample_names : list of string
+        The name corresponding to each sample. Must be the same length
+        as `clusters`.
+    patients : pandas.DataFrame
+        The DataFrame containing survival information for each patient.
+        The indices of this DataFrame must correspond to the
+        `sample_names`. Samples not represented in this list will be
+        ignored.
+    censor : bool, optional
+        If `True`, use `patients['melanoma-dead']` to right-censor the
+        survival data.
+    """
+    plt.figure()
+    if type(clusters) == np.ndarray:
+        cluster_ids = np.unique(clusters)
+        cluster_names = ['cluster {}'.format(i) for i in cluster_ids]
+    elif type(clusters) == pd.Series:
+        cluster_ids = clusters.cat.categories
+        cluster_names = list(cluster_ids)
+    n_clusters = len(cluster_ids)
+    for c in cluster_ids:
+        clust_samples = np.flatnonzero(clusters == c)
+        # discard patients not present in survival data
+        clust_samples = [sample_names[i] for i in clust_samples
+                         if sample_names[i] in patients.index]
+        patient_cluster = patients.loc[clust_samples]
+        survival_times = np.array(patient_cluster['melanoma-survival-time'])
+        if censor:
+            censored = ~np.array(patient_cluster['melanoma-dead']).astype(bool)
+        else:
+            censored = None
+        stimes, sfracs = survival_distribution_function(survival_times,
+                                                        censored)
+        plt.plot(stimes / 365, sfracs)
+
+    plt.xlabel('survival time (years)')
+    plt.ylabel('fraction alive')
+    plt.legend(cluster_names)
+```
+
+Now we can use the `fcluster` function to obtain cluster identities for the samples (columns of the counts data), and plot each survival curve separately.
+The `fcluster` function takes a linkage matrix, as returned by `linkage`, and a threshold, and returns cluster identities.
+It's difficult to know a-priori what the threshold should be, but we can obtain the appropriate threshold for a fixed number of clusters by checking the distances in the linkage matrix.
+
+```python
+n_clusters = 3
+threshold_distance = (yc[-n_clusters, 2] + yc[-n_clusters+1, 2]) / 2
+clusters = sch.fcluster(yc, threshold_distance, 'distance')
+
+plot_cluster_survival_curves(clusters, data_table.columns, patients)
+```
+
+The clustering of gene expression profiles has identified a higher-risk subtype of melanoma, which constitutes the majority of patients.
+This is indeed only the latest study to show such a result, with others identifying subtypes of leukemia (blood cancer), gut cancer, and more.
+Although the above clustering technique is quite fragile, there are other ways to explore this dataset and similar ones that are more robust.
+We leave you the exercise of implementing the approach described in the paper:
+
+1. Take bootstrap samples (random choice with replacement) of the genes used to cluster the samples;
+2. For each sample, produce a hierarchical clustering;
+3. In a `(n_samples, n_samples)`-shaped matrix, store the number of times a sample pair appears together in a bootstrapped clustering.
+4. Perform a hierarchical clustering on the resulting matrix.
+
+This identifies groups of samples that frequently occur together in clusterings, regardless of the genes chosen.
+Thus, these samples can be considered to robustly cluster together.
+
+*Hint: use `np.random.choice` with `replacement=True` to create bootstrap samples of row indices.*
