@@ -595,7 +595,7 @@ and the gene length.
 
 Let's say:  
 C = Number of reads mapped to a gene  
-L = exon length in base-pairs for a gene
+L = exon length in base-pairs for a gene  
 N = Total mapped reads in the experiment  
 
 First, let's calculate reads per kilobase.
@@ -609,12 +609,12 @@ One kilobase = 1000 bases, so we'll need to divide length (L) by 1000.
 Reads per kilobase would be:  
 $\frac{C}{L/1000}  = \frac{10^3C}{L}$
 
-Finally, we need to normalise by library size.
+Next, we need to normalise by library size.
 If we just divide by the number of mapped reads we get:  
 $ \frac{10^3C}{LN} $
 
-But biologists like thinking in millions of reads so the numbers don't get
-too big, so per million reads we get:  
+But biologists like thinking in millions of reads so that the numbers don't get
+too big. Counting per million reads we get:  
 $ \frac{10^3C}{L(N/10^6)} = \frac{10^9C}{LN}$
 
 
@@ -627,60 +627,124 @@ N = Total mapped reads in the experiment
 L = exon length in base-pairs for a gene
 
 Now let's implement RPKM over the entire counts array.
-First, we multiple by 10^9.
 
 ```python
+# Make our variable names the same as the RPKM formula so we can compare easily
 C = counts
 N = counts.sum(axis=0) # sum each column to get total reads per sample
-L = gene_lengths
+L = gene_lengths # lengths for each gene in the same order as the rows in counts
+```
 
-# Multiple all counts by 10^9
-temp_data = 10^9 * C
+First, we multiply by 10^9.
+Because counts (C) is an ndarray, we can use broadcasting.
+If we multiple an ndarray by a single value,
+that value is broadcast over the entire array.
+
+```python
+# Multiply all counts by 10^9
+C_tmp = 10^9 * C
 ```
 Next we need to divide by the gene length.
 Broadcasting a single value over a 2D array was pretty clear.
-We are just multiplying every element in the array by the value.
+We were just multiplying every element in the array by the value.
 But what happens when we need to divide a 2D array by a 1D array?
-First, let's have a look at the dimensions of our two arrays.
+
+##### Broadcasting rules [tip box?]
+
+Broadcasting allows calculations between ndarrays that have a different
+number of dimensions.
+
+If the input arrays do not have the same number of dimensions,
+then then an additional dimension is added to the start of the first array,
+with a value of 1.
+Once the two arrays have the same number of dimensions,
+broadcasting can only occur if the sizes of the dimensions match,
+or one of them is equal to 1.
+
+For example, let's say we have two ndarrays, A and B:  
+A.shape = (1, 2)  
+B.shape = (2,)
+
+If we performed the operation `A * B` then broadcasting would occur.
+B has fewer dimension than A, so during the calculation
+a new dimension is prepended to B with value 1.  
+B.shape = (1, 2)  
+Now A and B have the same number of dimension, so broadcasting can proceed.
+
+Now let's say we have another ndarray, C:  
+C.shape = (2, 1)  
+B.shape = (2,)  
+Now, if we were to do the oparation `C * B`,
+a new dimenion needs to be prepended to B.  
+B.shape = (1, 2)  
+However, the dimensions of the two ndarrays do not match,
+so broadcasting will fail.
+
+Let's say that we know that it is appropriate to broadcast B over C.
+We can explicitly add a new dimension to B using `np.newaxis`.
+Let's see this in our normalisation by RPKM.
+
+Let's have a look at the dimensions of our two arrays.
 
 ```python
-# Check the shapes of temp_data and L
-print('temp_data.shape', temp_data.shape)
+# Check the shapes of C_tmp and L
+print('C_tmp.shape', C_tmp.shape)
 print('L.shape', L.shape)
 ```
 
+We can see that C_tmp has 2 dimensions, while L has one.
+So during broadcasting, an additional dimension will be prepended to L.
+Then we will have:  
+C_tmp.shape (20500, 375)  
+L.shape (1, 20500)
 
+The dimensions won't match!
+We want to broadcast L over the first dimension of C_temp,
+so we need to adjust the dimensions of L ourselves.
 
 ```python
-L = L[:, np.newaxis]
-print('temp_data.shape', temp_data.shape)
+L = L[:, np.newaxis] # append a dimension to L, with value 1
+print('C_tmp.shape', C_tmp.shape)
 print('L.shape', L.shape)
 ```
+
+Now that our dimensions match or are equal to 1, we can broadcast.
 
 ```python
 # Divide each row by the gene length for that gene (L)
-temp_data = temp_data / L
+C_tmp = C_tmp / L
 ```
 
+Finally we need to normalise by the libaray size,
+the total number of counts for that column.
+Remember that we have already calculated N.
+
+`N = counts.sum(axis=0) # sum each column to get total reads per sample`
+
 ```python
-# Divide each column by the total counts for that column (N)
-# Check the shapes of temp_data and N
-print('temp_data.shape', temp_data.shape)
+# Check the shapes of C_tmp and N
+print('C_tmp.shape', C_tmp.shape)
 print('N.shape', N.shape)
 ```
 
+Once we trigger broadcasting, an additional dimension will be prepended to N:  
+N.shape (1, 375)  
+The dimensions will match so we don't have to do anything.
+However, for readability, it can be useful to add the extra dimension to N anyway.
+
 ```python
+# Divide each column by the total counts for that column (N)
 N = N[np.newaxis, :]
-print('temp_data.shape', temp_data.shape)
+print('C_tmp.shape', C_tmp.shape)
 print('N.shape', N.shape)
 ```
 
 ```python
 # Divide each column by the total counts for that column (N)
-rpkm_counts = temp_data / N
+rpkm_counts = C_tmp / N
 ```
 
-Let's put this in a funciton so we can reuse it.
+Let's put this in a function so we can reuse it.
 
 ```python
 def rpkm(data, lengths):
