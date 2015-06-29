@@ -724,11 +724,11 @@ def most_variable_rows(data, n=1500, axis=1, method='mad'):
 ```python
 import scipy
 import matplotlib.pyplot as plt
-import scipy.cluster.hierarchy as sch
+from scipy.cluster.hierarchy import linkage, fcluster, dendrogram, leaves_list
 from scipy.spatial.distance import pdist, squareform
 
-def bicluster(data, linkage_method='average', color_t=0.7,
-              distance_metric='correlation'):
+def bicluster(data, linkage_method='average',
+              n_clusters_r=10, n_clusters_c=3, distance_metric='correlation'):
     """Perform a biclustering, plot a heatmap with dendograms on each axis.
 
     Parameters
@@ -736,13 +736,12 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     data : 2D ndarray
         The input data to bicluster.
     linkage_method : string, optional
-        Method to be passed to sch.linkage()
-    color_t : float, optional
-        Cutoff for different colours in the dendogram. Expressed as a
-        fraction of the maximum distance between clusters.
+        Method to be passed to `linkage`.
+    n_clusters_r, n_clusters_c : int, optional
+        Number of clusters for rows and columns.
     distance_metric : string, optional
         Distance metric to use for clustering. Anything accepted by
-        `scipy.spatial.distance.pdist` is acceptable here.
+        `pdist` is acceptable here.
 
     Returns
     -------
@@ -751,19 +750,31 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     y_cols : linkage matrix
         The clustering of the cols of the input data.
     """
-    fig = plt.figure(figsize=(8,8))
+    fig = plt.figure(figsize=(8, 8))
 
     # Compute and plot row-wise dendogram
-    ax1 = fig.add_axes([0.09,0.1,0.2,0.6])
-    y_rows = sch.linkage(data, method=linkage_method, metric=distance_metric)
-    z_rows = sch.dendrogram(y_rows, orientation='right',
-                            color_threshold=color_t * np.max(y_rows[:, 2]))
+    # `add_axes` takes a "rectangle" input to add a subplot to a figure.
+    # The figure is considered to have side-length 1 on each side, and its
+    # bottom-left corner is at (0, 0).
+    # The measurements passed to `add_axes` are the left, bottom, width, and
+    # height of the subplot. Thus, to draw the left dendogram (for the rows),
+    # we create a rectangle whose bottom-left corner is at (0.09, 0.1), and
+    # measuring 0.2 in width and 0.6 in height.
+    ax1 = fig.add_axes([0.09, 0.1, 0.2, 0.6])
+    y_rows = linkage(data, method=linkage_method, metric=distance_metric)
+    # For a given number of clusters, we can obtain a cut of the linkage
+    # tree by looking at the corresponding distance annotation in the linkage
+    # matrix.
+    threshold_r = (y_rows[-n_clusters_r, 2] + y_rows[-n_clusters_r+1, 2]) / 2
+    z_rows = dendrogram(y_rows, orientation='right',
+                        color_threshold=threshold_r)
 
     # Compute and plot column-wise dendogram
-    ax2 = fig.add_axes([0.3,0.71,0.6,0.2])
-    y_cols = sch.linkage(data.T, method=linkage_method, metric=distance_metric)
-    z_cols = sch.dendrogram(y_cols,
-                            color_threshold=color_t * np.max(y_rows[:, 2]))
+    # See notes above for explanation of parameters to `add_axes`
+    ax2 = fig.add_axes([0.3, 0.71, 0.6, 0.2])
+    y_cols = linkage(data.T, method=linkage_method, metric=distance_metric)
+    threshold_c = (y_cols[-n_clusters_c, 2] + y_cols[-n_clusters_c+1, 2]) / 2
+    z_cols = dendrogram(y_cols, color_threshold=threshold_c)
 
     # Hide axes labels
     ax1.set_xticks([])
@@ -775,9 +786,9 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     axmatrix = fig.add_axes([0.3,0.1,0.6,0.6])
 
     # Sort data by the dendogram leaves
-    idx_rows = sch.leaves_list(y_rows)
+    idx_rows = leaves_list(y_rows)
     data = data[idx_rows, :]
-    idx_cols = sch.leaves_list(y_cols)
+    idx_cols = leaves_list(y_cols)
     data = data[:, idx_cols]
 
     im = axmatrix.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
@@ -800,7 +811,7 @@ def bicluster(data, linkage_method='average', color_t=0.7,
 def most_variable_heatmap(counts):
     counts_log = np.log(counts + 1)
     counts_variable = most_variable_rows(counts_log, n=1500, method='var')
-    yr, yc = bicluster(counts_variable, color_t=0.6)
+    yr, yc = bicluster(counts_variable)
     return yr, yc
 
 yr, yc = most_variable_heatmap(quantile_norm(counts))
@@ -930,7 +941,7 @@ It's difficult to know a-priori what the threshold should be, but we can obtain 
 ```python
 n_clusters = 3
 threshold_distance = (yc[-n_clusters, 2] + yc[-n_clusters+1, 2]) / 2
-clusters = sch.fcluster(yc, threshold_distance, 'distance')
+clusters = fcluster(yc, threshold_distance, 'distance')
 
 plot_cluster_survival_curves(clusters, data_table.columns, patients)
 ```
