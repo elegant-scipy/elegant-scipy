@@ -1,10 +1,75 @@
+# Elegant NumPy: The foundation of scientific computing in Python
 
-# 2D Array Manipulation for RNAseq
+This chapter touches on some statistical functions in SciPy, but more than that, it focuses on exploring the NumPy array, a data structure that underlies almost all numerical scientific computation in Python.
+We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
+
+Our use case is the analysis of gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from The Cancer Genome Atlas (TCGA) project.
+(We will unpack what "gene expression" means in just a moment.)
+
+The code we will work to understand is an implementation of [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
+This requires a strong assumption: if the data are not distributed according to a bell curve, we just make one!
+But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
+For example, Bolstad and colleagues [showed](http://bioinformatics.oxfordjournals.org/content/19/2/185.full.pdf) that it performs admirably in recovering known expression levels in microarray data.
+
+Using NumPy indexing tricks and the `scipy.stats.rank_data` function, quantile normalization is fast, efficient, and elegant in Python.
+
+```python
+import numpy as np
+from scipy import stats
+
+def quantile_norm(X):
+    """Normalize the columns of X to each have the same distribution.
+
+    Given an expression matrix (microarray data, read counts, etc) of ngenes
+    by nsamples, quantile normalization ensures all samples have the same spread of data (by construction).
+
+    The input data is log-transformed. The rows are averaged and each column
+    quantile is replaced with the quantile of the average column.
+
+    Parameters
+    ----------
+    X : 2D array of float, shape (M, N)
+        The input data, with n_features rows and n_samples columns.
+
+    Returns
+    -------
+    Xn : 2D array of float, shape (M, N)
+        The normalized data.
+    """
+    # log-transform the data
+    logX = np.log2(X + 1)
+
+    # compute the quantiles
+    log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
+
+    # compute the column-wise ranks. Each observation is replaced with its
+    # rank in that column: the smallest observation is replaced by 0, the
+    # second-smallest by 1, ..., and the largest by M, the number of rows.
+    ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
+                          for col in X.T])
+
+    # index the quantiles for each rank with the ranks matrix
+    logXn = log_quantiles[ranks]
+
+    # convert the data back to counts (casting to int is optional)
+    Xn = np.round(2**logXn - 1).astype(int)
+    return(Xn)
+```
+
+We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful:
+
+- Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
+- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $log(x + 1)$ for every value in the array.
+- Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
+- Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
+- Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
+
+Before we delve into the power of NumPy, let's spend some time to understand the biological data that we will be working with.
 
 ## Gene Expression
 
 In this chapter we’re going to work our way through a gene expression analysis to demonstrate the power of SciPy to solve a real-world biological problem that I come across everyday.
-Along the way we will use Pandas to parse tabular data, and then manipulate our data efficiently in Numpy ndarrays.
+Along the way we will use Pandas to parse tabular data, and then manipulate our data efficiently in NumPy ndarrays.
 
 But before we get to the juicy code, let me fill you in about my particular biological problem.
 The central dogma of genetics says that all the information to run a cell is stored in the DNA.
