@@ -523,18 +523,130 @@ plt.ylabel('average log-counts')
 plt.show()
 ```
 
-(some simple descriptive statistics and plots PCA/MDS?)
+One of the simplest normalisation methods for RNAseq data is RPKM: reads per
+kilobase transcript per million reads.
+This means we are normalising for both the library size (the sum of each column)
+and the gene length.
 
-Convert to RPKM: Reads per kilobase transcript per million reads
+Let's say:  
+C = Number of reads mapped to a gene  
+L = exon length in base-pairs for a gene
+N = Total mapped reads in the experiment  
 
-C = Number of reads mapped to a gene
+First, let's calculate reads per kilobase.
 
-N = Total mapped reads in the experiment
+Reads per base would be:  
+$\frac{C}{L}$
 
+The formula asks for reads per kilobase instead of reads per base.
+One kilobase = 1000 bases, so we'll need to divide length (L) by 1000.
+
+Reads per kilobase would be:  
+$\frac{C}{L/1000}  = \frac{10^3C}{L}$
+
+Finally, we need to normalise by library size.
+If we just divide by the number of mapped reads we get:  
+$ \frac{10^3C}{LN} $
+
+But biologists like thinking in millions of reads so the numbers don't get
+too big, so per million reads we get:  
+$ \frac{10^3C}{L(N/10^6)} = \frac{10^9C}{LN}$
+
+
+In summary, to calculate reads per kilobase transcript per million reads:  
+$RPKM = \frac{10^9C}{LN}$
+
+Where:  
+C = Number of reads mapped to a gene  
+N = Total mapped reads in the experiment  
 L = exon length in base-pairs for a gene
 
-Equation = RPKM = (10^9 * C)/(N * L)
+Now let's implement RPKM over the entire counts array.
+First, we multiple by 10^9.
 
+```python
+C = counts
+N = counts.sum(axis=0) # sum each column to get total reads per sample
+L = gene_lengths
+
+# Multiple all counts by 10^9
+temp_data = 10^9 * C
+```
+Next we need to divide by the gene length.
+Broadcasting a single value over a 2D array was pretty clear.
+We are just multiplying every element in the array by the value.
+But what happens when we need to divide a 2D array by a 1D array?
+First, let's have a look at the dimensions of our two arrays.
+
+```python
+# Check the shapes of temp_data and L
+print('temp_data.shape', temp_data.shape)
+print('L.shape', L.shape)
+```
+
+
+
+```python
+L = L[:, np.newaxis]
+print('temp_data.shape', temp_data.shape)
+print('L.shape', L.shape)
+```
+
+```python
+# Divide each row by the gene length for that gene (L)
+temp_data = temp_data / L
+```
+
+```python
+# Divide each column by the total counts for that column (N)
+# Check the shapes of temp_data and N
+print('temp_data.shape', temp_data.shape)
+print('N.shape', N.shape)
+```
+
+```python
+N = N[np.newaxis, :]
+print('temp_data.shape', temp_data.shape)
+print('N.shape', N.shape)
+```
+
+```python
+# Divide each column by the total counts for that column (N)
+rpkm_counts = temp_data / N
+```
+
+Let's put this in a funciton so we can reuse it.
+
+```python
+def rpkm(data, lengths):
+    """calculate reads per kilobase transcript per million reads
+    RPKM = (10^9 * C) / (N * L)
+
+    Where:  
+    C = Number of reads mapped to a gene  
+    N = Total mapped reads in the experiment  
+    L = exon length in base-pairs for a gene
+
+    data: 2d ndarray of counts where columns are individual samples and rows
+        are genes
+    lengths: list or 1d nd array of the gene lengths in bp in the same order
+        as the rows
+    """
+
+    N = data.sum(axis=0) # sum each column to get total reads per sample
+    L = lengths
+    C = data
+
+    rpkm = ( (10^9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
+
+    return(rpkm)
+
+counts_rpkm = rpkm(counts, gene_lengths)  
+```
+
+```python
+# Repeat binned boxplot with RPKM values
+```
 
 ```python
 # plot of a small gene vs a big gene
@@ -558,8 +670,6 @@ L is the length of the gene in base pairs (??? not kilobasepairs?)
 # Convert to RPKM
 # Redo plot showing new relationship between the genes
 ```
-
-
 
 
 ## Quantile normalization with NumPy and SciPy
