@@ -1,10 +1,75 @@
+# Elegant NumPy: The foundation of scientific computing in Python
 
-# 2D Array Manipulation for RNAseq
+This chapter touches on some statistical functions in SciPy, but more than that, it focuses on exploring the NumPy array, a data structure that underlies almost all numerical scientific computation in Python.
+We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
+
+Our use case is the analysis of gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from The Cancer Genome Atlas (TCGA) project.
+(We will unpack what "gene expression" means in just a moment.)
+
+The code we will work to understand is an implementation of [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
+This requires a strong assumption: if the data are not distributed according to a bell curve, we just make one!
+But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
+For example, Bolstad and colleagues [showed](http://bioinformatics.oxfordjournals.org/content/19/2/185.full.pdf) that it performs admirably in recovering known expression levels in microarray data.
+
+Using NumPy indexing tricks and the `scipy.stats.rank_data` function, quantile normalization is fast, efficient, and elegant in Python.
+
+```python
+import numpy as np
+from scipy import stats
+
+def quantile_norm(X):
+    """Normalize the columns of X to each have the same distribution.
+
+    Given an expression matrix (microarray data, read counts, etc) of ngenes
+    by nsamples, quantile normalization ensures all samples have the same spread of data (by construction).
+
+    The input data is log-transformed. The rows are averaged and each column
+    quantile is replaced with the quantile of the average column.
+
+    Parameters
+    ----------
+    X : 2D array of float, shape (M, N)
+        The input data, with n_features rows and n_samples columns.
+
+    Returns
+    -------
+    Xn : 2D array of float, shape (M, N)
+        The normalized data.
+    """
+    # log-transform the data
+    logX = np.log2(X + 1)
+
+    # compute the quantiles
+    log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
+
+    # compute the column-wise ranks. Each observation is replaced with its
+    # rank in that column: the smallest observation is replaced by 0, the
+    # second-smallest by 1, ..., and the largest by M, the number of rows.
+    ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
+                          for col in X.T])
+
+    # index the quantiles for each rank with the ranks matrix
+    logXn = log_quantiles[ranks]
+
+    # convert the data back to counts (casting to int is optional)
+    Xn = np.round(2**logXn - 1).astype(int)
+    return(Xn)
+```
+
+We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful:
+
+- Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
+- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $log(x + 1)$ for every value in the array.
+- Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
+- Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
+- Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
+
+Before we delve into the power of NumPy, let's spend some time to understand the biological data that we will be working with.
 
 ## Gene Expression
 
 In this chapter we’re going to work our way through a gene expression analysis to demonstrate the power of SciPy to solve a real-world biological problem that I come across everyday.
-Along the way we will use Pandas to parse tabular data, and then manipulate our data efficiently in Numpy ndarrays.
+Along the way we will use Pandas to parse tabular data, and then manipulate our data efficiently in NumPy ndarrays.
 
 But before we get to the juicy code, let me fill you in about my particular biological problem.
 The central dogma of genetics says that all the information to run a cell is stored in the DNA.
@@ -788,8 +853,6 @@ PCA_plot(quantile_norm(counts))
 ## Heatmap
 
 ```python
-# Note: We might want to change this to maximum absolute deviation?
-
 def median_absolute_deviation(a, axis=None):
     """Compute Median Absolute Deviation of an ndarray along given axis.
     From http://informatique-python.readthedocs.org/en/latest/Exercices/mad.html
@@ -831,20 +894,16 @@ def most_variable_rows(data, n=1500, axis=1, method='mad'):
     variable_data = data[sort_indices,:]
 
     return variable_data
-
-
-counts_log = np.log(counts + 1)
-counts_variable = most_variable_rows(counts_log)
 ```
 
 ```python
 import scipy
 import matplotlib.pyplot as plt
-import scipy.cluster.hierarchy as sch
+from scipy.cluster.hierarchy import linkage, fcluster, dendrogram, leaves_list
 from scipy.spatial.distance import pdist, squareform
 
-def bicluster(data, linkage_method='average', color_t=0.7,
-              distance_metric='correlation'):
+def bicluster(data, linkage_method='average',
+              n_clusters_r=10, n_clusters_c=3, distance_metric='correlation'):
     """Perform a biclustering, plot a heatmap with dendograms on each axis.
 
     Parameters
@@ -852,13 +911,12 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     data : 2D ndarray
         The input data to bicluster.
     linkage_method : string, optional
-        Method to be passed to sch.linkage()
-    color_t : float, optional
-        Cutoff for different colours in the dendogram. Expressed as a
-        fraction of the maximum distance between clusters.
+        Method to be passed to `linkage`.
+    n_clusters_r, n_clusters_c : int, optional
+        Number of clusters for rows and columns.
     distance_metric : string, optional
         Distance metric to use for clustering. Anything accepted by
-        `scipy.spatial.distance.pdist` is acceptable here.
+        `pdist` is acceptable here.
 
     Returns
     -------
@@ -867,25 +925,31 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     y_cols : linkage matrix
         The clustering of the cols of the input data.
     """
+    fig = plt.figure(figsize=(8, 8))
 
-    # Genes by genes distances
-    dist_rows = pdist(data, distance_metric)
-    # Sample by sample distances (first transpose counts)
-    dist_cols = pdist(data.T, distance_metric)
+    # Compute and plot row-wise dendogram
+    # `add_axes` takes a "rectangle" input to add a subplot to a figure.
+    # The figure is considered to have side-length 1 on each side, and its
+    # bottom-left corner is at (0, 0).
+    # The measurements passed to `add_axes` are the left, bottom, width, and
+    # height of the subplot. Thus, to draw the left dendogram (for the rows),
+    # we create a rectangle whose bottom-left corner is at (0.09, 0.1), and
+    # measuring 0.2 in width and 0.6 in height.
+    ax1 = fig.add_axes([0.09, 0.1, 0.2, 0.6])
+    y_rows = linkage(data, method=linkage_method, metric=distance_metric)
+    # For a given number of clusters, we can obtain a cut of the linkage
+    # tree by looking at the corresponding distance annotation in the linkage
+    # matrix.
+    threshold_r = (y_rows[-n_clusters_r, 2] + y_rows[-n_clusters_r+1, 2]) / 2
+    z_rows = dendrogram(y_rows, orientation='right',
+                        color_threshold=threshold_r)
 
-    fig = plt.figure(figsize=(8,8))
-
-    # Compute and plot first dendrogram.
-    ax1 = fig.add_axes([0.09,0.1,0.2,0.6])
-    y_rows = sch.linkage(dist_rows, method=linkage_method)
-    z_rows = sch.dendrogram(y_rows, orientation='right',
-                            color_threshold=color_t * np.max(y_rows[:, 2]))
-
-    # Compute and plot second dendrogram.
-    ax2 = fig.add_axes([0.3,0.71,0.6,0.2])
-    y_cols = sch.linkage(dist_cols, method=linkage_method)
-    z_cols = sch.dendrogram(y_cols,
-                            color_threshold=color_t * np.max(y_rows[:, 2]))
+    # Compute and plot column-wise dendogram
+    # See notes above for explanation of parameters to `add_axes`
+    ax2 = fig.add_axes([0.3, 0.71, 0.6, 0.2])
+    y_cols = linkage(data.T, method=linkage_method, metric=distance_metric)
+    threshold_c = (y_cols[-n_clusters_c, 2] + y_cols[-n_clusters_c+1, 2]) / 2
+    z_cols = dendrogram(y_cols, color_threshold=threshold_c)
 
     # Hide axes labels
     ax1.set_xticks([])
@@ -897,9 +961,9 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     axmatrix = fig.add_axes([0.3,0.1,0.6,0.6])
 
     # Sort data by the dendogram leaves
-    idx_rows = sch.leaves_list(y_rows)
+    idx_rows = leaves_list(y_rows)
     data = data[idx_rows, :]
-    idx_cols = sch.leaves_list(y_cols)
+    idx_cols = leaves_list(y_cols)
     data = data[:, idx_cols]
 
     im = axmatrix.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
@@ -914,35 +978,160 @@ def bicluster(data, linkage_method='average', color_t=0.7,
     axcolor = fig.add_axes([0.91,0.1,0.02,0.6])
     plt.colorbar(im, cax=axcolor)
     plt.show()
+
+    return y_rows, y_cols
 ```
 
 ```python
-# Compare un-normalised and normalised heat maps
-
 def most_variable_heatmap(counts):
     counts_log = np.log(counts + 1)
     counts_variable = most_variable_rows(counts_log, n=1500, method='var')
-    bicluster(counts_variable, color_t=0.6)
+    yr, yc = bicluster(counts_variable)
+    return yr, yc
 
-most_variable_heatmap(counts)
-most_variable_heatmap(quantile_norm(counts))
+yr, yc = most_variable_heatmap(quantile_norm(counts))
 ```
 
-Diagnostic plots
-
-- P-value histogram
-- Volcano plot of results
-
-
-## Other topics that could be covered
-
-### NumPy/SciPy functions to cover
-np.log2
-np.mean
-np.sort
-np.round
+We can see that the data naturally fall into NUMCLUSTERS clusters.
+Are these clusters meaningful?
+To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
+After some preprocessing, we get the [patients table]() (LINK TO FINAL PATIENTS TABLE), which contains survival information for each patient.
+We can then match these to the counts clusters, and understand whether the patients' gene expression can predict differences in their pathology.
 
 ```python
-from scipy import stats
-stats.rankdata
+patients = pd.read_csv('data/patients.csv', index_col=0)
+patients.head()
 ```
+
+Now we need to draw *survival curves* for each group of patients defined by the clustering.
+This is a plot of the fraction of a population that remains alive over a period of time.
+Note that some data is *right-censored*, which means that in some cases, don't actually know when the patient died, or the patient might have died of causes unrelated to the melanoma.
+We counts these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
+
+To obtain a survival curve from survival times, we merely create a step function that decreases by $1/n$ at each step, where $n$ is the population size.
+We then match that function against the non-censored survival times.
+
+```python
+def survival_distribution_function(lifetimes, right_censored=None):
+    """Return the survival distribution function of a set of lifetimes.
+
+    Parameters
+    ----------
+    lifetimes : array of float or int
+        The observed lifetimes of a population. These must be non-
+        -negative.
+    right_censored : array of bool, same shape as `lifetimes`
+        A value of `True` here indicates that this lifetime was not
+        observed. Values of `np.nan` in `lifetimes` are also considered
+        to be right-censored.
+
+    Returns
+    -------
+    sorted_lifetimes : array of float
+        The
+    sdf : array of float
+        Values starting at 1 and progressively decreasing, one level
+        for each observation in `lifetimes`.
+
+    Examples
+    --------
+
+    In this example, of a population of four, two die at time 1, a
+    third dies at time 2, and a final individual dies at an unknown
+    time. (Hence, ``np.nan``.)
+
+    >>> lifetimes = np.array([2, 1, 1, np.nan])
+    >>> survival_distribution_function(lifetimes)
+    (array([ 0.,  1.,  1.,  2.]), array([ 1.  ,  0.75,  0.5 ,  0.25]))
+    """
+    n_obs = len(lifetimes)
+    rc = np.isnan(lifetimes)
+    if right_censored is not None:
+        rc |= right_censored
+    observed = lifetimes[~rc]
+    xs = np.concatenate(([0], np.sort(observed)))
+    ys = np.concatenate((np.arange(1, 0, -1/n_obs), [0]))
+    ys = ys[:len(xs)]
+    return xs, ys
+```
+
+Now that we can easily obtain survival curves from the survival data, we can plot them.
+We write a function that groups the survival times by cluster identity and plots each group as a different line:
+
+```python
+
+def plot_cluster_survival_curves(clusters, sample_names, patients,
+                                 censor=True):
+    """Plot the survival data from a set of sample clusters.
+
+    Parameters
+    ----------
+    clusters : array of int or categorical pd.Series
+        The cluster identity of each sample, encoded as a simple int
+        or as a pandas categorical variable.
+    sample_names : list of string
+        The name corresponding to each sample. Must be the same length
+        as `clusters`.
+    patients : pandas.DataFrame
+        The DataFrame containing survival information for each patient.
+        The indices of this DataFrame must correspond to the
+        `sample_names`. Samples not represented in this list will be
+        ignored.
+    censor : bool, optional
+        If `True`, use `patients['melanoma-dead']` to right-censor the
+        survival data.
+    """
+    plt.figure()
+    if type(clusters) == np.ndarray:
+        cluster_ids = np.unique(clusters)
+        cluster_names = ['cluster {}'.format(i) for i in cluster_ids]
+    elif type(clusters) == pd.Series:
+        cluster_ids = clusters.cat.categories
+        cluster_names = list(cluster_ids)
+    n_clusters = len(cluster_ids)
+    for c in cluster_ids:
+        clust_samples = np.flatnonzero(clusters == c)
+        # discard patients not present in survival data
+        clust_samples = [sample_names[i] for i in clust_samples
+                         if sample_names[i] in patients.index]
+        patient_cluster = patients.loc[clust_samples]
+        survival_times = np.array(patient_cluster['melanoma-survival-time'])
+        if censor:
+            censored = ~np.array(patient_cluster['melanoma-dead']).astype(bool)
+        else:
+            censored = None
+        stimes, sfracs = survival_distribution_function(survival_times,
+                                                        censored)
+        plt.plot(stimes / 365, sfracs)
+
+    plt.xlabel('survival time (years)')
+    plt.ylabel('fraction alive')
+    plt.legend(cluster_names)
+```
+
+Now we can use the `fcluster` function to obtain cluster identities for the samples (columns of the counts data), and plot each survival curve separately.
+The `fcluster` function takes a linkage matrix, as returned by `linkage`, and a threshold, and returns cluster identities.
+It's difficult to know a-priori what the threshold should be, but we can obtain the appropriate threshold for a fixed number of clusters by checking the distances in the linkage matrix.
+
+```python
+n_clusters = 3
+threshold_distance = (yc[-n_clusters, 2] + yc[-n_clusters+1, 2]) / 2
+clusters = fcluster(yc, threshold_distance, 'distance')
+
+plot_cluster_survival_curves(clusters, data_table.columns, patients)
+```
+
+The clustering of gene expression profiles has identified a higher-risk subtype of melanoma, which constitutes the majority of patients.
+This is indeed only the latest study to show such a result, with others identifying subtypes of leukemia (blood cancer), gut cancer, and more.
+Although the above clustering technique is quite fragile, there are other ways to explore this dataset and similar ones that are more robust.
+We leave you the exercise of implementing the approach described in the paper:
+
+1. Take bootstrap samples (random choice with replacement) of the genes used to cluster the samples;
+2. For each sample, produce a hierarchical clustering;
+3. In a `(n_samples, n_samples)`-shaped matrix, store the number of times a sample pair appears together in a bootstrapped clustering.
+4. Perform a hierarchical clustering on the resulting matrix.
+
+This identifies groups of samples that frequently occur together in clusterings, regardless of the genes chosen.
+Thus, these samples can be considered to robustly cluster together.
+
+*Hint: use `np.random.choice` with `replacement=True` to create bootstrap samples of row indices.*
