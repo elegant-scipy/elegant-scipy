@@ -83,10 +83,10 @@ Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
 ![Central Dogma of Biology](http://www.phschool.com/science/biology_place/biocoach/images/transcription/centdog.gif)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 ![Gene expression](http://www.ncbi.nlm.nih.gov/Class/MLACourse/Original8Hour/Genetics/cgap_conceptual_tour1.gif)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 Currently, the most sensitive way to measure mRNA is to do an RNA sequencing (RNAseq) experiment. To do this we isolate all the mRNA from a sample, then we sequence it.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
@@ -94,7 +94,7 @@ We measure millions of reads and then based on their sequence we count how many 
 For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
 
 ![RNAseq](http://bio.lundberg.gu.se/courses/vt13/rna4.JPG.jpg)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 Here's an example of what this gene expression data looks like.
 
@@ -155,7 +155,7 @@ print(two_d_array)
 ```
 
 ![2-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img24.gif)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 ```python
 # Use .shape to check the dimensions of an ndarray
@@ -176,7 +176,7 @@ print(three_d_array)
 I like to draw this as a cube.
 
 ![3-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img25.gif)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 ```python
 print(three_d_array.shape)
