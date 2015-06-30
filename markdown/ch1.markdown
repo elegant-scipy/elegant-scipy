@@ -796,32 +796,53 @@ counts_rpkm = rpkm(counts, gene_lengths)
 ```
 
 ```python
+# Repeat binned boxplot with raw values
+log_counts = np.log(counts + 1)
+mean_log_counts = np.mean(log_counts, axis=1)
+log_gene_lengths = np.log(gene_lengths)
+
+binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+
 # Repeat binned boxplot with RPKM values
+log_counts = np.log(counts_rpkm + 1)
+mean_log_counts = np.mean(log_counts, axis=1)
+log_gene_lengths = np.log(gene_lengths)
+
+binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
 ```python
 # plot of a small gene vs a big gene
 # (choose two that have otherwise similar expression levels?
 # or better yet big one looks like it has more expression but actually
+# the little one is higher after normalisation)
+
+# plot of a small gene vs a big gene
+# (choose two that have otherwise similar expression levels?
+# or better yet big one looks like it has more expression but actually
 # the little one is higher afer normalisation)
+
+genes2_idx = [108, 103]
+genes2_lengths = gene_lengths[genes2_idx]
+genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]), 'Gene B, {}bp'.format(genes2_lengths[1])]
+
+log_counts_2 = list(np.log(counts[genes2_idx] + 1))
+log_ncounts_2 = list(np.log(counts_rpkm[genes2_idx] + 1))
+
+class_boxplot(log_counts_2,
+              ['raw counts'] * 3,
+              labels=genes2_labels)
+plt.xlabel('Genes')
+plt.ylabel('log gene expression counts over all samples')
+plt.show()
+
+class_boxplot(log_ncounts_2,
+              ['RPKM normalized'] * 3,
+              labels=genes2_labels)
+plt.xlabel('Genes')
+plt.ylabel('log RPKM gene expression counts over all samples')
+plt.show()
 ```
-
-Convert to RPKM: Reads per kilobase transcript per million reads
-
-Divide the number of reads by the size of the gene that they map to in kilobases
-(1 kb = 1000 DNA bases) then divi
-
-RPKM(X) = (10^9 * C) / (N * L)
-
-C is the number of reads mapping to that gene
-N is the total number of reads (sum all the counts for that individual)
-L is the length of the gene in base pairs (??? not kilobasepairs?)
-
-```python
-# Convert to RPKM
-# Redo plot showing new relationship between the genes
-```
-
 
 ## Quantile normalization with NumPy and SciPy
 
