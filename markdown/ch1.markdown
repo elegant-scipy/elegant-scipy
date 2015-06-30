@@ -545,25 +545,21 @@ plt.ylabel('log gene expression counts')
 plt.show()
 ```
 
-An example of the types of plots I'd like to show:
-http://www.nature.com/nbt/journal/v32/n9/images_article/nbt.2931-F2.jpg
-
 ### Between genes
 
-Number of reads related to length of gene
+The number of counts for a gene, is related to the gene length.
+Let's say we have gene A and gene B.
+Gene B is twice as long as gene A.
+Both are expressed at similar levels in the sample, i.e. both produce a similar number of mRNA molecules.
+Therefore you would expect that gene B would have about twice as many counts as gene A.
+Remember, that when we do an RNAseq experiement, we are fragmenting the transcript, and sampling reads from that pool of fragments.
+The counts are the number of reads from that gene in a given sample.
+So if a gene is twice as long, we are twice as likly to sample it.
 
-```python
-mean_counts = np.mean(counts_lib_norm, axis=1)  # mean expression per gene
-plt.figure()
-plt.scatter(gene_lengths, mean_counts)
-plt.xlabel("Gene length in base pairs")
-plt.ylabel("Mean expression counts for that gene")
-#plt.xlim(0,40000)
-#plt.ylim(0,10000)
-plt.show()
-```
+![Relationship between counts and gene length](https://izabelcavassim.files.wordpress.com/2015/03/screenshot-from-2015-03-08-2245511.png)
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
-Boxplot binned by gene length:
+Let's see if the relationship between gene length and counts plays out in our data set.
 
 ```python
 def binned_boxplot(x, y):
@@ -608,12 +604,17 @@ log_gene_lengths = np.log(gene_lengths)
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
+We can see a positive relationship between the length of a gene and the counts!
+
 ### Normalizing over samples and genes: RPKM
 
 One of the simplest normalization methods for RNAseq data is RPKM: reads per
 kilobase transcript per million reads.
-This means we are normalizing for both the library size (the sum of each column)
+RPKM puts together the ideas of normalising by sample and by gene.
+When we calculate RPKM, we are normalizing for both the library size (the sum of each column)
 and the gene length.
+
+Working through how RPKM is derived:
 
 Let's say:  
 C = Number of reads mapped to a gene  
