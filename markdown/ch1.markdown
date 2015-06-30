@@ -233,7 +233,7 @@ Behind the scenes, the highly-optimized NumPy library is doing the iteration as 
 Ndarrays are also size efficient.
 In Python, each element in a list as an object and is given a health memory allocation.
 In contrast, for ndarrays you
-(or in this case the arange function)
+(or in this case the `arange` function)
 decide how much memory to allocate to the elements.
 This is generally much less than would be given to objects in a python list.
 
@@ -294,7 +294,7 @@ x + y # add every element in x to the corresponding element in y
 x * y # multiply every element in x by the corresponding element in y
 ```
 
-Another word for this behaviour is vectorisation, which is a key feature of array languages such as Matlab and R.
+Another word for this behavior is vectorization, which is a key feature of array languages such as Matlab and R.
 Under the hood this is equivalent to the to a for loop, but much faster because the loop is running in C rather than Python.
 Let's try the same calculation as a loop and using broadcasting to see how much of a speed up we can get.
 
@@ -391,7 +391,7 @@ print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.sha
 
 ## Normalization
 
-Before we dive into the stats, it is important to first determine if we need to normalise our data.
+Before we dive into the stats, it is important to first determine if we need to normalize our data.
 
 ### Between samples
 
@@ -403,13 +403,13 @@ Let's take a look.
 # Make all plots appear inline in the IPython notebook from now onwards
 
 import matplotlib.pyplot as plt
-plt.style.use('ggplot') # Use ggplot style graphs for something a litle prettier
+plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
 ```
 
 ```python
 total_counts = counts.sum(axis=0) # sum each column (axis=1 would sum rows)
 
-density = stats.kde.gaussian_kde(total_counts) # Use guassian smoothing to estimate the density
+density = stats.kde.gaussian_kde(total_counts) # Use gaussian smoothing to estimate the density
 x = np.arange(min(total_counts), max(total_counts), 10000) # create ndarray of integers from min to max in steps of 10,000
 plt.plot(x, density(x))
 plt.xlabel("Total counts per individual")
@@ -453,10 +453,10 @@ plt.ylabel("Gene expression counts")
 plt.show()
 ```
 
-Now let's see what happens when we normalise by library size.
+Now let's see what happens when we normalize by library size.
 
 ```python
-# Normalise by library size
+# normalize by library size
 # Divide the expression counts by the total counts for that individual
 counts_lib_norm = counts / total_counts * 1000000 # Multiply by 1 million to get things back in a similar scale
 # Notice how we just used broadcasting twice there!
@@ -465,7 +465,7 @@ counts_subset_lib_norm = counts_lib_norm[:,samples_index]
 # Bar plot of expression counts by individual
 plt.figure(figsize=(16,5))
 plt.boxplot(np.log(counts_subset_lib_norm + 1), sym=".")
-plt.title("Gene expression counts normalised by library size")
+plt.title("Gene expression counts normalized by library size")
 plt.xlabel("Individuals")
 plt.ylabel("Gene expression counts")
 plt.show()
@@ -608,11 +608,11 @@ log_gene_lengths = np.log(gene_lengths)
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
-### Normalising over samples and genes: RPKM
+### Normalizing over samples and genes: RPKM
 
-One of the simplest normalisation methods for RNAseq data is RPKM: reads per
+One of the simplest normalization methods for RNAseq data is RPKM: reads per
 kilobase transcript per million reads.
-This means we are normalising for both the library size (the sum of each column)
+This means we are normalizing for both the library size (the sum of each column)
 and the gene length.
 
 Let's say:  
@@ -631,7 +631,7 @@ One kilobase = 1000 bases, so we'll need to divide length (L) by 1000.
 Reads per kilobase would be:  
 $\frac{C}{L/1000}  = \frac{10^3C}{L}$
 
-Next, we need to normalise by library size.
+Next, we need to normalize by library size.
 If we just divide by the number of mapped reads we get:  
 $ \frac{10^3C}{LN} $
 
@@ -696,15 +696,15 @@ Now A and B have the same number of dimension, so broadcasting can proceed.
 Now let's say we have another ndarray, C:  
 C.shape = (2, 1)  
 B.shape = (2,)  
-Now, if we were to do the oparation `C * B`,
-a new dimenion needs to be prepended to B.  
+Now, if we were to do the operation `C * B`,
+a new dimension needs to be prepended to B.  
 B.shape = (1, 2)  
 However, the dimensions of the two ndarrays do not match,
 so broadcasting will fail.
 
 Let's say that we know that it is appropriate to broadcast B over C.
 We can explicitly add a new dimension to B using `np.newaxis`.
-Let's see this in our normalisation by RPKM.
+Let's see this in our normalization by RPKM.
 
 Let's have a look at the dimensions of our two arrays.
 
@@ -737,7 +737,7 @@ Now that our dimensions match or are equal to 1, we can broadcast.
 C_tmp = C_tmp / L
 ```
 
-Finally we need to normalise by the libaray size,
+Finally we need to normalize by the libaray size,
 the total number of counts for that column.
 Remember that we have already calculated N.
 
@@ -815,12 +815,12 @@ binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 # plot of a small gene vs a big gene
 # (choose two that have otherwise similar expression levels?
 # or better yet big one looks like it has more expression but actually
-# the little one is higher after normalisation)
+# the little one is higher after normalization)
 
 # plot of a small gene vs a big gene
 # (choose two that have otherwise similar expression levels?
 # or better yet big one looks like it has more expression but actually
-# the little one is higher afer normalisation)
+# the little one is higher after normalization)
 
 genes2_idx = [108, 103]
 genes2_lengths = gene_lengths[genes2_idx]
@@ -864,7 +864,7 @@ def plot_col_density(data, xlabel=None):
     plt.show()
 
 
-# Before normalisation
+# Before normalization
 log_counts = np.log(counts + 1)
 plot_col_density(log_counts, xlabel="Log count distribution for each individual")
 ```
@@ -924,7 +924,7 @@ def quantile_norm(X):
 ```
 
 ```python
-# After normalisation
+# After normalization
 log_quant_norm_counts = np.log(quantile_norm(counts)+1)
 
 plot_col_density(log_quant_norm_counts, xlabel="Log count distribution for each individual")
@@ -1020,7 +1020,7 @@ from scipy.spatial.distance import pdist, squareform
 
 def bicluster(data, linkage_method='average',
               n_clusters_r=10, n_clusters_c=3, distance_metric='correlation'):
-    """Perform a biclustering, plot a heatmap with dendograms on each axis.
+    """Perform a biclustering, plot a heatmap with dendrograms on each axis.
 
     Parameters
     ----------
@@ -1043,12 +1043,12 @@ def bicluster(data, linkage_method='average',
     """
     fig = plt.figure(figsize=(8, 8))
 
-    # Compute and plot row-wise dendogram
+    # Compute and plot row-wise dendrogram
     # `add_axes` takes a "rectangle" input to add a subplot to a figure.
     # The figure is considered to have side-length 1 on each side, and its
     # bottom-left corner is at (0, 0).
     # The measurements passed to `add_axes` are the left, bottom, width, and
-    # height of the subplot. Thus, to draw the left dendogram (for the rows),
+    # height of the subplot. Thus, to draw the left dendrogram (for the rows),
     # we create a rectangle whose bottom-left corner is at (0.09, 0.1), and
     # measuring 0.2 in width and 0.6 in height.
     ax1 = fig.add_axes([0.09, 0.1, 0.2, 0.6])
