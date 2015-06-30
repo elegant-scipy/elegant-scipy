@@ -378,42 +378,22 @@ counts = np.asarray(data_table.loc[matched_index], dtype=int)
 print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
 ```
 
-## Differential gene expression analysis
+## Normalization
 
-The most common analysis done with RNAseq data is a differential gene expression analysis.
-The general strategy is to compare two different groups, say disease vs. normal, treatment vs. control, and ask the question; are which genes are differentially expressed between the two groups?
-In other words, which genes have significantly higher counts in one group compared with the other?
+Before we dive into the stats, it is important to first determine if we need to normalise our data.
 
-If we assume gene expression counts are normally distributed, then we could do a t-test for each gene.
+### Between samples
+
+For example, the number of counts for each individual can vary substantially in RNAseq experiments.
+Let's take a look.
 
 ```python
 %matplotlib inline
-# Make all plots appear inline from now onwards
+# Make all plots appear inline in the IPython notebook from now onwards
 
 import matplotlib.pyplot as plt
 plt.style.use('ggplot') # Use ggplot style graphs for something a litle prettier
 ```
-
-```python
-import matplotlib.pyplot as plt
-from scipy import stats
-
-# Plot the density of expresison counts for a gene to check if it's approximately normal
-data = counts[0, :] # expression counts for one gene
-density = stats.kde.gaussian_kde(data) # Use guassian smoothing to estimate the density
-x = np.arange(0, max(data)) # create ndarray of integers from 0 to largest expression count for that gene
-plt.plot(x, density(x))
-plt.show()
-```
-
-### Normalization
-
-Before we dive into the stats, it is important to first determine if we need to normalise our data.
-
-#### Between samples
-
-The number of counts for each individual can vary substantially in RNAseq experiments.
-Let's take a look.
 
 ```python
 total_counts = counts.sum(axis=0) # sum each column (axis=1 would sum rows)
@@ -450,7 +430,7 @@ plt.show()
 
 There are obviously a lot of outliers at the high expression end of the scale and a lot of variation between individuals, but pretty hard to see because everything is clustered around zero.
 So let's do log(n + 1) of our data so it's a bit easier to look at.
-Both the log function and the n + 1 step can be done using broadcasting to simpify our code and speed things up.
+Both the log function and the n + 1 step can be done using broadcasting to simplify our code and speed things up.
 
 ```python
 # Bar plot of expression counts by individual
@@ -557,7 +537,7 @@ plt.show()
 An example of the types of plots I'd like to show:
 http://www.nature.com/nbt/journal/v32/n9/images_article/nbt.2931-F2.jpg
 
-#### Between genes
+### Between genes
 
 Number of reads related to length of gene
 
@@ -608,6 +588,8 @@ plt.xlabel('gene length (log scale)')
 plt.ylabel('average log-counts')
 plt.show()
 ```
+
+### Normalising over samples and genes: RPKM
 
 One of the simplest normalisation methods for RNAseq data is RPKM: reads per
 kilobase transcript per million reads.
@@ -670,7 +652,7 @@ Broadcasting a single value over a 2D array was pretty clear.
 We were just multiplying every element in the array by the value.
 But what happens when we need to divide a 2D array by a 1D array?
 
-##### Broadcasting rules [tip box?]
+#### Broadcasting rules [tip box?]
 
 Broadcasting allows calculations between ndarrays that have a different
 number of dimensions.
@@ -853,7 +835,7 @@ Given an expression matrix (microarray data, read counts, etc) of ngenes by nsam
 sorting all the data points column-wise
 averaging the rows
 replacing each column quantile with the quantile of the average column.
-This can be done with numpy and scipy easily and efficiently.
+This can be done with NumPy and scipy easily and efficiently.
 Assume we've read in the input matrix as X:
 
 ```python
@@ -922,7 +904,7 @@ def PCA_plot(data):
     data : 2D ndarray of counts (assumed to be genes X samples)
     """
 
-    #construct your numpy array of data
+    #construct your NumPy array of data
     counts_transposed = np.array(data).T
 
     # Set up PCA, set number of components
