@@ -21,7 +21,8 @@ def quantile_norm(X):
     """Normalize the columns of X to each have the same distribution.
 
     Given an expression matrix (microarray data, read counts, etc) of ngenes
-    by nsamples, quantile normalization ensures all samples have the same spread of data (by construction).
+    by nsamples, quantile normalization ensures all samples have the same
+    spread of data (by construction).
 
     The input data is log-transformed. The rows are averaged and each column
     quantile is replaced with the quantile of the average column.
@@ -73,6 +74,11 @@ We will work our way through a *gene expression analysis* to demonstrate the pow
 We will use the Pandas library, which builds on NumPy, to read and munge our data files, and then we manipulate our data efficiently in NumPy arrays.
 
 The central dogma of molecular biology states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
+This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
+There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
+
+![The double helix](images/double-helix.jpg)
+
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
 
@@ -85,10 +91,15 @@ As you will see below, it often doesn't matter, because we are using mRNA levels
 ![Central Dogma of Biology](http://www.phschool.com/science/biology_place/biocoach/images/transcription/centdog.gif)
 **[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
+It's important to note that the DNA in every cell of your body is identical.
+Thus, the differences between cells arise from *differential expression* of that DNA into RNA.
+Similarly, as we shall see in this chapter, differential expression can distinguish different kinds of cancer.
+
 ![Gene expression](http://www.ncbi.nlm.nih.gov/Class/MLACourse/Original8Hour/Genetics/cgap_conceptual_tour1.gif)
 **[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
-Currently, the most sensitive way to measure mRNA is to do an RNA sequencing (RNAseq) experiment. To do this we isolate all the mRNA from a sample, then we sequence it.
+The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
+RNA is extracted from a tissue, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
 For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
@@ -109,7 +120,7 @@ See how the counts for each gene differ between the cell types?
 We can use this information to tell us about the differences between these two types of cell.
 This data is perfect to represented more efficiently as a ndarray.
 
-## Numpy N-dimensional arrays
+## NumPy N-dimensional arrays
 
 One of the key NumPy data types is the N-dimensional array (ndarray).
 Ndarrays must be homogenous; all items in an ndarray must be the same type and size.
