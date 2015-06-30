@@ -307,14 +307,16 @@ for i in range(array_len):
 result = nd_array * 5
 ```
 
+We will come back to some more advanced broadcasting examples as we start to deal with real data.
+
 ## Exploring a gene expression data set
 
-The data set that we'll be using is an RNAseq experiment of healthy individuals from a project called HapMap (http://hapmap.ncbi.nlm.nih.gov/).
-This is a standard reference data set to give researchers an idea of the baseline variation between healthy individuals.
-The raw sequencing reads are available at http://eqtl.uchicago.edu/RNA_Seq_data/unmapped_reads/.
-We will be using this data in a later chapter.
-However, in this chapter we will be starting from the gene count data, which can be found at http://eqtl.uchicago.edu/RNA_Seq_data/results/final_gene_counts.gz.
-If you are curious to see a full analysis of this data set right from raw sequencing reads, the Limma R package documentaation is a great place to start (http://www.bioconductor.org/packages/release/bioc/vignettes/limma/inst/doc/usersguide.pdf).
+The data set that we'll be using is an RNAseq experiment of skin cancer samples from The Cancer Genome Atlas (TCGA) project (http://cancergenome.nih.gov/).
+We will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044).
+
+### Downloading the data
+
+[Links to data!]
 
 We're first going to use Pandas to read in the table of counts.
 Pandas is particularly useful for reading in tabular data of mixed type.
@@ -337,11 +339,10 @@ print(data_table.iloc[:5, :5])
 ```
 
 We can see that Pandas has kindly pull out the header row and used it to name the columns.
-The first three columns are information about a gene.
-The ID of the gene, what chromosome it is on, and how long the gene is.
-The remaining columns are IDs for the individual people who were tested, along with the name of the lab that performed the testing (Argonne National Laboratory for the first few).
-Let's extract out the data that we need in a more useful format.
+The first column gives the name of the gene, and the remaining columns represent individual samples.
 
+We will also needs some corresponding metadata,
+including the sample information and the gene lengths.
 
 ```python
 # Sample names
@@ -358,7 +359,6 @@ print(gene_info.iloc[:5, :5])
 
 ```python
 #Subset gene info to match the count data
-
 matched_index = data_table.index.intersection(gene_info.index)
 print(gene_info.loc[matched_index].shape)
 print(data_table.loc[matched_index].shape)
