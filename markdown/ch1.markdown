@@ -11,7 +11,7 @@ This requires a strong assumption: if the data are not distributed according to 
 But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
 For example, Bolstad and colleagues [showed](http://bioinformatics.oxfordjournals.org/content/19/2/185.full.pdf) that it performs admirably in recovering known expression levels in microarray data.
 
-Using NumPy indexing tricks and the `scipy.stats.rank_data` function, quantile normalization is fast, efficient, and elegant in Python.
+Using NumPy indexing tricks and the `scipy.stats.rank_data` function, quantile normalization in Python is fast, efficient, and elegant.
 
 ```python
 import numpy as np
@@ -21,7 +21,8 @@ def quantile_norm(X):
     """Normalize the columns of X to each have the same distribution.
 
     Given an expression matrix (microarray data, read counts, etc) of ngenes
-    by nsamples, quantile normalization ensures all samples have the same spread of data (by construction).
+    by nsamples, quantile normalization ensures all samples have the same
+    spread of data (by construction).
 
     The input data is log-transformed. The rows are averaged and each column
     quantile is replaced with the quantile of the average column.
@@ -67,33 +68,44 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 
 Before we delve into the power of NumPy, let's spend some time to understand the biological data that we will be working with.
 
-## Gene Expression
+## What is gene expression?
 
-In this chapter we’re going to work our way through a gene expression analysis to demonstrate the power of SciPy to solve a real-world biological problem that I come across everyday.
-Along the way we will use Pandas to parse tabular data, and then manipulate our data efficiently in NumPy ndarrays.
+We will work our way through a *gene expression analysis* to demonstrate the power of NumPy and SciPy to solve a real-world biological problem.
+We will use the Pandas library, which builds on NumPy, to read and munge our data files, and then we manipulate our data efficiently in NumPy arrays.
 
-But before we get to the juicy code, let me fill you in about my particular biological problem.
-The central dogma of genetics says that all the information to run a cell is stored in the DNA.
-To access this information, the DNA needs to be transcribed into messenger RNA (mRNA).
-The amount of mRNA produced from a given gene is called the “expression” of that gene.
-The mRNA is in turn is translated into protein, which is the workhorse of the cell.
-Proteins can act as building blocks like the keratin that gives structure to your nails and hair, or the enzymes that allow you to digest your food.
-Unfortunately, protein is particularly difficult to detect experimentally, but mRNA is actually pretty easy to measure.
-So we make the assumption that if we measure the amount of mRNA we can gain insight into how the cells are functioning.
+The central dogma of molecular biology states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
+This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
+There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
+
+![The double helix](images/double-helix.jpg)
+
+To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
+Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
+
+The amount of mRNA produced from a given gene is called the *expression* of that gene.
+Although we would ideally like to measure protein levels, this is a much harder task than measuring mRNA.
+Fortunately, expression levels of an mRNA and levels of its corresponding protein are usually correlated ([Maier, Güell, and Serrano, 2009](http://www.sciencedirect.com/science/article/pii/S0014579309008126)).
+Therefore, we usually measure mRNA levels and base our analyses on that.
+As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
 ![Central Dogma of Biology](http://www.phschool.com/science/biology_place/biocoach/images/transcription/centdog.gif)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+
+It's important to note that the DNA in every cell of your body is identical.
+Thus, the differences between cells arise from *differential expression* of that DNA into RNA.
+Similarly, as we shall see in this chapter, differential expression can distinguish different kinds of cancer.
 
 ![Gene expression](http://www.ncbi.nlm.nih.gov/Class/MLACourse/Original8Hour/Genetics/cgap_conceptual_tour1.gif)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
-Currently, the most sensitive way to measure mRNA is to do an RNA sequencing (RNAseq) experiment. To do this we isolate all the mRNA from a sample, then we sequence it.
+The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
+RNA is extracted from a tissue, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
 For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
 
 ![RNAseq](http://bio.lundberg.gu.se/courses/vt13/rna4.JPG.jpg)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 Here's an example of what this gene expression data looks like.
 
@@ -108,7 +120,7 @@ See how the counts for each gene differ between the cell types?
 We can use this information to tell us about the differences between these two types of cell.
 This data is perfect to represented more efficiently as a ndarray.
 
-## Numpy N-dimensional arrays
+## NumPy N-dimensional arrays
 
 One of the key NumPy data types is the N-dimensional array (ndarray).
 Ndarrays must be homogenous; all items in an ndarray must be the same type and size.
@@ -147,16 +159,14 @@ print(one_d_array.dtype)
 For a 2-dimensional array, let's use our mini gene expression table from above.
 
 ```python
-two_d_array = np.array([
-        [100, 200],
-        [50, 0],
-        [350, 100]
-    ])
+two_d_array = np.array([[100, 200],
+                        [ 50,   0],
+                        [350, 100]])
 print(two_d_array)
 ```
 
 ![2-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img24.gif)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 ```python
 # Use .shape to check the dimensions of an ndarray
@@ -177,14 +187,14 @@ print(three_d_array)
 I like to draw this as a cube.
 
 ![3-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img25.gif)
-Note, this is an example image only, we have not checked license.
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 ```python
 print(three_d_array.shape)
 print(len(three_d_array.shape))
 ```
 
-A 4 dimensional array becomes tricky to visualise even with a diagram,
+A 4 dimensional array becomes tricky to visualize even with a diagram,
 so perhaps it is easier to think of it in terms of a use case.
 Let's say you have an ndarray that describes an object over time.
 You would need three dimensions to describe the position of
@@ -192,12 +202,13 @@ the objects and a fourth to indicate time.
 
 ### Why use ndarrays as opposed to Python lists?
 
-Ndarrays are fast because vectorized oporations can be performed on them.
-Let's say you have a list and you want to multiply every element in the list by 5.
-A standard Python approach would be to write a loop that iterates through the
+Arrays are fast because they enable vectorized operations, written in the low-level language C, that act on the whole array.
+Say you have a list and you want to multiply every element in the list by 5.
+A standard Python approach would be to write a loop that iterates over the
 elements of the list and multiply each one by 5.
-However, if your data were instead represented as an ndarray,
-you can multiply every element in the ndarray by 5 simultaneously.
+However, if your data were instead represented as an array,
+you can multiply every element in the array by 5 in a single bound.
+Behind the scenes, the highly-optimized NumPy library is doing the iteration as fast as possible.
 
 ```python
     import numpy as np
@@ -257,8 +268,8 @@ when you might think you are making a copy of it.
 ```
 
 ```python
-    # If you actually wanted a copy of your ndarray use it's copy method
-    y = x[:2].copy()
+    # If you actually wanted a copy of your array use the copy function
+    y = np.copy(x[:2])
 ```
 
 ### Broadcasting
