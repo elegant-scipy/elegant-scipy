@@ -124,6 +124,26 @@ one_d_array = np.array([1,2,3,4])
 print(one_d_array)
 ```
 
+```python
+# Use .shape to check the dimensions of an ndarray
+print(one_d_array.shape)
+print(len(one_d_array.shape))
+```
+
+Remember that ndarrays must contain all elements of the same type.
+The type is set automatically from the input data used to create the array.
+NumPy will choose the minimum type required to hold all the objects.
+The type can also be set explicitly.
+
+```python
+# Use .dtype to determine the data type (including allocated memory)
+print(one_d_array)
+print(one_d_array.dtype)
+one_d_array = np.array([1,2,3,4], dtype='str') # Set the data type to string (upcasting)
+print(one_d_array)
+print(one_d_array.dtype)
+```
+
 For a 2-dimensional array, let's use our mini gene expression table from above.
 
 ```python
@@ -133,6 +153,15 @@ two_d_array = np.array([
         [350, 100]
     ])
 print(two_d_array)
+```
+
+![2-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img24.gif)
+Note, this is an example image only, we have not checked license.
+
+```python
+# Use .shape to check the dimensions of an ndarray
+print(two_d_array.shape)
+print(len(two_d_array.shape))
 ```
 
 Once we get into three dimensions, things start to get trickier to imagine.
@@ -147,30 +176,19 @@ print(three_d_array)
 
 I like to draw this as a cube.
 
-[3-dimensional array picture]
-
-
-A 4 dimensional array becomes tricky to visualise even with a diagram,
-so perhaps it is easier to think of it in terms of a use case.
-Let's say you have an ndarray that describes an object over time.
-You would need three dimensions to describe the position of
-the objects and a fourth to indicate time.
-
-```python
-# Use .shape to check the dimensions of an ndarray
-print(two_d_array.shape)
-print(len(two_d_array.shape))
-```
+![3-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img25.gif)
+Note, this is an example image only, we have not checked license.
 
 ```python
 print(three_d_array.shape)
 print(len(three_d_array.shape))
 ```
 
-```python
-# Use .dtype to determine the data type (including allocated memory)
-print(two_d_array.dtype)
-```
+A 4 dimensional array becomes tricky to visualise even with a diagram,
+so perhaps it is easier to think of it in terms of a use case.
+Let's say you have an ndarray that describes an object over time.
+You would need three dimensions to describe the position of
+the objects and a fourth to indicate time.
 
 ### Why use ndarrays as opposed to Python lists?
 
@@ -265,8 +283,8 @@ x + y # add every element in x to the corresponding element in y
 x * y # multiply every element in x by the corresponding element in y
 ```
 
-Another word for this behavour is vectorisation, which is a key feature of array languages such as Matlab and R.
-Under the hood this is eqivalent to the to a for loop, but much faster because the loop is running in C rather than Python.
+Another word for this behaviour is vectorisation, which is a key feature of array languages such as Matlab and R.
+Under the hood this is equivalent to the to a for loop, but much faster because the loop is running in C rather than Python.
 Let's try the same calculation as a loop and using broadcasting to see how much of a speed up we can get.
 
 ```python
