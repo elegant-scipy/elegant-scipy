@@ -811,16 +811,13 @@ log_gene_lengths = np.log(gene_lengths)
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
-```python
-# plot of a small gene vs a big gene
-# (choose two that have otherwise similar expression levels?
-# or better yet big one looks like it has more expression but actually
-# the little one is higher after normalization)
+RPMK normalization can be particularly useful comparing the expression profile of two different genes.
+We've already seen that longer genes have higher counts, but this doesn't mean their expression level is actually higher.
+Let's choose a short gene and a long gene and compare their counts before and after RPKM normalization to see what we mean.
 
-# plot of a small gene vs a big gene
-# (choose two that have otherwise similar expression levels?
-# or better yet big one looks like it has more expression but actually
-# the little one is higher after normalization)
+```python
+# Boxplot of expression from a short gene vs. a long gene
+# showing how normalization can influence interpretation
 
 genes2_idx = [108, 103]
 genes2_lengths = gene_lengths[genes2_idx]
@@ -843,6 +840,11 @@ plt.xlabel('Genes')
 plt.ylabel('log RPKM gene expression counts over all samples')
 plt.show()
 ```
+
+Just looking at the raw counts, it looks like the shorter gene A is not expressed, while gene B has some gene expression.
+Once we normalize to RPKM values, the story changes substantially.
+Now it looks like gene A is actually expressed at a higher level than gene B.
+This is because RPKM includes normalization for gene length, so we can now directly compare between genes of dramatically different lengths.
 
 ## Quantile normalization with NumPy and SciPy
 
