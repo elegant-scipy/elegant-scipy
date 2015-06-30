@@ -7,7 +7,7 @@ Our use case is the analysis of gene expression data to predict mortality in ski
 (We will unpack what "gene expression" means in just a moment.)
 
 The code we will work to understand is an implementation of [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
-This requires a strong assumption: if the data are not distributed according to a bell curve, we just make one!
+This requires a strong assumption: if the data are not distributed according to a bell curve, we just make it fit!
 But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
 For example, Bolstad and colleagues [showed](http://bioinformatics.oxfordjournals.org/content/19/2/185.full.pdf) that it performs admirably in recovering known expression levels in microarray data.
 
@@ -25,6 +25,7 @@ def quantile_norm(X):
 
     The input data is log-transformed. The rows are averaged and each column
     quantile is replaced with the quantile of the average column.
+    The data is then transformed back to counts.
 
     Parameters
     ----------
@@ -94,7 +95,7 @@ For this chapter we’ll be starting directly from this count data, but in [ch7?
 ![RNAseq](http://bio.lundberg.gu.se/courses/vt13/rna4.JPG.jpg)
 Note, this is an example image only, we have not checked license.
 
-Let’s have a look at what this gene expression data looks like.
+Here's an example of what this gene expression data looks like.
 
 |        | Cell type A | Cell type B |
 |--------|-------------|-------------|
@@ -103,6 +104,8 @@ Let’s have a look at what this gene expression data looks like.
 | Gene 3 | 350         | 100         |
 
 The data is a table of counts, integers representing how many reads were observed for each gene in each cell type.
+See how the counts for each gene differ between the cell types?
+We can use this information to tell us about the differences between these two types of cell.
 This data is perfect to represented more efficiently as a ndarray.
 
 ## Numpy N-dimensional arrays
@@ -840,15 +843,24 @@ import numpy as np
 from scipy import stats
 
 def quantile_norm(X):
-    """ Given an expression matrix (microarray data, read counts, etc) of ngenes
-    by nsamples, quantile normalization ensures all samples have the same spread
-    of data (by construction).
-    The data is first log transformed. The rows are averaged and each column
+    """Normalize the columns of X to each have the same distribution.
+
+    Given an expression matrix (microarray data, read counts, etc) of ngenes
+    by nsamples, quantile normalization ensures all samples have the same spread of data (by construction).
+
+    The input data is log-transformed. The rows are averaged and each column
     quantile is replaced with the quantile of the average column.
+    The data is then transformed back to counts.
 
     Parameters
     ----------
-    X : 2D ndarray of counts
+    X : 2D array of float, shape (M, N)
+        The input data, with n_features rows and n_samples columns.
+
+    Returns
+    -------
+    Xn : 2D array of float, shape (M, N)
+        The normalized data.
     """
     # log-transform the data
     logX = np.log2(X + 1)
