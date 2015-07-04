@@ -77,7 +77,8 @@ The central dogma of molecular biology states that all the information needed to
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
 There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
 
-![The double helix](images/double-helix.jpg)
+![The double helix](http://www.clarealumni.com/s/845/images/editor/News%20Images/jim_watson__left____crick.jpg)
+**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
