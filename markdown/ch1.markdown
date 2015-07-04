@@ -969,20 +969,16 @@ PCA_plot(counts)
 PCA_plot(quantile_norm(counts))
 ```
 
-## Heatmap
+## Biclustering the counts data
+
+Now that the data are normalized, we can cluster the genes (rows) and samples (columns) of the expression matrix.
+Clustering the rows tells us which genes' expression values are linked, which is an indication that they work together in the process being studied.
+Clustering the samples tells us which samples have similar gene expression profiles, which may indicate similar characteristics of the samples on other scales.
+
+Because clustering can be an expensive operation, we will limit our analysis to the 1,500 genes that are most variable, since these will account for most of the correlation signal in either dimension.
 
 ```python
-def median_absolute_deviation(a, axis=None):
-    """Compute Median Absolute Deviation of an ndarray along given axis.
-    From http://informatique-python.readthedocs.org/en/latest/Exercices/mad.html
-    """
-    med = np.median(a, axis=axis)
-    med = np.expand_dims(med, axis or 0)
-    mad = np.median(np.abs(a - med), axis=axis)
-    return mad
-
-
-def most_variable_rows(data, n=1500, axis=1, method='mad'):
+def most_variable_rows(data, n=1500):
     """Subset data to the n most variable rows
 
     In this case, we want the n most variable genes.
@@ -993,37 +989,53 @@ def most_variable_rows(data, n=1500, axis=1, method='mad'):
         The data to be subset
     n : int, optional
         Number of rows to return.
-    axis : {0, 1}, optional
-        The axis along which to compute variability
-    method : {'mad', 'var'}, optional
-        Use MAD (median absolute deviation) or variance to compute
-        variability.
+    method : function, optional
+        The function with which to compute variance. Must take an array
+        of shape (nrows, ncols) and an axis parameter and return an
+        array of shape (nrows,).
     """
-    # compute variance along the axis with the chosen method
-    # e.g. variance of each gene over the samples
-    if method == 'mad':
-        rowvar = median_absolute_deviation(data, axis=axis)
-    elif method == 'var':
-        rowvar = np.var(data, axis=axis)
-
+    # compute variance along the columns axis
+    rowvar = np.var(data, axis=1)
     # Get sorted indices (ascending order), take the last n
     sort_indices = np.argsort(rowvar)[-n:]
-
     # use as index for data
-    variable_data = data[sort_indices,:]
-
+    variable_data = data[sort_indices, :]
     return variable_data
 ```
 
+Next, we need a function to *bicluster* the data.
+This means clustering along both the rows (to find out with genes are working together) and the columns (to find out which samples are similar).
+
+Normally, you would use a sophisticated clustering algorithm from the [scikit-learn](http://scikit-learn.org) library for this.
+In our case, we want to use hierarchical clustering for simplicity and ease of display.
+The SciPy library happens to have a perfectly good hierarchical clustering module, though it requires a bit of wrangling to get your head around its interface.
+
+As a reminder, hierarchical clustering is a method to group observations using sequential merging of clusters:
+initially, every observation is its own cluster.
+Then, the two nearest clusters are repeatedly merged, until every observation is in a single cluster.
+This sequence of merges forms a *merge tree*.
+By cutting the tree at a particular distance threshold, we can get a finer or coarser clustering of observations.
+
+The `linkage` function in `scipy.cluster.hierarchy` performs a hierarchical clustering of the rows of a matrix, using a particular metric (for example, Euclidean distance, Manhattan distance, or others) and a particular linkage method, the distance between two clusters (for example, the average distance between all the observations in a pair of clusters).
+
+It returns the merge tree as a "linkage matrix", which contains each merge operation along with the distance computed for the merge and the number of observations in the resulting cluster. From the `linkage` documentation:
+
+> A cluster with an index less than $n$ corresponds to one of
+> the $n$ original observations. The distance between
+> clusters `Z[i, 0]` and `Z[i, 1]` is given by `Z[i, 2]`. The
+> fourth value `Z[i, 3]` represents the number of original
+> observations in the newly formed cluster.
+
+Whew! So that's a lot of information, but let's dive right in and hopefully you'll get the hang of it rather quickly.
+First, we define a function, `bicluster`, that clusters both the rows *and* the columns of a matrix:
+
 ```python
-import scipy
 import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import linkage, fcluster, dendrogram, leaves_list
-from scipy.spatial.distance import pdist, squareform
 
-def bicluster(data, linkage_method='average',
-              n_clusters_r=10, n_clusters_c=3, distance_metric='correlation'):
-    """Perform a biclustering, plot a heatmap with dendrograms on each axis.
+
+def bicluster(data, linkage_method='average', distance_metric='correlation'):
+    """Cluster the rows and the columns of a matrix.
 
     Parameters
     ----------
@@ -1031,11 +1043,9 @@ def bicluster(data, linkage_method='average',
         The input data to bicluster.
     linkage_method : string, optional
         Method to be passed to `linkage`.
-    n_clusters_r, n_clusters_c : int, optional
-        Number of clusters for rows and columns.
     distance_metric : string, optional
-        Distance metric to use for clustering. Anything accepted by
-        `pdist` is acceptable here.
+        Distance metric to use for clustering. See the documentation
+        for ``scipy.spatial.distance.pdist`` for valid metrics.
 
     Returns
     -------
@@ -1043,6 +1053,36 @@ def bicluster(data, linkage_method='average',
         The clustering of the rows of the input data.
     y_cols : linkage matrix
         The clustering of the cols of the input data.
+    """
+    y_rows = linkage(data, method=linkage_method, metric=distance_metric)
+    y_cols = linkage(data.T, method=linkage_method, metric=distance_metric)
+    return y_rows, y_cols
+```
+
+Simple: we just call `linkage` for the input matrix and also for the transpose of that matrix, in which columns become rows and rows become columns.
+
+Next, we define a function to visualize the output of that clustering.
+We are going to rearrange the rows an columns of the input data so that similar rows are together and similar columns are together.
+And we are additionally going to show the merge tree for both rows and columns, displaying which observations belong together for each.
+
+As a word of warning, there is a fair bit of hard-coding of parameters going on here.
+This is difficult to avoid for plotting, where design is often a matter of eyeballing to find the correct proportions.
+
+```python
+def plot_bicluster(data, row_linkage, col_linkage,
+                   row_nclusters=10, col_nclusters=3):
+    """Perform a biclustering, plot a heatmap with dendrograms on each axis.
+
+    Parameters
+    ----------
+    data : array of float, shape (M, N)
+        The input data to bicluster.
+    row_linkage : array, shape (M-1, 4)
+        The linkage matrix for the rows of `data`.
+    col_linkage : array, shape (N-1, 4)
+        The linkage matrix for the columns of `data`.
+    n_clusters_r, n_clusters_c : int, optional
+        Number of clusters for rows and columns.
     """
     fig = plt.figure(figsize=(8, 8))
 
@@ -1055,20 +1095,19 @@ def bicluster(data, linkage_method='average',
     # we create a rectangle whose bottom-left corner is at (0.09, 0.1), and
     # measuring 0.2 in width and 0.6 in height.
     ax1 = fig.add_axes([0.09, 0.1, 0.2, 0.6])
-    y_rows = linkage(data, method=linkage_method, metric=distance_metric)
     # For a given number of clusters, we can obtain a cut of the linkage
     # tree by looking at the corresponding distance annotation in the linkage
     # matrix.
-    threshold_r = (y_rows[-n_clusters_r, 2] + y_rows[-n_clusters_r+1, 2]) / 2
-    z_rows = dendrogram(y_rows, orientation='right',
-                        color_threshold=threshold_r)
+    threshold_r = (row_linkage[-row_nclusters, 2] +
+                   row_linkage[-row_nclusters+1, 2]) / 2
+    dendrogram(row_linkage, orientation='right', color_threshold=threshold_r)
 
     # Compute and plot column-wise dendogram
     # See notes above for explanation of parameters to `add_axes`
     ax2 = fig.add_axes([0.3, 0.71, 0.6, 0.2])
-    y_cols = linkage(data.T, method=linkage_method, metric=distance_metric)
-    threshold_c = (y_cols[-n_clusters_c, 2] + y_cols[-n_clusters_c+1, 2]) / 2
-    z_cols = dendrogram(y_cols, color_threshold=threshold_c)
+    threshold_c = (col_linkage[-col_nclusters, 2] +
+                   col_linkage[-col_nclusters+1, 2]) / 2
+    dendrogram(col_linkage, color_threshold=threshold_c)
 
     # Hide axes labels
     ax1.set_xticks([])
@@ -1077,41 +1116,40 @@ def bicluster(data, linkage_method='average',
     ax2.set_yticks([])
 
     # Plot data heatmap
-    axmatrix = fig.add_axes([0.3,0.1,0.6,0.6])
+    ax = fig.add_axes([0.3, 0.1, 0.6, 0.6])
 
     # Sort data by the dendogram leaves
-    idx_rows = leaves_list(y_rows)
+    idx_rows = leaves_list(row_linkage)
     data = data[idx_rows, :]
-    idx_cols = leaves_list(y_cols)
+    idx_cols = leaves_list(col_linkage)
     data = data[:, idx_cols]
 
-    im = axmatrix.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
-    axmatrix.set_xticks([])
-    axmatrix.set_yticks([])
+    im = ax.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
+    ax.set_xticks([])
+    ax.set_yticks([])
 
     # Axis labels
     plt.xlabel('Samples')
     plt.ylabel('Genes', labelpad=125)
 
     # Plot legend
-    axcolor = fig.add_axes([0.91,0.1,0.02,0.6])
+    axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.6])
     plt.colorbar(im, cax=axcolor)
-    plt.show()
 
-    return y_rows, y_cols
+    # display the plot
+    plt.show()
 ```
+
+Now we apply these functions to our normalized counts matrix to display row and column clusterings.
 
 ```python
-def most_variable_heatmap(counts):
-    counts_log = np.log(counts + 1)
-    counts_variable = most_variable_rows(counts_log, n=1500, method='var')
-    yr, yc = bicluster(counts_variable)
-    return yr, yc
-
-yr, yc = most_variable_heatmap(quantile_norm(counts))
+counts_log = np.log(counts + 1)
+counts_var = most_variable_rows(counts_log, n=1500)
+yr, yc = bicluster(counts_var)
+plot_bicluster(counts_var, yr, yc)
 ```
 
-We can see that the data naturally fall into NUMCLUSTERS clusters.
+We can see that the sample data naturally falls into at least 2 clusters.
 Are these clusters meaningful?
 To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
 After some preprocessing, we get the [patients table]() (LINK TO FINAL PATIENTS TABLE), which contains survival information for each patient.
@@ -1127,7 +1165,7 @@ This is a plot of the fraction of a population that remains alive over a period 
 Note that some data is *right-censored*, which means that in some cases, don't actually know when the patient died, or the patient might have died of causes unrelated to the melanoma.
 We counts these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
 
-To obtain a survival curve from survival times, we merely create a step function that decreases by $1/n$ at each step, where $n$ is the population size.
+To obtain a survival curve from survival times, we create a step function that decreases by $1/n$ at each step, where $n$ is the population size.
 We then match that function against the non-censored survival times.
 
 ```python
@@ -1178,7 +1216,6 @@ Now that we can easily obtain survival curves from the survival data, we can plo
 We write a function that groups the survival times by cluster identity and plots each group as a different line:
 
 ```python
-
 def plot_cluster_survival_curves(clusters, sample_names, patients,
                                  censor=True):
     """Plot the survival data from a set of sample clusters.
@@ -1243,7 +1280,8 @@ plot_cluster_survival_curves(clusters, data_table.columns, patients)
 The clustering of gene expression profiles has identified a higher-risk subtype of melanoma, which constitutes the majority of patients.
 This is indeed only the latest study to show such a result, with others identifying subtypes of leukemia (blood cancer), gut cancer, and more.
 Although the above clustering technique is quite fragile, there are other ways to explore this dataset and similar ones that are more robust.
-We leave you the exercise of implementing the approach described in the paper:
+
+**Exercise:** We leave you the exercise of implementing the approach described in the paper:
 
 1. Take bootstrap samples (random choice with replacement) of the genes used to cluster the samples;
 2. For each sample, produce a hierarchical clustering;
