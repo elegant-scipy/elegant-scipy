@@ -123,8 +123,8 @@ This data is perfect to represented more efficiently as a ndarray.
 
 ## NumPy N-dimensional arrays
 
-One of the key NumPy data types is the N-dimensional array (ndarray).
-Ndarrays must be homogenous; all items in an ndarray must be the same type and size.
+One of the key NumPy data types is the N-dimensional array (ndarray, or just array).
+Arrays must be homogeneous; all items in an array must be the same type.
 In our case we will need to store integers.
 
 Ndarrays are called N-dimensional because they can have any number of dimensions.
@@ -143,7 +143,7 @@ print(one_d_array.shape)
 print(len(one_d_array.shape))
 ```
 
-Remember that ndarrays must contain all elements of the same type.
+Remember that arrays must contain all elements of the same type.
 The type is set automatically from the input data used to create the array.
 NumPy will choose the minimum type required to hold all the objects.
 The type can also be set explicitly.
