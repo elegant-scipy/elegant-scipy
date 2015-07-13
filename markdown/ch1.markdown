@@ -126,7 +126,7 @@ One way to represent this data in Python would be as a list of lists:
 gene0 = [100, 200]
 gene1 = [50, 0]
 gene2 = [350, 100]
-expression_data = [gene1, gene2, gene3]
+expression_data = [gene0, gene1, gene2]
 ```
 
 Above, each gene's expression across different cell types is stored in a list of Python integers.
