@@ -345,11 +345,10 @@ with open(filename, 'rt') as f:
 print(data_table.iloc[:5, :5])
 ```
 
-We can see that Pandas has kindly pull out the header row and used it to name the columns.
+We can see that Pandas has kindly pulled out the header row and used it to name the columns.
 The first column gives the name of the gene, and the remaining columns represent individual samples.
 
-We will also needs some corresponding metadata,
-including the sample information and the gene lengths.
+We will also needs some corresponding metadata, including the sample information and the gene lengths.
 
 ```python
 # Sample names
@@ -471,6 +470,8 @@ Much better!
 Also notice how we used broadcasting twice there.
 Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
 
+**[ED'S NOTE]: the following function will probably be replaced by Seaborn's new boxplot function, which supports exactly this use case.**
+
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -550,7 +551,7 @@ Both are expressed at similar levels in the sample, i.e. both produce a similar 
 Therefore you would expect that gene B would have about twice as many counts as gene A.
 Remember, that when we do an RNAseq experiement, we are fragmenting the transcript, and sampling reads from that pool of fragments.
 The counts are the number of reads from that gene in a given sample.
-So if a gene is twice as long, we are twice as likly to sample it.
+So if a gene is twice as long, we are twice as likely to sample it.
 
 ![Relationship between counts and gene length](https://izabelcavassim.files.wordpress.com/2015/03/screenshot-from-2015-03-08-2245511.png)
 **[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
@@ -640,18 +641,13 @@ $ \frac{10^3C}{L(N/10^6)} = \frac{10^9C}{LN}$
 In summary, to calculate reads per kilobase transcript per million reads:  
 $RPKM = \frac{10^9C}{LN}$
 
-Where:  
-C = Number of reads mapped to a gene  
-N = Total mapped reads in the experiment  
-L = exon length in base-pairs for a gene
-
 Now let's implement RPKM over the entire counts array.
 
 ```python
 # Make our variable names the same as the RPKM formula so we can compare easily
 C = counts
-N = counts.sum(axis=0) # sum each column to get total reads per sample
-L = gene_lengths # lengths for each gene in the same order as the rows in counts
+N = counts.sum(axis=0)  # sum each column to get total reads per sample
+L = gene_lengths  # lengths for each gene, matching rows in `C`
 ```
 
 First, we multiply by 10^9.
@@ -688,9 +684,9 @@ If we performed the operation `A * B` then broadcasting would occur.
 B has fewer dimension than A, so during the calculation
 a new dimension is prepended to B with value 1.  
 B.shape = (1, 2)  
-Now A and B have the same number of dimension, so broadcasting can proceed.
+Now A and B have the same number of dimensions, so broadcasting can proceed.
 
-Now let's say we have another ndarray, C:  
+Now let's say we have another array, C:  
 C.shape = (2, 1)  
 B.shape = (2,)  
 Now, if we were to do the operation `C * B`,
@@ -711,14 +707,16 @@ print('C_tmp.shape', C_tmp.shape)
 print('L.shape', L.shape)
 ```
 
-We can see that C_tmp has 2 dimensions, while L has one.
+We can see that `C_tmp` has 2 dimensions, while L has one.
 So during broadcasting, an additional dimension will be prepended to L.
-Then we will have:  
-C_tmp.shape (20500, 375)  
+Then we will have:
+```
+C_tmp.shape (20500, 375)
 L.shape (1, 20500)
+```
 
 The dimensions won't match!
-We want to broadcast L over the first dimension of C_temp,
+We want to broadcast L over the first dimension of `C_tmp`,
 so we need to adjust the dimensions of L ourselves.
 
 ```python
