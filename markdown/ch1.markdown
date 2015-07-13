@@ -112,14 +112,37 @@ Here's an example of what this gene expression data looks like.
 
 |        | Cell type A | Cell type B |
 |--------|-------------|-------------|
-| Gene 1 | 100         | 200         |
-| Gene 2 | 50          | 0           |
-| Gene 3 | 350         | 100         |
+| Gene 0 | 100         | 200         |
+| Gene 1 | 50          | 0           |
+| Gene 2 | 350         | 100         |
 
 The data is a table of counts, integers representing how many reads were observed for each gene in each cell type.
 See how the counts for each gene differ between the cell types?
 We can use this information to tell us about the differences between these two types of cell.
-This data is perfect to represented more efficiently as a ndarray.
+
+One way to represent this data in Python would be as a list of lists:
+
+```python
+gene0 = [100, 200]
+gene1 = [50, 0]
+gene2 = [350, 100]
+expression_data = [gene1, gene2, gene3]
+```
+
+Above, each gene's expression across different cell types is stored in a list of Python integers.
+Then, we store all of these lists in a list (a metalist, if you will).
+We can retrieve individual data points using two levels of list indexing:
+
+```python
+expression_data[2][0]
+```
+
+It turns out that, because of the way the Python interpreter works, this is a very inefficient way to store these data points.
+First, Python lists are always lists of *objects*, so that the above list `gene2` is not a list of integers, but a list of *pointers* to integers, which is unnecessary overhead.
+Additionally, this means that each of these lists and each of these integers end up in a completely different, random part of your computer's RAM.
+However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is very bad.
+
+This is the problem precisely solved by the *NumPy array*.
 
 ## NumPy N-dimensional arrays
 
