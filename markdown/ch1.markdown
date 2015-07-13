@@ -209,114 +209,112 @@ you can multiply every element in the array by 5 in a single bound.
 Behind the scenes, the highly-optimized NumPy library is doing the iteration as fast as possible.
 
 ```python
-    import numpy as np
+import numpy as np
 
-    # Create an ndarray of integers in the range 0 up to (but not including) 10,000,000
-    nd_array = np.arange(1e6)
-    # Convert arr to a list
-    list_array = nd_array.tolist()
+# Create an ndarray of integers in the range
+# 0 up to (but not including) 10,000,000
+nd_array = np.arange(1e6)
+# Convert arr to a list
+list_array = nd_array.tolist()
 ```
 
 ```python
-    %%timeit -n10 # Use the Ipython "magic" command timeit to time how long it takes to multiply each element in the ndarray by 5
-    x = nd_array * 5
+%%timeit -n10
+# Time how long it takes to multiply each element in the list by 5
+for i, val in enumerate(list_array):
+    list_array[i] = val * 5
 ```
 
 ```python
-    %%timeit -n10 # Time how long it takes to multiply each element in the list by 5
-    for i, val in enumerate(list_array):
-        list_array[i] = val * 5
+%%timeit -n10
+# Use the IPython "magic" command timeit to time how
+# long it takes to multiply each element in the ndarray by 5
+x = nd_array * 5
 ```
 
-Ndarrays are also size efficient.
-In Python, each element in a list as an object and is given a health memory allocation.
-In contrast, for ndarrays you
-(or in this case the `arange` function)
-decide how much memory to allocate to the elements.
+More than 100 times faster, and more concise, too!
+
+Arrays are also size efficient.
+In Python, each element in a list is an object and is given a healthy memory allocation (or is that unhealthy?).
+In contrast, in arrays, each element takes up just the necessary amount of memory.
+For example, an array of 64-bit integers takes up exactly 64-bits per element, plus some very small overhead for array metadata, such as the `shape` attribute we discussed above.
 This is generally much less than would be given to objects in a python list.
 
-Ndarrays contain pointers to other ndarrays or even other python data types such
-as ...
-This means that you can have a single copy of your data and access subsets via
-other variables without duplicating that portion of your data.
-However, this also means that if you may inadvertently edit your data set
-when you might think you are making a copy of it.
+Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
 
 ```python
-    # Create an ndarray x
-    x = np.array([1, 2, 3], np.int32)
-    print(x)
+# Create an ndarray x
+x = np.array([1, 2, 3], np.int32)
+print(x)
 ```
 
 ```python
-    # Create variable name y that points to the first two values in x
-    y = x[:2]
-    print(y)
+# Create a "slice" of x
+y = x[:2]
+print(y)
 ```
 
 ```python
-    # Set the first element of y to be 6
-    y[0] = 6
-    print(y)
+# Set the first element of y to be 6
+y[0] = 6
+print(y)
 ```
 
-```python
-    # Now the first element in x has changed to 6!
-    print(x)
-```
+Notice that although we edited `y`, `x` has also changed, because `y` was referencing the same data!
 
 ```python
-    # If you actually wanted a copy of your array use the copy function
-    y = np.copy(x[:2])
+# Now the first element in x has changed to 6!
+print(x)
+```
+
+This does mean you have to be careful with array references.
+If you want to manipulate the data without touching the original, it's easy to make a copy:
+
+```python
+y = np.copy(x[:2])
 ```
 
 ### Broadcasting
 
-One of the most powerful and often misunderstood features of the ndarray is broadcasting.
-Broadcasting is a way of performing operations between two arrays.
-Earlier when we talked about the speed of operations on ndarrays, what we were actually doing was broadcasting.
+One of the most powerful and often misunderstood features of arrays is broadcasting.
+Broadcasting is a way of performing implicit operations between two arrays.
+Earlier when we talked about the speed of operations on arrays, what we were actually doing was broadcasting.
 Let's look at some examples.
 
 ```python
 x = np.array([1, 2, 3, 4])
-
-x * 2
+print(x * 2)
 ```
+
+Here, we have implicitly multiplied every element in `x`, an array of 4 values, by 2, a single value.
 
 ```python
 y = np.array([0, 1, 2, 1])
-x + y # add every element in x to the corresponding element in y
+print(x + y)
 ```
+
+Now, we have added together each element in `x` to its corresponding element in `y`, an array of the same shape.
+
+Both of these operations are simple and, we hope, intuitive.
+NumPy also makes them very fast, much faster than iterating over the arrays manually.
+(Feel free to play with this yourself using the `%%timeit` IPython magic.)
+
+But, the more advanced version of broadcasting allows you to perform operations on arrays of *compatible* shapes, to create arrays bigger than either of the starting ones.
+For example, we can compute the [outer product](https://en.wikipedia.org/wiki/Outer_product) of two vectors, by reshaping them appropriately:
 
 ```python
-x * y # multiply every element in x by the corresponding element in y
+x = np.reshape(x, (len(x), 1))
+y = np.reshape(y, (1, len(y)))
+
+outer = x * y
+print(outer)
 ```
 
-Another word for this behavior is vectorization, which is a key feature of array languages such as Matlab and R.
-Under the hood this is equivalent to the to a for loop, but much faster because the loop is running in C rather than Python.
-Let's try the same calculation as a loop and using broadcasting to see how much of a speed up we can get.
+You can see for yoourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
+This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the correspoding dimension of the other array.
 
-```python
-# Create an ndarray of length 10,000,000
-nd_array = np.arange(1e6)
-```
-
-```python
-%%timeit -n10
-
-array_len = len(nd_array)
-result = np.empty(shape=array_len, dtype="int64") # Create an empty ndarray
-for i in range(array_len):
-    result[i] = nd_array[i] * 5
-```
-
-```python
-%%timeit -n10
-
-result = nd_array * 5
-```
-
-We will come back to some more advanced broadcasting examples as we start to deal with real data.
+As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
+It allows us to express complex operations concisely and efficiently.
 
 ## Exploring a gene expression data set
 
