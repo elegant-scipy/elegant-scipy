@@ -151,78 +151,52 @@ Arrays must be homogeneous; all items in an array must be the same type.
 In our case we will need to store integers.
 
 Ndarrays are called N-dimensional because they can have any number of dimensions.
-For example a 1-dimesional array would look like this:
+A 1-dimesional array is roughly equivalent to a Python list:
 
 ```python
 import numpy as np
 
 one_d_array = np.array([1,2,3,4])
 print(one_d_array)
+print(type(one_d_array))
 ```
 
+Arrays have particular attributes and methods, that you can access by placing a dot after the array name.
+For example, you can get the array's *shape*:
+
 ```python
-# Use .shape to check the dimensions of an ndarray
 print(one_d_array.shape)
-print(len(one_d_array.shape))
 ```
 
-Remember that arrays must contain all elements of the same type.
-The type is set automatically from the input data used to create the array.
-NumPy will choose the minimum type required to hold all the objects.
-The type can also be set explicitly.
+Here, it's just a tuple with a single number.
+You might wonder why you wouldn't just use `len`, as you would for a list.
+That will work, but it doesn't extend to *two-dimensional* arrays.
+
+This is what we use to represent our mini gene expression table from above:
 
 ```python
-# Use .dtype to determine the data type (including allocated memory)
-print(one_d_array)
-print(one_d_array.dtype)
-one_d_array = np.array([1,2,3,4], dtype='str') # Set the data type to string (upcasting)
-print(one_d_array)
-print(one_d_array.dtype)
+two_d_array = np.array(expression_data)
+print(two_d_array.shape)
 ```
 
-For a 2-dimensional array, let's use our mini gene expression table from above.
-
-```python
-two_d_array = np.array([[100, 200],
-                        [ 50,   0],
-                        [350, 100]])
-print(two_d_array)
-```
+Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
 
 ![2-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img24.gif)
 **[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
-```python
-# Use .shape to check the dimensions of an ndarray
-print(two_d_array.shape)
-print(len(two_d_array.shape))
-```
-
-Once we get into three dimensions, things start to get trickier to imagine.
+Arrays have other attributes, such as `ndim`, the number of dimensions:
 
 ```python
-three_d_array = np.array([
-        [[1,2], [3,4]],
-        [[5,6], [7,8]],
-    ])
-print(three_d_array)
+print(two_d_array.ndim)
 ```
 
-I like to draw this as a cube.
+You'll become familiar with all of these as you start to use NumPy more for your own data analysis.
 
-![3-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img25.gif)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+NumPy arrays can represent data that has even more dimensions, such as magnetic resonance imaging (MRI) data, which includes measurements within a 3D volume.
+If we store MRI values over time, we might need a 4D NumPy array.
 
-```python
-print(three_d_array.shape)
-print(len(three_d_array.shape))
-```
-
-A 4 dimensional array becomes tricky to visualize even with a diagram,
-so perhaps it is easier to think of it in terms of a use case.
-Let's say you have an ndarray that describes an object over time.
-You would need three dimensions to describe the position of
-the objects and a fourth to indicate time.
+For now, we'll stick to 2D data.
+Later chapters will introduce higher-D data and will teach you to write code that works for data of any number of dimensions!
 
 ### Why use ndarrays as opposed to Python lists?
 
