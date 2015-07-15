@@ -20,18 +20,19 @@ from scipy import stats
 def quantile_norm(X):
     """Normalize the columns of X to each have the same distribution.
 
-    Given an expression matrix (microarray data, read counts, etc) of ngenes
-    by nsamples, quantile normalization ensures all samples have the same
+    Given an expression matrix (microarray data, read counts, etc) of M genes
+    by N samples, quantile normalization ensures all samples have the same
     spread of data (by construction).
 
-    The input data is log-transformed. The rows are averaged and each column
-    quantile is replaced with the quantile of the average column.
+    The input data is log-transformed, then the data across each row are
+    averaged to obtain an average column. Each column quantile is replaced
+    with the corresponding quantile of the average column.
     The data is then transformed back to counts.
 
     Parameters
     ----------
     X : 2D array of float, shape (M, N)
-        The input data, with n_features rows and n_samples columns.
+        The input data, with M rows (genes/features) and N columns (samples).
 
     Returns
     -------
@@ -61,7 +62,7 @@ def quantile_norm(X):
 We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful:
 
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
-- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $log(x + 1)$ for every value in the array.
+- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
 - Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
 - Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
 - Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
@@ -73,12 +74,12 @@ Before we delve into the power of NumPy, let's spend some time to understand the
 We will work our way through a *gene expression analysis* to demonstrate the power of NumPy and SciPy to solve a real-world biological problem.
 We will use the Pandas library, which builds on NumPy, to read and munge our data files, and then we manipulate our data efficiently in NumPy arrays.
 
-The central dogma of molecular biology states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
+The so-called central dogma of molecular biology states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
 There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
 
-![The double helix](http://www.clarealumni.com/s/845/images/editor/News%20Images/jim_watson__left____crick.jpg)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+![The chemical structure of DNA](https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg)
+*Image by Madeleine Price Ball, used under the terms of the CC0 public domain license*
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
@@ -112,94 +113,91 @@ Here's an example of what this gene expression data looks like.
 
 |        | Cell type A | Cell type B |
 |--------|-------------|-------------|
-| Gene 1 | 100         | 200         |
-| Gene 2 | 50          | 0           |
-| Gene 3 | 350         | 100         |
+| Gene 0 | 100         | 200         |
+| Gene 1 | 50          | 0           |
+| Gene 2 | 350         | 100         |
 
 The data is a table of counts, integers representing how many reads were observed for each gene in each cell type.
 See how the counts for each gene differ between the cell types?
 We can use this information to tell us about the differences between these two types of cell.
-This data is perfect to represented more efficiently as a ndarray.
+
+One way to represent this data in Python would be as a list of lists:
+
+```python
+gene0 = [100, 200]
+gene1 = [50, 0]
+gene2 = [350, 100]
+expression_data = [gene0, gene1, gene2]
+```
+
+Above, each gene's expression across different cell types is stored in a list of Python integers.
+Then, we store all of these lists in a list (a metalist, if you will).
+We can retrieve individual data points using two levels of list indexing:
+
+```python
+expression_data[2][0]
+```
+
+It turns out that, because of the way the Python interpreter works, this is a very inefficient way to store these data points.
+First, Python lists are always lists of *objects*, so that the above list `gene2` is not a list of integers, but a list of *pointers* to integers, which is unnecessary overhead.
+Additionally, this means that each of these lists and each of these integers end up in a completely different, random part of your computer's RAM.
+However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is very bad.
+
+This is the problem precisely solved by the *NumPy array*.
 
 ## NumPy N-dimensional arrays
 
-One of the key NumPy data types is the N-dimensional array (ndarray).
-Ndarrays must be homogenous; all items in an ndarray must be the same type and size.
+One of the key NumPy data types is the N-dimensional array (ndarray, or just array).
+Arrays must be homogeneous; all items in an array must be the same type.
 In our case we will need to store integers.
 
 Ndarrays are called N-dimensional because they can have any number of dimensions.
-For example a 1-dimesional array would look like this:
+A 1-dimesional array is roughly equivalent to a Python list:
 
 ```python
 import numpy as np
 
 one_d_array = np.array([1,2,3,4])
 print(one_d_array)
+print(type(one_d_array))
 ```
 
+Arrays have particular attributes and methods, that you can access by placing a dot after the array name.
+For example, you can get the array's *shape*:
+
 ```python
-# Use .shape to check the dimensions of an ndarray
 print(one_d_array.shape)
-print(len(one_d_array.shape))
 ```
 
-Remember that ndarrays must contain all elements of the same type.
-The type is set automatically from the input data used to create the array.
-NumPy will choose the minimum type required to hold all the objects.
-The type can also be set explicitly.
+Here, it's just a tuple with a single number.
+You might wonder why you wouldn't just use `len`, as you would for a list.
+That will work, but it doesn't extend to *two-dimensional* arrays.
+
+This is what we use to represent our mini gene expression table from above:
 
 ```python
-# Use .dtype to determine the data type (including allocated memory)
-print(one_d_array)
-print(one_d_array.dtype)
-one_d_array = np.array([1,2,3,4], dtype='str') # Set the data type to string (upcasting)
-print(one_d_array)
-print(one_d_array.dtype)
+two_d_array = np.array(expression_data)
+print(two_d_array.shape)
 ```
 
-For a 2-dimensional array, let's use our mini gene expression table from above.
-
-```python
-two_d_array = np.array([[100, 200],
-                        [ 50,   0],
-                        [350, 100]])
-print(two_d_array)
-```
+Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
 
 ![2-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img24.gif)
 **[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
-```python
-# Use .shape to check the dimensions of an ndarray
-print(two_d_array.shape)
-print(len(two_d_array.shape))
-```
-
-Once we get into three dimensions, things start to get trickier to imagine.
+Arrays have other attributes, such as `ndim`, the number of dimensions:
 
 ```python
-three_d_array = np.array([
-        [[1,2], [3,4]],
-        [[5,6], [7,8]],
-    ])
-print(three_d_array)
+print(two_d_array.ndim)
 ```
 
-I like to draw this as a cube.
+You'll become familiar with all of these as you start to use NumPy more for your own data analysis.
 
-![3-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img25.gif)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+NumPy arrays can represent data that has even more dimensions, such as magnetic resonance imaging (MRI) data, which includes measurements within a 3D volume.
+If we store MRI values over time, we might need a 4D NumPy array.
 
-```python
-print(three_d_array.shape)
-print(len(three_d_array.shape))
-```
-
-A 4 dimensional array becomes tricky to visualize even with a diagram,
-so perhaps it is easier to think of it in terms of a use case.
-Let's say you have an ndarray that describes an object over time.
-You would need three dimensions to describe the position of
-the objects and a fourth to indicate time.
+For now, we'll stick to 2D data.
+Later chapters will introduce higher-D data and will teach you to write code that works for data of any number of dimensions!
 
 ### Why use ndarrays as opposed to Python lists?
 
@@ -212,119 +210,117 @@ you can multiply every element in the array by 5 in a single bound.
 Behind the scenes, the highly-optimized NumPy library is doing the iteration as fast as possible.
 
 ```python
-    import numpy as np
+import numpy as np
 
-    # Create an ndarray of integers in the range 0 up to (but not including) 10,000,000
-    nd_array = np.arange(1e6)
-    # Convert arr to a list
-    list_array = nd_array.tolist()
+# Create an ndarray of integers in the range
+# 0 up to (but not including) 10,000,000
+nd_array = np.arange(1e6)
+# Convert arr to a list
+list_array = nd_array.tolist()
 ```
 
 ```python
-    %%timeit -n10 # Use the Ipython "magic" command timeit to time how long it takes to multiply each element in the ndarray by 5
-    x = nd_array * 5
+%%timeit -n10
+# Time how long it takes to multiply each element in the list by 5
+for i, val in enumerate(list_array):
+    list_array[i] = val * 5
 ```
 
 ```python
-    %%timeit -n10 # Time how long it takes to multiply each element in the list by 5
-    for i, val in enumerate(list_array):
-        list_array[i] = val * 5
+%%timeit -n10
+# Use the IPython "magic" command timeit to time how
+# long it takes to multiply each element in the ndarray by 5
+x = nd_array * 5
 ```
 
-Ndarrays are also size efficient.
-In Python, each element in a list as an object and is given a health memory allocation.
-In contrast, for ndarrays you
-(or in this case the `arange` function)
-decide how much memory to allocate to the elements.
+More than 100 times faster, and more concise, too!
+
+Arrays are also size efficient.
+In Python, each element in a list is an object and is given a healthy memory allocation (or is that unhealthy?).
+In contrast, in arrays, each element takes up just the necessary amount of memory.
+For example, an array of 64-bit integers takes up exactly 64-bits per element, plus some very small overhead for array metadata, such as the `shape` attribute we discussed above.
 This is generally much less than would be given to objects in a python list.
 
-Ndarrays contain pointers to other ndarrays or even other python data types such
-as ...
-This means that you can have a single copy of your data and access subsets via
-other variables without duplicating that portion of your data.
-However, this also means that if you may inadvertently edit your data set
-when you might think you are making a copy of it.
+Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
 
 ```python
-    # Create an ndarray x
-    x = np.array([1, 2, 3], np.int32)
-    print(x)
+# Create an ndarray x
+x = np.array([1, 2, 3], np.int32)
+print(x)
 ```
 
 ```python
-    # Create variable name y that points to the first two values in x
-    y = x[:2]
-    print(y)
+# Create a "slice" of x
+y = x[:2]
+print(y)
 ```
 
 ```python
-    # Set the first element of y to be 6
-    y[0] = 6
-    print(y)
+# Set the first element of y to be 6
+y[0] = 6
+print(y)
 ```
 
-```python
-    # Now the first element in x has changed to 6!
-    print(x)
-```
+Notice that although we edited `y`, `x` has also changed, because `y` was referencing the same data!
 
 ```python
-    # If you actually wanted a copy of your array use the copy function
-    y = np.copy(x[:2])
+# Now the first element in x has changed to 6!
+print(x)
+```
+
+This does mean you have to be careful with array references.
+If you want to manipulate the data without touching the original, it's easy to make a copy:
+
+```python
+y = np.copy(x[:2])
 ```
 
 ### Broadcasting
 
-One of the most powerful and often misunderstood features of the ndarray is broadcasting.
-Broadcasting is a way of performing operations between two arrays.
-Earlier when we talked about the speed of operations on ndarrays, what we were actually doing was broadcasting.
+One of the most powerful and often misunderstood features of arrays is broadcasting.
+Broadcasting is a way of performing implicit operations between two arrays.
+Earlier when we talked about the speed of operations on arrays, what we were actually doing was broadcasting.
 Let's look at some examples.
 
 ```python
 x = np.array([1, 2, 3, 4])
-
-x * 2
+print(x * 2)
 ```
+
+Here, we have implicitly multiplied every element in `x`, an array of 4 values, by 2, a single value.
 
 ```python
 y = np.array([0, 1, 2, 1])
-x + y # add every element in x to the corresponding element in y
+print(x + y)
 ```
+
+Now, we have added together each element in `x` to its corresponding element in `y`, an array of the same shape.
+
+Both of these operations are simple and, we hope, intuitive.
+NumPy also makes them very fast, much faster than iterating over the arrays manually.
+(Feel free to play with this yourself using the `%%timeit` IPython magic.)
+
+But, the more advanced version of broadcasting allows you to perform operations on arrays of *compatible* shapes, to create arrays bigger than either of the starting ones.
+For example, we can compute the [outer product](https://en.wikipedia.org/wiki/Outer_product) of two vectors, by reshaping them appropriately:
 
 ```python
-x * y # multiply every element in x by the corresponding element in y
+x = np.reshape(x, (len(x), 1))
+y = np.reshape(y, (1, len(y)))
+
+outer = x * y
+print(outer)
 ```
 
-Another word for this behavior is vectorization, which is a key feature of array languages such as Matlab and R.
-Under the hood this is equivalent to the to a for loop, but much faster because the loop is running in C rather than Python.
-Let's try the same calculation as a loop and using broadcasting to see how much of a speed up we can get.
+You can see for yoourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
+This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the correspoding dimension of the other array.
 
-```python
-# Create an ndarray of length 10,000,000
-nd_array = np.arange(1e6)
-```
-
-```python
-%%timeit -n10
-
-array_len = len(nd_array)
-result = np.empty(shape=array_len, dtype="int64") # Create an empty ndarray
-for i in range(array_len):
-    result[i] = nd_array[i] * 5
-```
-
-```python
-%%timeit -n10
-
-result = nd_array * 5
-```
-
-We will come back to some more advanced broadcasting examples as we start to deal with real data.
+As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
+It allows us to express complex operations concisely and efficiently.
 
 ## Exploring a gene expression data set
 
 The data set that we'll be using is an RNAseq experiment of skin cancer samples from The Cancer Genome Atlas (TCGA) project (http://cancergenome.nih.gov/).
-We will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044).
+We will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 
 ### Downloading the data
 
@@ -350,11 +346,10 @@ with open(filename, 'rt') as f:
 print(data_table.iloc[:5, :5])
 ```
 
-We can see that Pandas has kindly pull out the header row and used it to name the columns.
+We can see that Pandas has kindly pulled out the header row and used it to name the columns.
 The first column gives the name of the gene, and the remaining columns represent individual samples.
 
-We will also needs some corresponding metadata,
-including the sample information and the gene lengths.
+We will also needs some corresponding metadata, including the sample information and the gene lengths.
 
 ```python
 # Sample names
@@ -476,6 +471,8 @@ Much better!
 Also notice how we used broadcasting twice there.
 Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
 
+**[ED'S NOTE]: the following function will probably be replaced by Seaborn's new boxplot function, which supports exactly this use case.**
+
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -555,7 +552,7 @@ Both are expressed at similar levels in the sample, i.e. both produce a similar 
 Therefore you would expect that gene B would have about twice as many counts as gene A.
 Remember, that when we do an RNAseq experiement, we are fragmenting the transcript, and sampling reads from that pool of fragments.
 The counts are the number of reads from that gene in a given sample.
-So if a gene is twice as long, we are twice as likly to sample it.
+So if a gene is twice as long, we are twice as likely to sample it.
 
 ![Relationship between counts and gene length](https://izabelcavassim.files.wordpress.com/2015/03/screenshot-from-2015-03-08-2245511.png)
 **[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
@@ -645,18 +642,13 @@ $ \frac{10^3C}{L(N/10^6)} = \frac{10^9C}{LN}$
 In summary, to calculate reads per kilobase transcript per million reads:  
 $RPKM = \frac{10^9C}{LN}$
 
-Where:  
-C = Number of reads mapped to a gene  
-N = Total mapped reads in the experiment  
-L = exon length in base-pairs for a gene
-
 Now let's implement RPKM over the entire counts array.
 
 ```python
 # Make our variable names the same as the RPKM formula so we can compare easily
 C = counts
-N = counts.sum(axis=0) # sum each column to get total reads per sample
-L = gene_lengths # lengths for each gene in the same order as the rows in counts
+N = counts.sum(axis=0)  # sum each column to get total reads per sample
+L = gene_lengths  # lengths for each gene, matching rows in `C`
 ```
 
 First, we multiply by 10^9.
@@ -693,9 +685,9 @@ If we performed the operation `A * B` then broadcasting would occur.
 B has fewer dimension than A, so during the calculation
 a new dimension is prepended to B with value 1.  
 B.shape = (1, 2)  
-Now A and B have the same number of dimension, so broadcasting can proceed.
+Now A and B have the same number of dimensions, so broadcasting can proceed.
 
-Now let's say we have another ndarray, C:  
+Now let's say we have another array, C:  
 C.shape = (2, 1)  
 B.shape = (2,)  
 Now, if we were to do the operation `C * B`,
@@ -716,14 +708,16 @@ print('C_tmp.shape', C_tmp.shape)
 print('L.shape', L.shape)
 ```
 
-We can see that C_tmp has 2 dimensions, while L has one.
+We can see that `C_tmp` has 2 dimensions, while L has one.
 So during broadcasting, an additional dimension will be prepended to L.
-Then we will have:  
-C_tmp.shape (20500, 375)  
+Then we will have:
+```
+C_tmp.shape (20500, 375)
 L.shape (1, 20500)
+```
 
 The dimensions won't match!
-We want to broadcast L over the first dimension of C_temp,
+We want to broadcast L over the first dimension of `C_tmp`,
 so we need to adjust the dimensions of L ourselves.
 
 ```python
@@ -889,17 +883,19 @@ from scipy import stats
 def quantile_norm(X):
     """Normalize the columns of X to each have the same distribution.
 
-    Given an expression matrix (microarray data, read counts, etc) of ngenes
-    by nsamples, quantile normalization ensures all samples have the same spread of data (by construction).
+    Given an expression matrix (microarray data, read counts, etc) of M genes
+    by N samples, quantile normalization ensures all samples have the same
+    spread of data (by construction).
 
-    The input data is log-transformed. The rows are averaged and each column
-    quantile is replaced with the quantile of the average column.
+    The input data is log-transformed, then the data across each row are
+    averaged to obtain an average column. Each column quantile is replaced
+    with the corresponding quantile of the average column.
     The data is then transformed back to counts.
 
     Parameters
     ----------
     X : 2D array of float, shape (M, N)
-        The input data, with n_features rows and n_samples columns.
+        The input data, with M rows (genes/features) and N columns (samples).
 
     Returns
     -------
