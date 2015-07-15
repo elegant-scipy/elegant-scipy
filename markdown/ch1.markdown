@@ -20,18 +20,19 @@ from scipy import stats
 def quantile_norm(X):
     """Normalize the columns of X to each have the same distribution.
 
-    Given an expression matrix (microarray data, read counts, etc) of ngenes
-    by nsamples, quantile normalization ensures all samples have the same
+    Given an expression matrix (microarray data, read counts, etc) of M genes
+    by N samples, quantile normalization ensures all samples have the same
     spread of data (by construction).
 
-    The input data is log-transformed. The rows are averaged and each column
-    quantile is replaced with the quantile of the average column.
+    The input data is log-transformed, then the data across each row are
+    averaged to obtain an average column. Each column quantile is replaced
+    with the corresponding quantile of the average column.
     The data is then transformed back to counts.
 
     Parameters
     ----------
     X : 2D array of float, shape (M, N)
-        The input data, with n_features rows and n_samples columns.
+        The input data, with M rows (genes/features) and N columns (samples).
 
     Returns
     -------
@@ -61,7 +62,7 @@ def quantile_norm(X):
 We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful:
 
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
-- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $log(x + 1)$ for every value in the array.
+- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
 - Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
 - Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
 - Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
@@ -73,7 +74,7 @@ Before we delve into the power of NumPy, let's spend some time to understand the
 We will work our way through a *gene expression analysis* to demonstrate the power of NumPy and SciPy to solve a real-world biological problem.
 We will use the Pandas library, which builds on NumPy, to read and munge our data files, and then we manipulate our data efficiently in NumPy arrays.
 
-The central dogma of molecular biology states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
+The so-called central dogma of molecular biology states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
 There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
 
@@ -882,17 +883,19 @@ from scipy import stats
 def quantile_norm(X):
     """Normalize the columns of X to each have the same distribution.
 
-    Given an expression matrix (microarray data, read counts, etc) of ngenes
-    by nsamples, quantile normalization ensures all samples have the same spread of data (by construction).
+    Given an expression matrix (microarray data, read counts, etc) of M genes
+    by N samples, quantile normalization ensures all samples have the same
+    spread of data (by construction).
 
-    The input data is log-transformed. The rows are averaged and each column
-    quantile is replaced with the quantile of the average column.
+    The input data is log-transformed, then the data across each row are
+    averaged to obtain an average column. Each column quantile is replaced
+    with the corresponding quantile of the average column.
     The data is then transformed back to counts.
 
     Parameters
     ----------
     X : 2D array of float, shape (M, N)
-        The input data, with n_features rows and n_samples columns.
+        The input data, with M rows (genes/features) and N columns (samples).
 
     Returns
     -------
