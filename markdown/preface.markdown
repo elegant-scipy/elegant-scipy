@@ -310,7 +310,7 @@ Where we have sourced code snippets from other people, the code will generally b
 ### GitHub: Taking Coding Social
 
 We've talked a little about releasing your source code under an open source license.
-This will hopefully result in hung numbers of people downloading your code, using it, fixing bugs and adding new features.
+This will hopefully result in huge numbers of people downloading your code, using it, fixing bugs and adding new features.
 Where will you host your code so people can find it?
 How will those bug fixes and features get back into your code? How will you keep track of all the issues and changes?
 You can imagine how this could get out of control quite quickly.
@@ -335,13 +335,13 @@ In essence, GitHub has democratized software development. It has substantially r
 
 ### Making your Mark on the SciPy Ecosystem
 
-Once you have become more comfortable with SciPy and started using it for your research, you may find that a particular package is lacking a feature you need, or you think you can do something for efficiently, or perhaps you've found a bug.
+Once you have become more comfortable with SciPy and started using it for your research, you may find that a particular package is lacking a feature you need, or you think that you can do something more efficiently, or perhaps you've found a bug.
 When you reach this point, it's time to start contributing to the SciPy Ecosystem.
 
 We strongly encourage you to try doing this.
 The community lives because people are willing to share their code and improve existing code.
 Beyond any altruistic reasons for contributing, there are some very practical personal benefits.
-Buy engaging with the community you will become a better coder.
+By engaging with the community you will become a better coder.
 Any code you contribute will be generally be reviewed by others and you will receive feedback.
 As a side effect, you will learn how to use Git and GitHub, which are very useful tools for maintaining and sharing your own code.
 You may even find interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
@@ -369,8 +369,14 @@ In general, Python library names can be a riot, and we hope you'll enjoy your ti
 
 ## Getting Help
 
+My first step when I get stuck is to Google the task that I am trying to achieve,
+or the error message that I got.
+This generally leads me to [Stack Overflow](http://stackoverflow.com/),
+an excellent question and answer site for programming.
+If you don't find what you're looking for immediately try generalizing your search terms to find someone who is have a a similar problem.
+Sometimes, you realize that you might be the first person to have this specific question (this is particularly likely when you are using a brand new package), but not all is lost!
 As mentioned above, the SciPy community is a friendly bunch, and can be found scattered around various parts of the interwebs.
-Your first point of call is to Google "<library name> mailing list", and find
+Your next point of call is to Google "`<library name> mailing list`", and find
 an email list to ask for help.
 Library authors and power users read these regularly, and are very welcoming to newcomers.
 Note that it is common etiquette to *subscribe* to the list before posting.
