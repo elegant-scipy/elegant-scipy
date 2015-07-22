@@ -192,9 +192,9 @@ Python 2 allowed you to define a Unicode string, like so:
 But in Python 3, *everything* is unicode:
 
 ```python
->>> β = 0.5
->>> np.arcsin(2 * β) / np.pi
-0.5
+import numpy as np
+β = 0.5
+np.arcsin(2 * β) / np.pi
 ```
 
 The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
@@ -362,6 +362,7 @@ This is a play on "six", which lets you use Python 3 syntax in Python 2, with a 
 Sux syntax makes it less frustrating to use Python 2-only packages after you've moved to Python 3:
 
 ```
+import sux
 sux.to_use('my_py2_package')
 ```
 
