@@ -5,10 +5,10 @@
 > -- Graeme Simsion, *The Rosie Effect*
 
 This book is entitled Elegant SciPy.
-We’re going to spend rather a lot of time focusing on the “SciPy” bit of the title, so let’s take a moment to reflect on "Elegant".
-There are plenty of manuals, tutorials and documentation websites out there describing the SciPy library.
+We’re going to spend rather a lot of time focusing on the “SciPy” bit of the title, so let’s take a moment to reflect on the "Elegant" bit.
+There are plenty of manuals, tutorials and documentation websites out there describe the SciPy library.
 Elegant SciPy is not one of those.
-Instead of just teaching you how to write code that works, we will teach you to write code that rocks.
+Instead of just teaching you how to write code that works, we will also teach you to write code that rocks!
 
 In The Rosie Effect (hilarious book; go read its prequel [The Rosie Project](https://en.wikipedia.org/wiki/The_Rosie_Project) when you’re done with Elegant SciPy), Graeme Simsion twists the conventions of the word "elegant" around.
 Most would use it to describe the visual simplicity of something or someone stylish or graceful.
