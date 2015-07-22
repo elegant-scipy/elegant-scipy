@@ -228,7 +228,7 @@ And such a killer app has launched a vast amount of related libraries that build
 You'll encounter many of these throughout this book.
 
 The creators of these libraries and many of their users gather at many events and conferences around the world.
-These include the yearly SciPy conference in Austin, Texas, EuroSciPy, SciPy India, and others.
+These include the yearly SciPy conference in Austin, Texas, EuroSciPy, SciPy India, PyData and others.
 We highly recommend attending one of these, and meeting the authors of the best scientific software in the Python world.
 
 ### Free and open-source software
@@ -319,12 +319,12 @@ Enter GitHub.
 
 GitHub (https://github.com/) is a website for hosting, sharing and developing code.
 It is based on Git version control software (http://git-scm.com/).
-**[ED NOTE, reference GitHub resource/book title/URL?]**
+**[ED NOTE, reference GitHub book http://shop.oreilly.com/product/0636920033059.do]**
 
 GitHub has had a massive effect on open source contributions, particularly in Python.
 GitHub allows users to publish code publicly.
 Anyone can come along and create a copy (fork) of the code and edit it to their heart's content.
-They can eventually contribute those changes back into the original.
+They can eventually contribute those changes back into the original by creating a pull request.
 There are some nice features like managing issues and change requests, as well as who can directly edit your code.
 You can even keep track of editing statistics and other fun stats.
 There are a whole bunch of other great GitHub features, but we will leave many them for you to discover and some for you to read in later chapters.
