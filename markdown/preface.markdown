@@ -390,5 +390,15 @@ It may seem annoying to join yet another mailing list, but we highly recommend i
 
 All of the code from this book is available on our GitHub repository [link]().
 
+## Diving in
+
+We've brought together some of the most elegant code offered up by the SciPy community.
+Along the way we are going to explore some real-world scientific problems that SciPy can solve.
+This book is also a glimpse into a welcoming scientific coding community that wants you to join in.
+
+Welcome to Elegant SciPy.
+
+Now, let's go write some code!
+
 
 [^py3]: http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html
