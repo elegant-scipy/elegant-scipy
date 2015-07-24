@@ -6,7 +6,7 @@
 
 This book is entitled Elegant SciPy.
 We’re going to spend rather a lot of time focusing on the “SciPy” bit of the title, so let’s take a moment to reflect on the "Elegant" bit.
-There are plenty of manuals, tutorials and documentation websites out there describe the SciPy library.
+There are plenty of manuals, tutorials and documentation websites out there that describe the SciPy library.
 Elegant SciPy is not one of those.
 Instead of just teaching you how to write code that works, we will also teach you to write code that rocks!
 
@@ -230,6 +230,7 @@ You'll encounter many of these throughout this book.
 The creators of these libraries and many of their users gather at many events and conferences around the world.
 These include the yearly SciPy conference in Austin, Texas, EuroSciPy, SciPy India, PyData and others.
 We highly recommend attending one of these, and meeting the authors of the best scientific software in the Python world.
+If you can't get there, or simply want a taste of these conferences, many [publish their talks online](https://www.youtube.com/user/EnthoughtMedia/playlists).
 
 ### Free and open-source software
 
@@ -319,6 +320,7 @@ Enter GitHub.
 
 GitHub (https://github.com/) is a website for hosting, sharing and developing code.
 It is based on Git version control software (http://git-scm.com/).
+We will help you get started in GitHub land, but there are some great resources for a more in-depth experience, e.g
 **[ED NOTE, reference GitHub book http://shop.oreilly.com/product/0636920033059.do]**
 
 GitHub has had a massive effect on open source contributions, particularly in Python.
