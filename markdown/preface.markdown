@@ -135,6 +135,9 @@ We will list all of the requirements and the versions we used at the start of ea
 The easiest way to get all of these components is to install the Anaconda Python distribution.
 You can download Anaconda here: http://continuum.io/downloads. You will also find detailed installation instructions.
 
+If you find that you need to keep track of multiple versions of Python or different sets of packages, try Conda
+(if you've just downloaded the Anaconda Python distribution then you already have it!).
+
 
 ### The Great Cataclysm: Python 2 vs. Python 3
 
