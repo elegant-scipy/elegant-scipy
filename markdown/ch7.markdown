@@ -1,3 +1,6 @@
+```python
+%matplotlib inline
+```
 # Big data in little laptop: streaming data analysis with Python
 
 Whenever I think too hard about streaming data analysis, my head hurts.
@@ -17,8 +20,8 @@ The most common way to do this would be to use NumPy to load the values, compute
 
 ```python
 import numpy as np
-expr = np.loadtxt('expr.csv')
-logexpr = log(expr + 1)
+expr = np.loadtxt('data/expr.tsv')
+logexpr = np.log(expr + 1)
 np.mean(logexpr, axis=1)
 ```
 
@@ -36,20 +39,24 @@ An awesome feature of Python is that it abstracts this complexity away, allowing
 Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream:
 
 ```python
+def process(elem):
+    return elem + 1
+
 def process_full(input):
     output = []
     for elem in input:
         output.append(process(elem))
     return output
 
-def process_streaming(input)
+def process_streaming(input_stream):
     for elem in input_stream:
         yield process(elem)
 ```
 
 The advantage of this approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
 This can conserve a lot of memory when you have a lot of input items, or when each item is very big.
-(Or both!) This quote from one of Matt's posts very succinctly summarises the utility of streaming data analysis:
+(Or both!)
+This quote from one of Matt's posts very succinctly summarises the utility of streaming data analysis:
 
 > In my brief experience people rarely take this [streaming] route.
 They use single-threaded in-memory Python until it breaks, and then seek out Big Data Infrastructure like Hadoop/Spark at relatively high productivity overhead.
@@ -64,17 +71,17 @@ To clarify the flow of control when using streaming-style functions, it's useful
 ```python
 import numpy as np
 
-def csv_line_to_array(line):
-    lst = [float(elem) for elem in line.rstrip()]
+def tsv_line_to_array(line):
+    lst = [float(elem) for elem in line.rstrip().split('\t')]
     return np.array(lst)
 
-def readcsv_verbose(filename):
-    print('starting readcsv')
+def readtsv_verbose(filename):
+    print('starting readtsv')
     with open(filename) as fin:
         for i, line in enumerate(fin):
             print('reading line {}'.format(i))
-            yield csv_line_to_array(line)
-    print('finished readcsv')
+            yield tsv_line_to_array(line)
+    print('finished readtsv')
 
 def add1_verbose(arrays_iter):
     print('starting adding 1')
@@ -104,13 +111,20 @@ def running_mean_verbose(arrays_iter):
 Let's see it in action for a small sample file:
 
 ```python
-# create small tempfile with small matrix of values
-# and compute running mean
-# lines = readcsv_verbose(fin)
-# loglines = log_verbose(add1_verbose(fin))
-# mean = running_mean_verbose(loglines)
+fin = 'data/expr.tsv'
+print('Creating lines iterator')
+lines = readtsv_verbose(fin)
+print('Creating loglines iterator')
+loglines = log_verbose(add1_verbose(lines))
+print('Computing mean')
+mean = running_mean_verbose(loglines)
 print('the mean log-row is: {}'.format(mean))
 ```
+
+Note a few things:
+
+- None of the computation is run when creating the lines and loglines iterators. This is because iterators are *lazy*, meaning they are not evaluated (or *consumed*) until a result is needed.
+- When the computation is finally triggered, by the call to `running_mean_verbose`, it jumps back and forth between all the functions, as various computations are performed on each line, before moving on to the next line.
 
 This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire human genome in 10 minutes on a laptop, using just a few lines of code.
 (It has been slightly edited for easier downstream processing.) Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
@@ -142,8 +156,8 @@ def markov_reshape(item):
     ((a, b, c), count) = item
     return {(a, b): {c: count}}
 
-if __name__ == '__main__':
-    pipe('/home/mrocklin/data/human-genome/chr*.fa', genome, markov)
+# if __name__ == '__main__':
+#     pipe('/home/mrocklin/data/human-genome/chr*.fa', genome, markov)
 ```
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
@@ -159,8 +173,8 @@ As a simple example, let's rewrite our running mean using `pipe`:
 
 ```python
 import toolz as tz
-filename = 'foo.txt'
-mean = tz.pipe(filename, open, read_csv_verbose,
+filename = 'data/expr.tsv'
+mean = tz.pipe(filename, readtsv_verbose,
                add1_verbose, log_verbose, running_mean_verbose)
 ```
 
@@ -171,14 +185,11 @@ In contrast, here we are only loading lines from disk one at a time, and maintai
 
 ## k-mer counting and error correction
 
-We're going to do a quick primer on genome sequencing.
-Your genetic information, the blueprint for making *you*, is encoded as a sequence of chemical *bases* in your *genome*.
-
-(figure of double-helix pointing to bases)
-
-Now, these are really really tiny, so you can't just look in a microscope and read them.
+You might want to review chapters 1 and 2 for information about DNA and genomics.
+Briefly, your genetic information, the blueprint for making *you*, is encoded as a sequence of chemical *bases* in your *genome*.
+These are really, really tiny, so you can't just look in a microscope and read them.
 You also can't read a long string of them: errors accumulate and the readout becomes unusable.
-(New technology is changing this, but for our purposes we will focus on Illumina data, the most common.)
+(New technology is changing this, but here we will focus on Illumina data, the most common today.)
 
 Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases), and then assemble those like an enormous puzzle of 30 million pieces.
 
@@ -195,8 +206,8 @@ However, this is a very inefficient way to do this, because finding similar read
 (And these are not cheap operations.)
 
 There is another way.
-REF realised that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
-This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of k-mers, which can only be as large as the genome itself — usually 1-2 order of magnitudes smaller than the reads.
+[REF: original k-mer/de-Bruijn Graph implementation] realised that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
+This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of k-mers, which can only be as large as the genome itself — usually 1-2 orders of magnitude smaller than the reads.
 
 Assuming we choose k large enough to ensure any k-mer appears only once in the genome, the number of times a k-mer appears is exactly the number of reads that originate from that part of the genome.
 This is called the *coverage* of that region.
@@ -205,6 +216,8 @@ If a read has an error in it, with high probability, the k-mers overlapping the 
 Think of the equivalent in English: if you were to take reads from Shakespeare, and one read was "to be or nob to be", the 6-mer "nob to" will appear rarely or not at all, whereas "not to" will be very frequent.
 
 This is the basis for k-mer error correction: split the reads into k-mers, count the occurrence of each k-mer, and use some logic to replace rare k-mers in reads with similar common ones.
+(Or, alternatively, discard reads with erroneous k-mers.
+This is possible because reads are so abundant that we can afford to toss out erroneous data.)
 
 This is also an example in which streaming is *essential*.
 As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.
@@ -213,26 +226,22 @@ Read data commonly comes in two formats: FASTA and FASTQ.
 These are both plaintext formats, described below:
 
 FASTA file:
-```
-> sequence_name
-ACGT
+    > sequence_name
+    ACGT
 
-> sequence_name2
-GACT
-```
+    > sequence_name2
+    GACT
 
 FASTQ file:
-```
-> sequence_name
-ACGT
-+
-1234
+    > sequence_name
+    ACGT
+    +
+    1234
 
-> sequence_name2
-CAGT
-+
-4321
-```
+    > sequence_name2
+    CAGT
+    +
+    4321
 
 The `+` line and the one immediately after mark the *quality* of each read position, an estimate from the sequence reader of the probability of error.
 We will ignore these here.
@@ -263,10 +272,10 @@ def kmer_counter(kmer_iter):
         counts[kmer] += 1
     return counts
 
-with open('reads.fasta') as fin:
+with open('data/sample.fasta') as fin:
     reads = filter(is_sequence, fin)
     kmers = reads_to_kmers(reads)
-    counts = kmer_counter(kmer_iter)
+    counts = kmer_counter(kmers)
 ```
 
 This totally works and is streaming, so reads are loaded from disk one at a time and piped through the k-mer converter and to the k-mer counter.
@@ -281,10 +290,12 @@ def integer_histogram(counts, normed=True, *args, **kwargs):
         hist = hist / np.sum(hist)
     return plt.bar(np.arange(len(hist)), hist, *args, **kwargs)
 
-integer_histogram(list(counts.values())
+integer_histogram(list(counts.values()))
 ```
 
-But we are actually doing a bit too much work.
+Notice the nice distribution of k-mer frequencies, along with a big bump of k-mers (at the left of the plot) that appear only once.
+
+But, with the code above, we are actually doing a bit too much work.
 A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end.
 Toolz has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
 
@@ -300,7 +311,9 @@ Together with pipe, we can now count k-mers in a single function call (though we
 ```python
 from toolz import curried as cur
 
-counts = tz.pipe('reads.fasta', open, cur.filter(is_sequence),
+k = 7
+counts = tz.pipe('data/sample.fasta', open, cur.filter(is_sequence),
+                 cur.map(str.rstrip),
                  cur.map(cur.sliding_window(k)),
                  tz.concat, cur.map(''.join),
                  tz.frequencies)
@@ -310,7 +323,7 @@ We neglected to discuss the *curried* part of this approach.
 
 (discussion about currying)
 
-We can now observe the frequency of diferent k-mers:
+We can now observe the frequency of different k-mers:
 
 ```python
 counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
@@ -333,6 +346,7 @@ def generate_reads(seq, nreads=60, readlen=5):  # 30x coverage
 ```
 Next, we generate some reads and feed them into a De Bruijn graph implemented in networkx
 ```python
+import networkx as nx
 seq = 'ATGGCGTGCA'
 g = nx.DiGraph()
 ```
@@ -344,10 +358,10 @@ draw_circular = tz.partial(nx.draw_circular, with_labels=True,
                                              node_color='w',
                                              node_size=600)
 reads = generate_reads(seq)
-draw = tz.pipe(reads, curried.map(curried.sliding_window(3)),  # k-mers
+draw = tz.pipe(reads, cur.map(cur.sliding_window(3)),  # k-mers
                       tz.concat,  # join k-mer streams from all reads
-                      curried.map(''.join),  # make strings from tup of char
-                      curried.map(eu.edge_from_kmer),  # get k-1-mer tuples
+                      cur.map(''.join),  # make strings from tup of char
+                      cur.map(eu.edge_from_kmer),  # get k-1-mer tuples
                       eu.add_edges(g),  # add them as edges to the graph
                       draw_circular)  # draw the graph
 ```
@@ -357,19 +371,20 @@ Or, we can feed the graph directly into an Eulerian path algorithm, and reconstr
 
 
 ```python
+from toolz import curried as cur
 def assemble(euler_path):
     start = tz.first(euler_path)[0]
-    rest = tz.pipe(euler_path, curried.pluck(0),  # 1st k-1-mer
-                               curried.pluck(1),  # 2nd letter
+    rest = tz.pipe(euler_path, cur.pluck(0),  # 1st k-1-mer
+                               cur.pluck(1),  # 2nd letter
                                ''.join)
     return start + rest
 
 reads = generate_reads(seq)
 g = nx.DiGraph()
-inferred = tz.pipe(reads, curried.map(curried.sliding_window(3)),  # k-mers
+inferred = tz.pipe(reads, cur.map(cur.sliding_window(3)),  # k-mers
                           tz.concat,  # join k-mer streams from all reads
-                          curried.map(''.join),  # make string from tup of char
-                          curried.map(eu.edge_from_kmer),  # get k-1-mer tups
+                          cur.map(''.join),  # make string from tup of char
+                          cur.map(eu.edge_from_kmer),  # get k-1-mer tups
                           eu.add_edges(g),  # add edges to g
                           eu.eulerian_path,  # iterate over euler path edges
                           assemble)  # get assembled string from path
@@ -417,7 +432,7 @@ Be sure to look at the documentation for the class to understand some of the cod
 
 ```python
 import toolz as tz
-from toolz import curried
+from toolz import curried as cur
 from sklearn import decomposition
 from sklearn import datasets
 import numpy as np
@@ -427,9 +442,9 @@ def streaming_pca(samples, n_components=2, batch_size=100):
                                         batch_size=batch_size)
     # we use `tz.last` to force evaluation of the full iterator
     _ = tz.last(tz.pipe(samples,  # iterator of 1D arrays
-                        curried.partition(batch_size),  # iterator of tuples
-                        curried.map(np.array),  # iterator of 2D arrays
-                        curried.map(ipca.partial_fit)))  # partial_fit on each
+                        cur.partition(batch_size),  # iterator of tuples
+                        cur.map(np.array),  # iterator of 2D arrays
+                        cur.map(ipca.partial_fit)))  # partial_fit on each
     return ipca
 ```
 
@@ -437,13 +452,13 @@ def streaming_pca(samples, n_components=2, batch_size=100):
 def array_from_txt(line, sep=',', dtype=np.float):
     return np.array(line.rstrip().split(sep), dtype=dtype)
 
-with open('iris.csv') as fin:
-    pca_obj = tz.pipe(fin, curried.map(array_from_txt), streaming_pca)
+with open('data/iris.csv') as fin:
+    pca_obj = tz.pipe(fin, cur.map(array_from_txt), streaming_pca)
 
-with open('iris.csv') as fin:
-    components = np.squeeze(tz.pipe(fin,
-                                    curried.map(array_from_txt),
-                                    curried.map(pca_obj.transform)))
+with open('data/iris.csv') as fin:
+    components = np.squeeze(list(tz.pipe(fin,
+                                         cur.map(array_from_txt),
+                                         cur.map(pca_obj.transform))))
 
 from matplotlib import pyplot as plt
 plt.scatter(*components.T)
@@ -461,4 +476,3 @@ plt.scatter(*components.T)
 Your future self will thank you.
 Doing it later is [harder](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg).
 ;)
-
