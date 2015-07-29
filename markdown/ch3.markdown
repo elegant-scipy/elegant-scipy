@@ -2,6 +2,32 @@
 %matplotlib inline
 ```
 
+<!--
+
+## Notes
+
+- Windowing introduction (no detail given)
+
+- fft/ifft (1D) [timing on real vs complex sequence -> rfft
+- dct (1D)
+  - compressed sensing
+    http://www.mathworks.com/company/newsletters/articles/clevescorner-compressed-sensing.html
+
+- fft2/ifft2 (2D)
+  - example: image notch filter
+    https://miac.unibas.ch/SIP/06-Restoration.html
+  - spectral method to solve, e.g., Poisson equation
+    See arXiv:1111.4971, "On FFT-based convolutions and correlations, with
+    application to solving Poisson’s equation in an open
+    rectangular pipe" by R. Ryne
+
+- fftn/ifftn (3D)
+ - Phase correlation from skimage
+
+- convolution types: numpy, ndimage, signal.convolve, signal.fftconvolve
+
+-->
+
 # The Fast Fourier Transform (FFT)
 
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
@@ -132,10 +158,11 @@ real-world problem: analyzing target detection in radar data.
 
 When executing the FFT, the returned spectrum (collection of
 frequencies, or Fourier components) is circular, and packed from
-low-to-high-to-low.  E.g., when we do the real Fourier transform of
-all ones, an input that has no variation and therefore only has the
-slowest, constant Fourier component (also known as the "DC"--for
-direct current--component), that component appears as the first entry:
+low-to-high-to-low.  E.g., when we do the real Fourier transform of a
+signal of all ones, an input that has no variation and therefore only
+has the slowest, constant Fourier component (also known as the
+"DC"--for direct current--component), that component appears as the
+first entry:
 
 ```python
 from scipy import fftpack
@@ -169,9 +196,10 @@ minus-one-plus-one cycle repeated every second sample.
 Sometimes, it is convenient to view the spectrum organized slightly
 differently, from high-negative to low to-high-positive (for now, we
 won't dive too deeply into the concept of negative frequency, other
-than saying a real-world sine wave is produced by a combination of the
-two).  This is achieved with the `fftshift` function.  Let's examine
-the frequency components in a noisy image:
+than saying a real-world sine wave is produced by a combination of
+positive and negative frequencies).  We re-shuffle the spectrum using
+the `fftshift` function.  Let's examine the frequency components in a
+noisy image:
 
 ```python
 from skimage import io
@@ -189,29 +217,370 @@ ax1.imshow(-np.log(1 + F_magnitude), cmap='gray', interpolation='nearest')
 plt.show()
 ```
 
-- Windowing introduction (no detail given)
-- Frequencies used (fftfreq)
+## Real-world Application: Analyzing Radar Data
 
-...
+Linearly modulated FMCW (Frequency-Modulated Continuous-Wave) radars
+make extensive use of the FFT algorithm for signal processing and
+provide examples of the application of the FFT. In this chapter
+we will use actual data from FMCW radars to demonstrate some
+applications of the FFT algorithm.
 
-- fft/ifft (1D) [timing on real vs complex sequence -> rfft
-- dct (1D)
-  - compressed sensing
-    http://www.mathworks.com/company/newsletters/articles/clevescorner-compressed-sensing.html
+To help the reader to understand the data we start with a short
+overview of a simple FMCW radar and the properties of the signal out
+of the radar.
 
-- fft2/ifft2 (2D)
-  - explain fftshift to get spectrum in expected form
-  - example: image notch filter
-    https://miac.unibas.ch/SIP/06-Restoration.html
-  - spectral method to solve, e.g., Poisson equation
-    See arXiv:1111.4971, "On FFT-based convolutions and correlations, with
-    application to solving Poisson’s equation in an open
-    rectangular pipe" by R. Ryne
+## A simple FMCW radar
 
-- Radar example
-  - In active discussion with source
+### Block Diagram
 
-- fftn/ifftn (3D)
- - Phase correlation from skimage
+A block diagram of a simple FMCW radar that uses separate transmit and
+receive antennas is shown in Fig. [fig: block-diagram]. The radar
+consists of a waveform generator that generates a linearly frequency
+modulated sinusoidal signal at the required transmit frequency. A
+Direct Digital Synthesizer (DDS) controlled by the computer is often
+used in modern systems. The output frequency of the DDS signal is
+converted to the desired radio frequency. The generated signal is
+amplified to the required power level by the transmit amplifier and
+routed to the transmit antenna via a coupler circuit where an
+amplitude scaled copy of the transmit signal is tapped off. The
+transmit antenna radiates the transmit signal as an electromagnetic
+wave in a narrow beam towards the target to be detected. When the wave
+encounters an object that reflects electromagnetic waves, a fraction
+of of the energy irradiating the target is reflected back to the
+receiver as a second electromagnetic wave that propagates in the
+direction of the radar system. When this wave encounters the receive
+antenna, the antenna collects the energy in the wave energy impinging
+on it and converts this to a fluctuating voltage that is fed to the
+mixer. The mixer multiplies the received signal with a replica of the
+transmit signal and produces a sinusoidal signal with a frequency
+equal to the difference in frequency between the transmitted and
+received signals. The low-pass filter ensures that the received signal
+is band limited and the receive amplifier amplifies the signal to a
+suitable amplitude for driving the analog to digital converter (ADC)
+that is controlled by the computer and also feeds data to the
+computer. The data consists of $N$ samples sampled at a frequency
+$f_{s}$.
 
-- convolution types: numpy, ndimage, signal.convolve, signal.fftconvolve
+![[fig: block-diagram]The block diagram of a simple FMCW radar system.](../figures/FMCW Block.png)
+
+### Signal properties in the time domain
+
+The transmit signal is a sinusoidal signal with an instantaneous
+frequency that increases linearly with time, as shown in
+Fig. [fig:FMCW waveform](a) . (A signal that decreases linearly with
+time could also be used.)
+
+Starting at $f_{min}$, the frequency increases at a rate $S$ Hz/s to
+$f_{max}.$ The frequency is then decreased rapidly back to $f_{min}$
+after which a next frequency sweep occurs.
+
+![[fig:FMCW waveform]The frequency relationships in an FMCW radar with
+ linear frequency modulation.](../figures/FMCW waveform.png)
+
+This signal is radiated by a directional transmit antenna. When the
+wave with propagation velocity $v\approx300\times10^{6}$ m/s hits a
+target at a range $R$, the echo will reach the radar after a time
+
+$$t_{d}=\frac{2R}{v}.\label{eq:transit time}$$
+
+Here it is collected by the receive antenna and converted to a
+sinusoidally fluctuating voltage. The received signal is a replica of
+the transmitted signal, delayed by the transit time $t_{d}$ and is
+shown dashed in Fig. [fig:FMCW waveform](b).
+
+A radar is designed to detect targets up to a maximum range
+$R_{max}$. Echoes from maximum range reach the radar after a transit
+time $t_{dm}$ as shown in Fig. [fig:FMCW waveform](c).
+
+We note that there is a constant difference in frequency between the
+transmitted and received signals and this will be true for all targets
+after time $t_{s}$ until $t_{e}$. We conclude from
+Fig. [fig:FMCW waveform] that the frequency difference is given by
+
+$$f_{d}=S\times t_{d}=\frac{2SR}{v}\label{eq:difference frequency}$$
+
+$T_{eff}=t_{e}-t_{s}=\frac{N}{f_{s}}$ is the effective sweep duration
+of the radar. The frequency excursion of the sweep during $T_{eff}$ is
+the effective bandwidth of the radar, given by
+
+$$B_{eff}=f_{max}-f_{1}=ST_{eff}.\label{eq:Effective bandwidth}$$
+
+We will see that the range resolution of the radar is determined by
+the effective bandwidth.
+
+Returning to Fig. [fig: block-diagram], the signal produced by the
+receiver at the input to the Analog to Digital Converter (ADC) when
+there is a single target is a sinusoid with constant amplitude,
+proportional to the amplitude of the echo, and constant frequency,
+proportional to the range to the target. Such a signal is shown as
+$v_{1}(t)$ in Fig. [fig:radar time signals] for a radar with
+parameters $B_{eff}=100$ MHz, sampling frequency 28125 Hz and N=2048
+samples. The effective sweep time is
+$T_{eff}=\frac{2048}{28125}=26.214$ ms. We can interpret this signal
+by counting the number of cycles in the graph - about
+$66\frac{1}{2}$. The difference frequency is approximately
+$\frac{66.5}{26.214E-3}=6.35$ kHz. With
+$S=\frac{B_{eff}}{T_{eff}}=\frac{100E6}{26.214E-3}=3.815\times10^{9}$
+Hz/s, we can calculate the range to the target as
+$R=\frac{vf_{d}}{2S}=\frac{3\times10^{8}\times6.35\times10^{3}}{2\times3.815\times10^{9}}=249.7$
+m.
+
+A real radar will rarely receive only a single echo. The simulated
+signal $v_{5}(t)$ shows what a radar signal will look like with 5
+targets at different ranges and $v_{real}(t)$ shows the output signal
+obtained with an actual radar. We cannot interpret these signals in
+the time domain. They just make no sense at all!
+
+![[fig:radar time signals]Receiver output signals (a) single target
+ (b) 5 targets (c) real radar data. ](time signals.png)
+
+We know that these signals must be the sum of sinusoidal signals
+generated by each of the distinct reflectors. We need to determine
+each the constituent components of the composite radar signal. The FFT
+is the tool that will do this for us. After a short introduction to
+the FFT, we will show how we interpret the radar data.
+
+### Discrete Fourier transforms
+
+The Discrete Fourier Transform (DFT) converts a sequence of $N$
+equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$of
+a function $x(t)$ of time (or another variable, depending on the
+application) into a sequence of $N$ complex numbers $X_{k}$ by the
+summation
+
+$$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
+N-1.\label{eq:Forward DFT}$$
+
+With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
+sample values $x_{n}$ through the summation
+
+$$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
+kn/N}.\label{eq:Inverse DFT}$$
+
+Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
+equation shows that the DFT has decomposed the sequence $x_{n}$ into a
+complex discrete Fourier series with coefficients $X_{k}$. Comparing
+the DFT with a continuous complex Fourier series
+
+$$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
+Fourier series}$$
+
+the DFT is a *finite *series with $N$ terms defined at the equally
+spaced discrete instances of the *angle*
+$(\omega_{0}t_{n})=2\pi\frac{k}{N}$ in the interval
+$[0,2\pi)$, i.e. *including* 0 and *excluding* $2\pi$.
+This automatically normalizes the DFT so that time does
+not appear explicitly in the forward or inverse transform.
+
+If the original function $x(t)$ is *band limited* to less than half of the
+sampling frequency, interpolation between sample values produced by the inverse
+DFT will usually (see the discussion below on windowing)
+give a faithful reconstruction of $x(t)$. If $x(t)$ is *not* band limited,
+the inverse DFT can, in general, not be used to reconstruct $x(t)$ by
+interpolation.
+
+The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
+discrete values between 0 and $2\pi\frac{N-1}{N}$ on the unit circle in
+the complex plane. The function $e^{j2\pi kn/N}=w^{kn}$ encircles the
+origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
+sinusoid for which $n=1$.
+
+The way in which we defined the DFT leads to a few subtleties
+when $n>\frac{N}{2}$. The function $e^{j2\pi kn/N}$ is plotted
+for increasing values of $k$ in Fig. ([fig:w^k^n values])
+for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from
+$k$ to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When
+$n=1$, the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
+increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi
+is$precisely once around the circle, the step equates to
+$-\frac{2\pi}{N}$, i.e. in the direction of a negative
+frequency. The components up to $N/2$ represent *positive* frequency
+components, those above $N/2$ up to $N-1$ represent *negative*
+frequencies with frequency. The angle increment for the component
+$N/2$ for $N$ even advances precisely halfway around the circle for
+each increment in $k$ and can therefore be interpreted as either a
+positive or a negative frequency. This component of the DFT represents
+the Nyquist Frequency, i.e. half of the sampling frequency and is
+useful to orientate oneself when looking at DFT graphics.
+
+The FFT in turn is simply a special and highly efficient algorithm for
+calculating the DFT. Whereas a straightforward calculation of the DFT
+takes of the order of $N^{2}$ calculations to compute, the FFT
+algorithm requires of the order $N\log N$ calculations. The FFT was
+the key to the wide-spread use of the DFT in real-time applications
+and was included in a list of the top 10 algorithms of the $20^{th}$
+century by the IEEE journal Computing in Science & Engineering in the
+year 2000.
+
+![[fig:w^k^n values]](../figures/Unit circle samples.png)
+
+Let’s apply the FFT to our radar data and see what happens!
+
+### Signal properties in the frequency domain
+
+Fig ([fig:FFT range traces]) shows the absolute values of the positive
+frequency components (i.e. components 0 to $N/2$) of the FFTs of the
+three signals in Fig. ([fig:radar time signals]), called *range
+traces* in radar terminology. Suddenly the information makes sense!
+
+The plot for $|V_{1}|$ clearly shows a target at component 67, that
+for $|V5|$ shows the targets that produced the signal that was
+uninterpretable in the time domain. The real radar signal shows a
+large number of targets between bins 400 and 500 with a large peak in
+bin 443. This happens to be an echo return from a radar illuminating
+the high wall of an open-cast mine.
+
+![[fig:FFT range traces]The absolute values of the FFT components of
+ the signals in Fig. ([fig:radar time signals]).](FFT traces.png)
+
+To get useful information from the plot, we must determine the range!
+The sinusoid associated with the first component of the DFT has a
+period exactly equal to the duration $T_{eff}$ of the time domain
+signal, so $f_{1}=\frac{1}{T_{eff}}$. The other sinusoids in the
+Fourier series are harmonics of this, $f_{n}=\frac{n}{T_{eff}}$.
+
+The ranges associated with the DFT components follow from
+Eqs. ([eq:difference frequency]) and ([eq:Effective bandwidth]) as
+
+$$R_{n}=\frac{nv}{2B_{eff}}\label{eq:FFT ranges}$$
+
+and the associated DFT components are known as *range bins* in radar
+terminology.
+
+This equation also defines the range resolution of the radar: targets
+will only be distinguishable if they are separated by more than two
+range bins, i.e.
+
+$$\Delta R>\frac{1}{B_{eff}}.\label{eq:Range resolution}$$
+
+This is a fundamental property of all types of radar.
+
+The plot in Fig. ([fig:FFT range traces]) has a fundamental
+shortcoming. The observable dynamic range is the signal is very
+limited! We could easily have missed one of the targets in the trace
+for $V_{5}$! Figure [fig:Log range traces] shows the same FFTs, this
+time against range on the x-axis and on a logarithmic y-axis
+scale. The traces were all normalized by dividing the amplitudes with
+the maximum value.
+
+![[fig:Log range traces]Range traces of the signals above plotted on a
+ logarithmic amplitude scale against range in meters.](FFT log
+ traces.png)
+
+The observable dynamic range is much improved in these plots. For
+instance, in the real radar signal the *noise floor* of the radar has
+become visible. The noise floor is ultimately caused by a phenomenon
+called thermal noise that is produced by all conducting elements that
+have resistance at temperatures above absolute zero, as well as by
+shot noise, a noise mechanism inherent in all the electronic devices
+that are used for processing the radar signal. The noise floor of a
+radar limits its ability to detect weak echoes.
+
+### Windowing
+
+The range traces in Fig. ([fig:Log range traces]) display a further
+serious shortcoming. The signals $v_{1}$ and $v_{5}$ are composed of
+pure sinusoids and we would ideally expect the FFT to produce line
+spectra for these signals. The logarithmic plots show steadily
+increasing values as the peaks are approached from both sides, to such
+an extent that one of the targets in the plot for $|v_{5}|$ can hardly
+be distinguished even though it is separated by several range bins
+from the large target. The broadening is caused by *side lobes* in the
+DFT. These are caused by an inherent clash between the properties of
+the signal we analyzed and the signal produced by the inverse DFT.
+
+![[fig:Periodicity anomaly]Eight samples have been taken of a given
+ function with effective length $T_{eff}.$ A step discontinuity
+ develops if the sampled function within the box is made periodic with
+ period $T_{eff}.$ These discontinuities cause sidelobes in the
+ sampled signal since the given periodic signal is not band-limited as
+ required by the DFT. ](g38228)
+
+Consider the function $x(t)$ shown in Figure . It is sampled at a
+sampling frequency $f_{s}$ and $N=8$ samples are taken. The effective
+length of the sampled signal is $T_{eff}=\frac{N}{f_{s}}$ as shown
+in the figure. The time domain reconstruction of the signal $x_{n}$
+according to equation ([eq:Inverse DFT]) is a periodic function with
+period equal to $T_{eff}$ . Replicas of the sampled part of the signal
+are shown towards the left and right of the original signal. There
+clearly is a discrepancy in the form of step discontinuities at both
+ends of the sampled function. A function with step discontinuities is
+not a band-limited function, while the DFT requires a band-limited
+function to faithfully reproduce the original time function. The step
+discontinuities cause a broadening of the signal spectrum by the
+formation of side lobes.
+
+We can counter this effect by a process called *windowing*. The
+original function is multiplied with a window function such as the
+function shown in Figure [fig:Kaiser window ]. The function shown is a
+Kaiser window $K(N,\beta)$, a very versatile window function developed
+by Jim Kaiser. By changing the parameter $\beta$, the shape of the
+window can be changed from rectangular (i.e. no windowing) with
+$\beta=0$ to a window that produces signals that smoothly increase
+from zero and decrease to zero at the endpoints of the sampled
+interval, producing very low side lobes with values of $\beta$ between
+5 and 10.
+
+![[fig:Kaiser window ]A Kaiser window with N=2048 and
+ $\beta=6.1$.](Kaiser window.png)
+
+Figure [fig:windowed traces] shows the signals used thus far in this
+example, windowed with a Kaiser window with $\beta=6.1$, with the
+corresponding range traces produced from the windowed signals with the
+FFT.
+
+Compare these with the range traces in Figure
+[fig:Log range traces]. There is a dramatic lowering in side lobe
+level, but this came at a price: the peaks have widened significantly,
+thus lowering the radar resolution, that is the ability of the radar
+to distinguish between two closely space targets. The choice of window
+is a compromise between side lobe level and resolution. Even so,
+referring to the trace for $V_{5}$, windowing has dramatically
+increased our ability to distinguish the small target from its large
+neighbor.
+
+In the real radar data range trace windowing has also reduced the side
+lobes. This is most visible in the depth of the notch between the two
+groups of targets.
+
+### Radar Images
+
+With the key concepts sorted out, we can now look at radar images.
+
+The data is produced by a radar with a parabolic reflector antenna. It
+produces a highly directive round pencil beam with a $2^{\circ}$
+spreading angle between half-power points. When directed with normal
+incidence at a plane, the radar will illuminate a spot of about 2 m in
+diameter on the half power contour at a distance of 60 m. Outside this
+spot the power drops off quite rapidly but strong echoes from outside
+the spot will nevertheless still be visible.
+
+A rock slope consists of thousands of scatterers. A range bin can be
+thought of as a large sphere with the radar at its center that
+intersects the slope along a ragged line. The scatterers on this line
+will produce reflections in this range bin. The scatterers are
+essentially randomly arranged along the line. The wavelength of the
+radar is about 30 mm. The reflections from scatterers separated by odd
+multiples of a quarter wavelength in range, about 7.5 mm, will tend to
+interfere destructively, while those from scatterers separated by
+multiples of a half wavelength will tend to interfere constructively
+at the radar. The reflections combine to produce apparent spots of
+strong reflections. Radar measurements of a small scanned region
+consisting of 20 azimuth and 30 elevation bins scanned in steps of
+$0.5^{\circ}$.
+
+![[fig:contour plots]Contour plots of the radar data, showing the
+ strength of echoes against elevation and azimuth, a cut through the
+ slope in an elevation plane and acut through the slope in an azimuth
+ plane. The contours are in steps of 2 dB from -40 to 0 dB. Azimuth
+ and elevation bin size is $0.5^{\circ}$ and range bin size is 1.5
+ m. The stepped construction of the high wall in an opencast mine is
+ clearly visible. ](rangeplane 305 el10az12.png)
+
+### Further applications of the FFT in radar
+
+The examples above show just one of the uses of the FFT in radar. The
+FFT provides us with a versatile tool that finds many other uses in
+radar, including pulse expansion and compression, Doppler measurement
+and detection, one and two dimensional beam forming in antennas and
+target recognition.
