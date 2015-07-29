@@ -54,6 +54,10 @@ def add1_all_streaming(input_stream):
 ```
 
 ```python
+np.random.seed(seed=7) # Set seed so we will get consistent results
+```
+
+```python
 %%timeit
 result = add1_all_standard(np.random.normal(0, 1, 1000))
 ```
