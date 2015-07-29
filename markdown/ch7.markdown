@@ -39,18 +39,28 @@ An awesome feature of Python is that it abstracts this complexity away, allowing
 Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream:
 
 ```python
-def process(elem):
+def add1(elem):
     return elem + 1
 
-def process_full(input):
+def add1_all_standard(input):
     output = []
     for elem in input:
-        output.append(process(elem))
+        output.append(add1(elem))
     return output
 
-def process_streaming(input_stream):
+def add1_all_streaming(input_stream):
     for elem in input_stream:
-        yield process(elem)
+        yield add1(elem)
+```
+
+```python
+%%timeit
+result = add1_all_standard(np.random.normal(0, 1, 1000))
+```
+
+```python
+%%timeit
+result = add1_all_streaming(np.random.normal(0, 1, 1000))
 ```
 
 The advantage of this approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
