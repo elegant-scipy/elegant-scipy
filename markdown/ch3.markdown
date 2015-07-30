@@ -2,7 +2,7 @@
 %matplotlib inline
 import matplotlib.pyplot as plt
 if hasattr(plt.cm, 'inferno'):
-    matplotlib.rcParams['image.cmap'] = 'inferno'
+    plt.rcParams['image.cmap'] = 'inferno'
 ```
 
 <!--
@@ -148,12 +148,18 @@ ax1.set_ylabel('Smoothness of input length')
 plt.show()
 ```
 
-If you are able to use software with different licenses, you may
-consider using [PyFFTW](https://github.com/hgomersall/pyFFTW),
-[Reikna](https://github.com/fjarri/reikna) or
-[NumbaPro](http://docs.continuum.io/numbapro/cudalib.html).
+While ideally we don't want to reimplement existing algorithms,
+sometimes it becomes necessary in order to obtain the best execution
+speeds possible, and tools like [Cython](http://cython.org)—which
+compiles Python to C—and [Numba](http://numba.pydata.org)—which
+does just-in-time compilation of Python code—make life a lot easier
+(and faster!).
 
-Next, we will present a couple of common concepts worth knowing before
+If you are able to use GPL-licenced software, you may
+consider using [PyFFTW](https://github.com/hgomersall/pyFFTW) for
+faster FFTs.
+
+Next, we present a couple of common concepts worth knowing before
 operating heavy Fourier Transform machinery, whereafter we tackle a
 real-world problem: analyzing target detection in radar data.
 
@@ -207,8 +213,9 @@ noisy image:
 ```python
 from skimage import io
 image = io.imread('images/moonlanding.png')
+M, N = image.shape
 
-print(image.shape, image.dtype)
+print((M, N), image.dtype)
 
 F = fftpack.fftn(image)
 F_magnitude = np.abs(F)
@@ -216,21 +223,28 @@ F_magnitude = fftpack.fftshift(F_magnitude)
 
 f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
 ax0.imshow(image, cmap='gray')
-ax1.imshow(-np.log(1 + F_magnitude), cmap='gray', interpolation='nearest')
+ax1.imshow(-np.log(1 + F_magnitude),
+           cmap='gray', interpolation='nearest',
+           extent=(-N // 2, N // 2, -M // 2, M // 2))
 plt.show()
 ```
+
+Note the high values around the origin (middle) of the spectrum—these
+coefficients describe the low frequencies or smooth parts of the
+image; a vague canvas of the photo.  Higher frequency components,
+spread throughout the spectrum, fill in the edges and detail.  Peaks
+around higher frequencies correspond to the periodic noise.
 
 ## Real-world Application: Analyzing Radar Data
 
 Linearly modulated FMCW (Frequency-Modulated Continuous-Wave) radars
 make extensive use of the FFT algorithm for signal processing and
-provide examples of the application of the FFT. In this chapter
-we will use actual data from FMCW radars to demonstrate some
-applications of the FFT algorithm.
+provide examples of various application of the FFT. In this chapter we
+will use actual data from FMCW radars to demonstrate one such
+application: target detection.
 
-To help the reader to understand the data we start with a short
-overview of a simple FMCW radar and the properties of the signal out
-of the radar.
+To start off, we take a bird's eye tour of FMCW radars so we may
+better understand the properties of the signals involved.
 
 ### Block diagram of a simple FMCW radar
 
@@ -256,10 +270,10 @@ mixer. The mixer multiplies the received signal with a replica of the
 transmit signal and produces a sinusoidal signal with a frequency
 equal to the difference in frequency between the transmitted and
 received signals. The low-pass filter ensures that the received signal
-is band limited and the receive amplifier amplifies the signal to a
-suitable amplitude for driving the analog to digital converter (ADC)
-that is controlled by the computer and also feeds data to the
-computer. The data consists of $N$ samples sampled at a frequency
+is band limited (i.e., does not contain frequencies that we don't care
+about) and the receive amplifier strengthens the signal to a suitable
+amplitude for the analog to digital converter (ADC) that feeds data to
+the computer. The data consists of $N$ samples sampled at a frequency
 $f_{s}$.
 
 ![[fig: block-diagram]The block diagram of a simple FMCW radar system.](../figures/FMCW Block.png)
@@ -268,8 +282,7 @@ $f_{s}$.
 
 The transmit signal is a sinusoidal signal with an instantaneous
 frequency that increases linearly with time, as shown in
-Fig. [fig:FMCW waveform](a) . (A signal that decreases linearly with
-time could also be used.)
+Fig. [fig:FMCW waveform](a).
 
 Starting at $f_{min}$, the frequency increases at a rate $S$ Hz/s to
 $f_{max}.$ The frequency is then decreased rapidly back to $f_{min}$
@@ -279,8 +292,10 @@ after which a next frequency sweep occurs.
  linear frequency modulation.](../figures/FMCW waveform.png)
 
 This signal is radiated by a directional transmit antenna. When the
-wave with propagation velocity $v\approx300\times10^{6}$ m/s hits a
-target at a range $R$, the echo will reach the radar after a time
+wave with propagation velocity $v\approx300\times10^{6}$ m/s (the
+propagation speed of electro-magnetic waves in air is ever-so-slightly
+slower than the speed of light in a vacuum) hits a target at a range
+$R$, the echo will reach the radar after a time
 
 $$t_{d}=\frac{2R}{v}.\label{eq:transit time}$$
 
@@ -319,7 +334,7 @@ Such a signal is shown as $v_{1}(t)$ in Fig. [fig:radar time signals]
 for a radar with parameters $B_{eff}=100$ MHz, sampling frequency
 28125 Hz and N=2048 samples. The effective sweep time is
 $T_{eff}=\frac{2048}{28125}=26.214$ ms. We can interpret this signal
-by counting the number of cycles in the graph - about
+by counting the number of cycles in the graph — about
 $66\frac{1}{2}$. The difference frequency is approximately
 $\frac{66.5}{26.214E-3}=6.35$ kHz. With
 $S=\frac{B_{eff}}{T_{eff}}=\frac{100E6}{26.214E-3}=3.815\times10^{9}$
@@ -329,12 +344,12 @@ m.
 
 A real radar will rarely receive only a single echo. The simulated
 signal $v_{5}(t)$ shows what a radar signal will look like with 5
-targets at different ranges and $v_{real}(t)$ shows the output signal
+targets at different ranges and $v_\mathrm{actual}(t)$ shows the output signal
 obtained with an actual radar. We cannot interpret these signals in
 the time domain. They just make no sense at all!
 
 ![[fig:radar time signals]Receiver output signals (a) single target
- (b) 5 targets (c) real radar data. ](../figures/generated/radar_time_signals.png)
+ (b) 5 targets (c) actual radar data. ](../figures/generated/radar_time_signals.png)
 
 Apart from the real world signal shown above, the others were
 generated as follows:
@@ -383,24 +398,36 @@ files.
 
 ```python
 data = np.load('data/radar_scan_0.npz')
+
+# Load variable 'scan' from 'radar_scan_0.npz'
 scan = data['scan']
+
+# Grab one (azimuth, elevation) measurement
+# It has shape (2048,)
+v_actual = scan['samples'][5, 14, :]
+
+# Scale v_actual to have a reasonable maximum
+print('v_actual has a maximum of {} before normalization'.format(v_actual.max()))
+
+v_actual = v_actual / 3000
+
+print('v_actual has a maximum of {} after normalization'.format(v_actual.max()))
+
 ```
 
 Since ``.npz``-files can store multiple variables, we have to select
-the one we want: ``data['scan']``.  That returns an *structured
-array*, ``scan``, with the following fields:
+the one we want: ``data['scan']``.  That returns a
+*structured NumPy array* with the following fields:
 
-```
-# time : unsigned 64-bit (8 byte) integer (np.uint64)
-# size : unsigned 32-bit (4 byte) integer (np.uint32)
-# position :
-#   az : 32-bit float (np.float32)
-#   el : 32-bit float (np.float32)
-#   region_type : unsigned 8-bit (1 byte) integer (np.uint8)
-#   region_ID : unsigned 16-bit (2 byte) integer (np.uint16)
-#   gain : unsigned 8-bit (1 byte) integer (np.uin8)
-#   samples : 2048 unsigned 16-bit (2 byte) integers (np.uint16)
-```
+- **time** : unsigned 64-bit (8 byte) integer (`np.uint64`)
+- **size** : unsigned 32-bit (4 byte) integer (`np.uint32`)
+- **position** :
+  - **az** : 32-bit float (`np.float32`)
+  - **el** : 32-bit float (`np.float32`)
+  - **region_type** : unsigned 8-bit (1 byte) integer (`np.uint8`)
+  - **region_ID** : unsigned 16-bit (2 byte) integer (`np.uint16`)
+  - **gain** : unsigned 8-bit (1 byte) integer (`np.uin8`)
+  - **samples** : 2048 unsigned 16-bit (2 byte) integers (`np.uint16`)
 
 While it is true that NumPy arrays are *homogeneous* (i.e., all the
 elements inside are the same), it does not mean that those elements
@@ -412,7 +439,8 @@ An individual field is accessed using dictionary syntax:
 azimuths = scan['position']['az']  # Get all azimuth measurements
 ```
 
-To construct an array such as the above from scratch, one would do:
+To construct an array such as the above from scratch, one would first
+set up the appropriate dtype:
 
 ```python
 dt = np.dtype([('time', np.uint64),
@@ -423,20 +451,26 @@ dt = np.dtype([('time', np.uint64),
                ('region_ID', np.uint16)]),
                ('gain', np.uint8),
                ('samples', (np.int16, 2048))])
+```
 
+The dtype can then be used to create an array, which we can later fill
+with values:
+
+```python
 data = np.zeros(500, dtype=dt)  # Construct array with 500 measurements
 ```
 
-We know that these signals must be the sum of sinusoidal signals
-generated by each of the distinct reflectors. We need to determine
-each the constituent components of the composite radar signal. The FFT
-is the tool that will do this for us. After a short introduction to
-the FFT, we will show how we interpret the radar data.
+To summarize what we've seen so far: the shown measurements ($v_5$ and
+$v_\mathrm{actual}$) are the sum of sinusoidal signals generated by each of the
+distinct reflectors.  We need to determine each of the constituent
+components of these composite radar signals. The FFT is the tool that
+will do this for us. After a short introduction to the theory of the
+FFT, we show how we interpret the radar data.
 
 ### Discrete Fourier transforms
 
 The Discrete Fourier Transform (DFT) converts a sequence of $N$
-equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$of
+equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
 a function $x(t)$ of time (or another variable, depending on the
 application) into a sequence of $N$ complex numbers $X_{k}$ by the
 summation
@@ -511,12 +545,49 @@ Let’s apply the FFT to our radar data and see what happens!
 
 ### Signal properties in the frequency domain
 
+First, we take the FFTs of our three signals and then display the
+positive frequency components (i.e., components 0 to $N/2$).  These
+are called the *range traces* in radar terminology.
+
+```python
+fig, axes = plt.subplots(3, 1, figsize=(15, 7))
+
+# Take FFTs of our signals.  Note the convention to
+# name FFTs with a capital letter.
+V0 = np.fft.fft(v0)
+V5 = np.fft.fft(v5)
+V_actual = np.fft.fft(v_actual)
+
+N = len(V0)
+
+axes[0].plot(np.abs(V0[:N // 2]))
+axes[0].set_ylabel("$|V_0|$")
+axes[0].set_ylim(0,1100)
+
+axes[1].plot(np.abs(V5[:N // 2]))
+axes[1].set_ylabel("$|V_5 |$")
+axes[1].set_ylim(0, 1000)
+
+axes[2].plot(np.abs(V_actual[:N // 2]))
+axes[2].set_ylim(0, 750)
+axes[2].set_ylabel("$|V_\mathrm{actual}|$")
+
+axes[2].set_xlabel("FFT component $n$")
+
+for ax in axes:
+    ax.grid()
+
+plt.show()
+```
+
+Suddenly, the information makes sense!
+
 Fig ([fig:FFT range traces]) shows the absolute values of the positive
 frequency components (i.e. components 0 to $N/2$) of the FFTs of the
 three signals in Fig. ([fig:radar time signals]), called *range
 traces* in radar terminology. Suddenly the information makes sense!
 
-The plot for $|V_{1}|$ clearly shows a target at component 67, that
+The plot for $|V_{0}|$ clearly shows a target at component 67, that
 for $|V5|$ shows the targets that produced the signal that was
 uninterpretable in the time domain. The real radar signal shows a
 large number of targets between bins 400 and 500 with a large peak in
@@ -551,14 +622,36 @@ This is a fundamental property of all types of radar.
 The plot in Fig. ([fig:FFT range traces]) has a fundamental
 shortcoming. The observable dynamic range is the signal is very
 limited! We could easily have missed one of the targets in the trace
-for $V_{5}$! Figure [fig:Log range traces] shows the same FFTs, this
-time against range on the x-axis and on a logarithmic y-axis
-scale. The traces were all normalized by dividing the amplitudes with
-the maximum value.
+for $V_{5}$!  To ameliorate the problem, we plot the same FFTs but
+this time against a logarithmic y-axis.  The traces were all
+normalized by dividing the amplitudes with the maximum value.
 
-![[fig:Log range traces]Range traces of the signals above plotted on a
- logarithmic amplitude scale against range in meters.](FFT log
- traces.png)
+```python
+c = 3e8  # Approximately the speed of light and of
+         # electro-magnetic waves in air
+
+fig, (ax0, ax1,ax2) = plt.subplots(3, 1, sharex=True, figsize=(15, 7))
+
+
+def log_plot_normalized(x, y, ylabel, ax):
+    y = np.abs(y)
+    y /= y.max()
+
+    ax.plot(x, 20 * np.log10(y))
+
+    ax.set_ylabel(ylabel)
+    ax.grid()
+
+
+rng = np.arange(N // 2) * c / 2 / Beff
+
+log_plot_normalized(rng, V0[:N // 2], "$|V_0|$ [dB]", ax0)
+log_plot_normalized(rng, V5[:N // 2], "$|V_5|$ [dB]", ax1)
+log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
+
+plt.show()
+```
+
 
 The observable dynamic range is much improved in these plots. For
 instance, in the real radar signal the *noise floor* of the radar has
@@ -641,7 +734,7 @@ groups of targets.
 With the key concepts sorted out, we can now look at radar images.
 
 The data is produced by a radar with a parabolic reflector antenna. It
-produces a highly directive round pencil beam with a $2^{\circ}$
+produces a highly directive round pencil beam with a $2^\circ$
 spreading angle between half-power points. When directed with normal
 incidence at a plane, the radar will illuminate a spot of about 2 m in
 diameter on the half power contour at a distance of 60 m. Outside this
@@ -660,13 +753,13 @@ multiples of a half wavelength will tend to interfere constructively
 at the radar. The reflections combine to produce apparent spots of
 strong reflections. Radar measurements of a small scanned region
 consisting of 20 azimuth and 30 elevation bins scanned in steps of
-$0.5^{\circ}$.
+$0.5^\circ$.
 
 ![[fig:contour plots]Contour plots of the radar data, showing the
  strength of echoes against elevation and azimuth, a cut through the
  slope in an elevation plane and acut through the slope in an azimuth
  plane. The contours are in steps of 2 dB from -40 to 0 dB. Azimuth
- and elevation bin size is $0.5^{\circ}$ and range bin size is 1.5
+ and elevation bin size is $0.5^\circ$ and range bin size is 1.5
  m. The stepped construction of the high wall in an opencast mine is
  clearly visible. ](rangeplane 305 el10az12.png)
 
