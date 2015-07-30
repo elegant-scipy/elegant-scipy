@@ -1,2 +1,7 @@
 build_html/*
 build_ipynb/*
+figures/generated/*
+.matplotlib/*.cache
+*~
+\#*
+.ipynb_checkpoints
