@@ -22,7 +22,7 @@ TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue
 CHS_ := $(addprefix $(BUILD_HTML)/,$(TITLES))
 chs: build_dirs $(addsuffix .html,$(CHS_))
 
-ch3: $(FIGURES)/radar_time_signals.png
+ch3: build_dirs $(BUILD_HTML)/ch3.html $(FIGURES)/radar_time_signals.png
 
 $(FIGURES)/%.png: script/%.py $(FIGURES)
 	MPLCONFIGDIR=./.matplotlib python $< $@
