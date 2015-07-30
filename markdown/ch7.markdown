@@ -39,18 +39,32 @@ An awesome feature of Python is that it abstracts this complexity away, allowing
 Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream:
 
 ```python
-def process(elem):
+def add1(elem):
     return elem + 1
 
-def process_full(input):
+def add1_all_standard(input):
     output = []
     for elem in input:
-        output.append(process(elem))
+        output.append(add1(elem))
     return output
 
-def process_streaming(input_stream):
+def add1_all_streaming(input_stream):
     for elem in input_stream:
-        yield process(elem)
+        yield add1(elem)
+```
+
+```python
+np.random.seed(seed=7) # Set seed so we will get consistent results
+```
+
+```python
+%%timeit
+result = add1_all_standard(np.random.normal(0, 1, 1000))
+```
+
+```python
+%%timeit
+result = add1_all_streaming(np.random.normal(0, 1, 1000))
 ```
 
 The advantage of this approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
@@ -131,26 +145,26 @@ This chapter's code example is from Matt Rocklin (who else?), in which he create
 This modification is almost *trivial*, which speaks to the elegance of his example.
 
 ```python
-from toolz import drop, pipe, sliding_window, merge_with, frequencies
-from toolz.curried import map
+import toolz as tz
+from toolz import curried as cur
 from glob import glob
 
 def genome(file_pattern):
     """Stream a genome from a list of FASTA filenames"""
-    return pipe(file_pattern, glob, sorted,        # Filenames
-                                 map(open),        # Open each file
-                                 map(drop(1)),     # Drop header from each file
+    return tz.pipe(file_pattern, glob, sorted,        # Filenames
+                                 cur.map(open),        # Open each file
+                                 cur.map(tz.drop(1)),     # Drop header from each file
                                  concat,           # Concatenate all lines from all files together
-                                 map(str.upper),   # Upper case each line
-                                 map(str.strip),   # Strip off \n from each line
+                                 cur.map(str.upper),   # Upper case each line
+                                 cur.map(str.strip),   # Strip off \n from each line
                                  concat)           # Concatenate all lines into one giant string sequence
 
 def markov(seq):
     """Get a 2nd-order Markov model from a sequence"""
-    return pipe(seq, sliding_window(3),          # Each successive triple{(A, A): {T: 10}}
-                     frequencies,                # Count occurrences of each triple
+    return tz.pipe(seq, tz.sliding_window(3),          # Each successive triple{(A, A): {T: 10}}
+                     tz.frequencies,                # Count occurrences of each triple
                      dict.items, map(markov_reshape),   # Reshape counts so {(A, A, T): 10} -> {(A, A): {T: 10}}
-                     merge_with(merge))          # Merge dicts from different pairs
+                     tz.merge_with(merge))          # Merge dicts from different pairs
 
 def markov_reshape(item):
     ((a, b, c), count) = item
