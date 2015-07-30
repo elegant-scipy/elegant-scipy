@@ -29,8 +29,11 @@ $(FIGURES)/%.png: script/%.py $(FIGURES)
 
 # %.html: How to build an HTML file from its corresponding IPython
 #     notebook.
-$(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb
+$(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	 ipython nbconvert --to html $< --stdout > $@
+
+$(BUILD_HTML)/custom.css:
+	cp style/custom.css $(BUILD_HTML)
 
 # %.ipynb: How to build an IPython notebook from a source Markdown
 #     file.
