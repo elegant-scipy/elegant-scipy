@@ -282,7 +282,7 @@ def is_sequence(line):
 def reads_to_kmers(reads_iter, k=7):
      for read in reads_iter:
          for start in range(0, len(read) - k):
-             yield read[start : start + k]
+             yield read[start : start + k] # note yeild, so this is a generator
 
 def kmer_counter(kmer_iter):
     counts = {}
@@ -314,6 +314,7 @@ integer_histogram(list(counts.values()))
 ```
 
 Notice the nice distribution of k-mer frequencies, along with a big bump of k-mers (at the left of the plot) that appear only once.
+Such low frequency k-mers are likely to be errors.
 
 But, with the code above, we are actually doing a bit too much work.
 A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end.
