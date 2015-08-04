@@ -256,29 +256,15 @@ This is possible because reads are so abundant that we can afford to toss out er
 This is also an example in which streaming is *essential*.
 As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.
 
-Read data commonly comes in two formats: FASTA and FASTQ.
-These are both plaintext formats, described below:
+DNA sequence data is commonly represented in FASTA format.
+This is a plaintext format, consisting of one or many DNA sequences per file, each with a name and the actual sequence.
 
-FASTA file:
-    > sequence_name
+A sample FASTA file:
+    > sequence_name1
     ACGT
 
     > sequence_name2
     GACT
-
-FASTQ file:
-    > sequence_name
-    ACGT
-    +
-    1234
-
-    > sequence_name2
-    CAGT
-    +
-    4321
-
-The `+` line and the one immediately after mark the *quality* of each read position, an estimate from the sequence reader of the probability of error.
-We will ignore these here.
 
 Now we have the required information to convert a stream of lines from a FASTA file to a count of k-mers:
 
