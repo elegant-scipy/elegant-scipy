@@ -16,7 +16,7 @@ The Python language contains some very nice primitives for streaming data proces
 
 Let me clarify what I mean by "streaming".
 Suppose you have some data in a CSV text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
-The most common way to do this would be to use NumPy to load the values, compute the function for the full matrix, and then take the mean over the 1st axis:
+The most common way to do this would be to use NumPy to load the values, compute the log function for all values in the full matrix, and then take the mean over the 1st axis:
 
 ```python
 import numpy as np
@@ -27,7 +27,7 @@ np.mean(logexpr, axis=1)
 
 This works, and it follows a reassuringly familiar input-output model of computation.
 But it's a pretty inefficient way to go about it!
-We load the full matrix into memory (1), then make a copy with 1 added to it (2), then make another copy to compute the log (3), before finally passing it on to `np.mean`.
+We load the full matrix into memory (1), then make a copy with 1 added to each value (2), then make another copy to compute the log (3), before finally passing it on to `np.mean`.
 That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance.
 It's clear that for any kind of "big data" operation, this approach won't work.
 
