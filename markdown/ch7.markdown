@@ -49,7 +49,9 @@ Python's creators knew this, and created the "yield" keyword, which enables a fu
 
 As I mentioned above, trying to think too hard about the flow of control in this paradigm is a surefire way to experience headaches, nausea, and other side effects.
 An awesome feature of Python is that it abstracts this complexity away, allowing you to focus on the analysis functionality.
-Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream:
+Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream.
+
+Here's an example where we add 1 to each element in a list, using a standard data-copying method and a streaming method:
 
 ```python
 def add1(elem):
@@ -80,7 +82,7 @@ result = add1_all_standard(np.random.normal(0, 1, 1000))
 result = add1_all_streaming(np.random.normal(0, 1, 1000))
 ```
 
-The advantage of this approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
+The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
 This can conserve a lot of memory when you have a lot of input items, or when each item is very big.
 (Or both!)
 This quote from one of Matt's posts very succinctly summarises the utility of streaming data analysis:
