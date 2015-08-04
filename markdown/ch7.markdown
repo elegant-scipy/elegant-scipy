@@ -205,9 +205,13 @@ import toolz as tz
 filename = 'data/expr.tsv'
 mean = tz.pipe(filename, readtsv_verbose,
                add1_verbose, log_verbose, running_mean_verbose)
+
+# This is equivalent to nesting the functions like this:
+# running_mean_verbose(log_verbose(add1_verbose(readtsv_verbose(filename))))
 ```
 
 What was originally multiple lines, or an unwieldy mess of parentheses, is now a clean description of the sequential transformations of the input data.
+Much easier to understand!
 
 This strategy also has an advantage over the original NumPy implementation: if we scale our data to millions or billions of rows, our computer might struggle to hold all the data in memory.
 In contrast, here we are only loading lines from disk one at a time, and maintaining a single line's worth of data.
