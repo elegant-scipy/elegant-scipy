@@ -3,6 +3,19 @@
 ```
 # Big data in little laptop: streaming data analysis with Python
 
+You have probably already done some streaming, perhaps without thinking about it these terms.
+The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
+For example a loop like this:
+
+'''python
+with open('data/expr.tsv') as f:
+    for line in f:
+        pass
+'''
+
+This strategy works really well for cases where your problem can be neatly solved with by-row processing.
+But things can quickly get out of hand when things get much more sophisticated.
+
 Whenever I think too hard about streaming data analysis, my head hurts.
 In traditional programming models, you pass a function some data, the function processes the data, and then returns the result.
 Done.
@@ -14,7 +27,7 @@ For many years, I didn't.
 But Matt Rocklin's blog posts on this topic really opened my eyes to the utility and elegance of streaming data analysis, to the point that it was impossible to contemplate writing this book without including a chapter on it, even though it is not really a SciPy feature.
 The Python language contains some very nice primitives for streaming data processing, and these can be combined with Matt's Toolz library to generate gorgeous, concise code that is extremely memory-efficient.
 
-Let me clarify what I mean by "streaming".
+Let me clarify what I mean by "streaming" and why you might want to do it.
 Suppose you have some data in a CSV text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
 The most common way to do this would be to use NumPy to load the values, compute the log function for all values in the full matrix, and then take the mean over the 1st axis:
 
