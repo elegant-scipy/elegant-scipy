@@ -228,10 +228,11 @@ Luckily, every one of your cells has an identical copy of your genome, so what w
 
 (MISSISSIPPI assembly example)
 
-A necessary step prior to assembly is error correction: some bases are incorrectly read out, and must be fixed, or they will mess up the assembly.
+Before performing assembly, it is vital to perform read correction.
+During DNA sequencing some bases are incorrectly read out, and must be fixed, or they will mess up the assembly.
 (Imagine having puzzle pieces with the wrong shape.)
 
-The obvious way to do this is that is to find similar reads in your dataset and fix the error by grabbing the correct information from those reads.
+One correction strategy is to find similar reads in your dataset and fix the error by grabbing the correct information from those reads. Or alternatively, you may choose to completely discard those reads containing errors.
 
 (MISSISSIPI assembly with error-correction)
 
