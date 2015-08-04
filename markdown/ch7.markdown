@@ -85,7 +85,7 @@ result = add1_all_streaming(np.random.normal(0, 1, 1000))
 The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
 This can conserve a lot of memory when you have a lot of input items, or when each item is very big.
 (Or both!)
-This quote from one of Matt's posts very succinctly summarises the utility of streaming data analysis:
+This quote from one of Matt's posts very succinctly summarizes the utility of streaming data analysis:
 
 > In my brief experience people rarely take this [streaming] route.
 They use single-threaded in-memory Python until it breaks, and then seek out Big Data Infrastructure like Hadoop/Spark at relatively high productivity overhead.
@@ -235,7 +235,7 @@ However, this is a very inefficient way to do this, because finding similar read
 (And these are not cheap operations.)
 
 There is another way.
-[REF: original k-mer/de-Bruijn Graph implementation] realised that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
+[REF: original k-mer/de-Bruijn Graph implementation] realized that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
 This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of k-mers, which can only be as large as the genome itself — usually 1-2 orders of magnitude smaller than the reads.
 
 Assuming we choose k large enough to ensure any k-mer appears only once in the genome, the number of times a k-mer appears is exactly the number of reads that originate from that part of the genome.
