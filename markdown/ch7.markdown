@@ -327,7 +327,7 @@ print(tz.sliding_window.__doc__)
 ```
 
 Additionally, the *frequencies* function counts the appearance of individual items in a data stream!
-Together with pipe, we can now count k-mers in a single function call (though we will still use our FASTA parsing function):
+Together with pipe, we can now count k-mers in a single function call (though we will still use our original FASTA parsing function):
 
 ```python
 from toolz import curried as cur
