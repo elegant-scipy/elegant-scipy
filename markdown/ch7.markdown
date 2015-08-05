@@ -3,6 +3,8 @@
 ```
 # Big data in little laptop: streaming data analysis with Python
 
+Whenever I think too hard about streaming data analysis, my head hurts.
+
 You have probably already done some streaming, perhaps without thinking about it these terms.
 The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
 For example a loop like this:
@@ -16,9 +18,9 @@ with open('data/expr.tsv') as f:
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
 But things can quickly get out of hand when things get much more sophisticated.
 
-Whenever I think too hard about streaming data analysis, my head hurts.
-In traditional programming models, you pass a function some data, the function processes the data, and then returns the result.
+In traditional programming models, you pass your data to a function, the function processes the data, and then returns the result.
 Done.
+
 But in streaming programs, a function processes *some* of the data, returns the processed chunk, then, while downstream functions are dealing with that chunk, the function receives a bit more, and so on...
 All these things are going on at the same time!
 How can one keep them straight?
