@@ -344,21 +344,20 @@ counts = tz.pipe('data/sample.fasta', open, cur.filter(is_sequence),
 
 We neglected to discuss the *curried* part of this approach.
 
-(discussion about currying)
-
 Currying is where you have a function that requires multiple arguments, you give it *some* of those arguments, and it returns a new function that takes the leftover arguments.
 Once that second curried function is called with the remaining arguments it can perform the original task.
 Another word for currying is partial evaluation.
 We are evaluating part of the function.
+In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
 
-Currying can be a bit of a mind-bend when you just read a definition, so let's make our own curried function to see how it works.
+Currying can be a bit of a mind-bend when you first start, so let's make our own curried function to see how it works.
 
 ```python
 # First, let's write a simple function to curry
 def my_sum(a, b):
     return a + b
 
-my_sum(1, 2)
+my_sum(2, 5)
 ```
 
 ```python
@@ -378,16 +377,26 @@ def my_sum_curried(a, b=None):
 Now let's try out a curried function to make sure it does what we expect.
 
 ```python
-print my_sum_curried(2, 5)
-print my_sum_curried(2)
+my_sum_curried(2, 5)
 ```
+Okay, it acts like a normal function when given both variables.
+Now let's leave out the second variable.
+
+```python
+my_sum_curried(2)
+```
+
+It returned a function. Yay!
+Now let's see if we can use that returned function as expected.
 
 ```python
 partial_sum = my_sum_curried(2)
-partial_sum(7)
+partial_sum(5)
 ```
 
-
+Now that worked, but my_sum_curried was a reasonable hard function to read.
+Future me will probably have trouble remembering how I wrote that code.
+Luckily, Toolz has some syntactic sugar to help us out.
 
 ```python
 from toolz import curry
@@ -396,11 +405,13 @@ from toolz import curry
 def curried_sum(x, y):
     return x + y
 
-curried_sum2 = curried_sum(2)       # curried_sum didn't receive enough arguments to evaluate
-                                    # so it holds onto the 2 and waits, returning a
-                                    # partially evaluated function
-curried_sum2(5)
+curried_sum_partial = curried_sum(2)    # curried_sum didn't receive enough arguments to evaluate
+                                        # so it holds onto the 2 and waits, returning a
+                                        # partially evaluated function
+curried_sum_partial(5)
 ```
+
+To summarize what we did, curried_sum is a curried function, so it can take one of the arguments and returns another function curried_sum_partial which “remembers” that argument.
 
 We can now observe the frequency of different k-mers:
 
