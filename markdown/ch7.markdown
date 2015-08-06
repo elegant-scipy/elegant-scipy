@@ -346,6 +346,62 @@ We neglected to discuss the *curried* part of this approach.
 
 (discussion about currying)
 
+Currying is where you have a function that requires multiple arguments, you give it *some* of those arguments, and it returns a new function that takes the leftover arguments.
+Once that second curried function is called with the remaining arguments it can perform the original task.
+Another word for currying is partial evaluation.
+We are evaluating part of the function.
+
+Currying can be a bit of a mind-bend when you just read a definition, so let's make our own curried function to see how it works.
+
+```python
+# First, let's write a simple function to curry
+def my_sum(a, b):
+    return a + b
+
+my_sum(1, 2)
+```
+
+```python
+# Now we write a curried version of my_sum
+def my_sum_curried(a, b=None):
+
+    def my_sum(a, b): # Here's our original function that needs to be curried
+        return a + b
+
+    if b is None: # The second value is not given, so we will need to return a function
+        return lambda b: my_sum(a, b)   # we're defining a function that takes a variable b,
+                                        # and uses the a we already know about
+    else: # Both values were given, so we can just return a value
+        return my_sum(a, b)
+```
+
+Now let's try out a curried function to make sure it does what we expect.
+
+```python
+print my_sum_curried(2, 5)
+print my_sum_curried(2)
+```
+
+```python
+partial_sum = my_sum_curried(2)
+partial_sum(7)
+```
+
+
+
+```python
+from toolz import curry
+
+@curry              # We can use curry as a decorator
+def curried_sum(x, y):
+    return x + y
+
+curried_sum2 = curried_sum(2)       # curried_sum didn't receive enough arguments to evaluate
+                                    # so it holds onto the 2 and waits, returning a
+                                    # partially evaluated function
+curried_sum2(5)
+```
+
 We can now observe the frequency of different k-mers:
 
 ```python
