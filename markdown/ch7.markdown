@@ -141,7 +141,8 @@ Note a few things:
 - When the computation is finally triggered, by the call to `running_mean_verbose`, it jumps back and forth between all the functions, as various computations are performed on each line, before moving on to the next line.
 
 This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire human genome in 10 minutes on a laptop, using just a few lines of code.
-(It has been slightly edited for easier downstream processing.) Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
+(It has been slightly edited for easier downstream processing.)
+Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
 This modification is almost *trivial*, which speaks to the elegance of his example.
 
 ```python
@@ -149,29 +150,46 @@ import toolz as tz
 from toolz import curried as cur
 from glob import glob
 
+@tz.curry
+def increment_model(model, index):
+    model[index] += 1
+
+
+LDICT = dict(zip('ACGT', range(4)))
+LDICT.update(dict(zip('acgt', range(4))))  # make dict case-insensitive
+
+
+def letter_tuple_to_index(tup):
+    return [LDICT[letter] for letter in tup]
+
+
+def is_nucleotide(letter):
+    return (letter.upper() in 'ACGT')
+
+
 def genome(file_pattern):
-    """Stream a genome from a list of FASTA filenames"""
-    return tz.pipe(file_pattern, glob, sorted,        # Filenames
-                                 cur.map(open),        # Open each file
-                                 cur.map(tz.drop(1)),     # Drop header from each file
-                                 concat,           # Concatenate all lines from all files together
-                                 cur.map(str.upper),   # Upper case each line
-                                 cur.map(str.strip),   # Strip off \n from each line
-                                 concat)           # Concatenate all lines into one giant string sequence
+    """Stream a genome, letter by letter, from a list of FASTA filenames."""
+    return tz.pipe(file_pattern, glob, sorted,  # Filenames
+                   cur.map(open),  # lines
+                   cur.map(cur.drop(1)),  # drop header from each file
+                   tz.concat,  # concatenate lines from all files
+                   tz.concat,  # concatenate chars from all lines
+                   cur.filter(is_nucleotide))  # discard newlines and 'N'
+
 
 def markov(seq):
-    """Get a 2nd-order Markov model from a sequence"""
-    return tz.pipe(seq, tz.sliding_window(3),          # Each successive triple{(A, A): {T: 10}}
-                     tz.frequencies,                # Count occurrences of each triple
-                     dict.items, map(markov_reshape),   # Reshape counts so {(A, A, T): 10} -> {(A, A): {T: 10}}
-                     tz.merge_with(merge))          # Merge dicts from different pairs
-
-def markov_reshape(item):
-    ((a, b, c), count) = item
-    return {(a, b): {c: count}}
+    """Get a 1st-order Markov model from a sequence of nucleotides."""
+    model = np.zeros((4, 4))
+    tz.pipe(seq,
+            tz.sliding_window(2),  # each successive tuple
+            cur.map(letter_tuple_to_index),  # location in matrix of tuple
+            cur.map(increment_model(model)))  # increment matrix
+    # convert counts to transition probability matrix
+    model /= np.sum(model, axis=1)[:, np.newaxis]
+    return model
 
 # if __name__ == '__main__':
-#     pipe('/home/mrocklin/data/human-genome/chr*.fa', genome, markov)
+#     model = tz.pipe('data/human-genome/chr*.fa', genome, markov)
 ```
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
