@@ -1,5 +1,10 @@
 ```python
 %matplotlib inline
+
+import seaborn as sns
+sns.set_style('white')
+sns.despine()
+
 import matplotlib.pyplot as plt
 if hasattr(plt.cm, 'inferno'):
     plt.rcParams['image.cmap'] = 'inferno'
@@ -590,12 +595,9 @@ traces* in radar terminology. Suddenly the information makes sense!
 The plot for $|V_{0}|$ clearly shows a target at component 67, that
 for $|V5|$ shows the targets that produced the signal that was
 uninterpretable in the time domain. The real radar signal shows a
-large number of targets between bins 400 and 500 with a large peak in
-bin 443. This happens to be an echo return from a radar illuminating
-the high wall of an open-cast mine.
-
-![[fig:FFT range traces]The absolute values of the FFT components of
- the signals in Fig. ([fig:radar time signals]).](FFT traces.png)
+large number of targets between component 400 and 500 with a large
+peak in component 443. This happens to be an echo return from a radar
+illuminating the high wall of an open-cast mine.
 
 To get useful information from the plot, we must determine the range!
 The sinusoid associated with the first component of the DFT has a
@@ -633,12 +635,17 @@ c = 3e8  # Approximately the speed of light and of
 fig, (ax0, ax1,ax2) = plt.subplots(3, 1, sharex=True, figsize=(15, 7))
 
 
-def log_plot_normalized(x, y, ylabel, ax):
+def dB(y):
+    "Calculate the log ratio of y / max(y) in decibel."
+
     y = np.abs(y)
     y /= y.max()
 
-    ax.plot(x, 20 * np.log10(y))
+    return 20 * np.log10(y)
 
+
+def log_plot_normalized(x, y, ylabel, ax):
+    ax.plot(x, dB(y))
     ax.set_ylabel(ylabel)
     ax.grid()
 
@@ -649,9 +656,11 @@ log_plot_normalized(rng, V0[:N // 2], "$|V_0|$ [dB]", ax0)
 log_plot_normalized(rng, V5[:N // 2], "$|V_5|$ [dB]", ax1)
 log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
 
+ax0.set_xlim(0, 300)  # Change x limits for these plots so that
+ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
+
 plt.show()
 ```
-
 
 The observable dynamic range is much improved in these plots. For
 instance, in the real radar signal the *noise floor* of the radar has
@@ -680,7 +689,7 @@ the signal we analyzed and the signal produced by the inverse DFT.
  develops if the sampled function within the box is made periodic with
  period $T_{eff}.$ These discontinuities cause sidelobes in the
  sampled signal since the given periodic signal is not band-limited as
- required by the DFT. ](g38228)
+ required by the DFT. ](../figures/periodic.png)
 
 Consider the function $x(t)$ shown in Figure . It is sampled at a
 sampling frequency $f_{s}$ and $N=8$ samples are taken. The effective
@@ -698,32 +707,83 @@ formation of side lobes.
 
 We can counter this effect by a process called *windowing*. The
 original function is multiplied with a window function such as the
-function shown in Figure [fig:Kaiser window ]. The function shown is a
-Kaiser window $K(N,\beta)$, a very versatile window function developed
-by Jim Kaiser. By changing the parameter $\beta$, the shape of the
+Kaiser window $K(N,\beta)$:
+
+```python
+f, axes = plt.subplots(1, 3, figsize=(10, 5))
+
+for i, beta in enumerate([0, 3, 10]):
+    axes[i].plot(np.kaiser(N, beta))
+    axes[i].set_xlabel(r'$\beta = {}$'.format(beta))
+    axes[i].set_xlim(0, N - 1)
+
+plt.show()
+```
+
+By changing the parameter $\beta$, the shape of the
 window can be changed from rectangular (i.e. no windowing) with
 $\beta=0$ to a window that produces signals that smoothly increase
 from zero and decrease to zero at the endpoints of the sampled
 interval, producing very low side lobes with values of $\beta$ between
 5 and 10.
 
-![[fig:Kaiser window ]A Kaiser window with N=2048 and
- $\beta=6.1$.](Kaiser window.png)
+Let's take a look at the signals used thus far in this example,
+windowed with a Kaiser window with $\beta=6.1$:
 
-Figure [fig:windowed traces] shows the signals used thus far in this
-example, windowed with a Kaiser window with $\beta=6.1$, with the
-corresponding range traces produced from the windowed signals with the
-FFT.
+
+```python
+f, axes = plt.subplots(3, 1, sharex=True, figsize=(10, 5))
+
+t_ms = t * 1000  # Sample times in milli-second
+
+w = np.kaiser(N, 6.1)  # Kaiser window with beta = 6.1
+
+for n, (signal, label) in enumerate([(v0, r'$v_0 [Volt]$'),
+                                     (v5, r'$v_5 [Volt]$'),
+                                     (v_actual, r'$v_{\mathrm{actual}}$')]):
+    axes[n].plot(t_ms, w * signal)
+    axes[n].set_ylabel(label)
+    axes[n].grid()
+
+axes[2].set_xlim(0, t_ms[-1])
+axes[2].set_xlabel('Time [ms]')
+plt.show()
+
+```
+
+And the corresponding FFTs (or "range traces", in radar terms):
+
+```python
+V0_win = np.fft.fft(w * v0)
+V5_win = np.fft.fft(w * v5)
+V_actual_win = np.fft.fft(w * v_actual)
+
+fig, (ax0, ax1,ax2) = plt.subplots(3, 1, figsize=(15, 7))
+
+log_plot_normalized(rng, V0_win[:N // 2], r"$|V_0,\mathrm{win}|$ [dB]", ax0)
+log_plot_normalized(rng, V5_win[:N // 2], r"$|V_5,\mathrm{win}|$ [dB]", ax1)
+log_plot_normalized(rng, V_actual_win[:N // 2], r"$|V_\mathrm{actual,win}|$ [dB]", ax2)
+
+ax0.set_xlim(0, 300)  # Change x limits for these plots so that
+ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
+
+ax1.annotate("New, previously unseen!", (160, -35),
+             xytext=(10, 25), textcoords="offset points", color='red',
+             arrowprops=dict(width=2, headwidth=6, frac=0.4, shrink=0.1))
+
+plt.show()
+
+```
 
 Compare these with the range traces in Figure
 [fig:Log range traces]. There is a dramatic lowering in side lobe
-level, but this came at a price: the peaks have widened significantly,
-thus lowering the radar resolution, that is the ability of the radar
-to distinguish between two closely space targets. The choice of window
-is a compromise between side lobe level and resolution. Even so,
-referring to the trace for $V_{5}$, windowing has dramatically
-increased our ability to distinguish the small target from its large
-neighbor.
+level, but this came at a price: the peaks have changed in shape,
+widening and becoming less peaky, thus lowering the radar resolution,
+that is, the ability of the radar to distinguish between two closely
+space targets. The choice of window is a compromise between side lobe
+level and resolution. Even so, referring to the trace for $V_{5}$,
+windowing has dramatically increased our ability to distinguish the
+small target from its large neighbor.
 
 In the real radar data range trace windowing has also reduced the side
 lobes. This is most visible in the depth of the notch between the two
@@ -755,13 +815,39 @@ strong reflections. Radar measurements of a small scanned region
 consisting of 20 azimuth and 30 elevation bins scanned in steps of
 $0.5^\circ$.
 
-![[fig:contour plots]Contour plots of the radar data, showing the
- strength of echoes against elevation and azimuth, a cut through the
- slope in an elevation plane and acut through the slope in an azimuth
- plane. The contours are in steps of 2 dB from -40 to 0 dB. Azimuth
- and elevation bin size is $0.5^\circ$ and range bin size is 1.5
- m. The stepped construction of the high wall in an opencast mine is
- clearly visible. ](rangeplane 305 el10az12.png)
+
+```python
+data = np.load('data/radar_scan_1.npz')
+scan = data['scan']
+
+# ADC is 14-bit for 5V max, so scale by 0.000305 to return to volt
+v = scan['samples'] * 0.000305
+
+# Take FFT for each measurement
+V = np.fft.fft(v, axis=2)[::-1, :, :N // 2]
+
+contours = np.arange(-40, 1, 2)
+
+f, axes = plt.subplots(1, 3, figsize=(16, 5))
+
+for n, (radar_slice, title) in enumerate([ (V[:, :, 250], 'Range Sphere 250'),
+                                           (V[6, :, :], 'Elevation Plane 6'),
+                                           (V[:,  3, :], 'Azimuth Plane 3') ]):
+
+    axes[n].contourf(dB(radar_slice), contours)
+    axes[n].set_title(title)
+
+plt.show()
+
+```
+
+
+Contour plots of the radar data, showing the strength of echoes
+against elevation and azimuth, a cut through the slope in an elevation
+plane and acut through the slope in an azimuth plane. The contours are
+in steps of 2 dB from -40 to 0 dB. Azimuth and elevation bin size is
+$0.5^\circ$ and range bin size is 1.5 m. The stepped construction of
+the high wall in an opencast mine is clearly visible.
 
 ### Further applications of the FFT in radar
 
