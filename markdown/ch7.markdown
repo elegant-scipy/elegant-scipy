@@ -322,6 +322,8 @@ But, with the code above, we are actually doing a bit too much work.
 A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end.
 Toolz has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
 
+- Explain what curried.map is doing
+
 For example, the *sliding window* function is exactly what we need to make k-mers:
 
 ```python
