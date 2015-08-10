@@ -322,8 +322,6 @@ But, with the code above, we are actually doing a bit too much work.
 A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end.
 Toolz has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
 
-- Explain what curried.map is doing
-
 For example, the *sliding window* function is exactly what we need to make k-mers:
 
 ```python
@@ -415,7 +413,37 @@ curried_sum_partial(5)
 
 To summarize what we did, curried_sum is a curried function, so it can take one of the arguments and returns another function curried_sum_partial which “remembers” that argument.
 
-Okay, so let's get back to our k-mer counting code.
+In fact, all of the Toolz functions are also available as curried functions in the toolz.curried namespace.
+Toolz also includes curried version of some handy higher order python functions like `map`, `filter` and `reduce`.
+
+```python
+from toolz import curried
+curried.map
+```
+
+As a reminder, `map` is a built-in function.
+From the [docs](https://docs.python.org/3.4/library/functions.html#map):
+
+> map(function, iterable, ...)
+> Return an iterator that applies function to every item of iterable, yielding the results.
+
+A curried version of `map` is particularly handy when working in a Toolz pipe.
+You can just pass a function to `curried.map` and then stream in the iterator later using `tz.pipe`.
+Take another look at our function for reading in the genome to see how this works in practice.
+
+```python
+def genome(file_pattern):
+    """Stream a genome from a list of FASTA filenames"""
+    return tz.pipe(file_pattern, glob, sorted,              # Filenames
+                                 curried.map(open),         # Open each file
+                                 curried.map(tz.drop(1)),   # Drop header from each file
+                                 concat,                    # Concatenate all lines from all files together
+                                 curried.map(str.upper),    # Upper case each line
+                                 curried.map(str.strip),    # Strip off \n from each line
+                                 concat)                    # Concatenate all lines into one giant string sequence
+```
+
+Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
 We can now observe the frequency of different k-mers:
 
 ```python
