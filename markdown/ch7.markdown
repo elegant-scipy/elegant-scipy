@@ -413,6 +413,7 @@ curried_sum_partial(5)
 
 To summarize what we did, curried_sum is a curried function, so it can take one of the arguments and returns another function curried_sum_partial which “remembers” that argument.
 
+Okay, so let's get back to our k-mer counting code.
 We can now observe the frequency of different k-mers:
 
 ```python
@@ -423,18 +424,23 @@ plt.bar(np.arange(len(hist)), hist / hist.sum())
 
 ## Genome assembly
 
-We use a toy genetic sequence to demonstrate a De Bruijn graph assembler.
+Now that we have a handle on k-mer frequencies in our DNA sequence, we can implement an important k-mer based assembly algorithm: a De Bruijn graph assembler.
+We will use a toy genetic sequence to demonstrate how this works.
 See [this link](http://www.cs.jhu.edu/~langmea/resources/lecture_notes/assembly_dbg.pdf) for more on this topic.
 The sequence is derived from Fig 3 of [this paper](http://www.nature.com/nbt/journal/v29/n11/full/nbt.2023.html), but in our case it is not circular.
 
+First we will needs some DNA sequencing reads to play with:
+
 ```python
 @tz.curry
-def generate_reads(seq, nreads=60, readlen=5):  # 30x coverage
+def generate_reads(seq, nreads=60, readlen=5):  # Generate sequencing reads with on average 30x coverage of each DNA base
     for i in range(nreads):
         start = np.random.randint(0, len(seq) - readlen + 1)
         yield seq[start : start+readlen]
 ```
-Next, we generate some reads and feed them into a De Bruijn graph implemented in networkx
+
+Next, we generate some reads and feed them into a De Bruijn graph implemented in networkx.
+
 ```python
 import networkx as nx
 seq = 'ATGGCGTGCA'
@@ -458,7 +464,6 @@ draw = tz.pipe(reads, curried.map(curried.sliding_window(3)),  # k-mers
 (Note that the graph is much smaller than the original dataset of the reads!)
 
 Or, we can feed the graph directly into an Eulerian path algorithm, and reconstruct the original genome from that:
-
 
 ```python
 import toolz as tz
