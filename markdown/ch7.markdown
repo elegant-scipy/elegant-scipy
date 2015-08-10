@@ -506,6 +506,14 @@ Take a small stream and add functions to your pipe one by one from the first/lef
 ## Markov model from a full genome
 
 - Intro to Markov models
+
+In general, a Markov model assumes that the probability of the system moving to a given state, is only dependent on the state that it was in just previously.
+For example if it is sunny right now, there is a high probability that it will be sunny tomorrow.
+The fact that it was raining yesterday is irrelevant.
+In this theory, all the information required to predict the future is encoded in the current state of things.
+The past is irrelevant.
+This assumption is usful for simplifying otherwise intractable problems.
+
 - Where to download the human genome
 - Matt's post and how to use it
 
