@@ -8,6 +8,11 @@ sns.despine()
 import matplotlib.pyplot as plt
 if hasattr(plt.cm, 'inferno'):
     plt.rcParams['image.cmap'] = 'inferno'
+    viridis = 'viridis'
+else:
+    viridis = 'summer'
+
+import numpy as np
 ```
 
 <!--
@@ -38,7 +43,107 @@ if hasattr(plt.cm, 'inferno'):
 
 # The Fast Fourier Transform (FFT)
 
-*This chapter was written in collaboration with SW's father, PW van der Walt.*
+*This chapter was written in collaboration with SW's father, PW van
+ der Walt.*
+
+Listen to the following snippet of nightingale birdsong:
+
+```python
+from IPython.display import Audio
+Audio('data/nightingale.wav')
+```
+
+If you are reading the paper version of this book, you'll have to use
+your imagination!  It goes something like this:
+chee-chee-woorrrr-hee-hee cheet-wheet-hoorrr-chi
+rrr-whi-wheo-wheo-wheo-wheo-wheo-wheo.
+
+Since we realise that not everyone is fluent in bird-speak, perhaps
+it's best if we visualize the measurements---better known as "the
+signal"---instead:
+
+```python
+from scipy.io import wavfile
+
+# Read audio file released under CC BY 4.0 at
+# http://www.orangefreesounds.com/nightingale-sound/
+
+# Get sampling rate (number of measurements per second)
+# as well as audio data as an (N, 2) array -- two columns
+# because this is a stereo recording.
+
+rate, audio = wavfile.read('data/nightingale.wav')
+
+audio = np.mean(audio, axis=1)
+
+# How long is the audio snippet?
+
+N = audio.shape[0]
+L = N / rate
+
+print('Audio length: {:.2f} seconds'.format(L))
+
+f, ax = plt.subplots()
+ax.plot(np.arange(N) / rate, audio)
+ax.set_xlabel('Time [s]')
+ax.set_ylabel('Amplitude [unknown]')
+plt.show()
+```
+
+Well, that's not very satisfying, is it!  If I sent this voltage to a
+speaker, I might hear a bird chirping, but I can't very well imagine
+how it would sound in my head.  Is there a better way of *seeing* what
+is going on?
+
+It turns out there is, and it is called the Discrete Fast Fourier
+Transform (discrete, because our recording consists of discrete
+measurements, and fast---because we're in a hurry!).  The Fast Fourier
+Transform (FFT) tells us which frequencies to expect in our signal.
+
+Of course, as per the description above you'll know by now that the
+bird is singing many different notes throughout the song, so what we
+*really* want to know is when each note occurs.  Our strategy will be
+as follows: take the audio signal, split it into small, overlapping
+chunks, and apply the Fourier transform to each (this is known as
+the Short Time Fourier Transform).
+
+We'll split the signal into chunks of 1024 samples -- that's about
+0.02 seconds of audio.  The chunks will overlap by 100 samples as
+shown here:
+
+![Sliding window](../figures/generated/sliding_window.png)
+
+
+```python
+from skimage import util
+
+M = 1024
+
+windows = util.view_as_windows(audio, window_shape=M, step=100)
+w = np.hanning(M)
+windows = windows * w
+spectrum = np.fft.fft(windows, axis=1)[:, :M //2:-1].T
+
+f, ax = plt.subplots(figsize=(10, 5))
+S = np.abs(spectrum)
+S = 20 * np.log10(S / S.max())
+
+ax.imshow(S, cmap=viridis, origin='lower',
+          extent=(0, L, 0, rate / 2 / 1000))
+ax.axis('tight')
+ax.set_ylabel('Frequency [kHz]')
+ax.set_xlabel('Time [s]')
+plt.show()
+```
+
+Much better!  We can see the frequencies vary as the birdsong
+progresses.
+
+```python
+plt.specgram(audio, NFFT=1024, Fs=rate, noverlap=100, cmap=viridis);
+plt.axis('tight')
+plt.show()
+```
 
 When taking measurements (or recording a "signal"), we usually do so
 along regular intervals in time or space.  For example, an image
@@ -60,8 +165,9 @@ accuracy within which we can pin-point both simultaneously (and that
 also makes sense logically: a low frequency component changes slowly,
 it would be hard to say exactly when it occurs, whereas a high
 frequency component is much easier to place).  The wavelet transform
-(the SciPy implementation of which is well underway) makes such a
-compromise and gives you a "best of both worlds" transform.
+makes such a compromise and gives you a "best of both worlds"
+transform.
+
 
 Returning to Fourier Transform, tracing its exact origins proves to be
 tricky.  The use of harmonic series dates back to Babylonian times,
@@ -97,7 +203,7 @@ permissive free software license.
 
 Consider that a naive calculation of the FFT takes
 $\mathcal{O}\left(N^2\right)$ operations, whereas the Fast Fourier
-Transform is $\mathcal{O}(N \log N)`` in the ideal case--a great
+Transform is $\mathcal{O}(N \log N)$ in the ideal case--a great
 improvement!  However, the classical Cooley-Tukey algorithm
 implemented in FFTPACK recursively breaks up the transform into
 smaller (prime-sized) pieces and only shows this improvement for
@@ -110,9 +216,7 @@ FFTPACK.
 Let us illustrate:
 
 ```python
-import numpy as np
 import time
-import matplotlib.pyplot as plt
 
 from scipy import fftpack
 from sympy import factorint

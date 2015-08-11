@@ -22,10 +22,10 @@ TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue
 CHS_ := $(addprefix $(BUILD_HTML)/,$(TITLES))
 chs: build_dirs $(addsuffix .html,$(CHS_))
 
-ch3: build_dirs $(BUILD_HTML)/ch3.html $(FIGURES)/radar_time_signals.png
+markdown/ch3.markdown: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
 
 $(FIGURES)/%.png: script/%.py $(FIGURES)
-	MPLCONFIGDIR=./.matplotlib python $< $@
+	 MPLCONFIGDIR=./.matplotlib python $< $@
 
 # %.html: How to build an HTML file from its corresponding IPython
 #     notebook.
@@ -33,7 +33,7 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	 ipython nbconvert --to html $< --stdout > $@
 
 $(BUILD_HTML)/custom.css:
-	cp style/custom.css $(BUILD_HTML)
+	 cp style/custom.css $(BUILD_HTML)
 
 # %.ipynb: How to build an IPython notebook from a source Markdown
 #     file.
@@ -47,7 +47,7 @@ nbs: $(addsuffix .ipynb,$(NBS_))
 
 # .PHONY: Special Makefile variable specifying targets that don't
 #     correspond to any actual files.
-.PHONY: all build_dirs
+.PHONY: all build_dirs chs
 
 # build_dirs: directories for build products
 build_dirs: $(BUILD_HTML) $(BUILD_NB)
