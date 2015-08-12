@@ -1,3 +1,4 @@
+
 ```python
 %matplotlib inline
 
@@ -59,8 +60,8 @@ chee-chee-woorrrr-hee-hee cheet-wheet-hoorrr-chi
 rrr-whi-wheo-wheo-wheo-wheo-wheo-wheo.
 
 Since we realise that not everyone is fluent in bird-speak, perhaps
-it's best if we visualize the measurements---better known as "the
-signal"---instead:
+it's best if we visualize the measurements—better known as "the
+signal"—instead:
 
 ```python
 from scipy.io import wavfile
@@ -92,39 +93,68 @@ plt.show()
 
 Well, that's not very satisfying, is it!  If I sent this voltage to a
 speaker, I might hear a bird chirping, but I can't very well imagine
-how it would sound in my head.  Is there a better way of *seeing* what
-is going on?
+how it would sound like in my head.  Is there a better way of *seeing*
+what is going on?
 
-It turns out there is, and it is called the Discrete Fast Fourier
+It turns out there is: it is called the Discrete Fast Fourier
 Transform (discrete, because our recording consists of discrete
-measurements, and fast---because we're in a hurry!).  The Fast Fourier
-Transform (FFT) tells us which frequencies to expect in our signal.
+measurements, and fast—because we're in a hurry!).  The Fast Fourier
+Transform (FFT) tells us which frequencies or "notes" to expect in our
+signal.
 
-Of course, as per the description above you'll know by now that the
-bird is singing many different notes throughout the song, so what we
-*really* want to know is when each note occurs.  Our strategy will be
-as follows: take the audio signal, split it into small, overlapping
-chunks, and apply the Fourier transform to each (this is known as
-the Short Time Fourier Transform).
+Of course, a bird sings many notes throughout the song, so we'd also
+like to know *when* each note occurs.  The Fourier transform takes a
+signal in the time domain (i.e., a set of measurements over time) and
+turns it into a spectrum—a set of frequencies with corresponding
+(complex[^0]) values.  The spectrum does not contain any information about
+time! [^2]
 
-We'll split the signal into chunks of 1024 samples -- that's about
-0.02 seconds of audio.  The chunks will overlap by 100 samples as
-shown here:
+[^0]: The Fourier transform essentially tells us how to combine a set
+of sinusoids of varying frequency to form the input signal.  The
+spectrum consists of complex numbers—one for each sinusoid.  A
+complex number encodes two things: a magnitude and an angle.  The
+magnitude is the strength of the sinusoid in the signal, and the angle
+how much it is shifted in time.  At this point, we only care about the
+magnitude, which we calculate using ``np.abs``.
+
+[^2] For more on techniques for calculating both (approximate)
+frequencies and time of occurrence, read up on wavelet analysis.
+
+So, to find both the frequencies and the time at which they were sung,
+we'll need to be somewhat clever.  Our strategy will be as follows:
+take the audio signal, split it into small, overlapping slices, and
+apply the Fourier transform to each (a technique known as the Short
+Time Fourier Transform).
+
+We'll split the signal into slices of 1024 samples—that's about 0.02
+seconds of audio.  Why we choose 1024 and not 1000 we'll explain in a
+second.  The slices will overlap by 100 samples as shown here:
 
 ![Sliding window](../figures/generated/sliding_window.png)
-
 
 ```python
 from skimage import util
 
 M = 1024
 
-windows = util.view_as_windows(audio, window_shape=M, step=100)
-w = np.hanning(M)
-windows = windows * w
-spectrum = np.fft.fft(windows, axis=1)[:, :M //2:-1].T
+# Chop up the signal into slices of 1024 samples, each slice
+# overlapping the previous by 100 samples
+slices = util.view_as_windows(audio, window_shape=M, step=100)
+print('Audio shape: {}, Sliced audio shape: {}'.format(audio.shape, slices.shape))
+
+# Generate a windowing function and multiply it with the signal—more on this later
+win = np.hanning(M + 1)[:-1]
+slices = slices * w
+
+# Calculate the Fourier transform for each slice.
+spectrum = np.fft.fft(slices, axis=1)[:, :M //2 + 1:-1].T
+spectrum = np.abs(spectrum)
+
+# Do a log plot of the ratio of the signal / the maximum signal
+# The unit for such a ratio is the decibel.
 
 f, ax = plt.subplots(figsize=(10, 5))
+
 S = np.abs(spectrum)
 S = 20 * np.log10(S / S.max())
 
@@ -136,50 +166,48 @@ ax.set_xlabel('Time [s]')
 plt.show()
 ```
 
-Much better!  We can see the frequencies vary as the birdsong
-progresses.
+Much better!  We can now see the frequencies vary over time, and it
+corresponds to the way the audio sounds.  See if you can match my
+earlier description: chee-chee-woorrrr-hee-hee cheet-wheet-hoorrr-chi
+rrr-whi-wheo-wheo-wheo-wheo-wheo-wheo (I didn't transcribe the section
+from 3 to 5 seconds, because that's another bird).
+
+SciPy already includes an implementation of this method as
+``scipy.signal.spectrogram``, and can be invoked as follows:
 
 ```python
-plt.specgram(audio, NFFT=1024, Fs=rate, noverlap=100, cmap=viridis);
-plt.axis('tight')
-plt.show()
+freqs, times, Sx = signal.spectrogram(left, fs=rate, window='hanning',
+                                      nperseg=1024, noverlap=M - 100,
+                                      detrend=False, scaling='spectrum')
+
+## Plot using:
+# plt.pcolormesh(t, f, 10 * np.log10(Sx), cmap='viridis');
 ```
 
-When taking measurements (or recording a "signal"), we usually do so
-along regular intervals in time or space.  For example, an image
-represents intensity values that vary across space, whereas a sound
-recording tells us how sound intensity changes over time.
+The only differences are that SciPy returnes the spectrum squared
+(which turns measured voltage into measured energy), and multiplies it
+by some normalization factors.
 
-Imagine, now, that you are an intra-dimensional being that could see
-all of time at once (yes, that would be awesome!).  This would allow
-you to gain one new kind of insight among many: which *frequencies*
-("notes" in terms of music, "texture" in terms of space) are included
-in a given signal.  The tool that allows mere mortals to gain access
-to this information is called the Fourier Transform.
+[^1]: SciPy goes to some effort to preserve the energy in the
+spectrum.  Therefore, when examining only half the components, it
+multiplies all apart from the first and last components by two (those
+two components are "shared" by the two halves of the spectrum).  It
+also normalizes the window by dividing it by its sum.
 
-Sometimes, we want to position ourselves somewhere in the middle of
-the time and Fourier domains: we want to know not only what
-frequencies are included in a signal, but also *when* they occur.
-Sadly, a variation of the uncertainty principle constrains us in the
-accuracy within which we can pin-point both simultaneously (and that
-also makes sense logically: a low frequency component changes slowly,
-it would be hard to say exactly when it occurs, whereas a high
-frequency component is much easier to place).  The wavelet transform
-makes such a compromise and gives you a "best of both worlds"
-transform.
+## History
 
+Tracing the exact origins proves to be tricky.  Some related elements
+go as far back as Babylonian times, but it was the hot topics of
+calculating asteroid orbits and solving the heat (flow) equation that
+led to several breakthroughs in the early 1800s.  Whom exactly among
+Clairaut, LaGrange, Euler, Gauss and D'Alembert we should thank is not
+exactly clear, but Gauss was the first to describe the Fast Fourier
+Transform (an algorithm for computing the Discrete Fourier Transform,
+popularized by Cooley and Tukey in 1965).  Joseph Fourier, after whom
+the transform is named, was first to claim that *arbitrary* functions
+can be expressed as a sum of trigonometric functions.
 
-Returning to Fourier Transform, tracing its exact origins proves to be
-tricky.  The use of harmonic series dates back to Babylonian times,
-but it was the hot topics of calculating asteroid orbits and solving
-the heat equation that led to several breakthroughs in the early
-1800s.  Whom exactly among Clairaut, LaGrange, Euler, Gauss and
-D'Alembert we should thank is not exactly clear, but we know that
-Gauss first came up with the Fast Fourier Transform (an algorithm for
-computing the Discrete Fourier Transform, popularized by Cooley and
-Tukey in 1965).  Furthermore it is believed that Fourier first claimed
-that abitrary functions could be expressed by a trigonometric
-(Fourier) series.
+## Implementation
 
 The Fourier Transform functionality in SciPy lives in the fairly
 spartan ``scipy.fftpack`` module.  It provides the following
@@ -197,9 +225,9 @@ This is complemented by the following functions in NumPy:
  - ``np.hanning``, ``np.hamming``, ``np.bartlett``, ``np.blackman``,
    ``np.kaiser``: Tapered windowing functions.
 
-SciPy wraps FFTPACK as its underlying implementation--it is not the
-fastest out there, but unlike packages such as FFTW, it has a
-permissive free software license.
+SciPy wraps the Fortran FFTPACK library—it is not the fastest out
+there, but unlike packages such as FFTW, it has a permissive free
+software license.
 
 Consider that a naive calculation of the FFT takes
 $\mathcal{O}\left(N^2\right)$ operations, whereas the Fast Fourier
@@ -207,11 +235,11 @@ Transform is $\mathcal{O}(N \log N)$ in the ideal case--a great
 improvement!  However, the classical Cooley-Tukey algorithm
 implemented in FFTPACK recursively breaks up the transform into
 smaller (prime-sized) pieces and only shows this improvement for
-highly smooth input lengths (an input length is considered smooth when
+highly "smooth" input lengths (an input length is considered smooth when
 its largest prime factor is small).  For large prime sized pieces, the
 Bluestein or Rader algorithms can be used in conjunction with the
 Cooley-Tukey algorithm, but this optimization is not implemented in
-FFTPACK.
+FFTPACK.[^3]
 
 Let us illustrate:
 
@@ -257,20 +285,21 @@ ax1.set_ylabel('Smoothness of input length')
 plt.show()
 ```
 
-While ideally we don't want to reimplement existing algorithms,
+This explains why we chose a length of 1024 for our audio slices
+earlier!
+
+[^3]: While ideally we don't want to reimplement existing algorithms,
 sometimes it becomes necessary in order to obtain the best execution
 speeds possible, and tools like [Cython](http://cython.org)—which
-compiles Python to C—and [Numba](http://numba.pydata.org)—which
-does just-in-time compilation of Python code—make life a lot easier
-(and faster!).
-
-If you are able to use GPL-licenced software, you may
+compiles Python to C—and [Numba](http://numba.pydata.org)—which does
+just-in-time compilation of Python code—make life a lot easier (and
+faster!).  If you are able to use GPL-licenced software, you may
 consider using [PyFFTW](https://github.com/hgomersall/pyFFTW) for
 faster FFTs.
 
 Next, we present a couple of common concepts worth knowing before
-operating heavy Fourier Transform machinery, whereafter we tackle a
-real-world problem: analyzing target detection in radar data.
+operating heavy Fourier Transform machinery, whereafter we tackle
+another real-world problem: analyzing target detection in radar data.
 
 ## Discrete Fourier Transform concepts
 
@@ -278,9 +307,9 @@ When executing the FFT, the returned spectrum (collection of
 frequencies, or Fourier components) is circular, and packed from
 low-to-high-to-low.  E.g., when we do the real Fourier transform of a
 signal of all ones, an input that has no variation and therefore only
-has the slowest, constant Fourier component (also known as the
-"DC"--for direct current--component), that component appears as the
-first entry:
+has the slowest, constant Fourier component (also known as the "DC"
+(Direct Current) component---just jargon for "signal mean"), appearing
+as the first entry:
 
 ```python
 from scipy import fftpack
