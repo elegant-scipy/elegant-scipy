@@ -375,8 +375,12 @@ def my_sum_curried(a, b=None):
         return a + b
 
     if b is None:  # The second value is not given, so we will need to return a function
-        return lambda b: my_sum(a, b)   # we're defining a function that takes a variable b,
-                                        # and uses the a we already know about
+
+        def my_sum_partial(b):  # we're defining a function that takes a variable b,
+            return my_sum(a, b)        # and uses the a variable that we already know about
+
+        return my_sum_partial
+
     else:  # Both values were given, so we can just return a value
         return my_sum(a, b)
 ```
