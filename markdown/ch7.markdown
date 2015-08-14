@@ -344,11 +344,18 @@ counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
 
 We neglected to discuss the *curried* part of this approach.
 
-Currying is where you have a function that requires multiple arguments, you give it *some* of those arguments, and it returns a new function that takes the leftover arguments.
-Once that second curried function is called with the remaining arguments it can perform the original task.
+What does it mean to curry a function?
+Normally in Python if you don't give a function all of its required arguments then it will throw a fit.
+In contrast, a curried function can just take *some* of those arguments.
+If the curried function doesn't get enough arguments, it returns a new function that takes the leftover arguments.
+Once that second function is called with the remaining arguments it can perform the original task.
 Another word for currying is partial evaluation.
 We are evaluating part of the function.
 In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
+
+Currying is not named after the spice blend (though it does spice up your code).
+It is named for Haskell Curry, the mathematician who invented the concept.
+Haskell Curry is also the namesake of the Haskell programming language, which has functions curried by default!
 
 Currying can be a bit of a mind-bend when you first start, so let's make our own curried function to see how it works.
 
