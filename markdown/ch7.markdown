@@ -71,7 +71,7 @@ def add1_all_streaming(input_stream):
 ```
 
 ```python
-np.random.seed(seed=7) # Set seed so we will get consistent results
+np.random.seed(seed=7)  # Set seed so we will get consistent results
 ```
 
 ```python
@@ -168,20 +168,20 @@ from glob import glob
 
 def genome(file_pattern):
     """Stream a genome from a list of FASTA filenames"""
-    return tz.pipe(file_pattern, glob, sorted,        # Filenames
-                                 c.map(open),        # Open each file
+    return tz.pipe(file_pattern, glob, sorted,          # Filenames
+                                 c.map(open),           # Open each file
                                  c.map(tz.drop(1)),     # Drop header from each file
-                                 concat,           # Concatenate all lines from all files together
-                                 c.map(str.upper),   # Upper case each line
-                                 c.map(str.strip),   # Strip off \n from each line
-                                 concat)           # Concatenate all lines into one giant string sequence
+                                 concat,                # Concatenate all lines from all files together
+                                 c.map(str.upper),      # Upper case each line
+                                 c.map(str.strip),      # Strip off \n from each line
+                                 concat)                # Concatenate all lines into one giant string sequence
 
 def markov(seq):
     """Get a 2nd-order Markov model from a sequence"""
-    return tz.pipe(seq, tz.sliding_window(3),          # Each successive triple{(A, A): {T: 10}}
-                     tz.frequencies,                # Count occurrences of each triple
+    return tz.pipe(seq, tz.sliding_window(3),           # Each successive triple{(A, A): {T: 10}}
+                     tz.frequencies,                    # Count occurrences of each triple
                      dict.items, map(markov_reshape),   # Reshape counts so {(A, A, T): 10} -> {(A, A): {T: 10}}
-                     tz.merge_with(merge))          # Merge dicts from different pairs
+                     tz.merge_with(merge))              # Merge dicts from different pairs
 
 def markov_reshape(item):
     ((a, b, c), count) = item
@@ -284,7 +284,7 @@ def is_sequence(line):
 def reads_to_kmers(reads_iter, k=7):
      for read in reads_iter:
          for start in range(0, len(read) - k):
-             yield read[start : start + k] # note yeild, so this is a generator
+             yield read[start : start + k]  # note yeild, so this is a generator
 
 def kmer_counter(kmer_iter):
     counts = {}
@@ -367,10 +367,10 @@ def my_sum_curried(a, b=None):
     def my_sum(a, b): # Here's our original function that needs to be curried
         return a + b
 
-    if b is None: # The second value is not given, so we will need to return a function
+    if b is None:  # The second value is not given, so we will need to return a function
         return lambda b: my_sum(a, b)   # we're defining a function that takes a variable b,
                                         # and uses the a we already know about
-    else: # Both values were given, so we can just return a value
+    else:  # Both values were given, so we can just return a value
         return my_sum(a, b)
 ```
 
@@ -437,13 +437,13 @@ Take another look at our function for reading in the genome to see how this work
 ```python
 def genome(file_pattern):
     """Stream a genome from a list of FASTA filenames"""
-    return tz.pipe(file_pattern, glob, sorted,              # Filenames
+    return tz.pipe(file_pattern, glob, sorted,        # Filenames
                                  c.map(open),         # Open each file
                                  c.map(tz.drop(1)),   # Drop header from each file
-                                 concat,                    # Concatenate all lines from all files together
+                                 concat,              # Concatenate all lines from all files together
                                  c.map(str.upper),    # Upper case each line
                                  c.map(str.strip),    # Strip off \n from each line
-                                 concat)                    # Concatenate all lines into one giant string sequence
+                                 concat)              # Concatenate all lines into one giant string sequence
 ```
 
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
