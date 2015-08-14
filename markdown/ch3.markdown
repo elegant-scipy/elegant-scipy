@@ -246,7 +246,7 @@ software license.
 
 Consider that a naive calculation of the FFT takes
 $\mathcal{O}\left(N^2\right)$ operations, whereas the Fast Fourier
-Transform is $\mathcal{O}(N \log N)$ in the ideal case--a great
+Transform is $\mathcal{O}(N \log N)$ in the ideal case—a great
 improvement!  However, the classical Cooley-Tukey algorithm
 implemented in FFTPACK recursively breaks up the transform into
 smaller (prime-sized) pieces and only shows this improvement for
@@ -443,37 +443,63 @@ plt.show()
 
 ### Windowing
 
-The range traces in Fig. ([fig:Log range traces]) display a further
-serious shortcoming. The signals $v_{1}$ and $v_{5}$ are composed of
-pure sinusoids and we would ideally expect the FFT to produce line
-spectra for these signals. The logarithmic plots show steadily
-increasing values as the peaks are approached from both sides, to such
-an extent that one of the targets in the plot for $|v_{5}|$ can hardly
-be distinguished even though it is separated by several range bins
-from the large target. The broadening is caused by *side lobes* in the
-DFT. These are caused by an inherent clash between the properties of
-the signal we analyzed and the signal produced by the inverse DFT.
+If we examine the Fourier transform of a step function, we see
+significant ringing in the spectrum:
+
+```python
+x = np.zeros(500)
+x[100:150] = 1
+
+X = fftpack.fft(x)
+
+f, (ax0, ax1) = plt.subplots(2, 1, sharex=True)
+
+ax0.plot(x)
+ax0.set_ylim(-0.1, 1.1)
+
+ax1.plot(fftpack.fftshift(np.abs(X)))
+ax1.set_ylim(-5, 55)
+plt.show()
+```
+
+In theory, you would need a combination of infinitely many sinusoids
+(frequencies) to make an ideal step function; the coefficients would
+have the ringing shape shown.
+
+Importantly, the Fourier transform assumes that the input signal is
+periodic.  If the signal is not, the assumption is simply that, right
+at the end of the signal, it jumps back to its beginning value.
+Consider the function, $x(t)$, show here:
 
 ![[fig:Periodicity anomaly]Eight samples have been taken of a given
- function with effective length $T_{eff}.$ A step discontinuity
- develops if the sampled function within the box is made periodic with
- period $T_{eff}.$ These discontinuities cause sidelobes in the
- sampled signal since the given periodic signal is not band-limited as
- required by the DFT. ](../figures/periodic.png)
+ function with effective length $T_{eff}$.  With the Fourier transform
+ assuming periodicity, it creates a step discontinuity between the
+ first and last samples.](../figures/periodic.png)
 
-Consider the function $x(t)$ shown in Figure . It is sampled at a
-sampling frequency $f_{s}$ and $N=8$ samples are taken. The effective
-length of the sampled signal is $T_{eff}=\frac{N}{f_{s}}$ as shown
-in the figure. The time domain reconstruction of the signal $x_{n}$
-according to equation ([eq:Inverse DFT]) is a periodic function with
-period equal to $T_{eff}$ . Replicas of the sampled part of the signal
-are shown towards the left and right of the original signal. There
-clearly is a discrepancy in the form of step discontinuities at both
-ends of the sampled function. A function with step discontinuities is
-not a band-limited function, while the DFT requires a band-limited
-function to faithfully reproduce the original time function. The step
-discontinuities cause a broadening of the signal spectrum by the
-formation of side lobes.
+
+The Fourier transform assumes that $x(8) = x(0)$, and that the signal
+is continued as the dashed, rather than the solid line.  This
+introduces a big jump at the edge, with the expected ossilation in the
+spectrum:
+
+```python
+t = np.linspace(0, 1, 500)
+x = np.sin(49 * np.pi * t)
+
+X = fftpack.fft(x)
+
+f, (ax0, ax1) = plt.subplots(2, 1)
+
+ax0.plot(x)
+ax0.set_ylim(-1.1, 1.1)
+
+ax1.plot(fftpack.fftfreq(len(t)), np.abs(X))
+ax1.set_ylim(0, 190)
+plt.show()
+```
+
+Instead of the expected two sharp peaks, they are spread out in the
+spectrum.
 
 We can counter this effect by a process called *windowing*. The
 original function is multiplied with a window function such as the
@@ -497,6 +523,18 @@ from zero and decrease to zero at the endpoints of the sampled
 interval, producing very low side lobes with values of $\beta$ between
 5 and 10.
 
+Applying the Kaiser window here, we see that the peaks are
+significantly sharper, at the cost of some reduction in spectrum
+amplitude:
+
+```python
+win = np.kaiser(len(t), 5)
+X_win = fftpack.fft(x * win)
+
+plt.plot(fftpack.fftfreq(len(t)), np.abs(X_win))
+plt.ylim(0, 190)
+plt.show()
+```
 
 ## Real-world Application: Analyzing Radar Data
 
@@ -929,6 +967,17 @@ that are used for processing the radar signal. The noise floor of a
 radar limits its ability to detect weak echoes.
 
 ### Windowing, applied
+
+The range traces in Fig. ([fig:Log range traces]) display a further
+serious shortcoming. The signals $v_{1}$ and $v_{5}$ are composed of
+pure sinusoids and we would ideally expect the FFT to produce line
+spectra for these signals. The logarithmic plots show steadily
+increasing values as the peaks are approached from both sides, to such
+an extent that one of the targets in the plot for $|v_{5}|$ can hardly
+be distinguished even though it is separated by several range bins
+from the large target. The broadening is caused by *side lobes* in the
+DFT. These are caused by an inherent clash between the properties of
+the signal we analyzed and the signal produced by the inverse DFT.
 
 Let's take a look at the signals used thus far in this example,
 windowed with a Kaiser window with $\beta=6.1$:
