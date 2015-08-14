@@ -163,17 +163,17 @@ This modification is almost *trivial*, which speaks to the elegance of his examp
 
 ```python
 import toolz as tz
-from toolz import curried
+from toolz import curried as c
 from glob import glob
 
 def genome(file_pattern):
     """Stream a genome from a list of FASTA filenames"""
     return tz.pipe(file_pattern, glob, sorted,        # Filenames
-                                 curried.map(open),        # Open each file
-                                 curried.map(tz.drop(1)),     # Drop header from each file
+                                 c.map(open),        # Open each file
+                                 c.map(tz.drop(1)),     # Drop header from each file
                                  concat,           # Concatenate all lines from all files together
-                                 curried.map(str.upper),   # Upper case each line
-                                 curried.map(str.strip),   # Strip off \n from each line
+                                 c.map(str.upper),   # Upper case each line
+                                 c.map(str.strip),   # Strip off \n from each line
                                  concat)           # Concatenate all lines into one giant string sequence
 
 def markov(seq):
@@ -332,13 +332,13 @@ Additionally, the *frequencies* function counts the appearance of individual ite
 Together with pipe, we can now count k-mers in a single function call (though we will still use our original FASTA parsing function):
 
 ```python
-from toolz import curried
+from toolz import curried as c
 
 k = 7
-counts = tz.pipe('data/sample.fasta', open, curried.filter(is_sequence),
-                 curried.map(str.rstrip),
-                 curried.map(curried.sliding_window(k)),
-                 tz.concat, curried.map(''.join),
+counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
+                 c.map(str.rstrip),
+                 c.map(c.sliding_window(k)),
+                 tz.concat, c.map(''.join),
                  tz.frequencies)
 ```
 
@@ -415,10 +415,13 @@ To summarize what we did, curried_sum is a curried function, so it can take one 
 
 In fact, all of the Toolz functions are also available as curried functions in the toolz.curried namespace.
 Toolz also includes curried version of some handy higher order python functions like `map`, `filter` and `reduce`.
+We will import the `curried` namespace as `c` so our code doesn't get too cluttered.
+So for example the curried version of `map` will be `c.map`.
+Note, that the curried functions (e.g. `c.map`) are different from the `@curry` decorator, which us used to create a curried function.
 
 ```python
-from toolz import curried
-curried.map
+from toolz import curried as c
+c.map
 ```
 
 As a reminder, `map` is a built-in function.
@@ -428,18 +431,18 @@ From the [docs](https://docs.python.org/3.4/library/functions.html#map):
 > Return an iterator that applies function to every item of iterable, yielding the results.
 
 A curried version of `map` is particularly handy when working in a Toolz pipe.
-You can just pass a function to `curried.map` and then stream in the iterator later using `tz.pipe`.
+You can just pass a function to `c.map` and then stream in the iterator later using `tz.pipe`.
 Take another look at our function for reading in the genome to see how this works in practice.
 
 ```python
 def genome(file_pattern):
     """Stream a genome from a list of FASTA filenames"""
     return tz.pipe(file_pattern, glob, sorted,              # Filenames
-                                 curried.map(open),         # Open each file
-                                 curried.map(tz.drop(1)),   # Drop header from each file
+                                 c.map(open),         # Open each file
+                                 c.map(tz.drop(1)),   # Drop header from each file
                                  concat,                    # Concatenate all lines from all files together
-                                 curried.map(str.upper),    # Upper case each line
-                                 curried.map(str.strip),    # Strip off \n from each line
+                                 c.map(str.upper),    # Upper case each line
+                                 c.map(str.strip),    # Strip off \n from each line
                                  concat)                    # Concatenate all lines into one giant string sequence
 ```
 
@@ -484,10 +487,10 @@ draw_circular = tz.partial(nx.draw_circular, with_labels=True,
                                              node_color='w',
                                              node_size=600)
 reads = generate_reads(seq)
-draw = tz.pipe(reads, curried.map(curried.sliding_window(3)),  # k-mers
+draw = tz.pipe(reads, c.map(c.sliding_window(3)),  # k-mers
                       tz.concat,  # join k-mer streams from all reads
-                      curried.map(''.join),  # make strings from tup of char
-                      curried.map(eu.edge_from_kmer),  # get k-1-mer tuples
+                      c.map(''.join),  # make strings from tup of char
+                      c.map(eu.edge_from_kmer),  # get k-1-mer tuples
                       eu.add_edges(g),  # add them as edges to the graph
                       draw_circular)  # draw the graph
 ```
@@ -497,20 +500,20 @@ Or, we can feed the graph directly into an Eulerian path algorithm, and reconstr
 
 ```python
 import toolz as tz
-from toolz import curried
+from toolz import curried as c
 def assemble(euler_path):
     start = tz.first(euler_path)[0]
-    rest = tz.pipe(euler_path, curried.pluck(0),  # 1st k-1-mer
-                               curried.pluck(1),  # 2nd letter
+    rest = tz.pipe(euler_path, c.pluck(0),  # 1st k-1-mer
+                               c.pluck(1),  # 2nd letter
                                ''.join)
     return start + rest
 
 reads = generate_reads(seq)
 g = nx.DiGraph()
-inferred = tz.pipe(reads, curried.map(curried.sliding_window(3)),  # k-mers
+inferred = tz.pipe(reads, c.map(c.sliding_window(3)),  # k-mers
                           tz.concat,  # join k-mer streams from all reads
-                          curried.map(''.join),  # make string from tup of char
-                          curried.map(eu.edge_from_kmer),  # get k-1-mer tups
+                          c.map(''.join),  # make string from tup of char
+                          c.map(eu.edge_from_kmer),  # get k-1-mer tups
                           eu.add_edges(g),  # add edges to g
                           eu.eulerian_path,  # iterate over euler path edges
                           assemble)  # get assembled string from path
@@ -566,7 +569,7 @@ Be sure to look at the documentation for the class to understand some of the cod
 
 ```python
 import toolz as tz
-from toolz import curried
+from toolz import curried as c
 from sklearn import decomposition
 from sklearn import datasets
 import numpy as np
@@ -576,9 +579,9 @@ def streaming_pca(samples, n_components=2, batch_size=100):
                                         batch_size=batch_size)
     # we use `tz.last` to force evaluation of the full iterator
     _ = tz.last(tz.pipe(samples,  # iterator of 1D arrays
-                        curried.partition(batch_size),  # iterator of tuples
-                        curried.map(np.array),  # iterator of 2D arrays
-                        curried.map(ipca.partial_fit)))  # partial_fit on each
+                        c.partition(batch_size),  # iterator of tuples
+                        c.map(np.array),  # iterator of 2D arrays
+                        c.map(ipca.partial_fit)))  # partial_fit on each
     return ipca
 ```
 
@@ -587,12 +590,12 @@ def array_from_txt(line, sep=',', dtype=np.float):
     return np.array(line.rstrip().split(sep), dtype=dtype)
 
 with open('data/iris.csv') as fin:
-    pca_obj = tz.pipe(fin, curried.map(array_from_txt), streaming_pca)
+    pca_obj = tz.pipe(fin, c.map(array_from_txt), streaming_pca)
 
 with open('data/iris.csv') as fin:
     components = np.squeeze(list(tz.pipe(fin,
-                                         curried.map(array_from_txt),
-                                         curried.map(pca_obj.transform))))
+                                         c.map(array_from_txt),
+                                         c.map(pca_obj.transform))))
 
 from matplotlib import pyplot as plt
 plt.scatter(*components.T)
