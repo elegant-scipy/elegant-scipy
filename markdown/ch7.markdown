@@ -95,7 +95,7 @@ They use single-threaded in-memory Python until it breaks, and then seek out Big
 Indeed, this describes my computational career perfectly, up until recent months.
 But the intermediate approach can get you a *lot* farther than you think.
 In some cases, it can get you there even faster than the supercomputing approach, by eliminating the overhead of multi-core communication and random-access to databases.
-(See, for example, see [this post](http://www.frankmcsherry.org/graph/scalability/cost/2015/02/04/COST2.html) by Frank McSherry, where he processes a 128 billion edge graph on his laptop *faster* than using a graph database on a supercomputer.)
+(For example, see [this post](http://www.frankmcsherry.org/graph/scalability/cost/2015/02/04/COST2.html) by Frank McSherry, where he processes a 128 billion edge graph on his laptop *faster* than using a graph database on a supercomputer.)
 
 To clarify the flow of control when using streaming-style functions, it's useful to make *verbose* versions of the functions, which print out a message with each operation.
 
@@ -540,7 +540,7 @@ For example if it is sunny right now, there is a high probability that it will b
 The fact that it was raining yesterday is irrelevant.
 In this theory, all the information required to predict the future is encoded in the current state of things.
 The past is irrelevant.
-This assumption is usful for simplifying otherwise intractable problems.
+This assumption is useful for simplifying otherwise intractable problems.
 
 - Where to download the human genome
 - Matt's post and how to use it
