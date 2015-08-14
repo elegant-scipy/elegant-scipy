@@ -1,4 +1,3 @@
-
 ```python
 %matplotlib inline
 
@@ -44,8 +43,7 @@ import numpy as np
 
 # The Fast Fourier Transform (FFT)
 
-*This chapter was written in collaboration with SW's father, PW van
- der Walt.*
+*This chapter was written in collaboration with SW's father, PW van der Walt.*
 
 Listen to the following snippet of nightingale birdsong:
 
@@ -75,6 +73,7 @@ from scipy.io import wavfile
 
 rate, audio = wavfile.read('data/nightingale.wav')
 
+# Average left and right audio channels
 audio = np.mean(audio, axis=1)
 
 # How long is the audio snippet?
@@ -106,19 +105,21 @@ Of course, a bird sings many notes throughout the song, so we'd also
 like to know *when* each note occurs.  The Fourier transform takes a
 signal in the time domain (i.e., a set of measurements over time) and
 turns it into a spectrum—a set of frequencies with corresponding
-(complex[^0]) values.  The spectrum does not contain any information about
-time! [^2]
+(complex[^complex]) values.  The spectrum does not contain any information about
+time! [^time]
 
-[^0]: The Fourier transform essentially tells us how to combine a set
-of sinusoids of varying frequency to form the input signal.  The
-spectrum consists of complex numbers—one for each sinusoid.  A
-complex number encodes two things: a magnitude and an angle.  The
-magnitude is the strength of the sinusoid in the signal, and the angle
-how much it is shifted in time.  At this point, we only care about the
-magnitude, which we calculate using ``np.abs``.
+[^complex]: The Fourier transform essentially tells us how to combine
+            a set of sinusoids of varying frequency to form the input
+            signal.  The spectrum consists of complex numbers—one for
+            each sinusoid.  A complex number encodes two things: a
+            magnitude and an angle.  The magnitude is the strength of
+            the sinusoid in the signal, and the angle how much it is
+            shifted in time.  At this point, we only care about the
+            magnitude, which we calculate using ``np.abs``.
 
-[^2] For more on techniques for calculating both (approximate)
-frequencies and time of occurrence, read up on wavelet analysis.
+[^time]: For more on techniques for calculating both (approximate)
+         frequencies and time of occurrence, read up on wavelet
+         analysis.
 
 So, to find both the frequencies and the time at which they were sung,
 we'll need to be somewhat clever.  Our strategy will be as follows:
@@ -128,7 +129,8 @@ Time Fourier Transform).
 
 We'll split the signal into slices of 1024 samples—that's about 0.02
 seconds of audio.  Why we choose 1024 and not 1000 we'll explain in a
-second.  The slices will overlap by 100 samples as shown here:
+second when we examine performance.  The slices will overlap by 100
+samples as shown here:
 
 ![Sliding window](../figures/generated/sliding_window.png)
 
@@ -144,7 +146,7 @@ print('Audio shape: {}, Sliced audio shape: {}'.format(audio.shape, slices.shape
 
 # Generate a windowing function and multiply it with the signal—more on this later
 win = np.hanning(M + 1)[:-1]
-slices = slices * w
+slices = slices * win
 
 # Calculate the Fourier transform for each slice.
 spectrum = np.fft.fft(slices, axis=1)[:, :M //2 + 1:-1].T
@@ -152,6 +154,10 @@ spectrum = np.abs(spectrum)
 
 # Do a log plot of the ratio of the signal / the maximum signal
 # The unit for such a ratio is the decibel.
+
+# Another reason to take logs is because the spectrum can contain both
+# very large and very small values.  Taking the log compresses the
+# range significantly.
 
 f, ax = plt.subplots(figsize=(10, 5))
 
@@ -170,13 +176,16 @@ Much better!  We can now see the frequencies vary over time, and it
 corresponds to the way the audio sounds.  See if you can match my
 earlier description: chee-chee-woorrrr-hee-hee cheet-wheet-hoorrr-chi
 rrr-whi-wheo-wheo-wheo-wheo-wheo-wheo (I didn't transcribe the section
-from 3 to 5 seconds, because that's another bird).
+from 3 to 5 seconds—that's another bird).
 
-SciPy already includes an implementation of this method as
-``scipy.signal.spectrogram``, and can be invoked as follows:
+SciPy already includes an implementation of this
+procedure as ``scipy.signal.spectrogram``, which can be invoked as
+follows:
 
 ```python
-freqs, times, Sx = signal.spectrogram(left, fs=rate, window='hanning',
+from scipy import signal
+
+freqs, times, Sx = signal.spectrogram(audio, fs=rate, window='hanning',
                                       nperseg=1024, noverlap=M - 100,
                                       detrend=False, scaling='spectrum')
 
@@ -186,32 +195,35 @@ freqs, times, Sx = signal.spectrogram(left, fs=rate, window='hanning',
 
 The only differences are that SciPy returnes the spectrum squared
 (which turns measured voltage into measured energy), and multiplies it
-by some normalization factors.
+by some normalization factors[^scaling].
 
-[^1]: SciPy goes to some effort to preserve the energy in the
-spectrum.  Therefore, when examining only half the components, it
-multiplies all apart from the first and last components by two (those
-two components are "shared" by the two halves of the spectrum).  It
-also normalizes the window by dividing it by its sum.
+[^scaling]: SciPy goes to some effort to preserve the energy in the
+            spectrum.  Therefore, when taking only half the
+            components, it multiplies the remaining components, apart
+            from the first and last components, by two (those two
+            components are "shared" by the two halves of the
+            spectrum).  It also normalizes the window by dividing it
+            by its sum.
 
 ## History
 
-Tracing the exact origins proves to be tricky.  Some related elements
-go as far back as Babylonian times, but it was the hot topics of
-calculating asteroid orbits and solving the heat (flow) equation that
-led to several breakthroughs in the early 1800s.  Whom exactly among
-Clairaut, LaGrange, Euler, Gauss and D'Alembert we should thank is not
-exactly clear, but Gauss was the first to describe the Fast Fourier
-Transform (an algorithm for computing the Discrete Fourier Transform,
-popularized by Cooley and Tukey in 1965).  Joseph Fourier, after whom
-the transform is named, was first to claim that *arbitrary* functions
-can be expressed as a sum of trigonometric functions.
+Tracing the exact origins of the Fourier transform is tricky.  Some
+related procedures go as far back as Babylonian times, but it was the
+hot topics of calculating asteroid orbits and solving the heat (flow)
+equation that led to several breakthroughs in the early 1800s.  Whom
+exactly among Clairaut, LaGrange, Euler, Gauss and D'Alembert we
+should thank is not exactly clear, but Gauss was the first to describe
+the Fast Fourier Transform (an algorithm for computing the Discrete
+Fourier Transform, popularized by Cooley and Tukey in 1965).  Joseph
+Fourier, after whom the transform is named, first claimed that
+*arbitrary* functions can be expressed as a sum of trigonometric
+functions.
 
 ## Implementation
 
-The Fourier Transform functionality in SciPy lives in the fairly
-spartan ``scipy.fftpack`` module.  It provides the following
-FFT-related functionality:
+The Fourier Transform functionality in SciPy lives in the
+`scipy.fftpack`` module.  Among other things, it provides the
+following FFT-related functionality:
 
  - ``fft``, ``fft2``, ``fftn``: Compute the Fast (discrete) Fourier Transform
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the FFT
@@ -224,6 +236,9 @@ This is complemented by the following functions in NumPy:
 
  - ``np.hanning``, ``np.hamming``, ``np.bartlett``, ``np.blackman``,
    ``np.kaiser``: Tapered windowing functions.
+
+It is also used to perform fast convolutions of large inputs by
+``scipy.signal.fftconvolve`.
 
 SciPy wraps the Fortran FFTPACK library—it is not the fastest out
 there, but unlike packages such as FFTW, it has a permissive free
@@ -239,7 +254,7 @@ highly "smooth" input lengths (an input length is considered smooth when
 its largest prime factor is small).  For large prime sized pieces, the
 Bluestein or Rader algorithms can be used in conjunction with the
 Cooley-Tukey algorithm, but this optimization is not implemented in
-FFTPACK.[^3]
+FFTPACK.[^fast]
 
 Let us illustrate:
 
@@ -288,14 +303,16 @@ plt.show()
 This explains why we chose a length of 1024 for our audio slices
 earlier!
 
-[^3]: While ideally we don't want to reimplement existing algorithms,
-sometimes it becomes necessary in order to obtain the best execution
-speeds possible, and tools like [Cython](http://cython.org)—which
-compiles Python to C—and [Numba](http://numba.pydata.org)—which does
-just-in-time compilation of Python code—make life a lot easier (and
-faster!).  If you are able to use GPL-licenced software, you may
-consider using [PyFFTW](https://github.com/hgomersall/pyFFTW) for
-faster FFTs.
+[^fast]: While ideally we don't want to reimplement existing
+         algorithms, sometimes it becomes necessary in order to obtain
+         the best execution speeds possible, and tools like
+         [Cython](http://cython.org)—which compiles Python to C—and
+         [Numba](http://numba.pydata.org)—which does just-in-time
+         compilation of Python code—make life a lot easier (and
+         faster!).  If you are able to use GPL-licenced software, you
+         may consider using
+         [PyFFTW](https://github.com/hgomersall/pyFFTW) for faster
+         FFTs.
 
 Next, we present a couple of common concepts worth knowing before
 operating heavy Fourier Transform machinery, whereafter we tackle
@@ -303,17 +320,21 @@ another real-world problem: analyzing target detection in radar data.
 
 ## Discrete Fourier Transform concepts
 
-When executing the FFT, the returned spectrum (collection of
-frequencies, or Fourier components) is circular, and packed from
-low-to-high-to-low.  E.g., when we do the real Fourier transform of a
-signal of all ones, an input that has no variation and therefore only
-has the slowest, constant Fourier component (also known as the "DC"
-(Direct Current) component---just jargon for "signal mean"), appearing
-as the first entry:
+### Frequencies and their ordering
+
+For historical reasons, most implementations return an array where
+frequencies vary from low-to-high-to-low.  E.g., when we do the real
+Fourier transform of a signal of all ones, an input that has no
+variation and therefore only has the slowest, constant Fourier
+component (also known as the "DC" or Direct Current component---just
+electronics jargon for "mean of the signal"), appearing as the first
+entry:
 
 ```python
 from scipy import fftpack
-fftpack.fft(np.ones(10))
+N = 10
+
+fftpack.fft(np.ones(N))  # Note first component is np.mean(x) * N
 ```
 
 Note that the FFT returns a complex spectrum which, in the case of
@@ -355,15 +376,23 @@ M, N = image.shape
 
 print((M, N), image.dtype)
 
+# We now need to use `fftn` since we're working in higher than one
+# dimension.  The two-dimensional FFT is equivalent to taking the 1-D
+# FFT across rows and then across columns (or vice versa).
+
 F = fftpack.fftn(image)
+
 F_magnitude = np.abs(F)
 F_magnitude = fftpack.fftshift(F_magnitude)
 
 f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
 ax0.imshow(image, cmap='gray')
-ax1.imshow(-np.log(1 + F_magnitude),
-           cmap='gray', interpolation='nearest',
+
+# Take log of spectrum to compress value range and display.
+ax1.imshow(np.log(1 + F_magnitude),
+           cmap='viridis', interpolation='nearest',
            extent=(-N // 2, N // 2, -M // 2, M // 2))
+ax1.set_title('Spectrum magnitude')
 plt.show()
 ```
 
@@ -372,6 +401,102 @@ coefficients describe the low frequencies or smooth parts of the
 image; a vague canvas of the photo.  Higher frequency components,
 spread throughout the spectrum, fill in the edges and detail.  Peaks
 around higher frequencies correspond to the periodic noise.
+
+The image with those peaks suppressed would look quite differently:
+
+```python
+# Set block around center of spectrum to zero
+K = 40
+F_magnitude[M // 2 - K: M // 2 + K, N // 2 - K: N // 2 + K] = 0
+
+# Find all peaks higher than the 98th percentile
+peaks = F_magnitude < np.percentile(F_magnitude, 98)
+
+# Shift the peaks back to align with the original spectrum
+peaks = fftpack.ifftshift(peaks)
+
+# Make a copy of the original (complex) spectrum
+F_dim = F.copy()
+
+# Set those peak coefficients to zero
+F_dim = F_dim * peaks.astype(int)
+
+# Do the inverse Fourier transform to get back to an image
+# Since we started with a real image, we only look at the real part of
+# the output.
+image_filtered = np.real(fftpack.ifft2(F_dim))
+
+# And add a slight bit of blurring to soften the result
+from scipy import ndimage
+image_filtered = ndimage.gaussian_filter(image_filtered, sigma=1)
+
+f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
+ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='gray', interpolation='nearest')
+ax0.set_title('Spectrum after suppression')
+
+ax1.imshow(ndimage.gaussian_filter(image_filtered, sigma=1), cmap='gray',
+interpolation='nearest')
+ax1.set_title('Reconstructed image')
+
+plt.show()
+```
+
+### Windowing
+
+The range traces in Fig. ([fig:Log range traces]) display a further
+serious shortcoming. The signals $v_{1}$ and $v_{5}$ are composed of
+pure sinusoids and we would ideally expect the FFT to produce line
+spectra for these signals. The logarithmic plots show steadily
+increasing values as the peaks are approached from both sides, to such
+an extent that one of the targets in the plot for $|v_{5}|$ can hardly
+be distinguished even though it is separated by several range bins
+from the large target. The broadening is caused by *side lobes* in the
+DFT. These are caused by an inherent clash between the properties of
+the signal we analyzed and the signal produced by the inverse DFT.
+
+![[fig:Periodicity anomaly]Eight samples have been taken of a given
+ function with effective length $T_{eff}.$ A step discontinuity
+ develops if the sampled function within the box is made periodic with
+ period $T_{eff}.$ These discontinuities cause sidelobes in the
+ sampled signal since the given periodic signal is not band-limited as
+ required by the DFT. ](../figures/periodic.png)
+
+Consider the function $x(t)$ shown in Figure . It is sampled at a
+sampling frequency $f_{s}$ and $N=8$ samples are taken. The effective
+length of the sampled signal is $T_{eff}=\frac{N}{f_{s}}$ as shown
+in the figure. The time domain reconstruction of the signal $x_{n}$
+according to equation ([eq:Inverse DFT]) is a periodic function with
+period equal to $T_{eff}$ . Replicas of the sampled part of the signal
+are shown towards the left and right of the original signal. There
+clearly is a discrepancy in the form of step discontinuities at both
+ends of the sampled function. A function with step discontinuities is
+not a band-limited function, while the DFT requires a band-limited
+function to faithfully reproduce the original time function. The step
+discontinuities cause a broadening of the signal spectrum by the
+formation of side lobes.
+
+We can counter this effect by a process called *windowing*. The
+original function is multiplied with a window function such as the
+Kaiser window $K(N,\beta)$:
+
+```python
+f, axes = plt.subplots(1, 3, figsize=(10, 5))
+
+for i, beta in enumerate([0, 3, 10]):
+    axes[i].plot(np.kaiser(N, beta))
+    axes[i].set_xlabel(r'$\beta = {}$'.format(beta))
+    axes[i].set_xlim(0, N - 1)
+
+plt.show()
+```
+
+By changing the parameter $\beta$, the shape of the
+window can be changed from rectangular (i.e. no windowing) with
+$\beta=0$ to a window that produces signals that smoothly increase
+from zero and decrease to zero at the endpoints of the sampled
+interval, producing very low side lobes with values of $\beta$ between
+5 and 10.
+
 
 ## Real-world Application: Analyzing Radar Data
 
@@ -637,12 +762,11 @@ $[0,2\pi)$, i.e. *including* 0 and *excluding* $2\pi$.
 This automatically normalizes the DFT so that time does
 not appear explicitly in the forward or inverse transform.
 
-If the original function $x(t)$ is *band limited* to less than half of the
-sampling frequency, interpolation between sample values produced by the inverse
-DFT will usually (see the discussion below on windowing)
-give a faithful reconstruction of $x(t)$. If $x(t)$ is *not* band limited,
-the inverse DFT can, in general, not be used to reconstruct $x(t)$ by
-interpolation.
+If the original function $x(t)$ is *band limited* to less than half of
+the sampling frequency, interpolation between sample values produced
+by the inverse DFT will usually give a faithful reconstruction of
+$x(t)$. If $x(t)$ is *not* band limited, the inverse DFT can, in
+general, not be used to reconstruct $x(t)$ by interpolation.
 
 The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
 discrete values between 0 and $2\pi\frac{N-1}{N}$ on the unit circle in
@@ -804,61 +928,7 @@ shot noise, a noise mechanism inherent in all the electronic devices
 that are used for processing the radar signal. The noise floor of a
 radar limits its ability to detect weak echoes.
 
-### Windowing
-
-The range traces in Fig. ([fig:Log range traces]) display a further
-serious shortcoming. The signals $v_{1}$ and $v_{5}$ are composed of
-pure sinusoids and we would ideally expect the FFT to produce line
-spectra for these signals. The logarithmic plots show steadily
-increasing values as the peaks are approached from both sides, to such
-an extent that one of the targets in the plot for $|v_{5}|$ can hardly
-be distinguished even though it is separated by several range bins
-from the large target. The broadening is caused by *side lobes* in the
-DFT. These are caused by an inherent clash between the properties of
-the signal we analyzed and the signal produced by the inverse DFT.
-
-![[fig:Periodicity anomaly]Eight samples have been taken of a given
- function with effective length $T_{eff}.$ A step discontinuity
- develops if the sampled function within the box is made periodic with
- period $T_{eff}.$ These discontinuities cause sidelobes in the
- sampled signal since the given periodic signal is not band-limited as
- required by the DFT. ](../figures/periodic.png)
-
-Consider the function $x(t)$ shown in Figure . It is sampled at a
-sampling frequency $f_{s}$ and $N=8$ samples are taken. The effective
-length of the sampled signal is $T_{eff}=\frac{N}{f_{s}}$ as shown
-in the figure. The time domain reconstruction of the signal $x_{n}$
-according to equation ([eq:Inverse DFT]) is a periodic function with
-period equal to $T_{eff}$ . Replicas of the sampled part of the signal
-are shown towards the left and right of the original signal. There
-clearly is a discrepancy in the form of step discontinuities at both
-ends of the sampled function. A function with step discontinuities is
-not a band-limited function, while the DFT requires a band-limited
-function to faithfully reproduce the original time function. The step
-discontinuities cause a broadening of the signal spectrum by the
-formation of side lobes.
-
-We can counter this effect by a process called *windowing*. The
-original function is multiplied with a window function such as the
-Kaiser window $K(N,\beta)$:
-
-```python
-f, axes = plt.subplots(1, 3, figsize=(10, 5))
-
-for i, beta in enumerate([0, 3, 10]):
-    axes[i].plot(np.kaiser(N, beta))
-    axes[i].set_xlabel(r'$\beta = {}$'.format(beta))
-    axes[i].set_xlim(0, N - 1)
-
-plt.show()
-```
-
-By changing the parameter $\beta$, the shape of the
-window can be changed from rectangular (i.e. no windowing) with
-$\beta=0$ to a window that produces signals that smoothly increase
-from zero and decrease to zero at the endpoints of the sampled
-interval, producing very low side lobes with values of $\beta$ between
-5 and 10.
+### Windowing, applied
 
 Let's take a look at the signals used thus far in this example,
 windowed with a Kaiser window with $\beta=6.1$:
@@ -908,15 +978,15 @@ plt.show()
 
 ```
 
-Compare these with the range traces in Figure
-[fig:Log range traces]. There is a dramatic lowering in side lobe
-level, but this came at a price: the peaks have changed in shape,
-widening and becoming less peaky, thus lowering the radar resolution,
-that is, the ability of the radar to distinguish between two closely
-space targets. The choice of window is a compromise between side lobe
-level and resolution. Even so, referring to the trace for $V_{5}$,
-windowing has dramatically increased our ability to distinguish the
-small target from its large neighbor.
+Compare these with the range traces in Figure [fig:Log range
+traces]. There is a dramatic lowering in side lobe level, but this
+came at a price: the peaks have changed in shape, widening and
+becoming less peaky, thus lowering the radar resolution, that is, the
+ability of the radar to distinguish between two closely space
+targets. The choice of window is a compromise between side lobe level
+and resolution. Even so, referring to the trace for $V_{5}$, windowing
+has dramatically increased our ability to distinguish the small target
+from its large neighbor.
 
 In the real radar data range trace windowing has also reduced the side
 lobes. This is most visible in the depth of the notch between the two
