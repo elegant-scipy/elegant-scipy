@@ -527,9 +527,9 @@ Applying the Kaiser window here, we see that the peaks are
 significantly sharper, at the cost of some reduction in peak width
 (spectrum resolution):
 
+**TODO:** Better illustrate widening.  Use something like:
+
 ```
-**TODO:** Better illustrate widening
-Use something like:
 
 # @interact(beta=(0, 20.))
 # def window(beta):
@@ -793,9 +793,12 @@ scan = data['scan']
 # It has shape (2048,)
 v_actual = scan['samples'][5, 14, :]
 
-# Convert to voltage.  The output is 5V, and the ADC is 14-bit, thus
-# units are 5 / (2 ** 14) V.
-v_actual = v_actual * (5 / 2**14)
+# The signal amplitude ranges from -2.5V to +2.5V.  The 14-bit
+# analogue-to-digital converter in the radar gives out integers
+# between -8192 to 8192.  We convert back to voltage by multiplying by
+# $(2.5 / 8192)$.
+
+v_actual = v_actual * (2.5 / 8192)
 
 ```
 
@@ -1163,32 +1166,36 @@ diameter <!-- on the half power contour at a distance of 60 m
 -->. Outside this spot the power drops off quite rapidly but strong
 echoes from outside the spot will nevertheless still be visible.
 
-## I'M HERE CURRENTLY
-
-A rock slope consists of thousands of scatterers. A range bin can be
+A rock slope consists of thousands of reflectors. A range bin can be
 thought of as a large sphere with the radar at its center that
 intersects the slope along a ragged line. The scatterers on this line
-will produce reflections in this range bin. The scatterers are
+will produce reflections in this range bin. The reflectors are
 essentially randomly arranged along the line. The wavelength of the
-radar is about 30 mm. The reflections from scatterers separated by odd
-multiples of a quarter wavelength in range, about 7.5 mm, will tend to
-interfere destructively, while those from scatterers separated by
-multiples of a half wavelength will tend to interfere constructively
-at the radar. The reflections combine to produce apparent spots of
-strong reflections. Radar measurements of a small scanned region
-consisting of 20 azimuth and 30 elevation bins scanned in steps of
-$0.5^\circ$.
+radar (distance the transmitted wave travels in one oscillation
+second) is about 30 mm. The reflections from scatterers separated by
+odd multiples of a quarter wavelength in range, about 7.5 mm, will
+tend to interfere destructively, while those from scatterers separated
+by multiples of a half wavelength will tend to interfere
+constructively at the radar. The reflections combine to produce
+apparent spots of strong reflections. This specific radar moves its
+antenna in order to scan small regions consisting of $20^\circ$
+azimuth and $30^\circ$ elevation bins scanned in steps of $0.5^\circ$.
 
 
 ```python
 data = np.load('data/radar_scan_1.npz')
 scan = data['scan']
 
-# ADC is 14-bit for 5V max, so scale by 0.000305 to return to volt
-v = scan['samples'] * 0.000305
+# The signal amplitude ranges from -2.5V to +2.5V.  The 14-bit
+# analogue-to-digital converter in the radar gives out integers
+# between -8192 to 8192.  We convert back to voltage by multiplying by
+# $(2.5 / 8192)$.
+
+v = scan['samples'] * 2.5 / 8192
+win = np.hanning(N + 1)[:-1]
 
 # Take FFT for each measurement
-V = np.fft.fft(v, axis=2)[::-1, :, :N // 2]
+V = np.fft.fft(v * win, axis=2)[::-1, :, :N // 2]
 
 contours = np.arange(-40, 1, 2)
 
@@ -1205,18 +1212,16 @@ plt.show()
 
 ```
 
-
 Contour plots of the radar data, showing the strength of echoes
 against elevation and azimuth, a cut through the slope in an elevation
-plane and acut through the slope in an azimuth plane. The contours are
-in steps of 2 dB from -40 to 0 dB. Azimuth and elevation bin size is
-$0.5^\circ$ and range bin size is 1.5 m. The stepped construction of
-the high wall in an opencast mine is clearly visible.
+plane and acut through the slope in an azimuth plane.  The stepped
+construction of the high wall in an opencast mine is clearly visible.
 
-### Further applications of the FFT in radar
+### Further applications of the FFT
 
-The examples above show just one of the uses of the FFT in radar. The
-FFT provides us with a versatile tool that finds many other uses in
-radar, including pulse expansion and compression, Doppler measurement
-and detection, one and two dimensional beam forming in antennas and
-target recognition.
+The examples above show just one of the uses of the FFT in
+radar. There are many others, such as movement (Doppler) measurement
+and target recognition.  The Fourier Transform is pervasive, and is
+seen anywhere from Magnetic Resonance Imaging (MRI) to statistics.
+With the basic techniques that this chapter outlines in hand, you
+should be well equipped to use it!
