@@ -39,6 +39,13 @@ import numpy as np
 
 - convolution types: numpy, ndimage, signal.convolve, signal.fftconvolve
 
+- Other ideas:
+
+  - Shape matching
+  - Image filtering
+  - skimage template matching
+
+
 -->
 
 # The Fast Fourier Transform (FFT)
