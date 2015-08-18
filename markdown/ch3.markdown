@@ -524,8 +524,22 @@ interval, producing very low side lobes with values of $\beta$ between
 5 and 10.
 
 Applying the Kaiser window here, we see that the peaks are
-significantly sharper, at the cost of some reduction in spectrum
-amplitude:
+significantly sharper, at the cost of some reduction in peak width
+(spectrum resolution):
+
+```
+**TODO:** Better illustrate widening
+Use something like:
+
+# @interact(beta=(0, 20.))
+# def window(beta):
+#    x = np.kaiser(1000, beta)
+#    f, axes = plt.subplots(1, 2, figsize=(10, 5))
+#    axes[0].plot(x)
+#    axes[1].plot(fftpack.fftshift(np.abs(np.fft.fft(x, 10000))))
+#    axes[1].set_xlim(2*2480, 2*2520)
+#    plt.show()
+```
 
 ```python
 win = np.kaiser(len(t), 5)
@@ -540,44 +554,83 @@ plt.show()
 
 Linearly modulated FMCW (Frequency-Modulated Continuous-Wave) radars
 make extensive use of the FFT algorithm for signal processing and
-provide examples of various application of the FFT. In this chapter we
-will use actual data from FMCW radars to demonstrate one such
-application: target detection.
+provide examples of various application of the FFT. We will use actual
+data from an FMCW radar to demonstrate one such an application: target
+detection.
 
-To start off, we take a bird's eye tour of FMCW radars so we may
-better understand the properties of the signals involved.
+Roughly[^detail_fmcw], an FMCW radar works like this:
 
-### Block diagram of a simple FMCW radar
+A signal with changing frequency is generated.  This signal is
+transmitted by antenna, after which it travels outwards, away from the
+radar.  When it hits an object, part of the signal is reflected back
+to the radar, where it is received, multiplied by a copy of the
+transmitted signal, and sampled, turning it into
+numbers that are packed into an array.  Our challenge is to interpret
+those numbers to form meaningful results.
 
-A block diagram of a simple FMCW radar that uses separate transmit and
-receive antennas is shown in Fig. [fig: block-diagram]. The radar
-consists of a waveform generator that generates a linearly frequency
-modulated sinusoidal signal at the required transmit frequency. A
-Direct Digital Synthesizer (DDS) controlled by the computer is often
-used in modern systems. The output frequency of the DDS signal is
-converted to the desired radio frequency. The generated signal is
-amplified to the required power level by the transmit amplifier and
-routed to the transmit antenna via a coupler circuit where an
-amplitude scaled copy of the transmit signal is tapped off. The
-transmit antenna radiates the transmit signal as an electromagnetic
-wave in a narrow beam towards the target to be detected. When the wave
-encounters an object that reflects electromagnetic waves, a fraction
-of of the energy irradiating the target is reflected back to the
-receiver as a second electromagnetic wave that propagates in the
-direction of the radar system. When this wave encounters the receive
-antenna, the antenna collects the energy in the wave energy impinging
-on it and converts this to a fluctuating voltage that is fed to the
-mixer. The mixer multiplies the received signal with a replica of the
-transmit signal and produces a sinusoidal signal with a frequency
-equal to the difference in frequency between the transmitted and
-received signals. The low-pass filter ensures that the received signal
-is band limited (i.e., does not contain frequencies that we don't care
-about) and the receive amplifier strengthens the signal to a suitable
-amplitude for the analog to digital converter (ADC) that feeds data to
-the computer. The data consists of $N$ samples sampled at a frequency
-$f_{s}$.
+The multiplication step above is important.  From school, recall the
+trigonometric identity:
+
+$$
+\sin(xt) \sin(yt) = \frac{1}{2}
+\left[ \sin \left( (x - y)t + \frac{\pi}{2} \right) - \sin \left( (x + y)t + \frac{\pi}{2} \right) \right]
+$$
+
+Thus, if we multiply the received signal by the transmitted signal, we
+expect two frequency components to appear in the spectrum: one that is
+the difference in frequencies between the received and transmitted
+signal, and one that is the sum of their frequencies.
+
+We are particularly interested in the first, since that gives us some
+indication of how long it took the signal to reflect back to the radar
+(in other words, how far away the object is from us!).  We discard the
+other by applying a low-pass filter to the signal (i.e., a filter that
+discards any high frequencies).
+
+To summarize, we should note that:
+
+ - The data that reaches the computer consists of $N$ samples sampled
+   (from the multiplied, filtered signal) at a sample frequency of
+   $f_{s}$.
+ - The **amplitude** of the returned signal varies depending on the
+   **strength of the reflection** (i.e., a property of the target object).
+ - The **frequency measured** is an indication of the **distance** of the
+   target object from the radar.
+
+[^detail_fmcw]: A block diagram of a simple FMCW radar that uses
+                separate transmit and receive antennas is shown in
+                Fig. [fig: block-diagram]. The radar consists of a
+                waveform generator that generates a sinusoidal signal
+                of which the frequency varies linearly around the
+                required transmit frequency. The generated signal is
+                amplified to the required power level by the transmit
+                amplifier and routed to the transmit antenna via a
+                coupler circuit where a copy of the transmit signal is
+                tapped off. The transmit antenna radiates the transmit
+                signal as an electromagnetic wave in a narrow beam
+                towards the target to be detected. When the wave
+                encounters an object that reflects electromagnetic
+                waves, a fraction of of the energy irradiating the
+                target is reflected back to the receiver as a second
+                electromagnetic wave that propagates in the direction
+                of the radar system. When this wave encounters the
+                receive antenna, the antenna collects the energy in
+                the wave energy impinging on it and converts it to a
+                fluctuating voltage that is fed to the mixer. The
+                mixer multiplies the received signal with a replica of
+                the transmit signal and produces a sinusoidal signal
+                with a frequency equal to the difference in frequency
+                between the transmitted and received signals. The
+                low-pass filter ensures that the received signal is
+                band limited (i.e., does not contain frequencies that
+                we don't care about) and the receive amplifier
+                strengthens the signal to a suitable amplitude for the
+                analog to digital converter (ADC) that feeds data to
+                the computer.
 
 ![[fig: block-diagram]The block diagram of a simple FMCW radar system.](../figures/FMCW Block.png)
+
+<!--
 
 ### Signal properties in the time domain
 
@@ -588,9 +641,6 @@ Fig. [fig:FMCW waveform](a).
 Starting at $f_{min}$, the frequency increases at a rate $S$ Hz/s to
 $f_{max}.$ The frequency is then decreased rapidly back to $f_{min}$
 after which a next frequency sweep occurs.
-
-![[fig:FMCW waveform]The frequency relationships in an FMCW radar with
- linear frequency modulation.](../figures/FMCW waveform.png)
 
 This signal is radiated by a directional transmit antenna. When the
 wave with propagation velocity $v\approx300\times10^{6}$ m/s (the
@@ -625,35 +675,27 @@ $$B_{eff}=f_{max}-f_{1}=ST_{eff}.\label{eq:Effective bandwidth}$$
 We will see that the range resolution of the radar is determined by
 the effective bandwidth.
 
+
 Returning to Fig. [fig: block-diagram], the signal produced by the
 receiver at the input to the Analog to Digital Converter (ADC) when
 there is a single target is a sinusoid with constant amplitude,
 proportional to the amplitude of the echo, and constant frequency,
 proportional to the range to the target.
 
-Such a signal is shown as $v_{1}(t)$ in Fig. [fig:radar time signals]
-for a radar with parameters $B_{eff}=100$ MHz, sampling frequency
-28125 Hz and N=2048 samples. The effective sweep time is
-$T_{eff}=\frac{2048}{28125}=26.214$ ms. We can interpret this signal
-by counting the number of cycles in the graph — about
-$66\frac{1}{2}$. The difference frequency is approximately
-$\frac{66.5}{26.214E-3}=6.35$ kHz. With
-$S=\frac{B_{eff}}{T_{eff}}=\frac{100E6}{26.214E-3}=3.815\times10^{9}$
-Hz/s, we can calculate the range to the target as
-$R=\frac{vf_{d}}{2S}=\frac{3\times10^{8}\times6.35\times10^{3}}{2\times3.815\times10^{9}}=249.7$
-m.
+-->
 
-A real radar will rarely receive only a single echo. The simulated
-signal $v_{5}(t)$ shows what a radar signal will look like with 5
-targets at different ranges and $v_\mathrm{actual}(t)$ shows the output signal
-obtained with an actual radar. We cannot interpret these signals in
-the time domain. They just make no sense at all!
+![[fig:FMCW waveform]The frequency relationships in an FMCW radar with
+ linear frequency modulation.](../figures/FMCW waveform.png)
 
-![[fig:radar time signals]Receiver output signals (a) single target
- (b) 5 targets (c) actual radar data. ](../figures/generated/radar_time_signals.png)
+To start off, we'll generate some synthetic signals, after which we'll
+turn our focus to the output of an actual radar.  We'll use the
+following formula for the difference in frequency, $f_d$, that
+corresponds to a target range of $R$:
 
-Apart from the real world signal shown above, the others were
-generated as follows:
+$$ f_{d}=\frac{2SR}{v}\label{eq:difference frequency}$$
+
+where $v$ is the speed of the transmitted wave through air (roughly
+the same as the speed of light, $3 \times 10^8$ m/s).
 
 ```python
 pi = np.pi
@@ -668,26 +710,70 @@ ts = 1 / fs         # Sampling time, i.e. one sample is taken each
 Teff = 2048.0 * ts  # Total sampling time for 2048 samples
                     # (AKA effective sweep duration) in seconds.
 
-Beff = 100e6        # Effective bandwidth in Hz
+Beff = 100e6        # Range of transmit signal frequency during the time the
+                    # radar samples, known as the "effective bandwidth"
+                    # (given in Hz)
+
 S = Beff / Teff     # Frequency sweep rate in Hz/s
 
-R = 100             # Simulated target range
+# Specification of targets
 
-fd = 2 * S * R / 3E8  # Frequency difference
+R = np.array([100, 137, 154, 159,  180])  # Ranges (in meter)
+M = np.array([0.33, 0.2, 0.9, 0.02, 0.1])  # Target size
+P = np.array([0, pi / 2, pi / 3, pi / 5, pi / 6])  # Randomly chosen phase offsets
 
 t = np.arange(2048) * ts  # Sample times
 
-# Generate five targets
-v0 = np.cos(2 * pi * fd * t)
-v1 = np.cos(2 * pi * fd * 1.37 * t + pi / 2)
-v2 = np.cos(2 * pi * fd * 1.54 * t + pi / 3)
-v3 = np.cos(2 * pi * fd * 1.599 * t + pi / 5)
-v4 = np.cos(2 * pi * fd * 1.8 * t + pi / 6)
+fd = 2 * S * R / 3E8      # Frequency differences for these targets
 
-# Blend them together
-v5 = (v1 / 3.0) + (0.2 * v1) + (0.9 * v2) + (0.02 * v3) + (0.1 * v4)
+# Generate five targets
+signals = np.cos(2 * pi * fd * t[:, np.newaxis] + P)
+
+v_single = signals[:, 0]
+v_sim = np.sum(M * signals, axis=1)
+
+## The above code is equivalent to:
+#
+# v0 = np.cos(2 * pi * fd[0] * t)
+# v1 = np.cos(2 * pi * fd[1] * t + pi / 2)
+# v2 = np.cos(2 * pi * fd[2] * t + pi / 3)
+# v3 = np.cos(2 * pi * fd[3] * t + pi / 5)
+# v4 = np.cos(2 * pi * fd[4] * t + pi / 6)
+#
+## Blend them together
+# v_single = v0
+# v_sim = (0.33 * v0) + (0.2 * v1) + (0.9 * v2) + (0.02 * v3) + (0.1 * v4)
 
 ```
+
+Above, we generate a synthetic signal, $v_single$, received when
+looking at a single target.  By counting the number of cycles seen in
+a given time period, we can compute the frequency of the signal and
+thus the distance to the target.
+
+A real radar will rarely receive only a single echo, though. The
+simulated signal $v_\mathrm{sim}$ shows what a radar signal will look
+like with five targets at different ranges (including two close to one
+another at 154 and 159 meter), and $v_\mathrm{actual}(t)$ shows the
+output signal obtained with an actual radar. We cannot interpret these
+signals in the time domain. They make no sense at all!
+
+<!--
+A synthetic radar signal is shown as $v_{1}(t)$ in Fig. [fig:radar time signals]
+for a radar with parameters $B_{eff}=100$ MHz, sampling frequency
+28125 Hz and N=2048 samples. The effective sweep time is
+$T_{eff}=\frac{2048}{28125}=26.214$ ms. We can interpret this signal
+by counting the number of cycles in the graph — about
+$66\frac{1}{2}$. The difference frequency is approximately
+$\frac{66.5}{26.214E-3}=6.35$ kHz. With
+$S=\frac{B_{eff}}{T_{eff}}=\frac{100E6}{26.214E-3}=3.815\times10^{9}$
+Hz/s, we can calculate the range to the target as
+$R=\frac{vf_{d}}{2S}=\frac{3\times10^{8}\times6.35\times10^{3}}{2\times3.815\times10^{9}}=249.7$
+m.
+-->
+
+![[fig:radar time signals]Receiver output signals (a) single target
+ (b) 5 targets (c) actual radar data. ](../figures/generated/radar_time_signals.png)
 
 The real world radar data is read from a NumPy-format ``.npz`` file (a
 light-weight, cross platform and cross-version compatible storage
@@ -707,12 +793,9 @@ scan = data['scan']
 # It has shape (2048,)
 v_actual = scan['samples'][5, 14, :]
 
-# Scale v_actual to have a reasonable maximum
-print('v_actual has a maximum of {} before normalization'.format(v_actual.max()))
-
-v_actual = v_actual / 3000
-
-print('v_actual has a maximum of {} after normalization'.format(v_actual.max()))
+# Convert to voltage.  The output is 5V, and the ADC is 14-bit, thus
+# units are 5 / (2 ** 14) V.
+v_actual = v_actual * (5 / 2**14)
 
 ```
 
@@ -761,14 +844,13 @@ with values:
 data = np.zeros(500, dtype=dt)  # Construct array with 500 measurements
 ```
 
-To summarize what we've seen so far: the shown measurements ($v_5$ and
-$v_\mathrm{actual}$) are the sum of sinusoidal signals generated by each of the
-distinct reflectors.  We need to determine each of the constituent
-components of these composite radar signals. The FFT is the tool that
-will do this for us. After a short introduction to the theory of the
-FFT, we show how we interpret the radar data.
+To summarize what we've seen so far: the shown measurements
+($v_\mathrm{sim}$ and $v_\mathrm{actual}$) are the sum of sinusoidal
+signals reflected by each of several objects.  We need to determine
+each of the constituent components of these composite radar
+signals. The FFT is the tool that will do this for us.
 
-### Discrete Fourier transforms
+### SIDEBOX: Discrete Fourier transforms
 
 The Discrete Fourier Transform (DFT) converts a sequence of $N$
 equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
@@ -800,11 +882,14 @@ $[0,2\pi)$, i.e. *including* 0 and *excluding* $2\pi$.
 This automatically normalizes the DFT so that time does
 not appear explicitly in the forward or inverse transform.
 
-If the original function $x(t)$ is *band limited* to less than half of
-the sampling frequency, interpolation between sample values produced
-by the inverse DFT will usually give a faithful reconstruction of
-$x(t)$. If $x(t)$ is *not* band limited, the inverse DFT can, in
-general, not be used to reconstruct $x(t)$ by interpolation.
+If the original function $x(t)$ is limited in frequency to less than
+half of the sampling frequency (the so-called *Nyquist frequency*),
+interpolation between sample values produced by the inverse DFT will
+usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
+limited as such, the inverse DFT can, in general, not be used to
+reconstruct $x(t)$ by interpolation.  Note that this limit does not
+imply that there are *no* methods that can do such a
+reconstruction—see, e.g., compressed sensing.
 
 The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
 discrete values between 0 and $2\pi\frac{N-1}{N}$ on the unit circle in
@@ -827,7 +912,7 @@ frequencies with frequency. The angle increment for the component
 $N/2$ for $N$ even advances precisely halfway around the circle for
 each increment in $k$ and can therefore be interpreted as either a
 positive or a negative frequency. This component of the DFT represents
-the Nyquist Frequency, i.e. half of the sampling frequency and is
+the Nyquist Frequency, i.e. half of the sampling frequency, and is
 useful to orientate oneself when looking at DFT graphics.
 
 The FFT in turn is simply a special and highly efficient algorithm for
@@ -841,7 +926,6 @@ year 2000.
 
 ![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
 
-Let’s apply the FFT to our radar data and see what happens!
 
 ### Signal properties in the frequency domain
 
@@ -850,22 +934,24 @@ positive frequency components (i.e., components 0 to $N/2$).  These
 are called the *range traces* in radar terminology.
 
 ```python
-fig, axes = plt.subplots(3, 1, figsize=(15, 7))
+fig, axes = plt.subplots(3, 1, sharex=True, figsize=(15, 7))
 
-# Take FFTs of our signals.  Note the convention to
-# name FFTs with a capital letter.
-V0 = np.fft.fft(v0)
-V5 = np.fft.fft(v5)
+# Take FFTs of our signals.  Note the convention to name FFTs with a
+# capital letter.
+
+V_single = np.fft.fft(v_single)
+V_sim = np.fft.fft(v_sim)
 V_actual = np.fft.fft(v_actual)
 
-N = len(V0)
+N = len(V_single)
 
-axes[0].plot(np.abs(V0[:N // 2]))
-axes[0].set_ylabel("$|V_0|$")
-axes[0].set_ylim(0,1100)
+axes[0].plot(np.abs(V_single[:N // 2]))
+axes[0].set_ylabel("$|V_\mathrm{single}|$")
+axes[0].set_xlim(0, N // 2)
+axes[0].set_ylim(0, 1100)
 
-axes[1].plot(np.abs(V5[:N // 2]))
-axes[1].set_ylabel("$|V_5 |$")
+axes[1].plot(np.abs(V_sim[:N // 2]))
+axes[1].set_ylabel("$|V_\mathrm{sim} |$")
 axes[1].set_ylim(0, 1000)
 
 axes[2].plot(np.abs(V_actual[:N // 2]))
@@ -882,19 +968,22 @@ plt.show()
 
 Suddenly, the information makes sense!
 
-Fig ([fig:FFT range traces]) shows the absolute values of the positive
-frequency components (i.e. components 0 to $N/2$) of the FFTs of the
-three signals in Fig. ([fig:radar time signals]), called *range
-traces* in radar terminology. Suddenly the information makes sense!
-
-The plot for $|V_{0}|$ clearly shows a target at component 67, that
-for $|V5|$ shows the targets that produced the signal that was
-uninterpretable in the time domain. The real radar signal shows a
-large number of targets between component 400 and 500 with a large
-peak in component 443. This happens to be an echo return from a radar
-illuminating the high wall of an open-cast mine.
+The plot for $|V_{0}|$ clearly shows a target at component 67, and for
+$|V_\mathrm{sim}|$ shows the targets that produced the signal that was
+uninterpretable in the time domain. The real radar signal,
+$|V_\mathrm{actual}|$ shows a large number of targets between
+component 400 and 500 with a large peak in component 443. This happens
+to be an echo return from a radar illuminating the high wall of an
+open-cast mine.
 
 To get useful information from the plot, we must determine the range!
+Again, we use the formula:
+
+$$R_{n}=\frac{nv}{2B_{eff}}$$
+
+In radar terminology, each DFT component is known as a *range bin*.
+
+<!--
 The sinusoid associated with the first component of the DFT has a
 period exactly equal to the duration $T_{eff}$ of the time domain
 signal, so $f_{1}=\frac{1}{T_{eff}}$. The other sinusoids in the
@@ -903,31 +992,39 @@ Fourier series are harmonics of this, $f_{n}=\frac{n}{T_{eff}}$.
 The ranges associated with the DFT components follow from
 Eqs. ([eq:difference frequency]) and ([eq:Effective bandwidth]) as
 
-$$R_{n}=\frac{nv}{2B_{eff}}\label{eq:FFT ranges}$$
+$$R_{n}=\frac{nv}{2B_{eff}}$$
 
 and the associated DFT components are known as *range bins* in radar
 terminology.
+
+-->
 
 This equation also defines the range resolution of the radar: targets
 will only be distinguishable if they are separated by more than two
 range bins, i.e.
 
-$$\Delta R>\frac{1}{B_{eff}}.\label{eq:Range resolution}$$
+$$\Delta R>\frac{1}{B_{eff}}.$$
 
 This is a fundamental property of all types of radar.
 
+<!--
 The plot in Fig. ([fig:FFT range traces]) has a fundamental
 shortcoming. The observable dynamic range is the signal is very
 limited! We could easily have missed one of the targets in the trace
 for $V_{5}$!  To ameliorate the problem, we plot the same FFTs but
 this time against a logarithmic y-axis.  The traces were all
 normalized by dividing the amplitudes with the maximum value.
+-->
+
+This result is quite satisfying--but the dynamic range is so large
+that we could very easily miss some peaks.  Let's take the $\log$ as
+before with the spectrogram:
 
 ```python
 c = 3e8  # Approximately the speed of light and of
          # electro-magnetic waves in air
 
-fig, (ax0, ax1,ax2) = plt.subplots(3, 1, sharex=True, figsize=(15, 7))
+fig, (ax0, ax1,ax2) = plt.subplots(3, 1, figsize=(15, 7))
 
 
 def dB(y):
@@ -947,26 +1044,38 @@ def log_plot_normalized(x, y, ylabel, ax):
 
 rng = np.arange(N // 2) * c / 2 / Beff
 
-log_plot_normalized(rng, V0[:N // 2], "$|V_0|$ [dB]", ax0)
-log_plot_normalized(rng, V5[:N // 2], "$|V_5|$ [dB]", ax1)
+log_plot_normalized(rng, V_single[:N // 2], "$|V_0|$ [dB]", ax0)
+log_plot_normalized(rng, V_sim[:N // 2], "$|V_5|$ [dB]", ax1)
 log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
 
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
 ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
+ax2.set_xlim(0, len(V_actual) // 2)
 
 plt.show()
 ```
 
 The observable dynamic range is much improved in these plots. For
 instance, in the real radar signal the *noise floor* of the radar has
-become visible. The noise floor is ultimately caused by a phenomenon
+become visible (i.e., the level where electronic noise in the system
+starts to limit the radar's ability to detect a target).
+
+<!-- The noise floor is ultimately caused by a phenomenon
 called thermal noise that is produced by all conducting elements that
 have resistance at temperatures above absolute zero, as well as by
 shot noise, a noise mechanism inherent in all the electronic devices
 that are used for processing the radar signal. The noise floor of a
-radar limits its ability to detect weak echoes.
+radar limits its ability to detect weak echoes. -->
+
 
 ### Windowing, applied
+
+We're getting there, but in the spectrum of the simulated signal, we
+still cannot distinguish the peaks at 154 and 159 meters.  Who knows
+what we're missing in the real-world signal!  To sharpen the peaks,
+we'll return to our toolbox and make use of *windowing*.
+
+<!--
 
 The range traces in Fig. ([fig:Log range traces]) display a further
 serious shortcoming. The signals $v_{1}$ and $v_{5}$ are composed of
@@ -979,9 +1088,10 @@ from the large target. The broadening is caused by *side lobes* in the
 DFT. These are caused by an inherent clash between the properties of
 the signal we analyzed and the signal produced by the inverse DFT.
 
-Let's take a look at the signals used thus far in this example,
-windowed with a Kaiser window with $\beta=6.1$:
+-->
 
+Here are the signals used thus far in this example, windowed with a
+Kaiser window with $\beta=6.1$:
 
 ```python
 f, axes = plt.subplots(3, 1, sharex=True, figsize=(10, 5))
@@ -990,8 +1100,8 @@ t_ms = t * 1000  # Sample times in milli-second
 
 w = np.kaiser(N, 6.1)  # Kaiser window with beta = 6.1
 
-for n, (signal, label) in enumerate([(v0, r'$v_0 [Volt]$'),
-                                     (v5, r'$v_5 [Volt]$'),
+for n, (signal, label) in enumerate([(v_single, r'$v_0 [Volt]$'),
+                                     (v_sim, r'$v_5 [Volt]$'),
                                      (v_actual, r'$v_{\mathrm{actual}}$')]):
     axes[n].plot(t_ms, w * signal)
     axes[n].set_ylabel(label)
@@ -1006,14 +1116,14 @@ plt.show()
 And the corresponding FFTs (or "range traces", in radar terms):
 
 ```python
-V0_win = np.fft.fft(w * v0)
-V5_win = np.fft.fft(w * v5)
+V_single_win = np.fft.fft(w * v_single)
+V_sim_win = np.fft.fft(w * v_sim)
 V_actual_win = np.fft.fft(w * v_actual)
 
 fig, (ax0, ax1,ax2) = plt.subplots(3, 1, figsize=(15, 7))
 
-log_plot_normalized(rng, V0_win[:N // 2], r"$|V_0,\mathrm{win}|$ [dB]", ax0)
-log_plot_normalized(rng, V5_win[:N // 2], r"$|V_5,\mathrm{win}|$ [dB]", ax1)
+log_plot_normalized(rng, V_single_win[:N // 2], r"$|V_0,\mathrm{win}|$ [dB]", ax0)
+log_plot_normalized(rng, V_sim_win[:N // 2], r"$|V_5,\mathrm{win}|$ [dB]", ax1)
 log_plot_normalized(rng, V_actual_win[:N // 2], r"$|V_\mathrm{actual,win}|$ [dB]", ax2)
 
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
@@ -1021,21 +1131,20 @@ ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
 
 ax1.annotate("New, previously unseen!", (160, -35),
              xytext=(10, 25), textcoords="offset points", color='red',
-             arrowprops=dict(width=2, headwidth=6, frac=0.4, shrink=0.1))
+             arrowprops=dict(width=2, headwidth=6, headlength=12, shrink=0.1))
 
 plt.show()
 
 ```
 
-Compare these with the range traces in Figure [fig:Log range
-traces]. There is a dramatic lowering in side lobe level, but this
-came at a price: the peaks have changed in shape, widening and
-becoming less peaky, thus lowering the radar resolution, that is, the
-ability of the radar to distinguish between two closely space
-targets. The choice of window is a compromise between side lobe level
-and resolution. Even so, referring to the trace for $V_{5}$, windowing
-has dramatically increased our ability to distinguish the small target
-from its large neighbor.
+Compare these with the earlier range traces. There is a dramatic
+lowering in side lobe level, but at a price: the peaks have changed in
+shape, widening and becoming less peaky, thus lowering the radar
+resolution, that is, the ability of the radar to distinguish between
+two closely space targets. The choice of window is a compromise
+between side lobe level and resolution. Even so, referring to the
+trace for $V_\mathrm{sim}$, windowing has dramatically increased our
+ability to distinguish the small target from its large neighbor.
 
 In the real radar data range trace windowing has also reduced the side
 lobes. This is most visible in the depth of the notch between the two
@@ -1043,15 +1152,18 @@ groups of targets.
 
 ### Radar Images
 
-With the key concepts sorted out, we can now look at radar images.
+Knowing how to analyze a single trace, we can expand to looking at
+radar images.
 
 The data is produced by a radar with a parabolic reflector antenna. It
 produces a highly directive round pencil beam with a $2^\circ$
 spreading angle between half-power points. When directed with normal
 incidence at a plane, the radar will illuminate a spot of about 2 m in
-diameter on the half power contour at a distance of 60 m. Outside this
-spot the power drops off quite rapidly but strong echoes from outside
-the spot will nevertheless still be visible.
+diameter <!-- on the half power contour at a distance of 60 m
+-->. Outside this spot the power drops off quite rapidly but strong
+echoes from outside the spot will nevertheless still be visible.
+
+## I'M HERE CURRENTLY
 
 A rock slope consists of thousands of scatterers. A range bin can be
 thought of as a large sphere with the radar at its center that
