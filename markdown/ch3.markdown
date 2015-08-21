@@ -197,7 +197,7 @@ freqs, times, Sx = signal.spectrogram(audio, fs=rate, window='hanning',
                                       detrend=False, scaling='spectrum')
 
 ## Plot using:
-# plt.pcolormesh(t, f, 10 * np.log10(Sx), cmap='viridis');
+# plt.pcolormesh(times, freqs, 10 * np.log10(Sx), cmap='viridis');
 ```
 
 The only differences are that SciPy returnes the spectrum squared

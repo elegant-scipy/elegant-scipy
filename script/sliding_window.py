@@ -32,7 +32,7 @@ plt.annotate(
                 'linewidth': 2})
 
 plt.annotate(
-    '2048', xy=(1024 / 2, -70), xycoords='data',
+    '1024', xy=(1024 / 2, -70), xycoords='data',
     xytext=(-10, 5), textcoords='offset points')
 
 plt.annotate(
