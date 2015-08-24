@@ -9,11 +9,11 @@ You have probably already done some streaming, perhaps without thinking about it
 The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
 For example a loop like this:
 
-'''python
+```python
 with open('data/expr.tsv') as f:
     for line in f:
         pass
-'''
+```
 
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
 But things can quickly get out of hand when things get much more sophisticated.
@@ -26,8 +26,10 @@ All these things are going on at the same time!
 How can one keep them straight?
 
 For many years, I didn't.
-But Matt Rocklin's blog posts on this topic really opened my eyes to the utility and elegance of streaming data analysis, to the point that it was impossible to contemplate writing this book without including a chapter on it, even though it is not really a SciPy feature.
+But Matt Rocklin's blog posts on this topic really opened my eyes to the utility and elegance of streaming data analysis, to the point that it was impossible to contemplate writing this book without including a chapter on it.
+Although streaming is not really a SciPy feature, it is a way of writing code that is critical to efficiently processing the large datasets that we see in science.
 The Python language contains some very nice primitives for streaming data processing, and these can be combined with Matt's Toolz library to generate gorgeous, concise code that is extremely memory-efficient.
+We will show you how to apply streaming concepts to make your SciPy code fast and and elegant.
 
 Let me clarify what I mean by "streaming" and why you might want to do it.
 Suppose you have some data in a CSV text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
@@ -157,6 +159,8 @@ Note a few things:
 - None of the computation is run when creating the lines and loglines iterators. This is because iterators are *lazy*, meaning they are not evaluated (or *consumed*) until a result is needed.
 - When the computation is finally triggered, by the call to `running_mean_verbose`, it jumps back and forth between all the functions, as various computations are performed on each line, before moving on to the next line.
 
+## Introducing the Toolz streaming library
+
 This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire human genome in 10 minutes on a laptop, using just a few lines of code.
 (It has been slightly edited for easier downstream processing.) Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
 This modification is almost *trivial*, which speaks to the elegance of his example.
@@ -193,8 +197,9 @@ def markov_reshape(item):
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
 
-The first thing to note is how many functions come from the Toolz library.
-That's because it is written specifically to take advantage of Python's iterators, and easily manipulate streams.
+The first thing to note is how many functions come from the [Toolz library](http://toolz.readthedocs.org/en/latest/).
+For example from Toolz we've used, `pipe`, `sliding_window`, `frequencies`, and a curried version of `map` (more on this later).
+That's because Toolz is written specifically to take advantage of Python's iterators, and easily manipulate streams.
 
 Let's start with `pipe`.
 This function is simply syntactic sugar to make nested function calls easier to read.
@@ -224,8 +229,7 @@ You might want to review chapters 1 and 2 for information about DNA and genomics
 Briefly, your genetic information, the blueprint for making *you*, is encoded as a sequence of chemical *bases* in your *genome*.
 These are really, really tiny, so you can't just look in a microscope and read them.
 You also can't read a long string of them: errors accumulate and the readout becomes unusable.
-(New technology is changing this, but here we will focus on Illumina data, the most common today.)
-
+(New technology is changing this, but here we will focus on short-read sequencing data, the most common today.)
 Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases), and then assemble those like an enormous puzzle of 30 million pieces.
 
 (MISSISSIPPI assembly example)
