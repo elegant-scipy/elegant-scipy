@@ -171,49 +171,50 @@ import toolz as tz
 from toolz import curried as c
 from glob import glob
 
+LDICT = dict(zip('ACGTacgt', range(8)))
+PDICT = {(a, b): (LDICT[a], LDICT[b])
+         for a, b in it.product(LDICT, LDICT)}
+
+def is_sequence(line):
+    return not line.startswith('>')
+
+def is_nucleotide(letter):
+    return letter in LDICT  # ignore 'N'
+
 @tz.curry
 def increment_model(model, index):
     model[index] += 1
 
 
-LDICT = dict(zip('ACGT', range(4)))
-LDICT.update(dict(zip('acgt', range(4))))  # make dict case-insensitive
-
-
-def letter_tuple_to_index(tup):
-    return [LDICT[letter] for letter in tup]
-
-
-def is_nucleotide(letter):
-    return (letter.upper() in 'ACGT')
-
-
 def genome(file_pattern):
     """Stream a genome, letter by letter, from a list of FASTA filenames."""
     return tz.pipe(file_pattern, glob, sorted,  # Filenames
-                   cur.map(open),  # lines
-                   cur.map(cur.drop(1)),  # drop header from each file
+                   c.map(open),  # lines
                    tz.concat,  # concatenate lines from all files
+                   c.filter(is_sequence),  # drop header from each sequence
                    tz.concat,  # concatenate chars from all lines
-                   cur.filter(is_nucleotide))  # discard newlines and 'N'
-
+                   c.filter(is_nucleotide))  # discard newlines and 'N'
 
 def markov(seq):
     """Get a 1st-order Markov model from a sequence of nucleotides."""
-    model = np.zeros((4, 4))
-    tz.pipe(seq,
-            tz.sliding_window(2),  # each successive tuple
-            cur.map(letter_tuple_to_index),  # location in matrix of tuple
-            cur.map(increment_model(model)))  # increment matrix
+    model = np.zeros((8, 8))
+    tz.last(tz.pipe(seq,
+                    c.sliding_window(2),  # each successive tuple
+                    c.map(PDICT.__getitem__),  # location in matrix of tuple
+                    c.map(increment_model(model))))  # increment matrix
     # convert counts to transition probability matrix
     model /= np.sum(model, axis=1)[:, np.newaxis]
     return model
-
-# if __name__ == '__main__':
-#     model = tz.pipe('data/human-genome/chr*.fa', genome, markov)
 ```
 
+We can then do the following to obtain a Markov model of repetitive sequences
+in the fruit-fly genome:
+
+    dm = 'data/dm6.fa'
+    m = tz.pipe(dm, genome, markov)
+
 There's a *lot* going on in that example, so we are going to unpack it little by little.
+We'll actually run the example at the end of the chapter.
 
 The first thing to note is how many functions come from the [Toolz library](http://toolz.readthedocs.org/en/latest/).
 For example from Toolz we've used, `pipe`, `sliding_window`, `frequencies`, and a curried version of `map` (more on this later).
@@ -634,6 +635,30 @@ from matplotlib import pyplot as plt
 plt.scatter(*components.T)
 ```
 
+# Getting the Markov model
+
+Let's go back to the example and get that Markov model.
+
+```
+model = tz.pipe(dm, genome, markov)
+print('    ', '      '.join('ACGTacgt'), '\n')
+print(model)
+```
+
+We can also look at the result as an image:
+
+```
+plt.imshow(model, cmap='gist_heat', interpolation='nearest');
+plt.colorbar();
+ax = plt.gca()
+ax.set_xticklabels(' ACGTacgt');
+ax.set_yticklabels(' ACGTacgt');
+```
+
+Note how the G-A and G-C transitions are different between the repeat and
+non-repeat parts of the genome. This information can be used to classify
+previously unseen DNA sequence.
+
 # Conclusions
 
 - streaming in Python is easy when you use a few abstractions
@@ -644,5 +669,6 @@ plt.scatter(*components.T)
 - streaming code is concise and readable using toolz (cytoolz for speed)
 - Time to reiterate my take-home: think about whether you can stream over a dataset, and if you can, do it.
 Your future self will thank you.
-Doing it later is [harder](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg).
-;)
+Doing it later is harder:
+
+![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg).
