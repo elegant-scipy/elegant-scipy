@@ -215,7 +215,7 @@ in the fruit-fly genome:
 # dm6.fa.gz can be downloaded from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
 # Unzip before using: gzip -d dm6.fa.gz
 dm = 'data/dm6.fa'
-model = tz.pipe(dm, genome, markov)
+model = tz.pipe(dm, genome, c.take(1000000), markov)
 ```
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
