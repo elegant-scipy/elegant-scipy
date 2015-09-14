@@ -170,6 +170,7 @@ This modification is almost *trivial*, which speaks to the elegance of his examp
 import toolz as tz
 from toolz import curried as c
 from glob import glob
+import itertools as it
 
 LDICT = dict(zip('ACGTacgt', range(8)))
 PDICT = {(a, b): (LDICT[a], LDICT[b])
@@ -210,8 +211,12 @@ def markov(seq):
 We can then do the following to obtain a Markov model of repetitive sequences
 in the fruit-fly genome:
 
-    dm = 'data/dm6.fa'
-    m = tz.pipe(dm, genome, markov)
+```python
+# dm6.fa.gz can be downloaded from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
+# Unzip before using: gzip -d dm6.fa.gz
+dm = 'data/dm6.fa'
+model = tz.pipe(dm, genome, c.take(1000000), markov)
+```
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
 We'll actually run the example at the end of the chapter.
@@ -640,7 +645,8 @@ plt.scatter(*components.T)
 Let's go back to the example and get that Markov model.
 
 ```
-model = tz.pipe(dm, genome, markov)
+# We produced the model earlier like this:
+# model = tz.pipe(dm, genome, markov)
 print('    ', '      '.join('ACGTacgt'), '\n')
 print(model)
 ```
