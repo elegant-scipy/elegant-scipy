@@ -170,6 +170,7 @@ This modification is almost *trivial*, which speaks to the elegance of his examp
 import toolz as tz
 from toolz import curried as c
 from glob import glob
+import itertools as it
 
 LDICT = dict(zip('ACGTacgt', range(8)))
 PDICT = {(a, b): (LDICT[a], LDICT[b])
