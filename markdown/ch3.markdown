@@ -66,7 +66,14 @@ But, you can equivalently think of it as an endless signal of *frequency*, or *p
 
 **[plot of FFT of sin function]**
 
+The Fourier transform converts the former into the latter form, and this turns out to have a massive number of applications.
+In this chapter, we'll guide you through a few of them to demonstrate that the FFT can be applied to multidimensional data (not just 1D signals) to achieve a variety of goals.
 
+Let's start with one of the most common applications, converting a sound signal (consisting of variations of air pressure over time) to a *spectrogram*.
+(You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
+
+![Stereo spectrogram](http://img.canuckaudiomart.com/uploads/large/383877-yamaha_eq550_ten_band_stereo_graphic_equalizer.jpg)
+**[ED NOTE: this image is just an example, would need to find one with correct license]**
 
 Listen to the following snippet of nightingale birdsong:
 
