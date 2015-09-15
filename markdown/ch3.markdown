@@ -52,6 +52,22 @@ import numpy as np
 
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
 
+This chapter will depart slightly from the format of the rest of the book.
+In particular, you may find the *code* in the chapter quite ordinary.
+Instead, we want to illustrate an elegant *algorithm*, the Fast Fourier Transform (FFT), that is endlessly useful, implemented in SciPy, and works, of course, on NumPy arrays.
+
+The Fourier Transform (FT) is a mathematical technique to convert temporal or spatial data into *frequency domain* data.
+Take, for example, a simple periodic function, $\sin(x)$.
+You can view it as a wave:
+
+**[plot of sin function]**
+
+But, you can equivalently think of it as an endless signal of *frequency*, or *period*, $2\pi$:
+
+**[plot of FFT of sin function]**
+
+
+
 Listen to the following snippet of nightingale birdsong:
 
 ```python
