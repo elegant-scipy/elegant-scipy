@@ -48,7 +48,7 @@ import numpy as np
 
 -->
 
-# The Fast Fourier Transform (FFT)
+# Frequency
 
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
 
