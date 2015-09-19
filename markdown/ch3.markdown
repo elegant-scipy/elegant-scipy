@@ -57,17 +57,48 @@ In particular, you may find the *code* in the chapter quite modest.
 Instead, we want to illustrate an elegant *algorithm*, the Fast Fourier Transform (FFT), that is endlessly useful, implemented in SciPy, and works, of course, on NumPy arrays.
 
 The Fourier Transform (FT) is a mathematical technique to convert temporal or spatial data into *frequency domain* data.
-Take, for example, a simple periodic function, $\sin(x)$.
+Take, for example, a simple periodic function, $\sin(10 * 2 \pi t)$.
 You can view it as a wave:
 
-**[plot of sin function]**
+```python
+f = 10  # Frequency, in cycles per second, or Herz
+f_s = 100  # Sampling rate, or number of measurements per second
 
-But, you can equivalently think of it as an endless signal of *frequency*, or *period*, $2\pi$:
+t = np.linspace(0, 2, 2 * f_s, endpoint=False)
+x = np.sin(f * 2 * np.pi * t)
 
-**[plot of FFT of sin function]**
+fig, ax = plt.subplots()
+ax.plot(t, x)
+ax.set_xlabel('Time [s]')
+ax.set_ylabel('Signal amplitude')
+```
 
-The Fourier transform converts the former into the latter form, and this turns out to have a massive number of applications.
-In this chapter, we'll guide you through a few of them to demonstrate that the FFT can be applied to multidimensional data (not just 1D signals) to achieve a variety of goals.
+But, you can equivalently think of it as an repeating signal of
+*frequency* 10 Hertz (it repeats once every $1/10$ seconds—a length of
+time we call its *period*):
+
+```python
+from scipy import fftpack
+
+X = fftpack.fft(x)
+freqs = fftpack.fftfreq(len(x)) * f_s
+
+fig, ax = plt.subplots()
+
+ax.stem(freqs, np.abs(X))
+ax.set_xlabel('Frequency in Hertz [Hz]')
+ax.set_ylabel('Frequency Domain (Spectrum) Magnitude')
+ax.set_xlim(-f_s / 2, f_s / 2)
+ax.set_ylim(-5, 110)
+```
+
+(We'll explain why you see positive and negative frequencies later on.)
+
+The Fourier transform takes us from the *time* to the *frequency*
+domain, and this turns out to have a massive number of applications.
+In this chapter, we'll guide you through a few of them to demonstrate
+that the FFT can be applied to multidimensional data (not just 1D
+signals) to achieve a variety of goals.
 
 Let's start with one of the most common applications, converting a sound signal (consisting of variations of air pressure over time) to a *spectrogram*.
 (You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
