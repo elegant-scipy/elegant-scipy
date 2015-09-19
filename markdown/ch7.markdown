@@ -73,7 +73,10 @@ def add1_all_streaming(input_stream):
 ```
 
 ```python
-np.random.seed(seed=7)  # Set seed so we will get consistent results
+# Set seed so we will get consistent results
+np.random.seed(seed=7)
+# Set print options to show only 3 significant digits
+np.set_printoptions(precision=3, suppress=True)
 ```
 
 ```python
