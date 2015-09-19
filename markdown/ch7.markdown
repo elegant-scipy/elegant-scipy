@@ -161,8 +161,9 @@ Note a few things:
 
 ## Introducing the Toolz streaming library
 
-This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire human genome in 10 minutes on a laptop, using just a few lines of code.
+This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire genome in 10 minutes on a laptop, using just a few lines of code.
 (It has been slightly edited for easier downstream processing.)
+Matt's example uses a human genome, but apparently our laptops weren't quite so fast, so we're going to use a fly genome instead (it's about 1/3 the size).
 Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
 This modification is almost *trivial*, which speaks to the elegance of his example.
 
@@ -190,18 +191,18 @@ def increment_model(model, index):
 def genome(file_pattern):
     """Stream a genome, letter by letter, from a list of FASTA filenames."""
     return tz.pipe(file_pattern, glob, sorted,  # Filenames
-                   c.map(open),  # lines
-                   tz.concat,  # concatenate lines from all files
-                   c.filter(is_sequence),  # drop header from each sequence
-                   tz.concat,  # concatenate chars from all lines
-                   c.filter(is_nucleotide))  # discard newlines and 'N'
+                   c.map(open),                 # lines
+                   tz.concat,                   # concatenate lines from all files
+                   c.filter(is_sequence),       # drop header from each sequence
+                   tz.concat,                   # concatenate chars from all lines
+                   c.filter(is_nucleotide))     # discard newlines and 'N'
 
 def markov(seq):
     """Get a 1st-order Markov model from a sequence of nucleotides."""
     model = np.zeros((8, 8))
     tz.last(tz.pipe(seq,
-                    c.sliding_window(2),  # each successive tuple
-                    c.map(PDICT.__getitem__),  # location in matrix of tuple
+                    c.sliding_window(2),        # each successive tuple
+                    c.map(PDICT.__getitem__),   # location in matrix of tuple
                     c.map(increment_model(model))))  # increment matrix
     # convert counts to transition probability matrix
     model /= np.sum(model, axis=1)[:, np.newaxis]
@@ -212,10 +213,10 @@ We can then do the following to obtain a Markov model of repetitive sequences
 in the fruit-fly genome:
 
 ```python
-# dm6.fa.gz can be downloaded from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
-# Unzip before using: gzip -d dm6.fa.gz
+%%timeit -r 1 -n 1
 dm = 'data/dm6.fa'
 model = tz.pipe(dm, genome, c.take(1000000), markov)
+#XXX the take step can just be removed once we have solved the nbconvert timeout issue
 ```
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
@@ -471,14 +472,13 @@ Take another look at our function for reading in the genome to see how this work
 
 ```python
 def genome(file_pattern):
-    """Stream a genome from a list of FASTA filenames"""
-    return tz.pipe(file_pattern, glob, sorted,        # Filenames
-                                 c.map(open),         # Open each file
-                                 c.map(tz.drop(1)),   # Drop header from each file
-                                 concat,              # Concatenate all lines from all files together
-                                 c.map(str.upper),    # Upper case each line
-                                 c.map(str.strip),    # Strip off \n from each line
-                                 concat)              # Concatenate all lines into one giant string sequence
+    """Stream a genome, letter by letter, from a list of FASTA filenames."""
+    return tz.pipe(file_pattern, glob, sorted,  # Filenames
+                   c.map(open),                 # lines
+                   tz.concat,                   # concatenate lines from all files
+                   c.filter(is_sequence),       # drop header from each sequence
+                   tz.concat,                   # concatenate chars from all lines
+                   c.filter(is_nucleotide))     # discard newlines and 'N'
 ```
 
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
@@ -513,7 +513,11 @@ In this theory, all the information required to predict the future is encoded in
 The past is irrelevant.
 This assumption is useful for simplifying otherwise intractable problems.
 
-- Where to download the human genome
+- Where to download the fruit-fly genome
+You can download the *Drosophila melanogaster* (fruit-fly) genome file dm6.fa.gz from
+ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
+You will need to unzip it using: `gzip -d dm6.fa.gz`
+
 - Matt's post and how to use it
 
 ## Image processing with streaming functions
@@ -573,9 +577,15 @@ plt.scatter(*components.T)
 
 Let's go back to the example and get that Markov model.
 
-```
-# We produced the model earlier like this:
-# model = tz.pipe(dm, genome, markov)
+```python
+# dm6.fa.gz can be downloaded from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
+# Unzip before using: gzip -d dm6.fa.gz
+dm = 'data/dm6.fa'
+model = tz.pipe(dm, genome, c.take(1000000), markov)
+# used take to just run on the first 1000000 bases, to speed things up.
+# the take step can just be removed if you have ~5-10 mins to wait.
+
+# Let's look at the resulting matrix
 print('    ', '      '.join('ACGTacgt'), '\n')
 print(model)
 ```
@@ -593,6 +603,8 @@ ax.set_yticklabels(' ACGTacgt');
 Note how the G-A and G-C transitions are different between the repeat and
 non-repeat parts of the genome. This information can be used to classify
 previously unseen DNA sequence.
+
+Challenge: add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive.
 
 # Conclusions
 
