@@ -164,8 +164,9 @@ Note a few things:
 
 ## Introducing the Toolz streaming library
 
-This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire human genome in 10 minutes on a laptop, using just a few lines of code.
+This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire fly genome in under 5 minutes on a laptop, using just a few lines of code.
 (It has been slightly edited for easier downstream processing.)
+Matt's example uses a human genome, but apparently our laptops weren't quite so fast, so we're going to use a fly genome instead (it's about 1/20 the size).
 Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
 This modification is almost *trivial*, which speaks to the elegance of his example.
 
@@ -193,18 +194,18 @@ def increment_model(model, index):
 def genome(file_pattern):
     """Stream a genome, letter by letter, from a list of FASTA filenames."""
     return tz.pipe(file_pattern, glob, sorted,  # Filenames
-                   c.map(open),  # lines
-                   tz.concat,  # concatenate lines from all files
-                   c.filter(is_sequence),  # drop header from each sequence
-                   tz.concat,  # concatenate chars from all lines
-                   c.filter(is_nucleotide))  # discard newlines and 'N'
+                   c.map(open),                 # lines
+                   tz.concat,                   # concatenate lines from all files
+                   c.filter(is_sequence),       # drop header from each sequence
+                   tz.concat,                   # concatenate chars from all lines
+                   c.filter(is_nucleotide))     # discard newlines and 'N'
 
 def markov(seq):
     """Get a 1st-order Markov model from a sequence of nucleotides."""
     model = np.zeros((8, 8))
     tz.last(tz.pipe(seq,
-                    c.sliding_window(2),  # each successive tuple
-                    c.map(PDICT.__getitem__),  # location in matrix of tuple
+                    c.sliding_window(2),        # each successive tuple
+                    c.map(PDICT.__getitem__),   # location in matrix of tuple
                     c.map(increment_model(model))))  # increment matrix
     # convert counts to transition probability matrix
     model /= np.sum(model, axis=1)[:, np.newaxis]
@@ -215,10 +216,10 @@ We can then do the following to obtain a Markov model of repetitive sequences
 in the fruit-fly genome:
 
 ```python
-# dm6.fa.gz can be downloaded from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
-# Unzip before using: gzip -d dm6.fa.gz
+%%timeit -r 1 -n 1
 dm = 'data/dm6.fa'
 model = tz.pipe(dm, genome, c.take(1000000), markov)
+#XXX the take step can just be removed once we have solved the nbconvert timeout issue
 ```
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
@@ -259,15 +260,11 @@ You also can't read a long string of them: errors accumulate and the readout bec
 (New technology is changing this, but here we will focus on short-read sequencing data, the most common today.)
 Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases), and then assemble those like an enormous puzzle of 30 million pieces.
 
-(MISSISSIPPI assembly example)
-
 Before performing assembly, it is vital to perform read correction.
 During DNA sequencing some bases are incorrectly read out, and must be fixed, or they will mess up the assembly.
 (Imagine having puzzle pieces with the wrong shape.)
 
 One correction strategy is to find similar reads in your dataset and fix the error by grabbing the correct information from those reads. Or alternatively, you may choose to completely discard those reads containing errors.
-
-(MISSISSIPI assembly with error-correction)
 
 However, this is a very inefficient way to do this, because finding similar reads takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
 (And these are not cheap operations.)
@@ -484,14 +481,13 @@ Take another look at our function for reading in the genome to see how this work
 
 ```python
 def genome(file_pattern):
-    """Stream a genome from a list of FASTA filenames"""
-    return tz.pipe(file_pattern, glob, sorted,        # Filenames
-                                 c.map(open),         # Open each file
-                                 c.map(tz.drop(1)),   # Drop header from each file
-                                 concat,              # Concatenate all lines from all files together
-                                 c.map(str.upper),    # Upper case each line
-                                 c.map(str.strip),    # Strip off \n from each line
-                                 concat)              # Concatenate all lines into one giant string sequence
+    """Stream a genome, letter by letter, from a list of FASTA filenames."""
+    return tz.pipe(file_pattern, glob, sorted,  # Filenames
+                   c.map(open),                 # lines
+                   tz.concat,                   # concatenate lines from all files
+                   c.filter(is_sequence),       # drop header from each sequence
+                   tz.concat,                   # concatenate chars from all lines
+                   c.filter(is_nucleotide))     # discard newlines and 'N'
 ```
 
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
@@ -502,74 +498,7 @@ counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
 
-## Genome assembly
 
-Now that we have a handle on k-mer frequencies in our DNA sequence, we can implement an important k-mer based assembly algorithm: a De Bruijn graph assembler.
-We will use a toy genetic sequence to demonstrate how this works.
-See [this link](http://www.cs.jhu.edu/~langmea/resources/lecture_notes/assembly_dbg.pdf) for more on this topic.
-The sequence is derived from Fig 3 of [this paper](http://www.nature.com/nbt/journal/v29/n11/full/nbt.2023.html), but in our case it is not circular.
-
-First we will needs some DNA sequencing reads to play with:
-
-```python
-@tz.curry
-def generate_reads(seq, nreads=60, readlen=5):  # Generate sequencing reads with on average 30x coverage of each DNA base
-    for i in range(nreads):
-        start = np.random.randint(0, len(seq) - readlen + 1)
-        yield seq[start : start+readlen]
-```
-
-Next, we generate some reads and feed them into a De Bruijn graph implemented in networkx.
-
-```python
-import networkx as nx
-seq = 'ATGGCGTGCA'
-g = nx.DiGraph()
-```
-We can draw the graph:
-```python
-import nxeuler as eu  # local module
-
-draw_circular = tz.partial(nx.draw_circular, with_labels=True,
-                                             node_color='w',
-                                             node_size=600)
-reads = generate_reads(seq)
-draw = tz.pipe(reads, c.map(c.sliding_window(3)),  # k-mers
-                      tz.concat,  # join k-mer streams from all reads
-                      c.map(''.join),  # make strings from tup of char
-                      c.map(eu.edge_from_kmer),  # get k-1-mer tuples
-                      eu.add_edges(g),  # add them as edges to the graph
-                      draw_circular)  # draw the graph
-```
-(Note that the graph is much smaller than the original dataset of the reads!)
-
-Or, we can feed the graph directly into an Eulerian path algorithm, and reconstruct the original genome from that:
-
-```python
-import toolz as tz
-from toolz import curried as c
-def assemble(euler_path):
-    start = tz.first(euler_path)[0]
-    rest = tz.pipe(euler_path, c.pluck(0),  # 1st k-1-mer
-                               c.pluck(1),  # 2nd letter
-                               ''.join)
-    return start + rest
-
-reads = generate_reads(seq)
-g = nx.DiGraph()
-inferred = tz.pipe(reads, c.map(c.sliding_window(3)),  # k-mers
-                          tz.concat,  # join k-mer streams from all reads
-                          c.map(''.join),  # make string from tup of char
-                          c.map(eu.edge_from_kmer),  # get k-1-mer tups
-                          eu.add_edges(g),  # add edges to g
-                          eu.eulerian_path,  # iterate over euler path edges
-                          assemble)  # get assembled string from path
-print(seq)
-print(inferred)
-```
-
-Note that real assembly requires lots of sophisticated error correction.
-But I hope this gives you an idea of the potential to stream over reads to generate a more compact view for assembly.
 
 > ## tips {.callout}
 >  - (list of list -> list) with tz.concat
@@ -592,7 +521,11 @@ In this theory, all the information required to predict the future is encoded in
 The past is irrelevant.
 This assumption is useful for simplifying otherwise intractable problems.
 
-- Where to download the human genome
+- Where to download the fruit-fly genome
+You can download the *Drosophila melanogaster* (fruit-fly) genome file dm6.fa.gz from
+ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
+You will need to unzip it using: `gzip -d dm6.fa.gz`
+
 - Matt's post and how to use it
 
 ## Image processing with streaming functions
@@ -652,9 +585,15 @@ plt.scatter(*components.T)
 
 Let's go back to the example and get that Markov model.
 
-```
-# We produced the model earlier like this:
-# model = tz.pipe(dm, genome, markov)
+```python
+# dm6.fa.gz can be downloaded from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
+# Unzip before using: gzip -d dm6.fa.gz
+dm = 'data/dm6.fa'
+model = tz.pipe(dm, genome, c.take(1000000), markov)
+# used take to just run on the first 1000000 bases, to speed things up.
+# the take step can just be removed if you have ~5-10 mins to wait.
+
+# Let's look at the resulting matrix
 print('    ', '      '.join('ACGTacgt'), '\n')
 print(model)
 ```
@@ -672,6 +611,8 @@ ax.set_yticklabels(' ACGTacgt');
 Note how the G-A and G-C transitions are different between the repeat and
 non-repeat parts of the genome. This information can be used to classify
 previously unseen DNA sequence.
+
+Challenge: add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive.
 
 # Conclusions
 
