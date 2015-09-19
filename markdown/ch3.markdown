@@ -48,9 +48,32 @@ import numpy as np
 
 -->
 
-# The Fast Fourier Transform (FFT)
+# Frequency
 
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
+
+This chapter will depart slightly from the format of the rest of the book.
+In particular, you may find the *code* in the chapter quite modest.
+Instead, we want to illustrate an elegant *algorithm*, the Fast Fourier Transform (FFT), that is endlessly useful, implemented in SciPy, and works, of course, on NumPy arrays.
+
+The Fourier Transform (FT) is a mathematical technique to convert temporal or spatial data into *frequency domain* data.
+Take, for example, a simple periodic function, $\sin(x)$.
+You can view it as a wave:
+
+**[plot of sin function]**
+
+But, you can equivalently think of it as an endless signal of *frequency*, or *period*, $2\pi$:
+
+**[plot of FFT of sin function]**
+
+The Fourier transform converts the former into the latter form, and this turns out to have a massive number of applications.
+In this chapter, we'll guide you through a few of them to demonstrate that the FFT can be applied to multidimensional data (not just 1D signals) to achieve a variety of goals.
+
+Let's start with one of the most common applications, converting a sound signal (consisting of variations of air pressure over time) to a *spectrogram*.
+(You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
+
+![Stereo spectrogram](http://img.canuckaudiomart.com/uploads/large/383877-yamaha_eq550_ten_band_stereo_graphic_equalizer.jpg)
+**[ED NOTE: this image is just an example, would need to find one with correct license]**
 
 Listen to the following snippet of nightingale birdsong:
 
