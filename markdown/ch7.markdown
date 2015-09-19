@@ -161,9 +161,9 @@ Note a few things:
 
 ## Introducing the Toolz streaming library
 
-This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire genome in 10 minutes on a laptop, using just a few lines of code.
+This chapter's code example is from Matt Rocklin (who else?), in which he creates a Markov model from an entire fly genome in under 5 minutes on a laptop, using just a few lines of code.
 (It has been slightly edited for easier downstream processing.)
-Matt's example uses a human genome, but apparently our laptops weren't quite so fast, so we're going to use a fly genome instead (it's about 1/3 the size).
+Matt's example uses a human genome, but apparently our laptops weren't quite so fast, so we're going to use a fly genome instead (it's about 1/20 the size).
 Over the course of the chapter we'll actually augment it a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
 This modification is almost *trivial*, which speaks to the elegance of his example.
 
