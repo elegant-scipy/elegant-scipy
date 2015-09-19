@@ -60,13 +60,13 @@ def xlogx(mat):
 
 def vi(x, y):
     pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
-                        dtype=float).tocsr()
+                            dtype=float).tocsr()
     pxy.data /= np.sum(pxy.data)
     px = pxy.sum(axis=1)
     py = pxy.sum(axis=0)
-    px_inv = invert_nonzero(px)
-    py_inv = invert_nonzero(py)
-    hygx = - (px * xlogx(py_inv.dot(pxy)).sum(axis=0)).sum()
-    hxgy = - (py * xlogx(pxy.dot(px)).sum(axis=1)).sum()
+    px_inv = sparse.diags(invert_nonzero(px), [0])
+    py_inv = sparse.diags(invert_nonzero(py), [0])
+    hygx = -(px * xlogx(py_inv.dot(pxy)).sum(axis=0)).sum()
+    hxgy = -(py * xlogx(pxy.dot(px)).sum(axis=1)).sum()
     return hygx + hxgy
 ```
