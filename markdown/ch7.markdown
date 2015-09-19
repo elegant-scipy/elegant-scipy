@@ -256,15 +256,11 @@ You also can't read a long string of them: errors accumulate and the readout bec
 (New technology is changing this, but here we will focus on short-read sequencing data, the most common today.)
 Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases), and then assemble those like an enormous puzzle of 30 million pieces.
 
-(MISSISSIPPI assembly example)
-
 Before performing assembly, it is vital to perform read correction.
 During DNA sequencing some bases are incorrectly read out, and must be fixed, or they will mess up the assembly.
 (Imagine having puzzle pieces with the wrong shape.)
 
 One correction strategy is to find similar reads in your dataset and fix the error by grabbing the correct information from those reads. Or alternatively, you may choose to completely discard those reads containing errors.
-
-(MISSISSIPI assembly with error-correction)
 
 However, this is a very inefficient way to do this, because finding similar reads takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
 (And these are not cheap operations.)
@@ -494,74 +490,7 @@ hist = np.bincount(counts)
 plt.bar(np.arange(len(hist)), hist / hist.sum())
 ```
 
-## Genome assembly
 
-Now that we have a handle on k-mer frequencies in our DNA sequence, we can implement an important k-mer based assembly algorithm: a De Bruijn graph assembler.
-We will use a toy genetic sequence to demonstrate how this works.
-See [this link](http://www.cs.jhu.edu/~langmea/resources/lecture_notes/assembly_dbg.pdf) for more on this topic.
-The sequence is derived from Fig 3 of [this paper](http://www.nature.com/nbt/journal/v29/n11/full/nbt.2023.html), but in our case it is not circular.
-
-First we will needs some DNA sequencing reads to play with:
-
-```python
-@tz.curry
-def generate_reads(seq, nreads=60, readlen=5):  # Generate sequencing reads with on average 30x coverage of each DNA base
-    for i in range(nreads):
-        start = np.random.randint(0, len(seq) - readlen + 1)
-        yield seq[start : start+readlen]
-```
-
-Next, we generate some reads and feed them into a De Bruijn graph implemented in networkx.
-
-```python
-import networkx as nx
-seq = 'ATGGCGTGCA'
-g = nx.DiGraph()
-```
-We can draw the graph:
-```python
-import nxeuler as eu  # local module
-
-draw_circular = tz.partial(nx.draw_circular, with_labels=True,
-                                             node_color='w',
-                                             node_size=600)
-reads = generate_reads(seq)
-draw = tz.pipe(reads, c.map(c.sliding_window(3)),  # k-mers
-                      tz.concat,  # join k-mer streams from all reads
-                      c.map(''.join),  # make strings from tup of char
-                      c.map(eu.edge_from_kmer),  # get k-1-mer tuples
-                      eu.add_edges(g),  # add them as edges to the graph
-                      draw_circular)  # draw the graph
-```
-(Note that the graph is much smaller than the original dataset of the reads!)
-
-Or, we can feed the graph directly into an Eulerian path algorithm, and reconstruct the original genome from that:
-
-```python
-import toolz as tz
-from toolz import curried as c
-def assemble(euler_path):
-    start = tz.first(euler_path)[0]
-    rest = tz.pipe(euler_path, c.pluck(0),  # 1st k-1-mer
-                               c.pluck(1),  # 2nd letter
-                               ''.join)
-    return start + rest
-
-reads = generate_reads(seq)
-g = nx.DiGraph()
-inferred = tz.pipe(reads, c.map(c.sliding_window(3)),  # k-mers
-                          tz.concat,  # join k-mer streams from all reads
-                          c.map(''.join),  # make string from tup of char
-                          c.map(eu.edge_from_kmer),  # get k-1-mer tups
-                          eu.add_edges(g),  # add edges to g
-                          eu.eulerian_path,  # iterate over euler path edges
-                          assemble)  # get assembled string from path
-print(seq)
-print(inferred)
-```
-
-Note that real assembly requires lots of sophisticated error correction.
-But I hope this gives you an idea of the potential to stream over reads to generate a more compact view for assembly.
 
 > ## tips {.callout}
 >  - (list of list -> list) with tz.concat
