@@ -337,13 +337,19 @@ We can then plot a histogram of the counts, and confirm that there are indeed tw
 ```python
 from matplotlib import pyplot as plt
 
-def integer_histogram(counts, normed=True, *args, **kwargs):
+def integer_histogram(counts, normed=True, xlim=[], ylim=[],
+                      *args, **kwargs):
     hist = np.bincount(counts)
     if normed:
         hist = hist / np.sum(hist)
-    return plt.bar(np.arange(len(hist)), hist, *args, **kwargs)
+    plt.plot(np.arange(hist.size), hist, *args, **kwargs)
+    plt.xlabel('counts')
+    plt.ylabel('frequency')
+    plt.xlim(*xlim)
+    plt.ylim(*ylim)
 
-integer_histogram(list(counts.values()))
+counts_arr = np.fromiter(counts.values(), dtype=int, count=len(counts))
+integer_histogram(counts_arr, xlim=(-1, 250), lw=2)
 ```
 
 Notice the nice distribution of k-mer frequencies, along with a big bump of k-mers (at the left of the plot) that appear only once.
@@ -493,8 +499,7 @@ We can now observe the frequency of different k-mers:
 
 ```python
 counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
-hist = np.bincount(counts)
-plt.bar(np.arange(len(hist)), hist / hist.sum())
+integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
 
 ## Genome assembly
