@@ -18,6 +18,51 @@ import seaborn as sns
 import itertools as it
 ```
 
+### Get the data
+
+```python
+import numpy as np
+import pandas as pd
+
+# Import TCGA melanoma data
+filename = 'data/counts.txt'
+with open(filename, 'rt') as f:
+    data_table = pd.read_csv(f, index_col=0) # Parse file with pandas
+
+print(data_table.iloc[:5, :5])
+```
+
+```python
+# Sample names
+samples = list(data_table.columns)
+```
+
+```python
+# Import gene lengths
+filename = 'data/genes.csv'
+with open(filename, 'rt') as f:
+    gene_info = pd.read_csv(f, index_col=0) # Parse file with pandas, index by GeneSymbol
+print(gene_info.iloc[:5, :5])
+```
+
+```python
+#Subset gene info to match the count data
+matched_index = data_table.index.intersection(gene_info.index)
+print(gene_info.loc[matched_index].shape)
+print(data_table.loc[matched_index].shape)
+```
+
+```python
+# 1D ndarray containing the lengths of each gene
+gene_lengths = np.asarray(gene_info.loc[matched_index]['GeneLength'],
+                          dtype=int)
+```
+
+```python
+# 2D ndarray containing expression counts for each gene in each individual
+counts = np.asarray(data_table.loc[matched_index], dtype=int)
+```
+
 ```python
 def plot_col_density(data, xlabel=None):
     """For each column (individual) produce a density plot over all rows (genes).
