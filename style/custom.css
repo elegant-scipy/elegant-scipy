@@ -1,0 +1,89 @@
+.rendered_html {
+    font-family: Georgia, serif;
+    font-size: 130%;
+    line-height: 1.5;
+}
+
+.input {
+    width: 930px;
+}
+
+.inner_cell {
+    width: 800px;
+}
+
+.code_cell {
+    width: 800px;
+}
+
+.CodeMirror-sizer {
+}
+
+hr {
+    border: 1px solid #DDD;
+}
+
+.rendered_html h1 {
+    margin: 0.25em 0em 0.5em;
+    font-family: sans-serif;
+    color: #015C9C;
+    text-align: center;
+    line-height: 1.2;
+    page-break-before: always;
+}
+
+.rendered_html h2 {
+    margin: 1.1em 0em 0.5em;
+    font-family: sans-serif;
+    color: #26465D;
+    line-height: 1.2;
+}
+
+.rendered_html h3 {
+    font-family: sans-serif;
+    margin: 1.1em 0em 0.5em;
+    color: #002845;
+    line-height: 1.2;
+}
+
+.rendered_html li {
+    line-height: 1.5;
+}
+
+.CodeMirror-lines {
+    font-size: 110%;
+    line-height: 1.4em;
+    font-family: DejaVu Sans Mono, Consolas, Ubuntu, monospace;
+}
+
+h1.bigtitle {
+    margin: 4cm 1cm 4cm 1cm;
+    font-size: 300%;
+}
+
+h3.point {
+    font-size: 200%;
+    text-align: center;
+    margin: 2em 0em 2em 0em;
+    #26465D
+}
+
+.logo {
+    margin: 20px 0 20px 0;
+}
+
+a.anchor-link {
+    display: none;
+}
+
+h1.title {
+    font-size: 250%;
+}
+
+.exercize {
+    color: #738;
+}
+
+h2 .exercize {
+    font-style: italic;
+}
