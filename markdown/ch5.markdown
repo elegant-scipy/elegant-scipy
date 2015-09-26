@@ -17,14 +17,15 @@ One such problem is the comparison of image segmentations.
 
 But let's start simple and work our way up to segmentations.
 
-Suppose you just started working as a data scientist at email startup Spamomatic.
+Suppose you just started working as a data scientist at email startup Spam-o-matic.
 You are tasked with building a detector for spam email.
 You encode the detector outcome as a numeric value, 0 for not spam and 1 for spam.
 
 If you have a training set of 10 emails to classify, you end up with a vector of *predictions*:
 
 ```python
-pred = np.array([[0, 1, 0, 0, 1, 1, 1, 0, 1, 1])
+import numpy as np
+pred = np.array([0, 1, 0, 0, 1, 1, 1, 0, 1, 1])
 ```
 
 You can check how well you've done by comparing it to a vector of *ground truth*, classifications obtained by inspecting each message by hand.
