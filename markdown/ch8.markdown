@@ -10,9 +10,12 @@ The simplest form is probably iterating through lines in a files, processing eac
 For example a loop like this:
 
 ```python
+import numpy as np
 with open('data/expr.tsv') as f:
+    sum_of_means = 0
     for line in f:
-        pass
+        sum_of_means += np.mean(np.fromstring(line, dtype=int, sep='\t'))
+print(sum_of_means)
 ```
 
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
