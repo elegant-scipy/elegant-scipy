@@ -12,22 +12,30 @@ $ notedown --match fenced --run markdown/chapter.markdown > ch2.ipynb
 $ ipython nbconvert --to html ch2.ipynb
 ```
 
-At some point this should be automated with a Makefile.
+You can also run `make` to create all the chapters:
+
+```console
+$ make all
+```
 
 Deadlines
 ========
 ~~Mar: 2 chs: 3/15/15~~  
 Jun: half chs: 6/1/15  
-Oct: First full draft: 10/15/15  
-Nov: All in:  11/15/15
+Oct: Ch5 (sparse): 10/15/15  
+Nov: Ch6 (linalg): 11/15/15  
+Dec: Ch7 (optimize): 12/15/15  
+Dec: first full draft! 12/15/15  
+Jan: All in:  1/15/16
 
 Availabilities
 -------------
-Stéfan: I am out of action half of May, the whole of June, and part of July, so that may slow me down for the first full draft. 
+Stéfan: ???
 
-Harriet: I'll be pretty busy in late July and August.
+Harriet: In the US late Oct, all Nov, early Dec. Some writing possible in
+second half of this.
 
-Juan: Most of August is out
+Juan: Available for the rest of it!
 
 Chapters/Ideas
 ==============
@@ -51,27 +59,26 @@ Getting Started:
 Installation - Anaconda
 Using IPythonNotebook and accessing the book materials
 
-**Chapter 1:** Statistics, including numpy basics: memory layout, strides, F-
-and C-contiguity, 1D, 2D arrays.
+**Chapter 1-2:** Statistics, including numpy basics: memory layout, strides, F-
+and C-contiguity, 1D, 2D arrays. Rough split between chapters 1 and 2:
+broadcasting, advanced indexing.
 
-**Chapter 2:** Image segmentation using `ndimage.generic_filter`. This includes
+**Chapter 3:** Image segmentation using `ndimage.generic_filter`. This includes
 an introduction to the NumPy array, memory layout, strides, F- and
 C-contiguity, 1D, 2D, and nD filters, and finally filtering to produce a graph
 and segmentation from that graph. (This may be broken down into several
 smaller chapters.)
 
-**Chapter 3:** Fourier Transforms. (Need to find a killer application/use for
-this one, but it's a central enough topic that it will be a high priority to
-include such an example.)
+**Chapter 4:** Fourier Transforms in 1D, 2D, and 3D. Scanning of a rock face.
 
-**Chapter 4:** Use of sparse matrices to evaluate clustering accuracy.
+**Chapter 5:** Use of sparse matrices to evaluate segmentation accuracy.
 
-**Chapter 5:** Eigendecomposition. (Same as FTs.)
+**Chapter 6:** Eigendecomposition. Ideas: Mark Newman's paper on
+community-finding, pagerank for paper citations... Others?
 
-**Chapter 6:** Optimization. (idem)
+**Chapter 7:** Optimization. Ideas: super-resolution microscopy.
 
-**Chapter 7:** Streaming data. (idem, but specifically want to include use of
-Matt Rocklin's Toolz)
+**Chapter 8:** Streaming data. Piping a genome into a markov model.
 
 **Chapter -1:** Contributing to the SciPy ecosystem: how to use git and github,
 and follow best practices, to contribute to SciPy and related packages.
