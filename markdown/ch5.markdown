@@ -83,6 +83,64 @@ def confusion_matrix1(pred, gt):
 [motivate `sparse` and `sparse.coo_matrix` with above]
 
 
+so, because the COO format (a) only stores a `rows` array, a `columns` array, and a `values` array, and (b) sums the values whenever the same (row column) pair appears twice, we are already done, just by making `rows = pred`, `columns = gt`, and `values = np.ones(pred.size)`!
+
+```python
+from scipy import sparse
+
+def confusion_matrix(pred, gt):
+    cont = sparse.coo_matrix((np.ones(pred.size), (pred, gt)))
+    return cont
+```
+
+To look at a small one, we simply use the `.todense()` method, which returns the numpy array corresponding to that matrix:
+
+```python
+cont = confusion_matrix(pred, gt)
+print(cont)
+```
+
+```python
+print(cont.todense())
+```
+
+# Contingency matrices in segmentation
+
+You can think of the segmentation of an image in the same way as the classification problem above:
+The segment label at each *pixel* is a *prediction* about which *class* the pixel belongs to.
+And numpy arrays allow us to do this transparently, because their `.ravel()` method returns a 1D view of the underlying data.
+
+As an example, here's a segmentation of a tiny 3 by 3 image:
+
+```python
+seg = np.array([[1, 1, 2],
+                [1, 2, 2],
+                [3, 3, 3]], dtype=int)
+```
+
+Here’s the ground truth, what some person said was the correct way to segment this image:
+
+```python
+gts = np.array([[1, 1, 1],
+                [1, 1, 1],
+                [2, 2, 2]], dtype=int)
+```
+
+We can think of these two as classifications, just like before:
+
+```python
+print(seg.ravel())
+print(gts.ravel())
+```
+
+Then, like above, the contingency matrix is given by:
+
+```python
+cont = sparse.coo_matrix((np.ones(seg.size),
+                          (seg.ravel(), gt.ravel())))
+print(cont)
+```
+
 Segmentation is a hard problem, so it's important to measure how well a segmentation algorithm is doing, by comparing its output to a "ground truth" segmentation that is manually produced by a human.
 
 But, even this comparison is not an easy task.
