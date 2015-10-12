@@ -77,7 +77,35 @@ def confusion_matrix1(pred, gt):
     return cont
 ```
 
-[Extend the above to 3 classes instead of 2]
+We can make this example a bit more general:
+Instead of classifying spam and non-spam, we can classify spam, newsletters,
+sales and promotions, mailing lists, and personal email.
+That's 5 categories, which we'll label 0 to 4.
+The confusion matrix will now be 5-by-5, with matches counted on the diagonal,
+and errors counted on the off-diagonal entries.
+Also, because some classes are easier to mistake for one another, the matrix
+will be *sparse*, with many 0 entries.
+
+The definition of the `confusion_matrix` function, above, doesn't extend well
+to this larger matrix, because now we must have *twenty-five* passes though the
+results and ground truth arrays.
+This problem only grows as we add more email categories, such as social media
+notifications.
+
+**Exercise:** Write a function to compute the confusion matrix in one pass, as
+above, but instead of assuming two categories, infer the number of categories
+from the input.
+
+```python
+def general_confusion_matrix(pred, gt):
+    n_classes = None  # replace `None` with something useful
+    # your code goes here
+    return cont
+```
+
+Your one-pass solution will scale well with the number of classes, but, because
+the for-loop runs in the Python interpreter, it will be slow when you have a
+large number of documents.
 
 [Extend it to *unknown number* of classes]
 
