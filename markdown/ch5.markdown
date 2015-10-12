@@ -146,7 +146,7 @@ data = np.array([4, 3, 32], dtype=float)
 i = np.array([0, 0, 1])
 j = np.array([0, 2, 1])
 
-scoo = sparse.coo_matrix(data, (i, j))
+scoo = sparse.coo_matrix((data, (i, j)))
 ```
 
 The `.todense()` method of every sparse format in `scipy.sparse` returns a
