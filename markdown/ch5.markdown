@@ -160,7 +160,7 @@ scoo.todense()
 **Exercise**: write out the COO representation of the following matrix:
 
 ```python
-s2 = np.array([[0, 0, 0, 0, 0],
+s2 = np.array([[0, 0, 6, 0, 0],
                [1, 2, 0, 4, 5],
                [0, 1, 0, 0, 0],
                [9, 0, 0, 0, 0],
