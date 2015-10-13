@@ -66,6 +66,12 @@ def confusion_matrix(pred, gt):
     return cont
 ```
 
+We can check that this gives use the right counts:
+
+```python
+confusion_matrix(pred, gt)
+```
+
 **Question:** Why did we call this inefficient?
 
 **Exercise:** Write an alternative way of computing the confusion matrix that only makes a single pass through `pred` and `gt`.
