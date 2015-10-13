@@ -296,3 +296,9 @@ for i, segment in enumerate(nx.connected_components(g)):
 segmented = map_array[seg]
 plt.imshow(color.label2rgb(segmented, tiger));
 ```
+
+```python
+# workaround version of vi while the version for this chapter is being fixed
+from gala import evaluate
+vi = evaluate.vi
+```
