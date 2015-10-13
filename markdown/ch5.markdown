@@ -164,7 +164,7 @@ s2 = np.array([[0, 0, 6, 0, 0],
                [1, 2, 0, 4, 5],
                [0, 1, 0, 0, 0],
                [9, 0, 0, 0, 0],
-               [0, 0, 0, 0, 7]], dtype=float)
+               [0, 0, 0, 6, 7]])
 ```
 
 Unfortunately, although the COO format is intuitive, it's not very optimized to
@@ -175,7 +175,49 @@ computation!)
 However, you can look at your COO representation above to help you identify
 redundant information:
 Notice all those repeated `1`s?
-(This introduces CSR format.)
+
+If we use COO to enumerate the nonzero entries row-by-row, rather than in
+arbitrary order (which the format allows), we end up with many consecutive,
+repeated values in the `i` array.
+These can be compressed by indicating the *indices* in `j` where the next row
+starts, rather than repeatedly writing the row index.
+
+Let's work through the example above.
+In CSR format, the `j` and `data` arrays are unchanged (but `j` is renamed to
+`indices`).
+However, the `i` array, instead of indicating the rows, indicates *where* in
+`j` each row begins, and is renamed to `indptr`, for "index pointer".
+
+So, let's look at `i` and `j` in COO format, ignoring `data`:
+
+```python
+i = [0, 1, 1, 1, 1, 2, 3, 4, 4]
+j = [2, 0, 1, 3, 4, 1, 0, 3, 4]
+```
+
+Each new row begins at the index where `i` changes.
+The 0th row starts at index 0, and the 1st row starts at index 1, but the 2nd
+row starts where "2" first appears in `i`, at index 5.
+Then, the indices increase by 1 for rows 3 and 4, to 6 and 7.
+The final index, indicating the end of the matrix, is the total number of
+nonzero values (9).
+So:
+
+```python
+indptr = [0, 1, 5, 6, 7, 9]
+```
+
+We can check our work by comparing the `.todense()` output from our COO and
+CSR representations to `s2` defined above:
+
+```python
+data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
+
+coo = sparse.coo_matrix((data, (i, j)))
+csr = sparse.csr_matrix((data, j, indptr))
+
+np.all(coo.todense(), csr.todense())
+```
 
 [This is useful in a very wide array of scientific problems.]
 
