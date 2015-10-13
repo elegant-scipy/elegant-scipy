@@ -319,5 +319,19 @@ vi(auto_seg, human_seg)
 auto_seg = RAG_segmentation(seg, tiger, threshold=80)
 plt.imshow(color.label2rgb(auto_seg, tiger));
 
-vi(auto_seg, human_seg)
+vi(auto_seg, human_seg, ignore_x=[], ignore_y=[])
+```
+
+```python
+# Try many thresholds
+def vi_at_threshold(seg, tiger, human_seg, threshold):
+    auto_seg = RAG_segmentation(seg, tiger, threshold)
+    return(vi(auto_seg, human_seg, ignore_x=[], ignore_y=[]))
+
+thresholds = range(0,110,10)
+vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold) for threshold in thresholds]
+```
+
+```python
+plt.plot(thresholds, vi_per_threshold);
 ```
