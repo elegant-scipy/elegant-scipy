@@ -189,6 +189,7 @@ arbitrary order (which the format allows), we end up with many consecutive,
 repeated values in the `i` array.
 These can be compressed by indicating the *indices* in `j` where the next row
 starts, rather than repeatedly writing the row index.
+This is the basis for the *compressed sparse row* or *CSR* format.
 
 Let's work through the example above.
 In CSR format, the `j` and `data` arrays are unchanged (but `j` is renamed to
@@ -215,8 +216,9 @@ So:
 indptr = [0, 1, 5, 6, 7, 9]
 ```
 
+Let's use these hand-computed arrays to build a CSR matrix in SciPy.
 We can check our work by comparing the `.todense()` output from our COO and
-CSR representations to `s2` defined above:
+CSR representations to the numpy array `s2` that we defined earlier.
 
 ```python
 data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
@@ -224,7 +226,10 @@ data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
 coo = sparse.coo_matrix((data, (i, j)))
 csr = sparse.csr_matrix((data, j, indptr))
 
-np.all(coo.todense(), csr.todense())
+print('The COO and CSR arrays are equal: ',
+      np.all(coo.todense(), csr.todense()))
+print('The CSR and NumPy arrays are equal: ',
+      np.all(s2, csr.todense()))
 ```
 
 [This is useful in a very wide array of scientific problems.]
