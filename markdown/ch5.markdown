@@ -1,3 +1,8 @@
+```python
+%matplotlib inline
+# Set up plotting
+```
+
 # Contingency tables using sparse coordinate matrices
 
 *Code by Juan Nunez-Iglesias.  
@@ -197,4 +202,33 @@ def vi(x, y):
     hygx = -(px * xlogx(py_inv.dot(pxy)).sum(axis=0)).sum()
     hxgy = -(py * xlogx(pxy.dot(px)).sum(axis=1)).sum()
     return hygx + hxgy
+```
+
+[Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
+May need to ask permission to use in the book. See: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/]
+
+```python
+# VI tiger example from Ch3
+
+from skimage import io
+from matplotlib import pyplot as plt
+
+url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
+tiger = io.imread(url)
+
+plt.imshow(tiger);
+```
+
+```python
+from scipy import ndimage as nd
+from skimage import color
+
+human_seg = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
+boundaries = io.imread(human_seg)
+io.imshow(boundaries);
+```
+
+```python
+seg = nd.label(boundaries > 100)[0]
+io.imshow(color.label2rgb(seg, tiger));
 ```
