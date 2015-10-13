@@ -279,26 +279,45 @@ io.imshow(color.label2rgb(seg, tiger));
 ```
 
 ```python
-g = build_rag(seg, tiger)
-for n in g:
-    node = g.node[n]
-    node['mean'] = node['total color'] / node['pixel count']
-for u, v in g.edges_iter():
-    d = g.node[u]['mean'] - g.node[v]['mean']
-    g[u][v]['weight'] = np.linalg.norm(d)
+def RAG_segmentation(base_seg, image, threshold=80):
+    g = build_rag(base_seg, image)
+    for n in g:
+        node = g.node[n]
+        node['mean'] = node['total color'] / node['pixel count']
+    for u, v in g.edges_iter():
+        d = g.node[u]['mean'] - g.node[v]['mean']
+        g[u][v]['weight'] = np.linalg.norm(d)
 
-threshold_graph(g, 80)
+    threshold_graph(g, threshold)
 
-map_array = np.zeros(np.max(seg) + 1, int)
-for i, segment in enumerate(nx.connected_components(g)):
-    for initial in segment:
-        map_array[initial] = i
-segmented = map_array[seg]
-plt.imshow(color.label2rgb(segmented, tiger));
+    map_array = np.zeros(np.max(seg) + 1, int)
+    for i, segment in enumerate(nx.connected_components(g)):
+        for initial in segment:
+            map_array[initial] = i
+    segmented = map_array[seg]
+    return(segmented)
 ```
 
 ```python
 # workaround version of vi while the version for this chapter is being fixed
 from gala import evaluate
 vi = evaluate.vi
+```
+
+Try a few thresholds
+
+```python
+# Ground truth: human_seg
+# Automated segmentation: auto_seg
+auto_seg = RAG_segmentation(seg, tiger, threshold=40)
+plt.imshow(color.label2rgb(auto_seg, tiger));
+
+vi(auto_seg, human_seg)
+```
+
+```python
+auto_seg = RAG_segmentation(seg, tiger, threshold=80)
+plt.imshow(color.label2rgb(auto_seg, tiger));
+
+vi(auto_seg, human_seg)
 ```
