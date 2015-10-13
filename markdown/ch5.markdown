@@ -223,14 +223,14 @@ plt.imshow(tiger);
 from scipy import ndimage as nd
 from skimage import color
 
-human_seg = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
-boundaries = io.imread(human_seg)
+human_seg_url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
+boundaries = io.imread(human_seg_url)
 io.imshow(boundaries);
 ```
 
 ```python
-seg = nd.label(boundaries > 100)[0]
-io.imshow(color.label2rgb(seg, tiger));
+human_seg = nd.label(boundaries > 100)[0]
+io.imshow(color.label2rgb(human_seg, tiger));
 ```
 
 ```python
