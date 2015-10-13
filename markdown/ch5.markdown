@@ -126,8 +126,10 @@ For sparse matrices, there are actually a wide array of possible formats, and
 the "right" format depends on the problem you want to solve.
 
 Perhaps the most intuitive is the coordinate, or COO, format.
-This consists of three arrays, each of the size of the nonzero entries of the
-array:
+This uses three 1D arrays to represent a 2D matrix $A$.
+Each of these arrays has length equal to the number of nonzero values in $A$,
+and together they list (i, j, value) coordinates of every entry that is not
+equal to 0.
 
 - the `i` and `j` arrays, which together specify the location of each non-zero
   entry.
