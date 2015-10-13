@@ -232,3 +232,67 @@ io.imshow(boundaries);
 seg = nd.label(boundaries > 100)[0]
 io.imshow(color.label2rgb(seg, tiger));
 ```
+
+```python
+# Draw a region adjacency graph (RAG) - all code from Ch3
+import networkx as nx
+import numpy as np
+from scipy import ndimage as nd
+from skimage.future import graph
+
+def add_edge_filter(values, graph):
+    current = values[0]
+    neighbors = values[1:]
+    for neighbor in neighbors:
+        graph.add_edge(current, neighbor)
+    return 0. # generic_filter requires a return value, which we ignore!
+
+def build_rag(labels, image):
+    g = nx.Graph()
+    footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
+    for j in range(labels.ndim):
+        fp = np.swapaxes(footprint, j, 0)
+        fp[0, ...] = 0  # zero out top of footprint on each axis
+    _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
+                          mode='nearest', extra_arguments=(g,))
+    for n in g:
+        g.node[n]['total color'] = np.zeros(3, np.double)
+        g.node[n]['pixel count'] = 0
+    for index in np.ndindex(labels.shape):
+        n = labels[index]
+        g.node[n]['total color'] += image[index]
+        g.node[n]['pixel count'] += 1
+    return g
+
+def threshold_graph(g, t):
+    to_remove = ((u, v) for (u, v, d) in g.edges(data=True)
+                 if d['weight'] > t)
+    g.remove_edges_from(to_remove)
+```
+
+```python
+# Baseline segmentation
+from skimage import segmentation
+seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
+                        enforce_connectivity=True, sigma=3)
+io.imshow(color.label2rgb(seg, tiger));
+```
+
+```python
+g = build_rag(seg, tiger)
+for n in g:
+    node = g.node[n]
+    node['mean'] = node['total color'] / node['pixel count']
+for u, v in g.edges_iter():
+    d = g.node[u]['mean'] - g.node[v]['mean']
+    g[u][v]['weight'] = np.linalg.norm(d)
+
+threshold_graph(g, 80)
+
+map_array = np.zeros(np.max(seg) + 1, int)
+for i, segment in enumerate(nx.connected_components(g)):
+    for initial in segment:
+        map_array[initial] = i
+segmented = map_array[seg]
+plt.imshow(color.label2rgb(segmented, tiger));
+```
