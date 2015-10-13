@@ -66,6 +66,12 @@ def confusion_matrix(pred, gt):
     return cont
 ```
 
+We can check that this gives use the right counts:
+
+```python
+confusion_matrix(pred, gt)
+```
+
 **Question:** Why did we call this inefficient?
 
 **Exercise:** Write an alternative way of computing the confusion matrix that only makes a single pass through `pred` and `gt`.
@@ -77,12 +83,164 @@ def confusion_matrix1(pred, gt):
     return cont
 ```
 
-[Extend the above to 3 classes instead of 2]
+We can make this example a bit more general:
+Instead of classifying spam and non-spam, we can classify spam, newsletters,
+sales and promotions, mailing lists, and personal email.
+That's 5 categories, which we'll label 0 to 4.
+The confusion matrix will now be 5-by-5, with matches counted on the diagonal,
+and errors counted on the off-diagonal entries.
 
-[Extend it to *unknown number* of classes]
+The definition of the `confusion_matrix` function, above, doesn't extend well
+to this larger matrix, because now we must have *twenty-five* passes though the
+results and ground truth arrays.
+This problem only grows as we add more email categories, such as social media
+notifications.
 
-[motivate `sparse` and `sparse.coo_matrix` with above]
+**Exercise:** Write a function to compute the confusion matrix in one pass, as
+above, but instead of assuming two categories, infer the number of categories
+from the input.
 
+```python
+def general_confusion_matrix(pred, gt):
+    n_classes = None  # replace `None` with something useful
+    # your code goes here
+    return cont
+```
+
+Your one-pass solution will scale well with the number of classes, but, because
+the for-loop runs in the Python interpreter, it will be slow when you have a
+large number of documents.
+Also, because some classes are easier to mistake for one another, the matrix
+will be *sparse*, with many 0 entries.
+Indeed, as the number of classes increases, dedicating lots of memory space to
+the 0 entries of the contingency matrix is increasingly wasteful.
+Instead, we can use the `sparse` module of SciPy, which contains objects to
+efficiently represent sparse matrices.
+
+## scipy.sparse data formats
+
+We covered the internal data format of NumPy arrays in Chapter 1.
+I hope you agree that it's a fairly intuitive, and, in some sense, inevitable
+format to hold n-dimensional array data.
+For sparse matrices, there are actually a wide array of possible formats, and
+the "right" format depends on the problem you want to solve.
+
+Perhaps the most intuitive is the coordinate, or COO, format.
+This uses three 1D arrays to represent a 2D matrix $A$.
+Each of these arrays has length equal to the number of nonzero values in $A$,
+and together they list (i, j, value) coordinates of every entry that is not
+equal to 0.
+
+- the `i` and `j` arrays, which together specify the location of each non-zero
+  entry.
+- the `data` array, which specifies the *value* at each location.
+
+Every part of the matrix that is not represented by the `(i, j)` pairs is
+considered to be 0.
+
+So, to represent the matrix:
+
+```python
+s = np.array([[ 4,  0, 3],
+              [ 0, 32, 0]], dtype=float)
+```
+
+We can do the following:
+
+```python
+from scipy import sparse
+
+data = np.array([4, 3, 32], dtype=float)
+i = np.array([0, 0, 1])
+j = np.array([0, 2, 1])
+
+scoo = sparse.coo_matrix((data, (i, j)))
+```
+
+The `.todense()` method of every sparse format in `scipy.sparse` returns a
+numpy array representation of the sparse data.
+We can use this to check that we created `scoo` correctly:
+
+```python
+scoo.todense()
+```
+
+**Exercise**: write out the COO representation of the following matrix:
+
+```python
+s2 = np.array([[0, 0, 6, 0, 0],
+               [1, 2, 0, 4, 5],
+               [0, 1, 0, 0, 0],
+               [9, 0, 0, 0, 0],
+               [0, 0, 0, 6, 7]])
+```
+
+Unfortunately, although the COO format is intuitive, it's not very optimized to
+use the minimum amount of memory, or to traverse the array as quickly as
+possible during computations.
+(Remember from Chapter 1, *data locality* is very important to efficient
+computation!)
+However, you can look at your COO representation above to help you identify
+redundant information:
+Notice all those repeated `1`s?
+
+If we use COO to enumerate the nonzero entries row-by-row, rather than in
+arbitrary order (which the format allows), we end up with many consecutive,
+repeated values in the `i` array.
+These can be compressed by indicating the *indices* in `j` where the next row
+starts, rather than repeatedly writing the row index.
+This is the basis for the *compressed sparse row* or *CSR* format.
+
+Let's work through the example above.
+In CSR format, the `j` and `data` arrays are unchanged (but `j` is renamed to
+`indices`).
+However, the `i` array, instead of indicating the rows, indicates *where* in
+`j` each row begins, and is renamed to `indptr`, for "index pointer".
+
+So, let's look at `i` and `j` in COO format, ignoring `data`:
+
+```python
+i = [0, 1, 1, 1, 1, 2, 3, 4, 4]
+j = [2, 0, 1, 3, 4, 1, 0, 3, 4]
+```
+
+Each new row begins at the index where `i` changes.
+The 0th row starts at index 0, and the 1st row starts at index 1, but the 2nd
+row starts where "2" first appears in `i`, at index 5.
+Then, the indices increase by 1 for rows 3 and 4, to 6 and 7.
+The final index, indicating the end of the matrix, is the total number of
+nonzero values (9).
+So:
+
+```python
+indptr = [0, 1, 5, 6, 7, 9]
+```
+
+Let's use these hand-computed arrays to build a CSR matrix in SciPy.
+We can check our work by comparing the `.todense()` output from our COO and
+CSR representations to the numpy array `s2` that we defined earlier.
+
+```python
+data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
+
+coo = sparse.coo_matrix((data, (i, j)))
+csr = sparse.csr_matrix((data, j, indptr))
+
+print('The COO and CSR arrays are equal: ',
+      np.all(coo.todense(), csr.todense()))
+print('The CSR and NumPy arrays are equal: ',
+      np.all(s2, csr.todense()))
+```
+
+[This is useful in a very wide array of scientific problems.]
+
+## Applications of sparse matrices
+
+[@stefanv's section]
+
+## Back to contingency matrices
+
+[Extend to *unknown number* of classes]
 
 so, because the COO format (a) only stores a `rows` array, a `columns` array, and a `values` array, and (b) sums the values whenever the same (row column) pair appears twice, we are already done, just by making `rows = pred`, `columns = gt`, and `values = np.ones(pred.size)`!
 
