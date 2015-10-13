@@ -1,3 +1,8 @@
+```python
+%matplotlib inline
+# Set up plotting
+```
+
 # Contingency tables using sparse coordinate matrices
 
 *Code by Juan Nunez-Iglesias.  
@@ -355,4 +360,136 @@ def vi(x, y):
     hygx = -(px * xlogx(py_inv.dot(pxy)).sum(axis=0)).sum()
     hxgy = -(py * xlogx(pxy.dot(px)).sum(axis=1)).sum()
     return hygx + hxgy
+```
+
+[Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
+May need to ask permission to use in the book. See: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/]
+
+```python
+# VI tiger example from Ch3
+
+from skimage import io
+from matplotlib import pyplot as plt
+
+url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
+tiger = io.imread(url)
+
+plt.imshow(tiger);
+```
+
+```python
+from scipy import ndimage as nd
+from skimage import color
+
+human_seg_url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
+boundaries = io.imread(human_seg_url)
+io.imshow(boundaries);
+```
+
+```python
+human_seg = nd.label(boundaries > 100)[0]
+io.imshow(color.label2rgb(human_seg, tiger));
+```
+
+```python
+# Draw a region adjacency graph (RAG) - all code from Ch3
+import networkx as nx
+import numpy as np
+from scipy import ndimage as nd
+from skimage.future import graph
+
+def add_edge_filter(values, graph):
+    current = values[0]
+    neighbors = values[1:]
+    for neighbor in neighbors:
+        graph.add_edge(current, neighbor)
+    return 0. # generic_filter requires a return value, which we ignore!
+
+def build_rag(labels, image):
+    g = nx.Graph()
+    footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
+    for j in range(labels.ndim):
+        fp = np.swapaxes(footprint, j, 0)
+        fp[0, ...] = 0  # zero out top of footprint on each axis
+    _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
+                          mode='nearest', extra_arguments=(g,))
+    for n in g:
+        g.node[n]['total color'] = np.zeros(3, np.double)
+        g.node[n]['pixel count'] = 0
+    for index in np.ndindex(labels.shape):
+        n = labels[index]
+        g.node[n]['total color'] += image[index]
+        g.node[n]['pixel count'] += 1
+    return g
+
+def threshold_graph(g, t):
+    to_remove = ((u, v) for (u, v, d) in g.edges(data=True)
+                 if d['weight'] > t)
+    g.remove_edges_from(to_remove)
+```
+
+```python
+# Baseline segmentation
+from skimage import segmentation
+seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
+                        enforce_connectivity=True, sigma=3)
+io.imshow(color.label2rgb(seg, tiger));
+```
+
+```python
+def RAG_segmentation(base_seg, image, threshold=80):
+    g = build_rag(base_seg, image)
+    for n in g:
+        node = g.node[n]
+        node['mean'] = node['total color'] / node['pixel count']
+    for u, v in g.edges_iter():
+        d = g.node[u]['mean'] - g.node[v]['mean']
+        g[u][v]['weight'] = np.linalg.norm(d)
+
+    threshold_graph(g, threshold)
+
+    map_array = np.zeros(np.max(seg) + 1, int)
+    for i, segment in enumerate(nx.connected_components(g)):
+        for initial in segment:
+            map_array[initial] = i
+    segmented = map_array[seg]
+    return(segmented)
+```
+
+```python
+# workaround version of vi while the version for this chapter is being fixed
+from gala import evaluate
+vi = evaluate.vi
+```
+
+Try a few thresholds
+
+```python
+# Ground truth: human_seg
+# Automated segmentation: auto_seg
+auto_seg = RAG_segmentation(seg, tiger, threshold=40)
+plt.imshow(color.label2rgb(auto_seg, tiger));
+
+vi(auto_seg, human_seg)
+```
+
+```python
+auto_seg = RAG_segmentation(seg, tiger, threshold=80)
+plt.imshow(color.label2rgb(auto_seg, tiger));
+
+vi(auto_seg, human_seg, ignore_x=[], ignore_y=[])
+```
+
+```python
+# Try many thresholds
+def vi_at_threshold(seg, tiger, human_seg, threshold):
+    auto_seg = RAG_segmentation(seg, tiger, threshold)
+    return(vi(auto_seg, human_seg, ignore_x=[], ignore_y=[]))
+
+thresholds = range(0,110,10)
+vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold) for threshold in thresholds]
+```
+
+```python
+plt.plot(thresholds, vi_per_threshold);
 ```
