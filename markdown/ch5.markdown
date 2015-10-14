@@ -508,11 +508,11 @@ Using all our sparse matrix skills, we can calculate the *variation of informati
 
 
 ```python
-vi(auto_seg_10, human_seg, ignore_x=[], ignore_y=[])
+vi(auto_seg_10, human_seg)
 ```
 
 ```python
-vi(auto_seg_40, human_seg, ignore_x=[], ignore_y=[])
+vi(auto_seg_40, human_seg)
 ```
 
 The high threshold has a smaller variation of information, so it's a better segmentation!
@@ -522,10 +522,11 @@ Now we can calculate the VI for a range of possible thresholds and see which one
 # Try many thresholds
 def vi_at_threshold(seg, tiger, human_seg, threshold):
     auto_seg = RAG_segmentation(seg, tiger, threshold)
-    return(vi(auto_seg, human_seg, ignore_x=[], ignore_y=[]))
+    return vi(auto_seg, human_seg)
 
 thresholds = range(0,110,10)
-vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold) for threshold in thresholds]
+vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold)
+                    for threshold in thresholds]
 ```
 
 ```python
