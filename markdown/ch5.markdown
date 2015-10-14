@@ -364,6 +364,7 @@ def vi(x, y):
 
 Now let's put it all together to estimate the best possible automated segmentation of an image.
 You may remember our friendly stalking tiger from chapter 3.
+(If you don't, you might want to work on your threat-assessment skills!)
 Using our skills from chapter 3, we're going to generate a number of possible ways of segmenting the tiger image, and then figure out the best one.
 
 [Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
@@ -395,7 +396,7 @@ io.imshow(boundaries);
 
 Overlaying the tiger image with the human segmentation, we can see that (unsurprisingly) this person does a pretty good job of finding the tiger.
 They have also segmented out the river bank, and a tuft of reeds.
-Nice job, human!
+Nice job, human #1122!
 
 ```python
 human_seg = nd.label(boundaries > 100)[0]
@@ -532,6 +533,7 @@ auto_seg = RAG_segmentation(seg, tiger, threshold=80)
 plt.imshow(color.label2rgb(auto_seg, tiger));
 ```
 
-Exercise:
+Exercise: Segmentation in practice
 
-Try this out on one of the other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+Using the mean or median of those thresholds, then go and segment a new image. Did you get a reasonable segmentation?
