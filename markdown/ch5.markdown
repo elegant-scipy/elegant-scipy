@@ -232,9 +232,9 @@ coo = sparse.coo_matrix((data, (i, j)))
 csr = sparse.csr_matrix((data, j, indptr))
 
 print('The COO and CSR arrays are equal: ',
-      np.all(coo.todense(), csr.todense()))
+      np.all(coo.todense() == csr.todense()))
 print('The CSR and NumPy arrays are equal: ',
-      np.all(s2, csr.todense()))
+      np.all(s2 == csr.todense()))
 ```
 
 [This is useful in a very wide array of scientific problems.]
