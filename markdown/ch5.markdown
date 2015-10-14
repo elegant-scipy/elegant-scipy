@@ -335,17 +335,21 @@ To compute these, we just need to count the number of times labels appear togeth
 It turns out that this can be done *easily* by the constructor of *scipy.sparse.coo_matrix*.
 
 ```python
+import numpy as np
+from scipy import sparse
+
+
 def invert_nonzero(mat):
     mat_inv = mat.copy()
-    nz = mat.data.nonzero()
-    mat_inv.data[nz] = 1 / mat_inv[nz]
+    nz = np.nonzero(mat)
+    mat_inv[nz] = 1 / mat[nz]
     return mat_inv
 
 
 def xlogx(mat):
     matlog = mat.copy()
-    nz = mat.data.nonzero()
-    matlog.data[nz] = mat.data[nz] * np.log2(mat.data[nz])
+    nz = np.nonzero(mat)
+    matlog[nz] = np.multiply(mat[nz], np.log2(mat[nz]))
     return matlog
 
 
@@ -355,11 +359,11 @@ def vi(x, y):
     pxy.data /= np.sum(pxy.data)
     px = pxy.sum(axis=1)
     py = pxy.sum(axis=0)
-    px_inv = sparse.diags(invert_nonzero(px), [0])
-    py_inv = sparse.diags(invert_nonzero(py), [0])
-    hygx = -(px * xlogx(py_inv.dot(pxy)).sum(axis=0)).sum()
-    hxgy = -(py * xlogx(pxy.dot(px)).sum(axis=1)).sum()
-    return hygx + hxgy
+    px_inv = sparse.diags(invert_nonzero(px).A.T, [0])
+    py_inv = sparse.diags(invert_nonzero(py).A, [0])
+    hygx = - px.T * xlogx(px_inv * pxy).sum(axis=1)
+    hxgy = - xlogx(pxy * py_inv).sum(axis=0) * py.T
+    return float(hygx + hxgy)
 ```
 
 Now let's put it all together to estimate the best possible automated segmentation of an image.
