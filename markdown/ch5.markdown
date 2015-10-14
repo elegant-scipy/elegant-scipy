@@ -1,5 +1,6 @@
 ```python
 %matplotlib inline
+import matplotlib.pyplot as plt
 # Set up plotting
 ```
 
@@ -241,7 +242,109 @@ print('The CSR and NumPy arrays are equal: ',
 
 ## Applications of sparse matrices
 
-[@stefanv's section]
+Load and show a sample image:
+
+```python
+from skimage import data
+image = data.camera()
+plt.imshow(image, cmap='gray');
+```
+
+Define transformation matrix:
+
+```
+angle = 30
+C = np.cos(np.deg2rad(angle))
+S = np.sin(np.deg2rad(angle))
+
+H = np.array([[C, -S, 0],
+              [S, C, 0],
+              [0, 0, 1]])
+```
+
+Define sparse operator:
+
+```
+from math import floor
+
+def homography(tf, image_shape):
+    """Represent homographic transformation + bilinear interpolation as a linear operator.
+
+    Parameters
+    ----------
+    tf : (3, 3) ndarray
+        Transformation matrix.
+    image_shape : (M, N)
+        Shape of input gray image.
+
+    Returns
+    -------
+    A : (M * N, M * N) ndarray
+        Linear-operator representing transformation + bilinear interpolation.
+
+    """
+    # Invert matrix.  This tells us, for each output pixel, where to
+    # find its corresponding input pixel.
+    H = np.linalg.inv(tf)
+    M, N = image_shape
+
+    I, J, V = [], [], []
+
+    for i in range(M):
+        for j in range(N):
+
+            jj, ii, _ = np.dot(H, [j, i, 1])
+
+            xx = (int)(floor(jj))
+            yy = (int)(floor(ii))
+
+            if xx < 0 or yy < 0 or yy >= (M - 1) or xx >= (N - 1):
+                continue
+
+            # Fractional part
+            t = ii - yy
+            u = jj - xx
+
+            R = i * N + j
+
+            I.extend([R, R, R, R])
+            J.extend([yy * N + xx,
+                      (yy + 1) * N + xx,
+                      (yy + 1) * N + xx + 1,
+                      yy * N + xx + 1])
+            V.extend([(1 - t) * (1 - u),
+                      t * (1 - u),
+                      t * u,
+                      (1 - t) * u])
+
+    return sparse.coo_matrix((V, (I, J)), shape=(M * N, M * N)).tocsr()
+```
+
+We apply the operator as follows:
+
+```python
+def apply_transform(image, tf):
+   return (tf * image.flat).reshape(image.shape)
+```
+
+Let's try it out:
+
+```python
+tf = homography(H, image.shape)
+out = apply_transform(image, tf)
+plt.imshow(out, cmap='gray')
+```
+
+Now, let's see how it performs in comparison to ndimage:
+
+```python
+%timeit apply_transform(image, tf)
+```
+
+```python
+from scipy import ndimage
+%timeit ndimage.rotate(image, 30)
+```
 
 ## Back to contingency matrices
 
