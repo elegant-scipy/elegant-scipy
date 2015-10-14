@@ -362,12 +362,14 @@ def vi(x, y):
     return hygx + hxgy
 ```
 
+Now let's put it all together to estimate the best possible automated segmentation of an image.
+You may remember our friendly stalking tiger from chapter 3.
+Using our skills from chapter 3, we're going to generate a number of possible ways of segmenting the tiger image, and then figure out the best one.
+
 [Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
 May need to ask permission to use in the book. See: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/]
 
 ```python
-# VI tiger example from Ch3
-
 from skimage import io
 from matplotlib import pyplot as plt
 
@@ -376,6 +378,11 @@ tiger = io.imread(url)
 
 plt.imshow(tiger);
 ```
+
+In order to check our image segmentation, we're going to need a ground truth.
+It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
+Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it.
+Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
 
 ```python
 from scipy import ndimage as nd
@@ -386,10 +393,16 @@ boundaries = io.imread(human_seg_url)
 io.imshow(boundaries);
 ```
 
+Overlaying the tiger image with the human segmentation, we can see that (unsurprisingly) this person does a pretty good job of finding the tiger.
+They have also segmented out the river bank, and a tuft of reeds.
+Nice job, human!
+
 ```python
 human_seg = nd.label(boundaries > 100)[0]
 io.imshow(color.label2rgb(human_seg, tiger));
 ```
+
+Now, let's grab our image segmentation code from chapter 3, and see how well a Python does a recognizing a tiger!
 
 ```python
 # Draw a region adjacency graph (RAG) - all code from Ch3
@@ -436,6 +449,10 @@ seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
 io.imshow(color.label2rgb(seg, tiger));
 ```
 
+In chapter 3, we set the graph threshold at 80 and sort of hand-waved over the whole thing.
+Now we're going to have a closer look at how this threshold impacts our segmentation accuracy.
+So lets pop the segmentation code in a function so we can play with the threshold.
+
 ```python
 def RAG_segmentation(base_seg, image, threshold=80):
     g = build_rag(base_seg, image)
@@ -456,29 +473,42 @@ def RAG_segmentation(base_seg, image, threshold=80):
     return(segmented)
 ```
 
+Let's try a few thresholds and see what happens:
+
+```python
+auto_seg_10 = RAG_segmentation(seg, tiger, threshold=10)
+plt.imshow(color.label2rgb(auto_seg_10, tiger));
+```
+
+```python
+auto_seg_40 = RAG_segmentation(seg, tiger, threshold=40)
+plt.imshow(color.label2rgb(auto_seg_40, tiger));
+```
+
+Actually, in champter 3 we did the segmentation a bunch of times with different thresholds and then (because we're human, so we can) picked one that produced a good segmentation.
+This is a completely unsatisfying way to program image segmentation.
+Clearly, we need a way to automate to do this.
+
+We can see that the higher threshold seems to producing a better segmentation.
+But we have a ground truth, so we can actually put a number to this!
+Using all our sparse matrix skills, we can calculate the *variation of information* or VI for each segmentation.
+
 ```python
 # workaround version of vi while the version for this chapter is being fixed
 from gala import evaluate
 vi = evaluate.vi
 ```
 
-Try a few thresholds
-
 ```python
-# Ground truth: human_seg
-# Automated segmentation: auto_seg
-auto_seg = RAG_segmentation(seg, tiger, threshold=40)
-plt.imshow(color.label2rgb(auto_seg, tiger));
-
-vi(auto_seg, human_seg)
+vi(auto_seg_10, human_seg, ignore_x=[], ignore_y=[])
 ```
 
 ```python
-auto_seg = RAG_segmentation(seg, tiger, threshold=80)
-plt.imshow(color.label2rgb(auto_seg, tiger));
-
-vi(auto_seg, human_seg, ignore_x=[], ignore_y=[])
+vi(auto_seg_40, human_seg, ignore_x=[], ignore_y=[])
 ```
+
+The high threshold has a smaller variation of information, so it's a better segmentation!
+Now we can calculate the VI for a range of possible thresholds and see which one gives us closes segmentation to the human ground truth.
 
 ```python
 # Try many thresholds
@@ -493,3 +523,15 @@ vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold) for thresh
 ```python
 plt.plot(thresholds, vi_per_threshold);
 ```
+
+Unsurprisingly, it turns out that eyeballing it and picking threshold=80, did give us one of the best segmentations.
+But now we have a way to automate this process for any image!
+
+```python
+auto_seg = RAG_segmentation(seg, tiger, threshold=80)
+plt.imshow(color.label2rgb(auto_seg, tiger));
+```
+
+Exercise:
+
+Try this out on one of the other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
