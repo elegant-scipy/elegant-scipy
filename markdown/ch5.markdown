@@ -328,13 +328,16 @@ This is straightforward: if I want to tell you whether a coin toss landed as
 heads or tails, I need one bit, which can take many forms:
 a long or short pulse over a telegraph wire (as in Morse code), a light
 flashing one of two colors, or a single number taking values 0 or 1.
+Importantly, I *always* need one bit, because the outcome of a coin toss is
+random.
 
-It turns out that it's fairly easy to extend this concept to *fractional* bits.
+It turns out that we can extend this concept to *fractional* bits for events
+that are *less* random.
 Suppose, for example, that you need to transmit whether it rained today in Los
 Angeles.
 At first glance, it seems that this requires 1 bit as well: 0 for it didn't
 rain, 1 for it rained.
-However, rain in LA is a rare event, so we can actually get away with
+However, rain in LA is a rare event, so over time we can actually get away with
 transmitting much less information:
 Transmit a 0 *occasionally* just to make sure that our communication is still
 working, but otherwise simply *assume* that the signal is 0, and send 1 only on
