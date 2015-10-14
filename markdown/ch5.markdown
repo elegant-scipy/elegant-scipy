@@ -322,8 +322,8 @@ This is defined as the answer to the following question: on average, for a rando
 In order to answer this question, we'll need a quick primer on information
 theory.
 
-The basic unit of information is the *bit*, representing choice between two
-options.
+The basic unit of information is the *bit*, commonly shown as a 0 or 1,
+representing choice between two options.
 This is straightforward: if I want to tell you whether a coin toss landed as
 heads or tails, I need one bit, which can take many forms:
 a long or short pulse over a telegraph wire (as in Morse code), a light
