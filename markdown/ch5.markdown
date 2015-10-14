@@ -285,16 +285,16 @@ seg = np.array([[1, 1, 2],
 Here’s the ground truth, what some person said was the correct way to segment this image:
 
 ```python
-gts = np.array([[1, 1, 1],
-                [1, 1, 1],
-                [2, 2, 2]], dtype=int)
+gt = np.array([[1, 1, 1],
+               [1, 1, 1],
+               [2, 2, 2]], dtype=int)
 ```
 
 We can think of these two as classifications, just like before:
 
 ```python
 print(seg.ravel())
-print(gts.ravel())
+print(gt.ravel())
 ```
 
 Then, like above, the contingency matrix is given by:
@@ -303,6 +303,13 @@ Then, like above, the contingency matrix is given by:
 cont = sparse.coo_matrix((np.ones(seg.size),
                           (seg.ravel(), gt.ravel())))
 print(cont)
+```
+
+Some indices appear more than once, but we can use the summing feature of the
+COO format to confirm that this represents the matrix we want:
+
+```python
+print(cont.todense())
 ```
 
 Segmentation is a hard problem, so it's important to measure how well a segmentation algorithm is doing, by comparing its output to a "ground truth" segmentation that is manually produced by a human.
@@ -498,11 +505,6 @@ We can see that the higher threshold seems to producing a better segmentation.
 But we have a ground truth, so we can actually put a number to this!
 Using all our sparse matrix skills, we can calculate the *variation of information* or VI for each segmentation.
 
-```python
-# workaround version of vi while the version for this chapter is being fixed
-from gala import evaluate
-vi = evaluate.vi
-```
 
 ```python
 vi(auto_seg_10, human_seg, ignore_x=[], ignore_y=[])
