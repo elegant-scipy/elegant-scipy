@@ -326,13 +326,14 @@ $$
 where $H(a|b)$ is the conditional entropy of $a$ given $b$:
 
 $$
-H(A | B) = \sum_{y \in B}{p(x)H(A | B = y)}
+H(A | B) = \sum_{y \in B}{p(y)H(A | B = y)}
 $$
 
 and:
 
 $$
-H(A | B=y) = \sum_{x \in A}{\frac{p(xy)}{p(y)}\log_2\(\frac{p(xy)}{p(y)}\)}
+H(A | B=y) = \sum_{x \in
+A}{\frac{p(xy)}{p(y)}\log_2\left(\frac{p(xy)}{p(y)}\right)}
 $$
 
 Two segmentations of the same image are *label arrays* of the same shape as the image (and therefore, same shape as each other).
