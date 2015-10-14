@@ -318,11 +318,87 @@ But, even this comparison is not an easy task.
 How do we define how "close" an automated segmentation is to a ground truth?
 We'll illustrate one method, the *variation of information* or VI (Meila, 2005).
 This is defined as the answer to the following question: on average, for a random pixel, if we are given its segment ID in one segmentation, how much more *information* do we need to determine its ID in the other?
-Mathematically, to compare segmentations $A$ and $B$, we define $VI$:
+
+In order to answer this question, we'll need a quick primer on information
+theory.
+
+The basic unit of information is the *bit*, representing choice between two
+options.
+This is straightforward: if I want to tell you whether a coin toss landed as
+heads or tails, I need one bit, which can take many forms:
+a long or short pulse over a telegraph wire (as in Morse code), a light
+flashing one of two colors, or a single number taking values 0 or 1.
+
+It turns out that it's fairly easy to extend this concept to *fractional* bits.
+Suppose, for example, that you need to transmit whether it rained today in Los
+Angeles.
+At first glance, it seems that this requires 1 bit as well: 0 for it didn't
+rain, 1 for it rained.
+However, rain in LA is a rare event, so we can actually get away with
+transmitting much less information:
+Transmit a 0 *occasionally* just to make sure that our communication is still
+working, but otherwise simply *assume* that the signal is 0, and send 1 only on
+those rare occasions that it rains.
+
+Thus, when two events are *not* equally likely, we need *less* than 1 bit to
+represent them.
+We measure this by using the *entropy* function $H$:
+
+$$
+H(X) = - \sum_{x}{p_x \log_2\left(p_x\right)}
+$$
+
+where the sum is over all possible values $x$ of $X$.
+
+So, the entropy of a coin toss $T$ that can take values heads ($h$) and tails
+($t$) is:
+
+$$
+\begin{align}
+H(T) & = - p_h \log_2(p_h) - p_t \log_2(p_t) \\
+     & = - 1/2 \log_2(1/2) - 1/2 \log_2(1/2) \\
+     & = - 1/2 \cdot (-1) - 1/2 \cdot (-1) \\
+     & = 1
+\end{align}
+$$
+
+The long-term probability of rain on any given day in LA is about 1 in 6, so
+the entropy of rain in LA, $R$, taking values rain ($r$) or shine ($s$) is:
+
+$$
+\begin{align}
+H(R) & = - p_r \log_2(p_r) - p_s \log_2(p_s) \\
+     & =  - 1/6 \log_2(1/6) - 5/6 \log_2(1/6) \\
+     & \approx 0.65
+\end{align}
+$$
+
+A special kind of entropy is the *conditional* entropy.
+This is the entropy of a variable *assuming* that you also know something else
+about that variable.
+For example: what is the entropy of rain *given* that you know the month?
+This is written as:
+
+$$
+H(R | M) = \sum_{m \in M}{p(m)H(R | M = m)}
+$$
+
+and
+
+$$
+H(R | M=m) = {\frac{p_r}{p_m}\log_2\left(\frac{p_r}{p_m}\right) +
+              \frac{p_s}{p_m}\log_2\left(\frac{p_s}{p_m}\right)}
+$$
+
+The conditional entropies of segmentations $A$ and $B$ gives us the variation
+of information (VI), by comparing the segmentations pixel by pixel:
+each pixel is an "event" (comparable to "rain" or "no rain") that is labeled
+in both $A$ and $B$.
 
 $$
 VI = H(A | B) + H(B | A)
 $$
+
 where $H(a|b)$ is the conditional entropy of $a$ given $b$:
 
 $$
