@@ -232,9 +232,9 @@ coo = sparse.coo_matrix((data, (i, j)))
 csr = sparse.csr_matrix((data, j, indptr))
 
 print('The COO and CSR arrays are equal: ',
-      np.all(coo.todense(), csr.todense()))
+      np.all(coo.todense() == csr.todense()))
 print('The CSR and NumPy arrays are equal: ',
-      np.all(s2, csr.todense()))
+      np.all(s2 == csr.todense()))
 ```
 
 [This is useful in a very wide array of scientific problems.]
@@ -285,16 +285,16 @@ seg = np.array([[1, 1, 2],
 Here’s the ground truth, what some person said was the correct way to segment this image:
 
 ```python
-gts = np.array([[1, 1, 1],
-                [1, 1, 1],
-                [2, 2, 2]], dtype=int)
+gt = np.array([[1, 1, 1],
+               [1, 1, 1],
+               [2, 2, 2]], dtype=int)
 ```
 
 We can think of these two as classifications, just like before:
 
 ```python
 print(seg.ravel())
-print(gts.ravel())
+print(gt.ravel())
 ```
 
 Then, like above, the contingency matrix is given by:
@@ -305,27 +305,116 @@ cont = sparse.coo_matrix((np.ones(seg.size),
 print(cont)
 ```
 
+Some indices appear more than once, but we can use the summing feature of the
+COO format to confirm that this represents the matrix we want:
+
+```python
+print(cont.todense())
+```
+
 Segmentation is a hard problem, so it's important to measure how well a segmentation algorithm is doing, by comparing its output to a "ground truth" segmentation that is manually produced by a human.
 
 But, even this comparison is not an easy task.
 How do we define how "close" an automated segmentation is to a ground truth?
 We'll illustrate one method, the *variation of information* or VI (Meila, 2005).
 This is defined as the answer to the following question: on average, for a random pixel, if we are given its segment ID in one segmentation, how much more *information* do we need to determine its ID in the other?
-Mathematically, to compare segmentations $A$ and $B$, we define $VI$:
+
+In order to answer this question, we'll need a quick primer on information
+theory.
+
+The basic unit of information is the *bit*, commonly shown as a 0 or 1,
+representing choice between two options.
+This is straightforward: if I want to tell you whether a coin toss landed as
+heads or tails, I need one bit, which can take many forms:
+a long or short pulse over a telegraph wire (as in Morse code), a light
+flashing one of two colors, or a single number taking values 0 or 1.
+Importantly, I *always* need one bit, because the outcome of a coin toss is
+random.
+
+It turns out that we can extend this concept to *fractional* bits for events
+that are *less* random.
+Suppose, for example, that you need to transmit whether it rained today in Los
+Angeles.
+At first glance, it seems that this requires 1 bit as well: 0 for it didn't
+rain, 1 for it rained.
+However, rain in LA is a rare event, so over time we can actually get away with
+transmitting much less information:
+Transmit a 0 *occasionally* just to make sure that our communication is still
+working, but otherwise simply *assume* that the signal is 0, and send 1 only on
+those rare occasions that it rains.
+
+Thus, when two events are *not* equally likely, we need *less* than 1 bit to
+represent them.
+Generally, we measure this for any random variable $X$ (which could have more
+than two possible values) by using the *entropy* function $H$:
+
+$$
+H(X) = - \sum_{x}{p_x \log_2\left(p_x\right)}
+$$
+
+where the $x$s are possible values of $X$, and $p_x$ is the probability of $X$
+taking value $x$.
+
+So, the entropy of a coin toss $T$ that can take values heads ($h$) and tails
+($t$) is:
+
+$$
+\begin{align}
+H(T) & = - p_h \log_2(p_h) - p_t \log_2(p_t) \\
+     & = - 1/2 \log_2(1/2) - 1/2 \log_2(1/2) \\
+     & = - 1/2 \cdot (-1) - 1/2 \cdot (-1) \\
+     & = 1
+\end{align}
+$$
+
+The long-term probability of rain on any given day in LA is about 1 in 6, so
+the entropy of rain in LA, $R$, taking values rain ($r$) or shine ($s$) is:
+
+$$
+\begin{align}
+H(R) & = - p_r \log_2(p_r) - p_s \log_2(p_s) \\
+     & =  - 1/6 \log_2(1/6) - 5/6 \log_2(1/6) \\
+     & \approx 0.65
+\end{align}
+$$
+
+A special kind of entropy is the *conditional* entropy.
+This is the entropy of a variable *assuming* that you also know something else
+about that variable.
+For example: what is the entropy of rain *given* that you know the month?
+This is written as:
+
+$$
+H(R | M) = \sum_{m \in M}{p(m)H(R | M = m)}
+$$
+
+and
+
+$$
+H(R | M=m) = {\frac{p_r}{p_m}\log_2\left(\frac{p_r}{p_m}\right) +
+              \frac{p_s}{p_m}\log_2\left(\frac{p_s}{p_m}\right)}
+$$
+
+The conditional entropies of segmentations $A$ and $B$ gives us the variation
+of information (VI), by comparing the segmentations pixel by pixel:
+each pixel is an "event" (comparable to "rain" or "no rain") that is labeled
+in both $A$ and $B$.
 
 $$
 VI = H(A | B) + H(B | A)
 $$
+
 where $H(a|b)$ is the conditional entropy of $a$ given $b$:
 
 $$
-H(A | B) = \sum_{y \in B}{p(x)H(A | B = y)}
+H(A | B) = \sum_{y \in B}{p(y)H(A | B = y)}
 $$
 
 and:
 
 $$
-H(A | B=y) = \sum_{x \in A}{\frac{p(xy)}{p(y)}\log_2\(\frac{p(xy)}{p(y)}\)}
+H(A | B=y) = \sum_{x \in A}
+                  {\frac{p(xy)}{p(y)}\log_2\left(\frac{p(xy)}{p(y)}\right)}
 $$
 
 Two segmentations of the same image are *label arrays* of the same shape as the image (and therefore, same shape as each other).
@@ -335,17 +424,21 @@ To compute these, we just need to count the number of times labels appear togeth
 It turns out that this can be done *easily* by the constructor of *scipy.sparse.coo_matrix*.
 
 ```python
+import numpy as np
+from scipy import sparse
+
+
 def invert_nonzero(mat):
     mat_inv = mat.copy()
-    nz = mat.data.nonzero()
-    mat_inv.data[nz] = 1 / mat_inv[nz]
+    nz = np.nonzero(mat)
+    mat_inv[nz] = 1 / mat[nz]
     return mat_inv
 
 
 def xlogx(mat):
     matlog = mat.copy()
-    nz = mat.data.nonzero()
-    matlog.data[nz] = mat.data[nz] * np.log2(mat.data[nz])
+    nz = np.nonzero(mat)
+    matlog[nz] = np.multiply(mat[nz], np.log2(mat[nz]))
     return matlog
 
 
@@ -355,11 +448,11 @@ def vi(x, y):
     pxy.data /= np.sum(pxy.data)
     px = pxy.sum(axis=1)
     py = pxy.sum(axis=0)
-    px_inv = sparse.diags(invert_nonzero(px), [0])
-    py_inv = sparse.diags(invert_nonzero(py), [0])
-    hygx = -(px * xlogx(py_inv.dot(pxy)).sum(axis=0)).sum()
-    hxgy = -(py * xlogx(pxy.dot(px)).sum(axis=1)).sum()
-    return hygx + hxgy
+    px_inv = sparse.diags(invert_nonzero(px).A.T, [0])
+    py_inv = sparse.diags(invert_nonzero(py).A, [0])
+    hygx = - px.T * xlogx(px_inv * pxy).sum(axis=1)
+    hxgy = - xlogx(pxy * py_inv).sum(axis=0) * py.T
+    return float(hygx + hxgy)
 ```
 
 Now let's put it all together to estimate the best possible automated segmentation of an image.
@@ -494,18 +587,13 @@ We can see that the higher threshold seems to producing a better segmentation.
 But we have a ground truth, so we can actually put a number to this!
 Using all our sparse matrix skills, we can calculate the *variation of information* or VI for each segmentation.
 
+
 ```python
-# workaround version of vi while the version for this chapter is being fixed
-from gala import evaluate
-vi = evaluate.vi
+vi(auto_seg_10, human_seg)
 ```
 
 ```python
-vi(auto_seg_10, human_seg, ignore_x=[], ignore_y=[])
-```
-
-```python
-vi(auto_seg_40, human_seg, ignore_x=[], ignore_y=[])
+vi(auto_seg_40, human_seg)
 ```
 
 The high threshold has a smaller variation of information, so it's a better segmentation!
@@ -515,10 +603,11 @@ Now we can calculate the VI for a range of possible thresholds and see which one
 # Try many thresholds
 def vi_at_threshold(seg, tiger, human_seg, threshold):
     auto_seg = RAG_segmentation(seg, tiger, threshold)
-    return(vi(auto_seg, human_seg, ignore_x=[], ignore_y=[]))
+    return vi(auto_seg, human_seg)
 
 thresholds = range(0,110,10)
-vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold) for threshold in thresholds]
+vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold)
+                    for threshold in thresholds]
 ```
 
 ```python
