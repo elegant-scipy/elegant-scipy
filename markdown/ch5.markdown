@@ -345,13 +345,15 @@ those rare occasions that it rains.
 
 Thus, when two events are *not* equally likely, we need *less* than 1 bit to
 represent them.
-We measure this by using the *entropy* function $H$:
+Generally, we measure this for any random variable $X$ (which could have more
+than two possible values) by using the *entropy* function $H$:
 
 $$
 H(X) = - \sum_{x}{p_x \log_2\left(p_x\right)}
 $$
 
-where the sum is over all possible values $x$ of $X$.
+where the $x$s are possible values of $X$, and $p_x$ is the probability of $X$
+taking value $x$.
 
 So, the entropy of a coin toss $T$ that can take values heads ($h$) and tails
 ($t$) is:
