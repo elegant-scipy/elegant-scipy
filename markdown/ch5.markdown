@@ -6,12 +6,11 @@ import matplotlib.pyplot as plt
 
 # Contingency tables using sparse coordinate matrices
 
-*Code by Juan Nunez-Iglesias.  
-Suggested by Andreas Mueller.*
+**Code by Juan Nunez-Iglesias,  **
+**with suggestions by Jaime Frio and Warren Weckesser.  **
+**Suggested by Andreas Mueller.**
 
 Many real-world matrices are *sparse*, which means that most of their values are zero.
-
-(Examples.)
 
 Using numpy arrays for these problems wastes a lot of time and energy multiplying many, many values by 0.
 Instead, we can use SciPy's `sparse` module to solve these efficiently, examining only non-zero values.
