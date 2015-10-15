@@ -670,7 +670,8 @@ $$
 
 In the segmentation context, "days" become "pixels", and "rain" and "month"
 become "label in automated segmentation (AS)" and "label ground truth (GT)".
-Then, the conditional entropy of AS given GT measures how much additional
+Then, the conditional entropy of the automatic segmentation given the ground
+truth measures how much additional
 information we need to determine a pixel's identity in AS if we are told its
 identity in GT.
 For example, if every GT segment $g$ is split into two equally-sized
