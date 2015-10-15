@@ -707,7 +707,7 @@ The only difference is that the label arrays are 2-dimensional, instead of
 the 1D arrays of predictions.
 In fact, though, this doesn't matter:
 remember that numpy arrays are actually linear (1D) chunks of data with some
-shape metadata attached.
+shape and other metadata attached.
 We can ignore the shape by using the arrays' `.ravel()` method:
 
 ```python
