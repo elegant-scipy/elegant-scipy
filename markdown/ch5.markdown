@@ -668,8 +668,8 @@ $$
 Here's a simple example:
 
 ```python
-as = np.array([[0, 1],
-               [2, 3]], int)
+aseg = np.array([[0, 1],
+                 [2, 3]], int)
 
 gt = np.array([[0, 1],
                [0, 1]], int)
@@ -688,16 +688,16 @@ shape metadata attached.
 We can ignore the shape by using the arrays' `.ravel()` method:
 
 ```python
-as.ravel()
+aseg.ravel()
 ```
 
 Now we can just make the contingency table in the same way as when we were
 predicting spam:
 
 ```python
-cont = sparse.coo_matrix((np.ones(as.size, dtype=float),
-                          (as.ravel(), gt.ravel())))
-cont = cont.todense()
+cont = sparse.coo_matrix((np.ones(aseg.size, dtype=float),
+                          (aseg.ravel(), gt.ravel())))
+cont = np.asarray(cont.todense())
 cont
 ```
 
@@ -709,7 +709,7 @@ cont /= np.sum(cont)
 ```
 
 Finally, we can use this table to compute the probabilities of labels in *either*
-`as` or `gt`, using the axis-wise sums:
+`aseg` or `gt`, using the axis-wise sums:
 
 ```python
 p_as = np.sum(cont, axis=1)
