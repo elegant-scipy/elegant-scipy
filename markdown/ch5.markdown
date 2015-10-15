@@ -599,13 +599,40 @@ By observing many days, we can build a *contingency matrix*, just like the
 ones in the classification examples, measuring the month of a day and whether
 it rained.
 We're not going to travel to LA to do this (fun though it would be), and
-instead we use the historical table below, roughly eyeballed from REF:
+instead we use the historical table below, roughly eyeballed from
+[WeatherSpark](https://weatherspark.com/averages/30699/Los-Angeles-California-United-States):
 
-[table]
+| Month | P(rain)  | P(shine) |
+| -----:| -------- | -------- |
+|1|0.25|0.75|
+|2|0.27|0.73|
+|3|0.24|0.76|
+|4|0.18|0.82|
+|5|0.14|0.86|
+|6|0.11|0.89|
+|7|0.07|0.93|
+|8|0.08|0.92|
+|9|0.10|0.90|
+|10|0.15|0.85|
+|11|0.18|0.82|
+|12|0.23|0.77|
 
 The conditional entropy of rain given month is then:
 
-[sum]
+$$
+\begin{align}
+H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(0.25) +
+                               0.75 \log_2(0.75) \right) +
+           \frac{1}{12} \left( 0.27 \log_2(0.27) +
+                               0.73 \log_2(0.73) \right) +
+           ... +
+           \frac{1}{12} \left( 0.23 \log_2(0.23) +
+                               0.77 \log_2(0.77) \right)
+       & \approx 0.626
+$$
+
+So, by using the month, we've reduced the randomness of the signal, but not by
+much!
 
 We can also compute the conditional entropy of month given rain, which
 measures how much information we need to determine the month if we know it
