@@ -650,8 +650,8 @@ $$
 VI(A, B) = H(A | B) + H(B | A)
 $$
 
-In the segmentation context, replace "rain" and "month" with "automated
-segmentation" (AS) and "ground truth" (GT).
+In the segmentation context, "days" become "pixels", and "rain" and "month"
+become "label in automated segmentation (AS)" and "label ground truth (GT)".
 Then, the conditional entropy of AS given GT measures how much additional
 information we need to determine a pixel's identity in AS if we are told its
 identity in GT.
