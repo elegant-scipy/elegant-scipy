@@ -583,8 +583,12 @@ $$
 and
 
 $$
-H(R | M=m) = {p_{r|m}\log_2\left(p_{r|m}\right) +
-              p_{s|m}\log_2\left(p_{s|m}\right)}
+\begin{align}
+H(R | M=m) &= {p_{r|m}\log_2\left(p_{r|m}\right) +
+               p_{s|m}\log_2\left(p_{s|m}\right)} \\
+           &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_{rm}}{p_m}\right) +
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_{sm}}{p_m}\right)}
+\end{align}
 $$
 
 You now have all the information theory you need to understand the variation
