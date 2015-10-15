@@ -279,7 +279,7 @@ def homography(tf, image_shape):
 
     Returns
     -------
-    A : (M * N, M * N) ndarray
+    A : (M * N, M * N) sparse COO matrix
         Linear-operator representing transformation + bilinear interpolation.
 
     """
