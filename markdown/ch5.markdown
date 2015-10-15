@@ -566,7 +566,7 @@ $$
 \begin{align}
 H(R) & = - p_r \log_2(p_r) - p_s \log_2(p_s) \\
      & =  - 1/6 \log_2(1/6) - 5/6 \log_2(1/6) \\
-     & \approx 0.65
+     & \approx 0.65 \textrm{bits}
 \end{align}
 $$
 
@@ -631,7 +631,7 @@ H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(0.25) +
            ... +
            \frac{1}{12} \left( 0.23 \log_2(0.23) +
                                0.77 \log_2(0.77) \right) \\
-       & \approx 0.626
+       & \approx 0.626 \textrm{bits}
 \end{align}
 $$
 
