@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 **Code by Juan Nunez-Iglesias,**  
 **with suggestions by Jaime Frio and Warren Weckesser.**  
-**Suggested by Andreas Mueller.**
+**Nominated by Andreas Mueller.**
 
 Many real-world matrices are *sparse*, which means that most of their values are zero.
 
