@@ -57,7 +57,7 @@ So, for example, since there are 4 true positives (where `pred` and `gt` are bot
 Generally:
 
 $$
-C_{i, j} = \sum_k{\mathbb{I}\(p_k = i\) \mathbb{I}\(g_k = j\)}
+C_{i, j} = \sum_k{\mathbb{I}(p_k = i) \mathbb{I}(g_k = j)}
 $$
 
 Here's an inefficient way of building the above:
