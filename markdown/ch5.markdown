@@ -477,6 +477,10 @@ In order to check our image segmentation, we're going to need a ground truth.
 It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
 Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it.
 Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+It's worth noting that there is quite substantial variation between the segmentations performed by humans.
+If you look through the [various tiger segmentations](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html), you will see that some humans are more pedantic than others about tracing around the reeds, while others consider the reflections to be objects worth segmenting out from the rest of the water.
+We have chosen a segmentation that we like (one with pedantic-reed-tracing, because we are perfectionistic scientist-types.)
+But to be clear, we really have no single ground truth!
 
 ```python
 from scipy import ndimage as nd
@@ -544,8 +548,8 @@ io.imshow(color.label2rgb(seg, tiger));
 ```
 
 In chapter 3, we set the graph threshold at 80 and sort of hand-waved over the whole thing.
-Now we're going to have a closer look at how this threshold impacts our segmentation accuracy.
-So lets pop the segmentation code in a function so we can play with the threshold.
+Now we're going to have a closer look at how this threshold parameter impacts our segmentation accuracy.
+So let's pop the segmentation code into a function so we can play with the parameter.
 
 ```python
 def RAG_segmentation(base_seg, image, threshold=80):
@@ -579,9 +583,9 @@ auto_seg_40 = RAG_segmentation(seg, tiger, threshold=40)
 plt.imshow(color.label2rgb(auto_seg_40, tiger));
 ```
 
-Actually, in champter 3 we did the segmentation a bunch of times with different thresholds and then (because we're human, so we can) picked one that produced a good segmentation.
+Actually, in chapter 3 we did the segmentation a bunch of times with different thresholds and then (because we're human, so we can) picked one that produced a good segmentation.
 This is a completely unsatisfying way to program image segmentation.
-Clearly, we need a way to automate to do this.
+Clearly, we need a way to automate this.
 
 We can see that the higher threshold seems to producing a better segmentation.
 But we have a ground truth, so we can actually put a number to this!
