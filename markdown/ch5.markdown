@@ -578,7 +578,7 @@ For example: what is the entropy of rain *given* that you know the month?
 This is written as:
 
 $$
-H(R | M) = \sum_{m \in M}{p(m)H(R | M = m)}
+H(R | M) = \sum_{m = 1...12}{p(m)H(R | M = m)}
 $$
 
 and
@@ -588,27 +588,106 @@ H(R | M=m) = {\frac{p_r}{p_m}\log_2\left(\frac{p_r}{p_m}\right) +
               \frac{p_s}{p_m}\log_2\left(\frac{p_s}{p_m}\right)}
 $$
 
-The conditional entropies of segmentations $A$ and $B$ gives us the variation
-of information (VI), by comparing the segmentations pixel by pixel:
-each pixel is an "event" (comparable to "rain" or "no rain") that is labeled
-in both $A$ and $B$.
+You now have all the information theory you need to understand the variation
+of information.
+In the above example, events are days, and they have two properties:
+
+- rain/shine
+- month
+
+By observing many days, we can build a *contingency matrix*, just like the
+ones in the classification examples, measuring the month of a day and whether
+it rained.
+We're not going to travel to LA to do this (fun though it would be), and
+instead we use the historical table below, roughly eyeballed from REF:
+
+[table]
+
+The conditional entropy of rain given month is then:
+
+[sum]
+
+We can also compute the conditional entropy of month given rain, which
+measures how much information we need to determine the month if we know it
+rained.
+Intuitively, we know that this is better than going in blind, since it's
+more likely to rain in the winter months.
+
+Together, these two values define the variation of information (VI):
 
 $$
-VI = H(A | B) + H(B | A)
+VI(A, B) = H(A | B) + H(B | A)
 $$
 
-where $H(a|b)$ is the conditional entropy of $a$ given $b$:
+In the segmentation context, replace "rain" and "month" with "automated
+segmentation" (AS) and "ground truth" (GT).
+Then, the conditional entropy of AS given GT measures how much additional
+information we need to determine a pixel's identity in AS if we are told its
+identity in GT.
+For example, if every GT segment $g$ is split into two equally-sized
+segments $a_1$ and $a_2$ in AS, then H(AS|GT) = 1, because after knowing a
+pixel is in $g$, you
+still need 1 additional bit to know whether it belongs to $a_1$ or $a_2$.
+However, H(GT|AS) = 0, because regardless of whether a pixel is in $a_1$ or
+$a_2$, it is guaranteed to be in $g$, so you need no more information than
+the segment in AS.
+
+So, together, in this case,
 
 $$
-H(A | B) = \sum_{y \in B}{p(y)H(A | B = y)}
+VI(AS, GT) = H(AS | GT) + H(GT | AS) = 1 + 0 = 1 \textrm{bit.}
 $$
 
-and:
+Here's a simple example:
 
-$$
-H(A | B=y) = \sum_{x \in A}
-                  {\frac{p(xy)}{p(y)}\log_2\left(\frac{p(xy)}{p(y)}\right)}
-$$
+```python
+as = np.array([[0, 1],
+               [2, 3]], int)
+
+gt = np.array([[0, 1],
+               [0, 1]], int)
+```
+
+Here we have two segmentations of a four-pixel image: `as` and `gt`. `as`
+puts every pixel in its own segment, while `gt` puts the left two pixels in
+segment 0 and the right two pixels in segment 1.
+Now, we make a contingency table of the pixel labels, just as we did with
+the spam prediction labels.
+The only difference is that the label arrays are 2-dimensional, instead of
+the 1D arrays of predictions.
+In fact, though, this doesn't matter:
+remember that numpy arrays are actually linear (1D) chunks of data with some
+shape metadata attached.
+We can ignore the shape by using the arrays' `.ravel()` method:
+
+```python
+as.ravel()
+```
+
+Now we can just make the contingency table in the same way as when we were
+predicting spam:
+
+```python
+cont = sparse.coo_matrix((np.ones(as.size, dtype=float),
+                          (as.ravel(), gt.ravel())))
+cont = cont.todense()
+cont
+```
+
+In order to make this a table of probabilities, instead of counts, we simply
+divide by the total number of pixels:
+
+```python
+cont /= np.sum(cont)
+```
+
+Finally, we can use this table to compute the probabilities of labels in *either*
+`as` or `gt`, using the axis-wise sums:
+
+```python
+p_as = np.sum(cont, axis=1)
+p_gt = np.sum(cont, axis=0)
+```
 
 Two segmentations of the same image are *label arrays* of the same shape as the image (and therefore, same shape as each other).
 The definitions above use just $p(xy)$, the joint probability of labels, and $p(x)$ and $p(y)$, the *marginal* probabilities of labels.
