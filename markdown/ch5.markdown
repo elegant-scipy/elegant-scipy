@@ -630,8 +630,9 @@ H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(0.25) +
                                0.73 \log_2(0.73) \right) +
            ... +
            \frac{1}{12} \left( 0.23 \log_2(0.23) +
-                               0.77 \log_2(0.77) \right)
+                               0.77 \log_2(0.77) \right) \\
        & \approx 0.626
+\end{align}
 $$
 
 So, by using the month, we've reduced the randomness of the signal, but not by
@@ -792,10 +793,17 @@ def vi(x, y):
     return float(hygx + hxgy)
 ```
 
+We can check that this gives the right value (1) for the VI of our toy `aseg`
+and `gt`:
+
+```python
+vi(aseg, gt)
+```
+
 You can see how we use three types of sparse matrices (COO, CSR, and diagonal)
 to efficiently solve the entropy calculation in the case of sparse contingency
 matrices, where NumPy would be inefficient.
-(Indeed, this whole approach was inspired by a Python `MemoryError`!
+(Indeed, this whole approach was inspired by a Python `MemoryError`!)
 
 To finish, let's demonstrate the use of VI to estimate the best possible
 automated segmentation of an image.
