@@ -716,11 +716,46 @@ p_as = np.sum(cont, axis=1)
 p_gt = np.sum(cont, axis=0)
 ```
 
-Two segmentations of the same image are *label arrays* of the same shape as the image (and therefore, same shape as each other).
-The definitions above use just $p(xy)$, the joint probability of labels, and $p(x)$ and $p(y)$, the *marginal* probabilities of labels.
-These are merely the fractions of pixels (or voxels, for 3D images) having labels $x$ in $A$ and $y$ in $B$.
-To compute these, we just need to count the number of times labels appear together (in the same pixel) in either segmentation.
-It turns out that this can be done *easily* by the constructor of *scipy.sparse.coo_matrix*.
+There is a small kink in writing Python code to compute entropy:
+although $0 \log(0)$ is defined to be equal to 0, in Python, it is undefined,
+and results in a `nan` (not a number) value.
+Therefore, we have to use numpy indexing to mask out the 0 values.
+We'll write the following convenience function:
+
+```python
+def xlogx(arr):
+    out = arr.copy()
+    nz = np.nonzero(arr)
+    out[nz] = arr[nz] * np.log2(arr[nz])
+    return out
+```
+So, the conditional entropy of AS given GT:
+
+```python
+H_ag = -np.sum(np.sum(xlogx(cont / p_gt), axis=0) * p_gt)
+H_ag
+```
+
+And the converse:
+
+```python
+H_ga = -np.sum(np.sum(xlogx(cont / p_as[:, np.newaxis]), axis=1) * p_as)
+H_ga
+```
+
+We used numpy arrays and broadcasting in the above examples, which, as we've
+seen many times, is a powerful way to analyze data in Python.
+However, for segmentations of complex images, possibly containing thousands of
+segments, it rapidly becomes inefficient.
+We can instead use `sparse` throughout the calculation, and recast some of the
+NumPy magic as linear algebra operations.
+This was
+[suggested](http://stackoverflow.com/questions/16043299/substitute-for-numpy-broadcasting-using-scipy-sparse-csc-matrix)
+by Warren Weckesser on StackOverflow.
+
+When reading the code, keep in mind that the `sparse` module is optimized for
+linear algebra, and as such recasts Python's "times" operator `*` as matrix
+multiplication.
 
 ```python
 import numpy as np
@@ -754,7 +789,13 @@ def vi(x, y):
     return float(hygx + hxgy)
 ```
 
-Now let's put it all together to estimate the best possible automated segmentation of an image.
+You can see how we use three types of sparse matrices (COO, CSR, and diagonal)
+to efficiently solve the entropy calculation in the case of sparse contingency
+matrices, where NumPy would be inefficient.
+(Indeed, this whole approach was inspired by a Python `MemoryError`!
+
+To finish, let's demonstrate the use of VI to estimate the best possible
+automated segmentation of an image.
 You may remember our friendly stalking tiger from chapter 3.
 (If you don't, you might want to work on your threat-assessment skills!)
 Using our skills from chapter 3, we're going to generate a number of possible ways of segmenting the tiger image, and then figure out the best one.
