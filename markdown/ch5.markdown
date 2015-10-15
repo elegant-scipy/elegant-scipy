@@ -1,5 +1,6 @@
 ```python
 %matplotlib inline
+import matplotlib.pyplot as plt
 # Set up plotting
 ```
 
@@ -237,11 +238,203 @@ print('The CSR and NumPy arrays are equal: ',
       np.all(s2 == csr.todense()))
 ```
 
-[This is useful in a very wide array of scientific problems.]
+The ability to store large, sparse matrices is incredibly powerful!
+The combination of sparsity and linear algebra abounds.  For example,
+one can think of the entire web as a large, sparse, $N \times N$ matrix.
+Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
+By normalizing this matrix and solving for its dominant eigenvector,
+one obtains the so-called PageRank—one of the numbers Google uses to
+order your search results.
 
-## Applications of sparse matrices
+Now, consider studying the human brain, and represent it as a large $M
+\times M$ graph, where there are $M$ nodes (positions) in which you
+measure activity using an MRI scanner.  After a while of measuring,
+correlations can be calculated and entered into a matrix $C_{ij}$.
+The matrix is thresholded (which makes it sparse) and normalized, and
+its dominant eigenvector calculated.  The sign of each entry in the
+(length $M$) eigenvector groups the nodes into two sub-groups.  Rinse
+and repeat to form more and more and more sub-groups.  It turns out
+that these subgroups, or communities, tell us a lot about functional
+regions of the brain! [SvdW TODO: Double check Newman algorithm in BrainX]
 
-[@stefanv's section]
+Maybe mention? http://kieranhealy.org/blog/archives/2013/06/09/using-metadata-to-find-paul-revere/
+
+[... This is useful in a very wide array of scientific problems. ...]
+
+## Applications of sparse matrices: image transformations
+
+Libraries like scikit-image and SciPy already contain algorithms for
+transforming (rotating & warping) images effectively, but what if you
+were head of the Numpy Agency for Space Affairs and had to rotate
+millions of images streaming in from the newly launched Jupyter
+Orbiter?
+
+Of course, one option would be to rewrite all your code in C++, but
+let's presume you have diligently read Scott Meyers' excellent books
+and are deeply convinced that you will never write bug free C++ under
+pressure.  While options like Cython, Numba, or Julia are available,
+we'd like to show you a quick workaround using SciPy's sparse
+matrices.
+
+We'll use the following image as a test:
+
+```python
+from skimage import data
+image = data.camera()
+plt.imshow(image, cmap='gray');
+```
+
+As a test operation, we'll be rotating the image by 30 degrees.  Let
+us define the translation matrix, $H$ which, when multiplied with a
+coordinate from the input image, $[x, y, 1]$, will give us the
+corresponding coordinate in the output, $[x', y', 1]$.
+
+```
+angle = 30
+C = np.cos(np.deg2rad(angle))
+S = np.sin(np.deg2rad(angle))
+
+H = np.array([[C, -S, 0],
+              [S, C, 0],
+              [0, 0, 1]])
+```
+
+Now, we will build a function that defines a "sparse operator".  The
+goal of the sparse operator is to take all pixels of the output image,
+figure out where they came from in the input image and, doing the
+appropriate (bi-linear) interpolation, calculate their values.
+
+It will be used as follows:
+
+```
+## Turn input image into a vector
+# input_flat = input_image.ravel()
+
+## Multiply input image by sparse operator
+# out_flat = input_flat * sparse_operator
+
+## Reshape output vector back into an image of the same shape as the input
+# out_image = out_flat.reshape(input_flat.shape)
+```
+
+<img src="https://en.wikipedia.org/wiki/Bilinear_interpolation#/media/File:Bilinear_interpolation.png"/>
+
+Let's look at the function that builds our sparse operator:
+
+```
+from math import floor
+
+def homography(tf, image_shape):
+    """Represent homographic transformation + bilinear interpolation as a linear operator.
+
+    Parameters
+    ----------
+    tf : (3, 3) ndarray
+        Transformation matrix.
+    image_shape : (M, N)
+        Shape of input gray image.
+
+    Returns
+    -------
+    A : (M * N, M * N) sparse COO matrix
+        Linear-operator representing transformation + bilinear interpolation.
+
+    """
+    # Invert matrix.  This tells us, for each output pixel, where to
+    # find its corresponding input pixel.
+    H = np.linalg.inv(tf)
+
+    M, N = image_shape
+
+    # We are going to construct a COO matrix, for which we'll need I
+    # (row coordinates), J (column coordinates), and K (values)
+    I, J, V = [], [], []
+
+    # For each pixel in the output image
+    for i in range(M):
+        for j in range(N):
+
+            # Compute where it came from in the input image
+            jj, ii, zz = np.dot(H, [j, i, 1])
+            jj = jj / zz
+            ii = ii / zz
+
+            # We want to find the four surrounding pixels, so that we
+            # can interpolate their values to find an accurate
+            # estimation of the output pixel value
+
+            xx = (int)(floor(jj))
+            yy = (int)(floor(ii))
+
+            # If any of those four pixels lie outside the image, give up
+            if xx < 0 or yy < 0 or yy >= (M - 1) or xx >= (N - 1):
+                continue
+
+            # Calculate the position of the output pixel, mapped into
+            # the input image, within the four selected pixels
+            # https://en.wikipedia.org/wiki/Bilinear_interpolation#/media/File:Bilinear_interpolation.png
+            t = ii - yy
+            u = jj - xx
+
+            # The sparse matrix is going to be of shape (M * N, M *
+            # N).  Each of the (M * N) columns represents a pixel in
+            # the input image.  Each of the (M * N) rows represents a
+            # pixel in the output image.  The position of the output
+            # pixel is calculated here, and repeated four times
+            # (because it will become a weighted average of four input pixels).
+
+            R = i * N + j
+            I.extend([R, R, R, R])
+
+            # The actual weights are calculated according to bilinear
+            # interpolation, as shown at
+            # https://en.wikipedia.org/wiki/Bilinear_interpolation
+
+            J.extend([yy * N + xx,
+                      (yy + 1) * N + xx,
+                      (yy + 1) * N + xx + 1,
+                      yy * N + xx + 1])
+            V.extend([(1 - t) * (1 - u),
+                      t * (1 - u),
+                      t * u,
+                      (1 - t) * u])
+
+    return sparse.coo_matrix((V, (I, J)), shape=(M * N, M * N)).tocsr()
+```
+
+Recall that we apply the sparse operator as follows:
+
+```python
+def apply_transform(image, tf):
+   return (tf * image.flat).reshape(image.shape)
+```
+
+Let's try it out!
+
+```python
+tf = homography(H, image.shape)
+out = apply_transform(image, tf)
+plt.imshow(out, cmap='gray')
+```
+
+And measure how it performs in comparison to ndimage:
+
+```python
+%timeit apply_transform(image, tf)
+```
+
+```python
+from scipy import ndimage
+%timeit ndimage.rotate(image, 30)
+```
+
+On our machines, we see a speed-up of approximately 30 times.  While
+this example does only a rotation, there is no reason why we cannot do
+more complicated warping operations, like correct for a distorted
+telescope lens, or make people pull funny faces.
+
+We won't claim that this hack was quick or cheap, but let's hope it was
+educational!
 
 ## Back to contingency matrices
 
