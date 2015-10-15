@@ -548,8 +548,8 @@ io.imshow(color.label2rgb(seg, tiger));
 ```
 
 In chapter 3, we set the graph threshold at 80 and sort of hand-waved over the whole thing.
-Now we're going to have a closer look at how this threshold parameter impacts our segmentation accuracy.
-So let's pop the segmentation code into a function so we can play with the parameter.
+Now we're going to have a closer look at how this threshold impacts our segmentation accuracy.
+Let's pop the segmentation code into a function so we can play with it.
 
 ```python
 def RAG_segmentation(base_seg, image, threshold=80):
