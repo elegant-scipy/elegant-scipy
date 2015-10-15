@@ -644,6 +644,24 @@ rained.
 Intuitively, we know that this is better than going in blind, since it's
 more likely to rain in the winter months.
 
+
+**Exercise:** Compute the conditional entropy of month given rain. What is the
+entropy of the month variable? (Ignore the different number of days in a
+month.) Which one is greater? (*Hint:* the probabilities in the table are
+the conditional probabilities of rain given month.)
+
+```python
+prains = [25, 27, 24, 18, 14, 11, 7, 8, 10, 15, 18, 23]
+prains = [p / 100 for p in prains]
+pshine = [1 - p for p in prains]
+p_rain_g_month = np.array((prains, pshine)).T
+# replace 'None' below with expression for non-conditional contingency
+# table. Hint: the values in the table must sum to 1.
+p_rain_month = None
+# Add your code below to compute H(M|R) and H(M)
+pass
+```
+
 Together, these two values define the variation of information (VI):
 
 $$
