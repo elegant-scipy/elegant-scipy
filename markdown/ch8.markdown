@@ -523,7 +523,7 @@ This assumption is useful for simplifying otherwise intractable problems.
 
 - Where to download the fruit-fly genome
 You can download the *Drosophila melanogaster* (fruit-fly) genome file dm6.fa.gz from
-ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
+http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
 You will need to unzip it using: `gzip -d dm6.fa.gz`
 
 - Matt's post and how to use it
