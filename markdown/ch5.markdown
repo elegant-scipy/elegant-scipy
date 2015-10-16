@@ -6,12 +6,11 @@ import matplotlib.pyplot as plt
 
 # Contingency tables using sparse coordinate matrices
 
-*Code by Juan Nunez-Iglesias.  
-Suggested by Andreas Mueller.*
+**Code by Juan Nunez-Iglesias,**  
+**with suggestions by Jaime Frio and Warren Weckesser.**  
+**Nominated by Andreas Mueller.**
 
 Many real-world matrices are *sparse*, which means that most of their values are zero.
-
-(Examples.)
 
 Using numpy arrays for these problems wastes a lot of time and energy multiplying many, many values by 0.
 Instead, we can use SciPy's `sparse` module to solve these efficiently, examining only non-zero values.
@@ -58,7 +57,7 @@ So, for example, since there are 4 true positives (where `pred` and `gt` are bot
 Generally:
 
 $$
-C_{i, j} = \sum_k{\mathbb{I}\(p_k = i\) \mathbb{I}\(g_k = j\)}
+C_{i, j} = \sum_k{\mathbb{I}(p_k = i) \mathbb{I}(g_k = j)}
 $$
 
 Here's an inefficient way of building the above:
@@ -567,7 +566,7 @@ $$
 \begin{align}
 H(R) & = - p_r \log_2(p_r) - p_s \log_2(p_s) \\
      & =  - 1/6 \log_2(1/6) - 5/6 \log_2(1/6) \\
-     & \approx 0.65
+     & \approx 0.65 \textrm{bits}
 \end{align}
 $$
 
@@ -578,43 +577,208 @@ For example: what is the entropy of rain *given* that you know the month?
 This is written as:
 
 $$
-H(R | M) = \sum_{m \in M}{p(m)H(R | M = m)}
+H(R | M) = \sum_{m = 1...12}{p(m)H(R | M = m)}
 $$
 
 and
 
 $$
-H(R | M=m) = {\frac{p_r}{p_m}\log_2\left(\frac{p_r}{p_m}\right) +
-              \frac{p_s}{p_m}\log_2\left(\frac{p_s}{p_m}\right)}
+\begin{align}
+H(R | M=m) &= {p_{r|m}\log_2\left(p_{r|m}\right) +
+               p_{s|m}\log_2\left(p_{s|m}\right)} \\
+           &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_{rm}}{p_m}\right) +
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_{sm}}{p_m}\right)}
+\end{align}
 $$
 
-The conditional entropies of segmentations $A$ and $B$ gives us the variation
-of information (VI), by comparing the segmentations pixel by pixel:
-each pixel is an "event" (comparable to "rain" or "no rain") that is labeled
-in both $A$ and $B$.
+You now have all the information theory you need to understand the variation
+of information.
+In the above example, events are days, and they have two properties:
+
+- rain/shine
+- month
+
+By observing many days, we can build a *contingency matrix*, just like the
+ones in the classification examples, measuring the month of a day and whether
+it rained.
+We're not going to travel to LA to do this (fun though it would be), and
+instead we use the historical table below, roughly eyeballed from
+[WeatherSpark](https://weatherspark.com/averages/30699/Los-Angeles-California-United-States):
+
+| Month | P(rain)  | P(shine) |
+| -----:| -------- | -------- |
+|1|0.25|0.75|
+|2|0.27|0.73|
+|3|0.24|0.76|
+|4|0.18|0.82|
+|5|0.14|0.86|
+|6|0.11|0.89|
+|7|0.07|0.93|
+|8|0.08|0.92|
+|9|0.10|0.90|
+|10|0.15|0.85|
+|11|0.18|0.82|
+|12|0.23|0.77|
+
+The conditional entropy of rain given month is then:
 
 $$
-VI = H(A | B) + H(B | A)
+\begin{align}
+H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(0.25) +
+                               0.75 \log_2(0.75) \right) +
+           \frac{1}{12} \left( 0.27 \log_2(0.27) +
+                               0.73 \log_2(0.73) \right) +
+           ... +
+           \frac{1}{12} \left( 0.23 \log_2(0.23) +
+                               0.77 \log_2(0.77) \right) \\
+       & \approx 0.626 \textrm{bits}
+\end{align}
 $$
 
-where $H(a|b)$ is the conditional entropy of $a$ given $b$:
+So, by using the month, we've reduced the randomness of the signal, but not by
+much!
+
+We can also compute the conditional entropy of month given rain, which
+measures how much information we need to determine the month if we know it
+rained.
+Intuitively, we know that this is better than going in blind, since it's
+more likely to rain in the winter months.
+
+
+**Exercise:** Compute the conditional entropy of month given rain. What is the
+entropy of the month variable? (Ignore the different number of days in a
+month.) Which one is greater? (*Hint:* the probabilities in the table are
+the conditional probabilities of rain given month.)
+
+```python
+prains = [25, 27, 24, 18, 14, 11, 7, 8, 10, 15, 18, 23]
+prains = [p / 100 for p in prains]
+pshine = [1 - p for p in prains]
+p_rain_g_month = np.array((prains, pshine)).T
+# replace 'None' below with expression for non-conditional contingency
+# table. Hint: the values in the table must sum to 1.
+p_rain_month = None
+# Add your code below to compute H(M|R) and H(M)
+pass
+```
+
+Together, these two values define the variation of information (VI):
 
 $$
-H(A | B) = \sum_{y \in B}{p(y)H(A | B = y)}
+VI(A, B) = H(A | B) + H(B | A)
 $$
 
-and:
+In the segmentation context, "days" become "pixels", and "rain" and "month"
+become "label in automated segmentation (AS)" and "label ground truth (GT)".
+Then, the conditional entropy of the automatic segmentation given the ground
+truth measures how much additional
+information we need to determine a pixel's identity in AS if we are told its
+identity in GT.
+For example, if every GT segment $g$ is split into two equally-sized
+segments $a_1$ and $a_2$ in AS, then H(AS|GT) = 1, because after knowing a
+pixel is in $g$, you
+still need 1 additional bit to know whether it belongs to $a_1$ or $a_2$.
+However, H(GT|AS) = 0, because regardless of whether a pixel is in $a_1$ or
+$a_2$, it is guaranteed to be in $g$, so you need no more information than
+the segment in AS.
+
+So, together, in this case,
 
 $$
-H(A | B=y) = \sum_{x \in A}
-                  {\frac{p(xy)}{p(y)}\log_2\left(\frac{p(xy)}{p(y)}\right)}
+VI(AS, GT) = H(AS | GT) + H(GT | AS) = 1 + 0 = 1 \textrm{bit.}
 $$
 
-Two segmentations of the same image are *label arrays* of the same shape as the image (and therefore, same shape as each other).
-The definitions above use just $p(xy)$, the joint probability of labels, and $p(x)$ and $p(y)$, the *marginal* probabilities of labels.
-These are merely the fractions of pixels (or voxels, for 3D images) having labels $x$ in $A$ and $y$ in $B$.
-To compute these, we just need to count the number of times labels appear together (in the same pixel) in either segmentation.
-It turns out that this can be done *easily* by the constructor of *scipy.sparse.coo_matrix*.
+Here's a simple example:
+
+```python
+aseg = np.array([[0, 1],
+                 [2, 3]], int)
+
+gt = np.array([[0, 1],
+               [0, 1]], int)
+```
+
+Here we have two segmentations of a four-pixel image: `as` and `gt`. `as`
+puts every pixel in its own segment, while `gt` puts the left two pixels in
+segment 0 and the right two pixels in segment 1.
+Now, we make a contingency table of the pixel labels, just as we did with
+the spam prediction labels.
+The only difference is that the label arrays are 2-dimensional, instead of
+the 1D arrays of predictions.
+In fact, though, this doesn't matter:
+remember that numpy arrays are actually linear (1D) chunks of data with some
+shape and other metadata attached.
+We can ignore the shape by using the arrays' `.ravel()` method:
+
+```python
+aseg.ravel()
+```
+
+Now we can just make the contingency table in the same way as when we were
+predicting spam:
+
+```python
+cont = sparse.coo_matrix((np.ones(aseg.size, dtype=float),
+                          (aseg.ravel(), gt.ravel())))
+cont = np.asarray(cont.todense())
+cont
+```
+
+In order to make this a table of probabilities, instead of counts, we simply
+divide by the total number of pixels:
+
+```python
+cont /= np.sum(cont)
+```
+
+Finally, we can use this table to compute the probabilities of labels in *either*
+`aseg` or `gt`, using the axis-wise sums:
+
+```python
+p_as = np.sum(cont, axis=1)
+p_gt = np.sum(cont, axis=0)
+```
+
+There is a small kink in writing Python code to compute entropy:
+although $0 \log(0)$ is defined to be equal to 0, in Python, it is undefined,
+and results in a `nan` (not a number) value.
+Therefore, we have to use numpy indexing to mask out the 0 values.
+We'll write the following convenience function:
+
+```python
+def xlogx(arr):
+    out = arr.copy()
+    nz = np.nonzero(arr)
+    out[nz] = arr[nz] * np.log2(arr[nz])
+    return out
+```
+So, the conditional entropy of AS given GT:
+
+```python
+H_ag = -np.sum(np.sum(xlogx(cont / p_gt), axis=0) * p_gt)
+H_ag
+```
+
+And the converse:
+
+```python
+H_ga = -np.sum(np.sum(xlogx(cont / p_as[:, np.newaxis]), axis=1) * p_as)
+H_ga
+```
+
+We used numpy arrays and broadcasting in the above examples, which, as we've
+seen many times, is a powerful way to analyze data in Python.
+However, for segmentations of complex images, possibly containing thousands of
+segments, it rapidly becomes inefficient.
+We can instead use `sparse` throughout the calculation, and recast some of the
+NumPy magic as linear algebra operations.
+This was
+[suggested](http://stackoverflow.com/questions/16043299/substitute-for-numpy-broadcasting-using-scipy-sparse-csc-matrix)
+by Warren Weckesser on StackOverflow.
+
+When reading the code, keep in mind that the `sparse` module is optimized for
+linear algebra, and as such recasts Python's "times" operator `*` as matrix
+multiplication.
 
 ```python
 import numpy as np
@@ -648,7 +812,20 @@ def vi(x, y):
     return float(hygx + hxgy)
 ```
 
-Now let's put it all together to estimate the best possible automated segmentation of an image.
+We can check that this gives the right value (1) for the VI of our toy `aseg`
+and `gt`:
+
+```python
+vi(aseg, gt)
+```
+
+You can see how we use three types of sparse matrices (COO, CSR, and diagonal)
+to efficiently solve the entropy calculation in the case of sparse contingency
+matrices, where NumPy would be inefficient.
+(Indeed, this whole approach was inspired by a Python `MemoryError`!)
+
+To finish, let's demonstrate the use of VI to estimate the best possible
+automated segmentation of an image.
 You may remember our friendly stalking tiger from chapter 3.
 (If you don't, you might want to work on your threat-assessment skills!)
 Using our skills from chapter 3, we're going to generate a number of possible ways of segmenting the tiger image, and then figure out the best one.
