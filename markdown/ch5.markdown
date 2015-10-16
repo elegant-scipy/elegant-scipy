@@ -12,10 +12,10 @@ import matplotlib.pyplot as plt
 
 Many real-world matrices are *sparse*, which means that most of their values are zero.
 
-Using numpy arrays for these problems wastes a lot of time and energy multiplying many, many values by 0.
+Using numpy arrays to manipulate sparse matrices wastes a lot of time and energy multiplying many, many values by 0.
 Instead, we can use SciPy's `sparse` module to solve these efficiently, examining only non-zero values.
 
-In addition to helping solve these "canonical" sparse matrix problems, `sparse` can be used to problems that were not obviously related to sparse matrices.
+In addition to helping solve these "canonical" sparse matrix problems, `sparse` can be used for problems that are not obviously related to sparse matrices.
 
 One such problem is the comparison of image segmentations.
 (Review chapter 3 for a definition of segmentation.)
@@ -26,7 +26,7 @@ Suppose you just started working as a data scientist at email startup Spam-o-mat
 You are tasked with building a detector for spam email.
 You encode the detector outcome as a numeric value, 0 for not spam and 1 for spam.
 
-If you have a training set of 10 emails to classify, you end up with a vector of *predictions*:
+If you have a set of 10 emails to classify, you end up with a vector of *predictions*:
 
 ```python
 import numpy as np
@@ -44,14 +44,15 @@ At positions where `pred` is 0 and `gt` is 0, the prediction has correctly ident
 This is called a *true negative*.
 Conversely, at positions where both values are 1, the predictor has correctly identified a spam message, and found a *true positive*.
 
-Then there are two kinds of errors.
+Then, there are two kinds of errors.
 If we let a spam message (where `gt` is 1) through to the user's inbox (`pred` is 0), we've made a *false negative* error.
 If we predict a legitimate message (`gt` is 0) to be spam (`pred` is 1), we've made a *false positive* prediction.
 (An email from the director of my scientific institute once landed in my spam folder. The reason? His announcement of a postdoc talk competition started with "You could win $500!")
 
 If we want to measure how well we are doing, we have to count the above kinds of errors using a *contingency matrix*.
 (This is also sometimes called a confusion matrix. The name is apt.)
-For this, we place the prediction labels along the rows and the ground truth ones along the columns, and count the number of times they correspond.
+For this, we place the prediction labels along the rows and the ground truth labels along the columns.
+Then we count the number of times they correspond.
 So, for example, since there are 4 true positives (where `pred` and `gt` are both 1), the matrix will have a value of 3 at position (1, 1).
 
 Generally:
@@ -60,7 +61,7 @@ $$
 C_{i, j} = \sum_k{\mathbb{I}(p_k = i) \mathbb{I}(g_k = j)}
 $$
 
-Here's an inefficient way of building the above:
+Here's an intuitive, but inefficient way of building the above:
 
 ```python
 def confusion_matrix(pred, gt):
@@ -97,7 +98,7 @@ and errors counted on the off-diagonal entries.
 
 The definition of the `confusion_matrix` function, above, doesn't extend well
 to this larger matrix, because now we must have *twenty-five* passes though the
-results and ground truth arrays.
+result and ground truth arrays.
 This problem only grows as we add more email categories, such as social media
 notifications.
 
@@ -137,11 +138,12 @@ and together they list (i, j, value) coordinates of every entry that is not
 equal to 0.
 
 - the `i` and `j` arrays, which together specify the location of each non-zero
-  entry.
+  entry (row and column indices, respectively).
 - the `data` array, which specifies the *value* at each location.
 
 Every part of the matrix that is not represented by the `(i, j)` pairs is
 considered to be 0.
+Much more efficient!
 
 So, to represent the matrix:
 
@@ -255,10 +257,6 @@ its dominant eigenvector calculated.  The sign of each entry in the
 and repeat to form more and more and more sub-groups.  It turns out
 that these subgroups, or communities, tell us a lot about functional
 regions of the brain! [SvdW TODO: Double check Newman algorithm in BrainX]
-
-Maybe mention? http://kieranhealy.org/blog/archives/2013/06/09/using-metadata-to-find-paul-revere/
-
-[... This is useful in a very wide array of scientific problems. ...]
 
 ## Applications of sparse matrices: image transformations
 
@@ -413,7 +411,7 @@ Let's try it out!
 ```python
 tf = homography(H, image.shape)
 out = apply_transform(image, tf)
-plt.imshow(out, cmap='gray')
+plt.imshow(out, cmap='gray');
 ```
 
 And measure how it performs in comparison to ndimage:
@@ -439,7 +437,7 @@ educational!
 
 [Extend to *unknown number* of classes]
 
-so, because the COO format (a) only stores a `rows` array, a `columns` array, and a `values` array, and (b) sums the values whenever the same (row column) pair appears twice, we are already done, just by making `rows = pred`, `columns = gt`, and `values = np.ones(pred.size)`!
+So, because the COO format (a) only stores a `rows` array, a `columns` array, and a `values` array, and (b) sums the values whenever the same (row column) pair appears twice, we are already done, just by making `rows = pred`, `columns = gt`, and `values = np.ones(pred.size)`!
 
 ```python
 from scipy import sparse
@@ -509,7 +507,7 @@ Segmentation is a hard problem, so it's important to measure how well a segmenta
 But, even this comparison is not an easy task.
 How do we define how "close" an automated segmentation is to a ground truth?
 We'll illustrate one method, the *variation of information* or VI (Meila, 2005).
-This is defined as the answer to the following question: on average, for a random pixel, if we are given its segment ID in one segmentation, how much more *information* do we need to determine its ID in the other?
+This is defined as the answer to the following question: on average, for a random pixel, if we are given its segment ID in one segmentation, how much more *information* do we need to determine its ID in the other segmentation?
 
 In order to answer this question, we'll need a quick primer on information
 theory.
@@ -668,7 +666,7 @@ $$
 VI(A, B) = H(A | B) + H(B | A)
 $$
 
-In the segmentation context, "days" become "pixels", and "rain" and "month"
+Back in the image segmentation context, "days" become "pixels", and "rain" and "month"
 become "label in automated segmentation (AS)" and "label ground truth (GT)".
 Then, the conditional entropy of the automatic segmentation given the ground
 truth measures how much additional
@@ -705,7 +703,7 @@ Now, we make a contingency table of the pixel labels, just as we did with
 the spam prediction labels.
 The only difference is that the label arrays are 2-dimensional, instead of
 the 1D arrays of predictions.
-In fact, though, this doesn't matter:
+In fact, this doesn't matter:
 remember that numpy arrays are actually linear (1D) chunks of data with some
 shape and other metadata attached.
 We can ignore the shape by using the arrays' `.ravel()` method:
@@ -777,7 +775,7 @@ This was
 by Warren Weckesser on StackOverflow.
 
 When reading the code, keep in mind that the `sparse` module is optimized for
-linear algebra, and as such recasts Python's "times" operator `*` as matrix
+linear algebra, and as such it recasts Python's "times" operator `*` as matrix
 multiplication.
 
 ```python
@@ -996,7 +994,7 @@ auto_seg = RAG_segmentation(seg, tiger, threshold=80)
 plt.imshow(color.label2rgb(auto_seg, tiger));
 ```
 
-Exercise: Segmentation in practice
+**Exercise:** Segmentation in practice
 
 Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
 Using the mean or median of those thresholds, then go and segment a new image. Did you get a reasonable segmentation?
