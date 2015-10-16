@@ -14,11 +14,36 @@ Many real-world matrices are *sparse*, which means that most of their values are
 
 Using numpy arrays to manipulate sparse matrices wastes a lot of time and energy multiplying many, many values by 0.
 Instead, we can use SciPy's `sparse` module to solve these efficiently, examining only non-zero values.
-
 In addition to helping solve these "canonical" sparse matrix problems, `sparse` can be used for problems that are not obviously related to sparse matrices.
 
 One such problem is the comparison of image segmentations.
 (Review chapter 3 for a definition of segmentation.)
+
+The code sample motivating this chapter uses sparse matrices twice:
+once to compute a *contingency matrix* that counts the correspondence of labels
+between two segmentations, and again to use that contingency matrix to compute
+the *variation of information*, which measures the differences between
+segmentations.
+
+```python
+def vi(x, y):
+    # compute contingency matrix
+    pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
+                            dtype=float).tocsr()
+    pxy.data /= np.sum(pxy.data)
+
+    # compute marginal probabilities
+    px = pxy.sum(axis=1)
+    py = pxy.sum(axis=0)
+
+    # use sparse matrix linear algebra to compute VI
+    px_inv = sparse.diags(invert_nonzero(px).A.T, [0])
+    py_inv = sparse.diags(invert_nonzero(py).A, [0])
+    hygx = - px.T * xlogx(px_inv * pxy).sum(axis=1)
+    hxgy = - xlogx(pxy * py_inv).sum(axis=0) * py.T
+
+    return float(hygx + hxgy)
+```
 
 But let's start simple and work our way up to segmentations.
 
