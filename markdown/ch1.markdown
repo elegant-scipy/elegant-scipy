@@ -33,12 +33,11 @@ def rpkm(data, lengths):
     return(rpkm)
 ```
 
-We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful:
+This example illustrates some of the ways that powerful NumPy arrays can make your code more elegant:
 
-- Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
-- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
-- Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
-- Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
+- Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
+- Arrays allow the expression of many numerical operations at once. In the second last line of the function, we multiple every value in the array by 10^9.
+- Arrays can be operated on along *axes*. In the first line, we calculate the sum down each column by specifying a *different* `axis`.
 
 Before we delve into the power of NumPy, let's spend some time to understand the biological data that we will be working with.
 
