@@ -1,6 +1,6 @@
 ## Quantile normalization with NumPy and SciPy
 
-Our use case is the analysis of gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from The Cancer Genome Atlas (TCGA) project.
+Our use case is using gene expression data to predict mortality in skin cancer patients. We will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this  [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
 
 The code we will work to understand is an implementation of [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
 This requires a strong assumption: if the data are not distributed according to a bell curve, we just make it fit!
@@ -55,8 +55,11 @@ def quantile_norm(X):
     return(Xn)
 ```
 
-We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful:
+We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful (you will remember many of these moves from chapter 1):
 
+- Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
+- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
+- Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
 - Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
 - Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
 
