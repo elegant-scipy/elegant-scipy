@@ -1,4 +1,68 @@
-## Quantile normalization with NumPy and SciPy
+# Quantile normalization with NumPy and SciPy
+
+Our use case is using gene expression data to predict mortality in skin cancer patients. We will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this  [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
+
+The code we will work to understand is an implementation of [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
+This requires a strong assumption: if the data are not distributed according to a bell curve, we just make it fit!
+But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
+For example, Bolstad and colleagues [showed](http://bioinformatics.oxfordjournals.org/content/19/2/185.full.pdf) that it performs admirably in recovering known expression levels in microarray data.
+
+Using NumPy indexing tricks and the `scipy.stats.rank_data` function, quantile normalization in Python is fast, efficient, and elegant.
+
+```python
+import numpy as np
+from scipy import stats
+
+def quantile_norm(X):
+    """Normalize the columns of X to each have the same distribution.
+
+    Given an expression matrix (microarray data, read counts, etc) of M genes
+    by N samples, quantile normalization ensures all samples have the same
+    spread of data (by construction).
+
+    The input data is log-transformed, then the data across each row are
+    averaged to obtain an average column. Each column quantile is replaced
+    with the corresponding quantile of the average column.
+    The data is then transformed back to counts.
+
+    Parameters
+    ----------
+    X : 2D array of float, shape (M, N)
+        The input data, with M rows (genes/features) and N columns (samples).
+
+    Returns
+    -------
+    Xn : 2D array of float, shape (M, N)
+        The normalized data.
+    """
+    # log-transform the data
+    logX = np.log2(X + 1)
+
+    # compute the quantiles
+    log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
+
+    # compute the column-wise ranks. Each observation is replaced with its
+    # rank in that column: the smallest observation is replaced by 0, the
+    # second-smallest by 1, ..., and the largest by M, the number of rows.
+    ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
+                          for col in X.T])
+
+    # index the quantiles for each rank with the ranks matrix
+    logXn = log_quantiles[ranks]
+
+    # convert the data back to counts (casting to int is optional)
+    Xn = np.round(2**logXn - 1).astype(int)
+    return(Xn)
+```
+
+We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful (you will remember the first three of these moves from chapter 1):
+
+- Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
+- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
+- Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
+- Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
+- Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
+
 
 ```python
 %matplotlib inline
