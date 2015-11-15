@@ -10,20 +10,20 @@ This allows the comparison of measurements between different samples and genes.
 
 ```python
 def rpkm(counts, lengths):
-    """calculate reads per kilobase transcript per million reads
+    """Calculate reads per kilobase transcript per million reads.
     RPKM = (10^9 * C) / (N * L)
 
     Where:  
     C = Number of reads mapped to a gene  
     N = Total mapped reads in the experiment  
-    L = exon length in base-pairs for a gene
+    L = Exon length in base pairs for a gene
 
     counts: 2D numpy ndarray (numerical)
         RNAseq (or similar) count data where columns are individual samples
-        and rows are genes
+        and rows are genes.
     lengths: list or 1D numpy ndarray (numerical)
-        gene lengths in bp in the same order
-        as the rows
+        Gene lengths in base pairs in the same order
+        as the rows in counts.
     """
 
     N = counts.sum(axis=0) # sum each column to get total reads per sample
