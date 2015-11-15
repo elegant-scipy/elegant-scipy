@@ -242,7 +242,8 @@ smoothdiff = np.array([.5, 1.5, 3, 5, -5, -3, -1.5, -0.5]) / 10
 This smoothed difference filter looks for an edge in the central position,
 but also for that difference to continue. This is true in the case of a true
 edge, but not in "spurious" edges caused by noise. We then assign a
-weight of 0.8 to edges in the center, and 0.2 to the edge extension.
+weight of 0.5 to edges in the center, progressively decreasing as we move away
+from it.
 Check out the result:
 
 ```python
