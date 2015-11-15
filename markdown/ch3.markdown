@@ -179,18 +179,18 @@ detect edges between objects in the image.
 
 To understand filters, it's easiest to start with a 1D signal, instead of an image. For
 example, you might measure the light arriving at your end of a fiber-optic cable.
-If you *sample* the signal every ten milliseconds for a second, you end up with an
-array of length 100. Suppose that after 300ms the light signal is turned on, and
-300ms later, it is switched off. You end up with a signal like this:
+If you *sample* the signal every millisecond (ms) for 100ms, you end up with an
+array of length 100. Suppose that after 30ms the light signal is turned on, and
+30ms later, it is switched off. You end up with a signal like this:
 
 ```python
 sig = np.zeros(100, np.float) # 
-sig[30:60] = 1 # signal is 1 during the period 300-600ms because light is observed
+sig[30:60] = 1  # signal = 1 during the period 30-60ms because light is observed
 plt.plot(sig);
 plt.ylim(-0.1, 1.1);
 ```
 
-To find *when* the light is turned on, you can *delay* it by, say, 10ms, then
+To find *when* the light is turned on, you can *delay* it by 1ms, then
 *subtract* the delayed signal from the original, and finally *clip* this
 difference to be nonzero.
 
@@ -198,7 +198,7 @@ difference to be nonzero.
 sigdelta = sig[:-1]  # sigd[0] equals sig[1], and so on
 sigdiff = sig[1:] - sigdelta
 sigon = np.clip(sigdiff, 0, np.inf)
-print(10 + np.flatnonzero(sigon)[0] * 10, 'ms')
+print(1 + np.flatnonzero(sigon)[0], 'ms')
 ```
 
 It turns out that that can all be accomplished by *convolving* the signal
