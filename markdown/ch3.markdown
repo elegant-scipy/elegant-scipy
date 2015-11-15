@@ -305,10 +305,36 @@ selling a house in an expensive neighborhood costs more.) With
 from skimage import morphology
 def tax(prices):
     return 10 + 0.05 * np.percentile(prices, 90)
-house_price_map = np.ones((100, 100))
+house_price_map = (0.5 + np.random.rand(100, 100)) * 1e6
 footprint = morphology.disk(radius=10)
 tax_rate_map = nd.generic_filter(house_price_map, tax, footprint=footprint)
+plt.imshow(tax_rate_map)
+plt.colorbar()
 ```
+
+**Exercise:** Conway's
+[Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) is a
+seemingly simple construct in which "cells" on a regular square grid live or die
+according to the cells in their immediate surroundings. At every timestep, we
+determine the state of position (i, j) according to its previous state and that
+of its 8 neighbors (above, below, left, right, and diagonals):
+
+- a live cell with only one live neighbor or none dies.
+- a live cell with two or three live neighbors lives on for another generation.
+- a live cell with four or more live neighbors dies, as if from overpopulation.
+- a dead cell with exactly three live neighbors becomes alive, as if by
+  reproduction.
+
+Although the rules sound like a contrived math problem, they in fact give rise
+to incredible patterns, starting with gliders (small patterns of live cells
+that slowly move in each generation) and glider guns (stationary patterns that
+sprout off gliders), all the way up to prime number generator machines (see,
+for example,
+[this page](http://www.njohnston.ca/2009/08/generating-sequences-of-primes-in-conways-game-of-life/)),
+and even
+[simulating Game of Life itself](https://www.youtube.com/watch?v=xP5-iIeKXE8)!
+
+Can you implement the Game of Life using `nd.generic_filter`?
 
 # Graphs and the NetworkX library
 
