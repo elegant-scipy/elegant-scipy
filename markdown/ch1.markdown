@@ -31,11 +31,13 @@ def rpkm(counts, lengths):
     return(rpkm)
 ```
 
-This example illustrates some of the ways that powerful NumPy arrays can make your code more elegant:
+This example illustrates some of the ways that NumPy arrays can make your code more elegant:
 
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
-- Arrays allow the expression of many numerical operations at once. In the second last line of the function, we multiple every value in the array by 10^9.
 - Arrays can be operated on along *axes*. In the first line, we calculate the sum down each column by specifying a *different* `axis`.
+- Arrays allow the expression of many numerical operations at once.
+For example towards the end of the function we divide the 2D array of counts (C) by the 1D array of column sums (N).
+This is broadcasting. More on how this works in just a moment!
 
 Before we delve into the power of NumPy, let's spend some time to understand the biological data that we will be working with.
 
