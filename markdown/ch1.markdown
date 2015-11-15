@@ -7,7 +7,7 @@ Our use case is using gene expression data to predict mortality in skin cancer p
 (We will unpack what "gene expression" means in just a moment.)
 
 ```python
-def rpkm(data, lengths):
+def rpkm(counts, lengths):
     """calculate reads per kilobase transcript per million reads
     RPKM = (10^9 * C) / (N * L)
 
@@ -16,15 +16,15 @@ def rpkm(data, lengths):
     N = Total mapped reads in the experiment  
     L = exon length in base-pairs for a gene
 
-    data: 2d ndarray of counts where columns are individual samples and rows
+    counts: 2d ndarray of counts where columns are individual samples and rows
         are genes
     lengths: list or 1d nd array of the gene lengths in bp in the same order
         as the rows
     """
 
-    N = data.sum(axis=0) # sum each column to get total reads per sample
+    N = counts.sum(axis=0) # sum each column to get total reads per sample
     L = lengths
-    C = data
+    C = counts
 
     rpkm = ( (10^9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
 
