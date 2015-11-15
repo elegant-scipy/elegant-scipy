@@ -84,7 +84,7 @@ Finally, "make some noise" and display it as an image:
 
 ```python
 random_image = np.random.rand(500, 500)
-plt.imshow(random_image, cmap=cm.gray, interpolation='none');
+plt.imshow(random_image);
 ```
 
 This displays a numpy array as an image. The converse is also true: an image
