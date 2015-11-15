@@ -3,7 +3,9 @@
 This chapter touches on some statistical functions in SciPy, but more than that, it focuses on exploring the NumPy array, a data structure that underlies almost all numerical scientific computation in Python.
 We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
 
-Our use case is using gene expression data to predict mortality in skin cancer patients. We will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this  [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
+Our use case is using gene expression data from The Cancer Genome Atlas (TCGA) project to predict mortality in skin cancer patients.
+Before we can do this, we will need to normalize the expression data using a method called RPKM normalization.
+This allows the comparison of measurements between different samples and genes.
 (We will unpack what "gene expression" means in just a moment.)
 
 ```python
