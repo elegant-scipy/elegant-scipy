@@ -55,7 +55,7 @@ def quantile_norm(X):
     return(Xn)
 ```
 
-We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful (you will remember many of these moves from chapter 1):
+We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful (you will remember the first three of these moves from chapter 1):
 
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
 - Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
