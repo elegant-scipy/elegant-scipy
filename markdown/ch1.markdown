@@ -16,9 +16,11 @@ def rpkm(counts, lengths):
     N = Total mapped reads in the experiment  
     L = exon length in base-pairs for a gene
 
-    counts: 2d ndarray of counts where columns are individual samples and rows
-        are genes
-    lengths: list or 1d nd array of the gene lengths in bp in the same order
+    counts: 2D numpy ndarray (numerical)
+        RNAseq (or similar) count data where columns are individual samples
+        and rows are genes
+    lengths: list or 1D numpy ndarray (numerical)
+        gene lengths in bp in the same order
         as the rows
     """
 
