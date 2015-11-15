@@ -223,7 +223,7 @@ plt.plot(dsig);
 Signals are usually *noisy* though, not perfect as above:
 
 ```python
-sig = sig + np.random.normal(0, 0.05, size=sig.shape)
+sig = sig + np.random.normal(0, 0.3, size=sig.shape)
 plt.plot(sig);
 ```
 
