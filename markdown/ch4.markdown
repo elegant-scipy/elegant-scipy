@@ -202,7 +202,7 @@ M = 1024
 
 # Chop up the signal into slices of 1024 samples, each slice
 # overlapping the previous by 100 samples
-slices = util.view_as_windows(audio, window_shape=M, step=100)
+slices = util.view_as_windows(audio, window_shape=(M,), step=100)
 print('Audio shape: {}, Sliced audio shape: {}'.format(audio.shape, slices.shape))
 
 # Generate a windowing function and multiply it with the signal—more on this later
