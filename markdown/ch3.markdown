@@ -16,7 +16,7 @@ relationships between them. Building such a structure could be a complicated
 affair, and even more difficult 
 when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
-here we will show you how to produce an RAG in a few lines of code using NetworkX and
+here we will show you how to produce a RAG in a few lines of code using NetworkX and
 a generalized filter from SciPy's N-dimensional image processing submodule.
 
 ```python
@@ -84,7 +84,7 @@ Finally, "make some noise" and display it as an image:
 
 ```python
 random_image = np.random.rand(500, 500)
-plt.imshow(random_image, cmap=cm.gray, interpolation='none');
+plt.imshow(random_image);
 ```
 
 This displays a numpy array as an image. The converse is also true: an image
@@ -179,18 +179,18 @@ detect edges between objects in the image.
 
 To understand filters, it's easiest to start with a 1D signal, instead of an image. For
 example, you might measure the light arriving at your end of a fiber-optic cable.
-If you *sample* the signal every ten milliseconds for a second, you end up with an
-array of length 100. Suppose that after 300ms the light signal is turned on, and
-300ms later, it is switched off. You end up with a signal like this:
+If you *sample* the signal every millisecond (ms) for 100ms, you end up with an
+array of length 100. Suppose that after 30ms the light signal is turned on, and
+30ms later, it is switched off. You end up with a signal like this:
 
 ```python
 sig = np.zeros(100, np.float) # 
-sig[30:60] = 1 # signal is 1 during the period 300-600ms because light is observed
+sig[30:60] = 1  # signal = 1 during the period 30-60ms because light is observed
 plt.plot(sig);
 plt.ylim(-0.1, 1.1);
 ```
 
-To find *when* the light is turned on, you can *delay* it by, say, 10ms, then
+To find *when* the light is turned on, you can *delay* it by 1ms, then
 *subtract* the delayed signal from the original, and finally *clip* this
 difference to be nonzero.
 
@@ -198,7 +198,7 @@ difference to be nonzero.
 sigdelta = sig[:-1]  # sigd[0] equals sig[1], and so on
 sigdiff = sig[1:] - sigdelta
 sigon = np.clip(sigdiff, 0, np.inf)
-print(10 + np.flatnonzero(sigon)[0] * 10, 'ms')
+print(1 + np.flatnonzero(sigon)[0], 'ms')
 ```
 
 It turns out that that can all be accomplished by *convolving* the signal
@@ -223,7 +223,7 @@ plt.plot(dsig);
 Signals are usually *noisy* though, not perfect as above:
 
 ```python
-sig = sig + np.random.normal(0, 0.05, size=sig.shape)
+sig = sig + np.random.normal(0, 0.3, size=sig.shape)
 plt.plot(sig);
 ```
 
@@ -242,7 +242,8 @@ smoothdiff = np.array([.5, 1.5, 3, 5, -5, -3, -1.5, -0.5]) / 10
 This smoothed difference filter looks for an edge in the central position,
 but also for that difference to continue. This is true in the case of a true
 edge, but not in "spurious" edges caused by noise. We then assign a
-weight of 0.8 to edges in the center, and 0.2 to the edge extension.
+weight of 0.5 to edges in the center, progressively decreasing as we move away
+from it.
 Check out the result:
 
 ```python
@@ -305,10 +306,36 @@ selling a house in an expensive neighborhood costs more.) With
 from skimage import morphology
 def tax(prices):
     return 10 + 0.05 * np.percentile(prices, 90)
-house_price_map = np.ones((100, 100))
+house_price_map = (0.5 + np.random.rand(100, 100)) * 1e6
 footprint = morphology.disk(radius=10)
 tax_rate_map = nd.generic_filter(house_price_map, tax, footprint=footprint)
+plt.imshow(tax_rate_map)
+plt.colorbar()
 ```
+
+**Exercise:** Conway's
+[Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) is a
+seemingly simple construct in which "cells" on a regular square grid live or die
+according to the cells in their immediate surroundings. At every timestep, we
+determine the state of position (i, j) according to its previous state and that
+of its 8 neighbors (above, below, left, right, and diagonals):
+
+- a live cell with only one live neighbor or none dies.
+- a live cell with two or three live neighbors lives on for another generation.
+- a live cell with four or more live neighbors dies, as if from overpopulation.
+- a dead cell with exactly three live neighbors becomes alive, as if by
+  reproduction.
+
+Although the rules sound like a contrived math problem, they in fact give rise
+to incredible patterns, starting with gliders (small patterns of live cells
+that slowly move in each generation) and glider guns (stationary patterns that
+sprout off gliders), all the way up to prime number generator machines (see,
+for example,
+[this page](http://www.njohnston.ca/2009/08/generating-sequences-of-primes-in-conways-game-of-life/)),
+and even
+[simulating Game of Life itself](https://www.youtube.com/watch?v=xP5-iIeKXE8)!
+
+Can you implement the Game of Life using `nd.generic_filter`?
 
 # Graphs and the NetworkX library
 
