@@ -24,6 +24,13 @@ chs: build_dirs $(addsuffix .html,$(CHS_))
 
 markdown/ch4.markdown: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
 
+markdown/ch1.markdown: data/counts.txt
+
+markdown/ch2.markdown: data/counts.txt
+
+data/counts.txt: data/counts.txt.bz2
+	 bunzip2 -d -k data/counts.txt.bz2
+
 $(FIGURES)/%.png: script/%.py $(FIGURES)
 	 MPLCONFIGDIR=./.matplotlib python $< $@
 

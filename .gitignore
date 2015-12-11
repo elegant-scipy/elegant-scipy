@@ -1,4 +1,5 @@
 .*.swp
+data/counts.txt
 build_html/*
 build_ipynb/*
 figures/generated/*
