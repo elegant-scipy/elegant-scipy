@@ -24,6 +24,13 @@ chs: build_dirs $(addsuffix .html,$(CHS_))
 
 markdown/ch4.markdown: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
 
+markdown/ch1.markdown: data/counts.txt
+
+markdown/ch2.markdown: data/counts.txt
+
+data/counts.txt: data/counts.txt.bz2
+	 bunzip2 -d -k data/counts.txt.bz2
+
 $(FIGURES)/%.png: script/%.py $(FIGURES)
 	 MPLCONFIGDIR=./.matplotlib python $< $@
 
@@ -38,7 +45,7 @@ $(BUILD_HTML)/custom.css:
 # %.ipynb: How to build an IPython notebook from a source Markdown
 #     file.
 $(BUILD_NB)/%.ipynb: %.markdown
-	 notedown --timeout 300 --match fenced --run $< --output $@
+	 notedown --timeout 300 --match python --run $< --output $@
 
 # .SECONDARY: Ensure ipynb files are not deleted after being generated.
 NBS_ := $(addprefix $(BUILD_NB)/,$(TITLES))

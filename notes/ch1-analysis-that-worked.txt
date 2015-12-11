@@ -1,0 +1,3 @@
+qnorm_counts_variable = most_variable_rows(np.log(qnorm_counts + 1))
+yr, yc = bicluster(qnorm_counts_variable, linkage_method='ward', color_t=0.25)
+
