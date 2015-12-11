@@ -156,7 +156,7 @@ In this case, the Python core team decided that a clean break was needed to elim
 
 Here's one way in which Python has improved in turning 3:
 
-```python
+```
 print "Hello World!"   # Python 2 print statement
 print("Hello World!")  # Python 3 print function
 ```
@@ -165,7 +165,7 @@ So what, right?
 Why cause such a fuss just to add some parentheses!
 Well, true, but what if you want to instead print to a different *stream*, such as *standard error*, the usual place for debugging information?
 
-```python
+```
 print >>sys.stderr, "fatal error"  # Python 2
 print("fatal error", file=sys.stderr)  # Python 3
 ```
@@ -189,7 +189,7 @@ Possibly the biggest improvement in Python 3 is its support for Unicode, a way o
 Python 2 allowed you to define a Unicode string, like so:
 
 ```python
->>> beta = u"β"
+beta = u"β"
 ```
 
 But in Python 3, *everything* is unicode:
