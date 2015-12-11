@@ -1,3 +1,4 @@
+.*.swp
 build_html/*
 build_ipynb/*
 figures/generated/*
