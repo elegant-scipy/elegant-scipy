@@ -381,6 +381,7 @@ plt.style.use('ggplot') # Use ggplot style graphs for something a little prettie
 ```python
 total_counts = counts.sum(axis=0) # sum each column (axis=1 would sum rows)
 
+from scipy import stats
 density = stats.kde.gaussian_kde(total_counts) # Use gaussian smoothing to estimate the density
 x = np.arange(min(total_counts), max(total_counts), 10000) # create ndarray of integers from min to max in steps of 10,000
 plt.plot(x, density(x))
