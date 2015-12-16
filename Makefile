@@ -29,7 +29,7 @@ markdown/ch1.markdown: data/counts.txt
 markdown/ch2.markdown: data/counts.txt
 
 data/counts.txt: data/counts.txt.bz2
-	 bunzip2 -d -k data/counts.txt.bz2
+	 bunzip2 -d -k -f data/counts.txt.bz2
 
 $(FIGURES)/%.png: script/%.py $(FIGURES)
 	 MPLCONFIGDIR=./.matplotlib python $< $@
