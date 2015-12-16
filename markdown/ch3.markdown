@@ -556,6 +556,7 @@ understand this difficulty, look at this image:
 
 While you see a face, a computer only sees a bunch of numbers:
 
+```
     58688888888888899998898988888666532121
     66888886888998999999899998888888865421
     66665566566689999999999998888888888653
@@ -594,6 +595,7 @@ While you see a face, a computer only sees a bunch of numbers:
     26686888888888888888888666688688865654
     28688888888888888888668666668686666555
     28666688888888888868668668688886665548
+```
 
 (Yes, your visual system is tuned enough to find faces that it sees the
 face even in this blob of numbers! But I hope you get my point. Also, check
