@@ -536,10 +536,10 @@ to include that line.
 
 # Region adjacency graphs
 
-I hope that section gave you an idea of the power of graphs as a scientific
+I hope that the previous section gave you an idea of the power of graphs as a scientific
 abstraction, and also how Python makes it easy to manipulate and analyse
 them. Now we will study a special kind of graph, the region adjacency
-graph, or RAG. This is a representation of an image useful for *segmentation*,
+graph, or RAG. This is a representation of an image that is useful for *segmentation*,
 the division of images into meaningful regions (or *segments*). If you've seen
 Terminator 2, you've seen segmentation:
 
