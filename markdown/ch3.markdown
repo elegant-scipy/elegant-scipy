@@ -56,7 +56,8 @@ inline` IPython magic to make our images appear below the code:
 %matplotlib inline
 import numpy as np
 import matplotlib as mpl
-from matplotlib import pyplot as plt, cm
+from matplotlib import pyplot as plt
+from matplotlib cm  # colormap module
 ```
 
 Next, we set the default matplotlib colormap and interpolation method:
