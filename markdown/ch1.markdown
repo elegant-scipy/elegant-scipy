@@ -50,7 +50,7 @@ Before we delve into the power of NumPy, let's spend some time to understand the
 We will work our way through a *gene expression analysis* to demonstrate the power of NumPy and SciPy to solve a real-world biological problem.
 We will use the Pandas library, which builds on NumPy, to read and munge our data files, and then we manipulate our data efficiently in NumPy arrays.
 
-The so-called central dogma of molecular biology states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
+The so-called [central dogma of molecular biology](https://en.wikipedia.org/wiki/Central_dogma_of_molecular_biology) states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
 There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
 
@@ -107,7 +107,7 @@ expression_data = [gene0, gene1, gene2]
 ```
 
 Above, each gene's expression across different cell types is stored in a list of Python integers.
-Then, we store all of these lists in a list (a metalist, if you will).
+Then, we store all of these lists in a list (a meta-list, if you will).
 We can retrieve individual data points using two levels of list indexing:
 
 ```python
@@ -216,6 +216,7 @@ In Python, each element in a list is an object and is given a healthy memory all
 In contrast, in arrays, each element takes up just the necessary amount of memory.
 For example, an array of 64-bit integers takes up exactly 64-bits per element, plus some very small overhead for array metadata, such as the `shape` attribute we discussed above.
 This is generally much less than would be given to objects in a python list.
+(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas' blog post [Why Python is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
 
 Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
 
@@ -287,7 +288,7 @@ outer = x * y
 print(outer)
 ```
 
-You can see for yoourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
+You can see for yourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
 This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the correspoding dimension of the other array.
 
 As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
