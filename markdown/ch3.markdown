@@ -1,4 +1,7 @@
-# Vighnesh Birodkar: build a region adjacency graph from nD images
+# Build a Region Adjacency Graph using ndimage.generic_filter
+
+### Code by Vighnesh Birodkar
+### Submitted by Juan Nunez-Iglesias
 
 You probably know that digital images are made up of *pixels*. These are
 the light signal *sampled on a regular grid*. When computing
