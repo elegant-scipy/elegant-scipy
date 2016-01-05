@@ -61,7 +61,7 @@ It turns out that arrays are equally adept at representing images.
 
 Here's how to create an image of white noise using just numpy, and display it
 with matplotlib. First, we import the necessary packages, and use the `matplotlib
-inline` IPython magic:
+inline` IPython magic to make our images appear below the code:
 
 ```python
 %matplotlib inline
