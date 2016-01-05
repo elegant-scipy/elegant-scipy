@@ -107,7 +107,7 @@ expression_data = [gene0, gene1, gene2]
 ```
 
 Above, each gene's expression across different cell types is stored in a list of Python integers.
-Then, we store all of these lists in a list (a metalist, if you will).
+Then, we store all of these lists in a list (a meta-list, if you will).
 We can retrieve individual data points using two levels of list indexing:
 
 ```python
@@ -287,7 +287,7 @@ outer = x * y
 print(outer)
 ```
 
-You can see for yoourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
+You can see for yourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
 This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the correspoding dimension of the other array.
 
 As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
