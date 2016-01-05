@@ -196,6 +196,7 @@ But in Python 3, *everything* is unicode:
 
 ```python
 β = 0.5
+print(2 * β)
 ```
 
 The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
