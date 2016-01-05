@@ -336,8 +336,8 @@ Can you implement the Game of Life using `nd.generic_filter`?
 
 # Graphs and the NetworkX library
 
-To introduce you to graphs, we will reproduce some results from the paper "Structural
-properties of the *Caenorhabditis elegans* neuronal networks", by Varshney *et al*, 2011.
+To introduce you to graphs, we will reproduce some results from the paper 
+["Structural properties of the *Caenorhabditis elegans* neuronal networks"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Varshney *et al*, 2011.
 Note that in this context, "graphs" is synonymous not with "plots", but with "networks".
 Mathematicians and computer scientists invented slightly different words to discuss these:
 graph = network, vertex = node, and edge = link.
