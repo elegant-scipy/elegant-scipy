@@ -732,6 +732,7 @@ def add_edge_filter(values, graph):
     for neighbor in values:
         if neighbor != center and not graph.has_edge(center, neighbor)
             graph.add_edge(center, neighbor)
+    # float return value is unused but needed by `generic_filter`
     return 0.0
 
 def build_rag(labels, image):
@@ -751,6 +752,9 @@ def build_rag(labels, image):
 
 There's a few things to notice here:
 
+- we return "0.0" from the filter function because `generic_filter` requires
+  the filter function to return a float. However, we will ignore the filter
+  output, and only use it for its "side effect" of adding edges to the graph.
 - the loops are not nested several levels deep. This makes the code more
   compact, easier to take in in one go.
 - the code works identically for 1D, 2D, 3D, or even 8D images!
