@@ -311,7 +311,7 @@ us define the translation matrix, $H$ which, when multiplied with a
 coordinate from the input image, $[x, y, 1]$, will give us the
 corresponding coordinate in the output, $[x', y', 1]$.
 
-```
+```python
 angle = 30
 C = np.cos(np.deg2rad(angle))
 S = np.sin(np.deg2rad(angle))
@@ -343,7 +343,7 @@ It will be used as follows:
 
 Let's look at the function that builds our sparse operator:
 
-```
+```python
 from math import floor
 
 def homography(tf, image_shape):
