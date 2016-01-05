@@ -207,7 +207,7 @@ when adjacent values (u, v) of the signal are identical, the filter produces
 
 ```python
 diff = np.array([1, -1])
-from scipy import ndimage as nd
+from scipy import ndimage as ndi
 dsig = ndi.convolve(sig, diff)
 plt.plot(dsig);
 ```
