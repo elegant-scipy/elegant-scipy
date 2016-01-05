@@ -794,7 +794,7 @@ threshold_graph(g, 80)
 
 Finally, we use the numpy index-with-an-array trick we learned in chapter 1:
 
-```
+```python
 map_array = np.zeros(np.max(seg) + 1, int)
 for i, segment in enumerate(nx.connected_components(g)):
     for initial in segment:
