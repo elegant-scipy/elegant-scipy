@@ -7,7 +7,7 @@ Whenever I think too hard about streaming data analysis, my head hurts.
 
 You have probably already done some streaming, perhaps without thinking about it these terms.
 The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
-For example a loop like this:
+For example a loop like this to calculate the mean of each row and sum them:
 
 ```python
 import numpy as np
