@@ -343,8 +343,8 @@ To introduce you to graphs, we will reproduce some results from the paper "Struc
 properties of the *Caenorhabditis elegans* neuronal networks", by Varshney *et al*, 2011.
 Note that in this context, "graphs" is synonymous not with "plots", but with "networks".
 Mathematicians and computer scientists invented slightly different words to discuss these:
-graph vs network, vertex vs node, and edge vs link.
-As most people do, we will be using them interchangeably.
+graph = network, vertex = node, and edge = link.
+As most people do, we will be using these terms interchangeably.
 
 You might be slightly more familiar with the network terminology: a network consists of
 *nodes* and *links* between the nodes. Equivalently, a graph consists of *vertices* and
