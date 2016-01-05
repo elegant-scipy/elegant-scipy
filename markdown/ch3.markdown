@@ -24,14 +24,12 @@ import networkx as nx
 import numpy as np
 from scipy import ndimage as nd
 
-
 def add_edge_filter(values, graph):
     current = values[0]
     neighbors = values[1:]
     for neighbor in neighbors:
         graph.add_edge(current, neighbor)
     return 0.
-
 
 def build_rag(labels, image):
     g = nx.Graph()
@@ -59,12 +57,11 @@ graph (network) using the NetworkX library. We'll go over these in turn.
 
 In the previous chapter, we saw that numpy arrays can efficiently represent
 tabular data, and are a convenient way to perform computations on it.
-
 It turns out that arrays are equally adept at representing images.
 
 Here's how to create an image of white noise using just numpy, and display it
 with matplotlib. First, we import the necessary packages, and use the `matplotlib
-inline` IPython magic:
+inline` IPython magic to make our images appear below the code:
 
 ```python
 %matplotlib inline
@@ -168,7 +165,7 @@ def overlay_grid(image, spacing=128):
     pass  # replace this line with your code...
     return image_gridded
 
-# plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line
+# plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line to test your function
 ```
 
 # Image filters
@@ -339,12 +336,12 @@ Can you implement the Game of Life using `nd.generic_filter`?
 
 # Graphs and the NetworkX library
 
-To introduce you to graphs, we will reproduce some results from the paper "Structural
-properties of the *Caenorhabditis elegans* neuronal networks", by Varshney *et al*, 2011.
-Note that in this context, "graphs" is synonymous not with "plots", but with "networks".
+To introduce you to graphs, we will reproduce some results from the paper 
+["Structural properties of the *Caenorhabditis elegans* neuronal networks"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Varshney *et al*, 2011.
+Note that in this context the term "graph" is synonymous with "network", but not with "plot".
 Mathematicians and computer scientists invented slightly different words to discuss these:
-graph vs network, vertex vs node, and edge vs link.
-As most people do, we will be using them interchangeably.
+graph = network, vertex = node, and edge = link.
+As most people do, we will be using these terms interchangeably.
 
 You might be slightly more familiar with the network terminology: a network consists of
 *nodes* and *links* between the nodes. Equivalently, a graph consists of *vertices* and
@@ -523,8 +520,8 @@ Then, plot using Matplotlib:
 
 ```python
 plt.loglog(np.arange(1, len(survival) + 1), survival, c='b', lw=2)
-plt.xlabel('in-degree')
-plt.ylabel('fraction of neurons with higher in-degree')
+plt.xlabel('in-degree distribution')
+plt.ylabel('fraction of neurons with higher in-degree distribution')
 plt.scatter(avg_in_degree, 0.0022, marker='v')
 plt.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree, )
 plt.ylim(0.002, 1.0)
@@ -539,10 +536,10 @@ to include that line.
 
 # Region adjacency graphs
 
-I hope that section gave you an idea of the power of graphs as a scientific
+I hope that the previous section gave you an idea of the power of graphs as a scientific
 abstraction, and also how Python makes it easy to manipulate and analyse
 them. Now we will study a special kind of graph, the region adjacency
-graph, or RAG. This is a representation of an image useful for *segmentation*,
+graph, or RAG. This is a representation of an image that is useful for *segmentation*,
 the division of images into meaningful regions (or *segments*). If you've seen
 Terminator 2, you've seen segmentation:
 
@@ -740,7 +737,6 @@ def add_edge_filter(values, graph):
         graph.add_edge(current, neighbor)
     return 0. # generic_filter requires a return value, which we ignore!
 
-
 def build_rag(labels, image):
     g = nx.Graph()
     footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
@@ -796,9 +792,9 @@ def threshold_graph(g, t):
 threshold_graph(g, 80)
 ```
 
-Finally, we use the numpy index-with-an-array trick we learned in chapter 1:
+Finally, we use the numpy index-with-an-array trick we learned in chapter 2:
 
-```
+```python
 map_array = np.zeros(np.max(seg) + 1, int)
 for i, segment in enumerate(nx.connected_components(g)):
     for initial in segment:
