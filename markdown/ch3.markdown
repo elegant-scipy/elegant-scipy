@@ -798,7 +798,7 @@ plt.imshow(color.label2rgb(segmented, tiger));
 
 Oops! Looks like the cat lost its tail!
 
-Still, I think that's a nice demonstration of the capabilities of RAGs...
+Still, we think that's a nice demonstration of the capabilities of RAGs...
 And the beauty with which SciPy and NetworkX make it feasible!
 
 Many of these functions are available in the scikit-image library. If you
