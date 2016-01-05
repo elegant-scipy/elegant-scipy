@@ -36,13 +36,6 @@ def build_rag(labels, image):
         fp[0, ...] = 0
     _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
                           mode='nearest', extra_arguments=(g,))
-    for n in g:
-        g.node[n]['total color'] = np.zeros(3, np.double)
-        g.node[n]['pixel count'] = 0
-    for index in np.ndindex(labels.shape):
-        n = labels[index]
-        g.node[n]['total color'] += image[index]
-        g.node[n]['pixel count'] += 1
     return g
 ```
 
