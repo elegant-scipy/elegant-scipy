@@ -327,6 +327,12 @@ and even
 
 Can you implement the Game of Life using `nd.generic_filter`?
 
+**Exercise:** Sobel gradient magnitude.
+
+Above, we saw how we can combine the output of two different filters, the
+horizontal Sobel filter, and the vertical one. Can you write a function that
+does this in a single pass using `nd.generic_filter`?
+
 # Graphs and the NetworkX library
 
 To introduce you to graphs, we will reproduce some results from the paper
