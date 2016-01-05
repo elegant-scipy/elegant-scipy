@@ -22,18 +22,16 @@ import numpy as np
 from scipy import ndimage as nd
 
 def add_edge_filter(values, graph):
-    current = values[0]
-    neighbors = values[1:]
-    for neighbor in neighbors:
-        graph.add_edge(current, neighbor)
-    return 0.
+    center = values[len(values) // 2]
+    for neighbor in values:
+        if neighbor != center and not graph.has_edge(center, neighbor)
+            graph.add_edge(center, neighbor)
+    return 0.0
+
 
 def build_rag(labels, image):
     g = nx.Graph()
     footprint = ndi.generate_binary_structure(labels.ndim, connectivity=1)
-    for j in range(labels.ndim):
-        fp = np.swapaxes(footprint, j, 0)
-        fp[0, ...] = 0
     _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
                            mode='nearest', extra_arguments=(g,))
     return g
@@ -730,18 +728,15 @@ import numpy as np
 from scipy import ndimage as nd
 
 def add_edge_filter(values, graph):
-    current = values[0]
-    neighbors = values[1:]
-    for neighbor in neighbors:
-        graph.add_edge(current, neighbor)
-    return 0. # generic_filter requires a return value, which we ignore!
+    center = values[len(values) // 2]
+    for neighbor in values:
+        if neighbor != center and not graph.has_edge(center, neighbor)
+            graph.add_edge(center, neighbor)
+    return 0.0
 
 def build_rag(labels, image):
     g = nx.Graph()
     footprint = ndi.generate_binary_structure(labels.ndim, connectivity=1)
-    for j in range(labels.ndim):
-        fp = np.swapaxes(footprint, j, 0)
-        fp[0, ...] = 0  # zero out top of footprint on each axis
     _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
                            mode='nearest', extra_arguments=(g,))
     for n in g:
