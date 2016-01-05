@@ -290,11 +290,13 @@ DNA sequence data is commonly represented in FASTA format.
 This is a plaintext format, consisting of one or many DNA sequences per file, each with a name and the actual sequence.
 
 A sample FASTA file:
+```
     > sequence_name1
     ACGT
 
     > sequence_name2
     GACT
+```
 
 Now we have the required information to convert a stream of lines from a FASTA file to a count of k-mers:
 
