@@ -57,7 +57,6 @@ graph (network) using the NetworkX library. We'll go over these in turn.
 
 In the previous chapter, we saw that numpy arrays can efficiently represent
 tabular data, and are a convenient way to perform computations on it.
-
 It turns out that arrays are equally adept at representing images.
 
 Here's how to create an image of white noise using just numpy, and display it
