@@ -30,12 +30,12 @@ def add_edge_filter(values, graph):
 
 def build_rag(labels, image):
     g = nx.Graph()
-    footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
+    footprint = ndi.generate_binary_structure(labels.ndim, connectivity=1)
     for j in range(labels.ndim):
         fp = np.swapaxes(footprint, j, 0)
         fp[0, ...] = 0
-    _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
-                          mode='nearest', extra_arguments=(g,))
+    _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
+                           mode='nearest', extra_arguments=(g,))
     return g
 ```
 
@@ -203,7 +203,7 @@ when adjacent values (u, v) of the signal are identical, the filter produces
 ```python
 diff = np.array([1, -1])
 from scipy import ndimage as nd
-dsig = nd.convolve(sig, diff)
+dsig = ndi.convolve(sig, diff)
 plt.plot(dsig);
 ```
 
@@ -217,7 +217,7 @@ plt.plot(sig);
 The plain difference filter can amplify that noise:
 
 ```python
-plt.plot(nd.convolve(sig, diff));
+plt.plot(ndi.convolve(sig, diff));
 ```
 
 In such cases, you can add smoothing to the filter:
@@ -234,7 +234,7 @@ from it.
 Check out the result:
 
 ```python
-sdsig = nd.convolve(sig, smoothdiff)
+sdsig = ndi.convolve(sig, smoothdiff)
 plt.plot(sdsig);
 ```
 
@@ -251,7 +251,7 @@ edges in the coins image:
 ```python
 coins = coins.astype(float) / 255  # prevents overflow errors
 diff2d = np.array([[0, 1, 0], [1, 0, -1], [0, -1, 0]])
-coins_edges = nd.convolve(coins, diff2d)
+coins_edges = ndi.convolve(coins, diff2d)
 io.imshow(coins_edges);
 ```
 
@@ -271,16 +271,16 @@ noise right within the filter. The *Sobel* filter is designed to do just that:
 ```python
 hsobel = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
 vsobel = hsobel.T
-coins_h = nd.convolve(coins, hsobel)
-coins_v = nd.convolve(coins, vsobel)
+coins_h = ndi.convolve(coins, hsobel)
+coins_v = ndi.convolve(coins, vsobel)
 coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
 plt.imshow(coins_sobel, cmap=plt.cm.YlGnBu);
 plt.colorbar();
 ```
 
-In addition to dot-products, implemented by `nd.convolve`, SciPy lets you
+In addition to dot-products, implemented by `ndi.convolve`, SciPy lets you
 define a filter that is an *arbitrary function* of the points in a neighborhood,
-implemented in `nd.generic_filter`. This can let you express arbitrarily complex
+implemented in `ndi.generic_filter`. This can let you express arbitrarily complex
 filters.
 
 For example, suppose an image represents median house values in a county,
@@ -295,7 +295,7 @@ def tax(prices):
     return 10 + 0.05 * np.percentile(prices, 90)
 house_price_map = (0.5 + np.random.rand(100, 100)) * 1e6
 footprint = morphology.disk(radius=10)
-tax_rate_map = nd.generic_filter(house_price_map, tax, footprint=footprint)
+tax_rate_map = ndi.generic_filter(house_price_map, tax, footprint=footprint)
 plt.imshow(tax_rate_map)
 plt.colorbar()
 ```
@@ -325,13 +325,13 @@ for example,
 and even
 [simulating Game of Life itself](https://www.youtube.com/watch?v=xP5-iIeKXE8)!
 
-Can you implement the Game of Life using `nd.generic_filter`?
+Can you implement the Game of Life using `ndi.generic_filter`?
 
 **Exercise:** Sobel gradient magnitude.
 
 Above, we saw how we can combine the output of two different filters, the
 horizontal Sobel filter, and the vertical one. Can you write a function that
-does this in a single pass using `nd.generic_filter`?
+does this in a single pass using `ndi.generic_filter`?
 
 # Graphs and the NetworkX library
 
@@ -738,12 +738,12 @@ def add_edge_filter(values, graph):
 
 def build_rag(labels, image):
     g = nx.Graph()
-    footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
+    footprint = ndi.generate_binary_structure(labels.ndim, connectivity=1)
     for j in range(labels.ndim):
         fp = np.swapaxes(footprint, j, 0)
         fp[0, ...] = 0  # zero out top of footprint on each axis
-    _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
-                          mode='nearest', extra_arguments=(g,))
+    _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
+                           mode='nearest', extra_arguments=(g,))
     for n in g:
         g.node[n]['total color'] = np.zeros(3, np.double)
         g.node[n]['pixel count'] = 0
@@ -760,8 +760,8 @@ There's a few things to notice here:
   compact, easier to take in in one go.
 - the code works identically for 1D, 2D, 3D, or even 8D images!
 - if we want to add support for diagonal connectivity, we just need to
-  change the `connectivity` parameter to `nd.generate_binary_structure`
-- `nd.generic_filter` iterates over array elements *with their neighbors*;
+  change the `connectivity` parameter to `ndi.generate_binary_structure`
+- `ndi.generic_filter` iterates over array elements *with their neighbors*;
   use `numpy.ndindex` to simply iterate over array indices.
 
 Overall, I think this is just a brilliant piece of code.
