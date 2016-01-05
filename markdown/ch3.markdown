@@ -24,14 +24,12 @@ import networkx as nx
 import numpy as np
 from scipy import ndimage as nd
 
-
 def add_edge_filter(values, graph):
     current = values[0]
     neighbors = values[1:]
     for neighbor in neighbors:
         graph.add_edge(current, neighbor)
     return 0.
-
 
 def build_rag(labels, image):
     g = nx.Graph()
@@ -739,7 +737,6 @@ def add_edge_filter(values, graph):
     for neighbor in neighbors:
         graph.add_edge(current, neighbor)
     return 0. # generic_filter requires a return value, which we ignore!
-
 
 def build_rag(labels, image):
     g = nx.Graph()
