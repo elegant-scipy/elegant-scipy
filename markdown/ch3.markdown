@@ -38,8 +38,9 @@ def build_rag(labels, image):
 ```
 
 There are a few things going on here: images being represented as numpy arrays,
-*filtering* of these images using `scipy.ndimage`, and building these into a
-graph (network) using the NetworkX library. We'll go over these in turn.
+*filtering* of these images using `scipy.ndimage`, and building of the image
+regions into a graph (network) using the NetworkX library. We'll go over these
+in turn.
 
 # Images are numpy arrays
 
