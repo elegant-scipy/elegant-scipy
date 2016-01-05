@@ -520,8 +520,8 @@ Then, plot using Matplotlib:
 
 ```python
 plt.loglog(np.arange(1, len(survival) + 1), survival, c='b', lw=2)
-plt.xlabel('in-degree')
-plt.ylabel('fraction of neurons with higher in-degree')
+plt.xlabel('in-degree distribution')
+plt.ylabel('fraction of neurons with higher in-degree distribution')
 plt.scatter(avg_in_degree, 0.0022, marker='v')
 plt.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree, )
 plt.ylim(0.002, 1.0)
