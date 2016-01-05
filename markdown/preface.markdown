@@ -195,9 +195,7 @@ beta = u"β"
 But in Python 3, *everything* is unicode:
 
 ```python
-import numpy as np
 β = 0.5
-np.arcsin(2 * β) / np.pi
 ```
 
 The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
