@@ -195,9 +195,8 @@ beta = u"β"
 But in Python 3, *everything* is unicode:
 
 ```python
-import numpy as np
 β = 0.5
-np.arcsin(2 * β) / np.pi
+print(2 * β)
 ```
 
 The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
@@ -347,7 +346,7 @@ We strongly encourage you to try doing this.
 The community lives because people are willing to share their code and improve existing code.
 Beyond any altruistic reasons for contributing, there are some very practical personal benefits.
 By engaging with the community you will become a better coder.
-Any code you contribute will be generally be reviewed by others and you will receive feedback.
+Any code you contribute will generally be reviewed by others and you will receive feedback.
 As a side effect, you will learn how to use Git and GitHub, which are very useful tools for maintaining and sharing your own code.
 You may even find interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
 
