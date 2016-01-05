@@ -178,12 +178,17 @@ plt.ylim(-0.1, 1.1);
 ```
 
 To find *when* the light is turned on, you can *delay* it by 1ms, then
-*subtract* the delayed signal from the original, and finally *clip* this
-difference to be nonzero.
+*subtract* the original from delayed signal. This way, when the signal is
+unchanged from one millisecond to the next, the subtraction will give zero,
+but when the signal *increases*, you will get a positive signal.
+
+However, when the signal *decreases*, we will get a negative signal. If we are
+only interested in pinpointing the time when the light was turned on, we can
+*clip* the difference signal, so that any negative values are converted to 0.
 
 ```python
-sigdelta = sig[:-1]  # sigd[0] equals sig[1], and so on
-sigdiff = sig[1:] - sigdelta
+sigdelta = sig[1:]  # sigdelta[0] equals sig[1], and so on
+sigdiff = sigdelta - sig
 sigon = np.clip(sigdiff, 0, np.inf)
 print(1 + np.flatnonzero(sigon)[0], 'ms')
 ```
