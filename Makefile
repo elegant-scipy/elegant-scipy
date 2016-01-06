@@ -68,6 +68,9 @@ $(FIGURES):
 # all: build the book.
 all: chs
 
+zip: all
+	 zip -r elegant-scipy.zip toc.html html
+
 # clean: remove intermediate products (IPython notebooks)
 clean:
 	 rm -rf $(BUILD_NB)
