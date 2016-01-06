@@ -396,6 +396,10 @@ Currying is not named after the spice blend (though it does spice up your code).
 It is named for Haskell Curry, the mathematician who invented the concept.
 Haskell Curry is also the namesake of the Haskell programming language, which has functions curried by default!
 
+Why curry?
+Well, it turns out that having a function that already knows about some of the arguments is perfect for streaming!
+We will see how we can combine currying and pipes to do streaming later in this chapter.
+
 Currying can be a bit of a mind-bend when you first start, so let's make our own curried function to see how it works.
 
 ```python
