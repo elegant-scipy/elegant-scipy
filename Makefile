@@ -69,7 +69,7 @@ $(FIGURES):
 all: chs
 
 zip: all
-	 zip -r elegant-scipy.zip toc.html html
+	 zip -r elegant-scipy.zip index.html html
 
 # clean: remove intermediate products (IPython notebooks)
 clean:
