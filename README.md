@@ -5,8 +5,9 @@ Just some notes to help us plan
 Installing dependencies
 =======================
 
-The conda environment file should let you make a minimal environment to
-run everything in the book.
+If you've installed [conda](http://conda.pydata.org/miniconda.html),
+the conda environment file should let you
+make a minimal environment to run everything in the book.
 
 ```console
 conda env create
