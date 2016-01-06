@@ -36,17 +36,54 @@ Issues on GitHub
 - A great place to start interacting with an open source project.
 
 Fork the project on GitHub
-Clone
-Branch
-Edit-add-commit cycle
-Push
 
-Pulling and pushing (to your fork)
-Dealing with remotes: upstream and origin
+Clone
+- `$ git clone url`
+- `cd` into directory
+
+Branch
+- `$ git checkout -b branchname`
+
+Edit-add-commit cycle
+- edit and save the file
+- `$ git add filename(s)`
+- `$ git commit -m "A note about what I changed"`
+
+Push
+`$ git push origin branchname`
 
 Submit a pull request on GitHub
 - Be polite
 - Don't be offended by feedback
 - Keep trying
 
+Pulling and pushing (to your fork)
+- pull vs fetch (and when they can be useful)
+
+Dealing with remotes: upstream and origin
+- Add a new remote
+`$ git remote add upstream url`
+- Check your remotes
+`$ git remote -v`
+
 Rebasing - keeping up to date with master
+- `$ git checkout master`
+- `$ git pull upstream master`
+- `$ git checkout branchname`
+
+Squash all commits into a single commit (not required, but makes rebasing quicker and easier)
+- `$ git merge-base branchname master commit-hash`
+- On all but the first line replace “pick” with “squash”
+
+Start the actual rebase
+`$ git rebase --interactive`
+- If you get an error, you can edit the offending file then:
+`$ git add file`
+`$ git rebase --continue`
+
+Force-push to update your pull request
+`$ git push -f origin branchname`
+Your pull request on GitHub should update automatically.
+
+Tidy up:
+`$ git branch -d branchname`
