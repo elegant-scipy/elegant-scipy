@@ -7,8 +7,8 @@ VPATH = markdown
 
 # BUILD_{HTML,NB}: where to put the output HTML files and the
 #     intermediate IPython notebooks.
-BUILD_HTML = build_html
-BUILD_NB = build_ipynb
+BUILD_HTML = html
+BUILD_NB = ipynb
 FIGURES = figures/generated
 
 # TITLES: This should be an exhaustive list of all the chapters to be
@@ -67,6 +67,9 @@ $(FIGURES):
 
 # all: build the book.
 all: chs
+
+zip: all
+	 zip -r elegant-scipy.zip index.html html
 
 # clean: remove intermediate products (IPython notebooks)
 clean:

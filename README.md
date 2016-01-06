@@ -1,6 +1,24 @@
 Planning
-=======
+========
 Just some notes to help us plan
+
+Installing dependencies
+=======================
+
+If you've installed [conda](http://conda.pydata.org/miniconda.html),
+the conda environment file should let you
+make a minimal environment to run everything in the book.
+
+```console
+conda env create
+```
+
+This uses the provided `environment.yml` as default. You can also specify it
+directly:
+
+```console
+conda env create -f path/to/environment.yml
+```
 
 Building chapters
 =================
