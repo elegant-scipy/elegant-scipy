@@ -13,7 +13,12 @@ make a minimal environment to run everything in the book.
 conda env create
 ```
 
-This uses the provided `environment.yml` as default.
+This uses the provided `environment.yml` as default. You can also specify it
+directly:
+
+```console
+conda env create -f path/to/environment.yml
+```
 
 Building chapters
 =================
