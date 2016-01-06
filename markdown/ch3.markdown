@@ -24,7 +24,7 @@ from scipy import ndimage as nd
 def add_edge_filter(values, graph):
     center = values[len(values) // 2]
     for neighbor in values:
-        if neighbor != center and not graph.has_edge(center, neighbor)
+        if neighbor != center and not graph.has_edge(center, neighbor):
             graph.add_edge(center, neighbor)
     return 0.0
 
@@ -57,7 +57,7 @@ inline` IPython magic to make our images appear below the code:
 import numpy as np
 import matplotlib as mpl
 from matplotlib import pyplot as plt
-from matplotlib cm  # colormap module
+from matplotlib import cm  # colormap module
 ```
 
 Next, we set the default matplotlib colormap and interpolation method:
@@ -188,7 +188,7 @@ only interested in pinpointing the time when the light was turned on, we can
 
 ```python
 sigdelta = sig[1:]  # sigdelta[0] equals sig[1], and so on
-sigdiff = sigdelta - sig
+sigdiff = sigdelta - sig[:-1]
 sigon = np.clip(sigdiff, 0, np.inf)
 print(1 + np.flatnonzero(sigon)[0], 'ms')
 ```
@@ -737,7 +737,7 @@ from scipy import ndimage as nd
 def add_edge_filter(values, graph):
     center = values[len(values) // 2]
     for neighbor in values:
-        if neighbor != center and not graph.has_edge(center, neighbor)
+        if neighbor != center and not graph.has_edge(center, neighbor):
             graph.add_edge(center, neighbor)
     # float return value is unused but needed by `generic_filter`
     return 0.0
