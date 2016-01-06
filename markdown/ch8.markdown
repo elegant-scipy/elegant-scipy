@@ -269,7 +269,8 @@ During DNA sequencing some bases are incorrectly read out, and must be fixed, or
 
 One correction strategy is to find similar reads in your dataset and fix the error by grabbing the correct information from those reads. Or alternatively, you may choose to completely discard those reads containing errors.
 
-However, this is a very inefficient way to do it, because finding similar reads takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
+However, this is a very inefficient way to do it, because finding similar reads means you would compare each read to every other read.
+This takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
 (And these are not cheap operations.)
 
 There is another way.
