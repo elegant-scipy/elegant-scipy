@@ -5,7 +5,7 @@
 
 Whenever I think too hard about streaming data analysis, my head hurts.
 
-You have probably already done some streaming, perhaps without thinking about it these terms.
+You have probably already done some streaming, perhaps without thinking about it in these terms.
 The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
 For example a loop like this to calculate the mean of each row and sum them:
 
@@ -19,7 +19,7 @@ print(sum_of_means)
 ```
 
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
-But things can quickly get out of hand when things get much more sophisticated.
+But things can quickly get out of hand when your code becomes more sophisticated.
 
 In traditional programming models, you pass your data to a function, the function processes the data, and then returns the result.
 Done.
@@ -48,7 +48,7 @@ np.mean(logexpr, axis=1)
 This works, and it follows a reassuringly familiar input-output model of computation.
 But it's a pretty inefficient way to go about it!
 We load the full matrix into memory (1), then make a copy with 1 added to each value (2), then make another copy to compute the log (3), before finally passing it on to `np.mean`.
-That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance.
+That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance in memory.
 It's clear that for any kind of "big data" operation, this approach won't work.
 
 Python's creators knew this, and created the "yield" keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
@@ -93,7 +93,7 @@ result = add1_all_streaming(np.random.normal(0, 1, 1000))
 ```
 
 The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
-This can conserve a lot of memory when you have a lot of input items, or when each item is very big.
+This can conserve a lot of memory when you have many input items, or when each item is very big.
 (Or both!)
 This quote from one of Matt's posts very succinctly summarizes the utility of streaming data analysis:
 
@@ -261,7 +261,7 @@ Briefly, your genetic information, the blueprint for making *you*, is encoded as
 These are really, really tiny, so you can't just look in a microscope and read them.
 You also can't read a long string of them: errors accumulate and the readout becomes unusable.
 (New technology is changing this, but here we will focus on short-read sequencing data, the most common today.)
-Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases), and then assemble those like an enormous puzzle of 30 million pieces.
+Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases long), and then assemble those like an enormous puzzle of 30 million pieces.
 
 Before performing assembly, it is vital to perform read correction.
 During DNA sequencing some bases are incorrectly read out, and must be fixed, or they will mess up the assembly.
@@ -269,7 +269,7 @@ During DNA sequencing some bases are incorrectly read out, and must be fixed, or
 
 One correction strategy is to find similar reads in your dataset and fix the error by grabbing the correct information from those reads. Or alternatively, you may choose to completely discard those reads containing errors.
 
-However, this is a very inefficient way to do this, because finding similar reads takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
+However, this is a very inefficient way to do it, because finding similar reads takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
 (And these are not cheap operations.)
 
 There is another way.
@@ -451,7 +451,7 @@ Luckily, Toolz has some syntactic sugar to help us out.
 ```python
 import toolz as tz
 
-@tz.curry          # We can use curry as a decorator
+@tz.curry          # Use curry as a decorator
 def curried_sum(x, y):
     return x + y
 
@@ -467,7 +467,7 @@ In fact, all of the Toolz functions are also available as curried functions in t
 Toolz also includes curried version of some handy higher order python functions like `map`, `filter` and `reduce`.
 We will import the `curried` namespace as `c` so our code doesn't get too cluttered.
 So for example the curried version of `map` will be `c.map`.
-Note, that the curried functions (e.g. `c.map`) are different from the `@curry` decorator, which us used to create a curried function.
+Note, that the curried functions (e.g. `c.map`) are different from the `@curry` decorator, which is used to create a curried function.
 
 ```python
 from toolz import curried as c
@@ -509,7 +509,7 @@ integer_histogram(counts, xlim=(-1, 250), lw=2)
 >  - (list of list -> list) with tz.concat
 >  - don’t get caught out:
 >     * iterators get consumed.
-So if you make a generator, do some processing, and then a later step fails, you need to re-create the generator.
+So if you make a generator object and do some processing on it, and then a later step fails, you need to re-create the generator.
 The original is already gone.
 >     * iterators are lazy; need to force evaluation sometimes.
 >  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
@@ -526,9 +526,8 @@ In this theory, all the information required to predict the future is encoded in
 The past is irrelevant.
 This assumption is useful for simplifying otherwise intractable problems.
 
-- Where to download the fruit-fly genome
-You can download the *Drosophila melanogaster* (fruit-fly) genome file dm6.fa.gz from
-http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
+- You can download the *Drosophila melanogaster* (fruit-fly) genome file dm6.fa.gz from
+http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/.
 You will need to unzip it using: `gzip -d dm6.fa.gz`
 
 - Matt's post and how to use it
