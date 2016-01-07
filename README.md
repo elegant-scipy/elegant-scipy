@@ -22,18 +22,25 @@ conda env create -f path/to/environment.yml
 
 Building chapters
 =================
-Using `notedown` to convert a markdown file to an IPython notebook, run it,
-and then convert to html:
+We are using `notedown` to convert a markdown file to an IPython notebook, run it,
+ and then convert to html. For ease of use, this is done using a Makefile.
 
-```console
-$ notedown --match fenced --run markdown/chapter.markdown > ch2.ipynb
-$ ipython nbconvert --to html ch2.ipynb
-```
-
-You can also run `make` to create all the chapters:
+You can use `make` to build all the chapters:
 
 ```console
 $ make all
+```
+
+Or to build just an individual chapter, specify the file you wish to create:
+
+```console
+$ make html/ch1.html
+```
+
+To generate a zip file containing html of all chapters along with a table of contents (for easy sharing):
+
+```console
+$ make zip
 ```
 
 Deadlines
