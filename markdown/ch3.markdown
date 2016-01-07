@@ -307,22 +307,63 @@ value (depending on whether the image is brighter towards the bottom-right
 or top-left at that point).
 
 Just as with the 1D filter, you can get more sophisticated and smooth out
-noise right within the filter. The *Sobel* filter is designed to do just that:
+noise right within the filter. The *Sobel* filter is designed to do just that.
+It comes in horizontal and vertical varieties, to find edges with that
+orientation in the data.
+Let's start with the horizontal filter first.
+To find a horizontal edge in a picture, you might try the following filter:
 
 ```python
-hsobel = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
+# column vector (vertical) to find horizontal edges
+hdiff = np.array([[1], [0], [-1]])
+```
+
+However, as we saw with 1D filters, this will result in a noisy estimate of the
+edges in the image. But rather than using Gaussian smoothing, which can cause
+blurry edges, the Sobel filter uses the property that edges in images tend to
+be continuous: a picture of the ocean, for example, will contain a horizontal
+edge along an entire line, not just at specific points of the image. So the
+Sobel filter smooths the vertical filter horizontally: it looks for a strong
+edge at the central position that is corroborated by the adjacent positions:
+
+```python
+hsobel = np.array(([ 1,  2,  1],
+                   [ 0,  0,  0],
+                   [-1, -2, -1]])
+```
+
+The vertical Sobel filter is simply the transpose of the horizontal:
+
+```python
 vsobel = hsobel.T
+```
+
+We can then find the horizontal and vertical edges in the coins image:
+
+```python
 coins_h = ndi.convolve(coins, hsobel)
 coins_v = ndi.convolve(coins, vsobel)
-coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
-plt.imshow(coins_sobel, cmap=plt.cm.YlGnBu);
-plt.colorbar();
+
+fig, axes = plt.subplots(nrows=1, ncols=2)
+axes[0].imshow(coins_h, cmap=plt.cm.RdBu)
+axes[1].imshow(coins_v, cmap=plt.cm.RdBu)
 ```
+
+And finally, just like the Pythagorean theorem, you can argue that the edge
+magnitude in *any* direction is equal to the square root of the sum of squares
+of the horizontal and vertical components:
+
+```python
+coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
+plt.imshow(coins_sobel, cmap=plt.cm.viridis);
+```
+
+# Generic filters
 
 In addition to dot-products, implemented by `ndi.convolve`, SciPy lets you
 define a filter that is an *arbitrary function* of the points in a neighborhood,
-implemented in `ndi.generic_filter`. This can let you express arbitrarily complex
-filters.
+implemented in `ndi.generic_filter`. This can let you express arbitrarily
+complex filters.
 
 For example, suppose an image represents median house values in a county,
 with a 100m x 100m resolution. The local council decides to tax house sales as
