@@ -236,23 +236,46 @@ plt.plot(ndi.convolve(sig, diff));
 
 In such cases, you can add smoothing to the filter. The most common form of
 smoothing is *Gaussian* smoothing, which takes the weighted average of
-neighboring points in the signal.
+neighboring points in the signal using the
+[Gaussian function](https://en.wikipedia.org/wiki/Gaussian_function). We can
+write a function to make a Gaussian smoothing kernel as follows:
 
 ```python
-smoothdiff = np.array([.5, 1.5, 3, 5, -5, -3, -1.5, -0.5]) / 10
+def gaussian_kernel(size, sigma):
+    """Make a 1D Gaussian kernel of the specified size and standard deviation.
+
+    The size should be an odd number and at least ~6 times greater than sigma
+    to ensure sufficient coverage.
+    """
+    positions = np.arange(size) - size // 2
+    kernel_raw = np.exp(-positions**2 / (2 * sigma**2))
+    kernel_normalized = kernel_raw / np.sum(kernel_raw)
+    return kernel_normalized
+```
+
+A really nice feature feature of convolution is that it's *associative*,
+meaning if you want to find the derivative of the smoothed signal, you can
+equivalently convolve the signal with the smoothed difference filter! This can
+save a lot of computation time, because you can smooth just the filter, which
+is usually much smaller than the data.
+
+```python
+smooth_diff = ndi.convolve(gaussian_kernel(25, 3), diff)
+plt.plot(smooth_diff)
 ```
 
 This smoothed difference filter looks for an edge in the central position,
-but also for that difference to continue. This is true in the case of a true
-edge, but not in "spurious" edges caused by noise. We then assign a
-weight of 0.5 to edges in the center, progressively decreasing as we move away
-from it.
-Check out the result:
+but also for that difference to continue. This continuation happens in the case
+of a true
+edge, but not in "spurious" edges caused by noise. Check out the result:
 
 ```python
-sdsig = ndi.convolve(sig, smoothdiff)
+sdsig = ndi.convolve(sig, smooth_diff)
 plt.plot(sdsig);
 ```
+
+Although it still looks wobbly, the *signal-to-noise ratio*, often called SNR,
+is much greater in this version than when using the simple difference filter.
 
 (Note: this operation is called filtering because, in physical electrical
 circuits, many of these operations are implemented by hardware that
