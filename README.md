@@ -34,7 +34,7 @@ $ make all
 Or to build just an individual chapter, specify the file you wish to create:
 
 ```console
-$ make build_html/ch1.html
+$ make html/ch1.html
 ```
 
 To generate a zip file containing html of all chapters along with a table of contents (for easy sharing):
