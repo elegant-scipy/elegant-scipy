@@ -403,8 +403,15 @@ You can download the neuronal dataset in Excel format (yuck) from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
 The direct link to the data is:
 [http://www.wormatlas.org/images/NeuronConnect.xls](http://www.wormatlas.org/images/NeuronConnect.xls)
-Let's start by getting a list of rows out of the file. An elegant pattern from Tony
-Yu [^file-url] enables us to open a remote URL as a local file:
+Let's start by getting a list of rows out of the file. An elegant pattern from
+Tony Yu [^file-url] enables us to open a remote URL as a local file.
+It uses a
+[context manager](https://docs.python.org/3.5/library/contextlib.html#contextlib.contextmanager)
+to download a remote file to a local temporary file.
+(Your operating system provides Python with a place to put temporary files.)
+
+We then use the `xlrd` library to read the contents of the Excel file into a
+connectivity matrix.
 
 ```python
 import os
