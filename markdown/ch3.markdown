@@ -200,7 +200,7 @@ predetermined vector of values. Depending on the kernel, then, the convolution
 shows a different feature of the signal.
 
 Now, think of what happens when the kernel is (1, 0, -1), the difference
-filter. At any position `i`, the convolution result is
+filter, for a signal `s`. At any position `i`, the convolution result is
 `1*s[i+1] + 0*s[i] - 1*s[i-1]`, that is, `s[i+1] - s[i-1]`.
 Thus, when adjacent values are identical, the convolution gives 0, but when
 `s[i+1] > s[i-1]` (the signal is increasing), it gives a positive value, and,
