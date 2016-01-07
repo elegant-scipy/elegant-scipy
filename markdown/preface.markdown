@@ -7,8 +7,8 @@
 Welcome to Elegant SciPy.
 We’re going to spend rather a lot of time focusing on the “SciPy” bit of the title, so let’s take a moment to reflect on the "Elegant" bit.
 There are plenty of manuals, tutorials and documentation websites out there that describe the SciPy library.
-Elegant SciPy is not one of those.
-Instead of just teaching you how to write code that works, we will inspire you to write code that rocks!
+Elegant SciPy goes much further.
+More than just teaching you how to write code that works, we will inspire you to write code that rocks!
 
 In The Rosie Effect (hilarious book; go read its prequel [The Rosie Project](https://en.wikipedia.org/wiki/The_Rosie_Project) when you’re done with Elegant SciPy), Graeme Simsion twists the conventions of the word "elegant" around.
 Most would use it to describe the visual simplicity of something or someone stylish or graceful.
@@ -16,7 +16,7 @@ Say, the first iPhone.
 Instead, just such an object (the wedding dress) is compared to delightfully concise code.
 The kind of code that you rarely encounter, yet know immediately when you do.
 We hope that you will know exactly what he means after reading this book.
-That you will read or write a piece of elegant code, and feel calmed in the face of its beauty and grace.
+That you will read or write a piece of elegant code, and feel calmed in the glow of its beauty and grace.
 (Note: the authors may be prone to hyperbole.)
 Perhaps you too will compliment your significant other on how their outfit reminds you of that bit of code you saw in Elegant SciPy...
 
@@ -78,7 +78,7 @@ This is a book that you will read once, but may return to for inspiration (and m
 
 ## Why SciPy?
 
-The NumPy and SciPy libraries form the core of the Scientific Python ecosystem.
+The NumPy and SciPy libraries make up the core of the Scientific Python ecosystem.
 The SciPy software library implements a set of functions for processing scientific data, such as statistics, signal processing, image processing, and function optimization.
 SciPy is built on top of the Python numerical array computation library NumPy.
 Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years [plot?], spanning disciplines as broad as astronomy, biology, meteorology and climate science, and materials science.
@@ -260,7 +260,7 @@ Many of us have had the experience of reading a really cool paper, and then down
 Only we find, that the executable isn't compiled for our system. Or we can't work out how to run it.
 Or it has bugs, missing features, or produces unexpected results.
 By making scientific software open source, we not only increase the quality of that software, but we make it possible to see exactly how the science was done.
-What assumptions were made, and even hard coded?
+What assumptions were made, and even hard-coded?
 Open source helps to solve many of these issues.
 It also enables other scientists to build on the code of their peers, fostering new collaborations and speeding up scientific progress.
 
@@ -291,6 +291,7 @@ In this way, copy-left licenses restrict what users can do with the code.
 
 The most popular copy-left license is the Gnu Public License, or GPL.
 The main disadvantage to using a copy-left license is that you are effectively putting your code off-limits to any potential users or contributors from the private sector.
+And this could include your future self!
 This can substantially reduce your user base and thus the success of your software.
 In science, this probably means fewer citations.
 
@@ -330,7 +331,7 @@ GitHub allows users to publish code publicly.
 Anyone can come along and create a copy (fork) of the code and edit it to their heart's content.
 They can eventually contribute those changes back into the original by creating a pull request.
 There are some nice features like managing issues and change requests, as well as who can directly edit your code.
-You can even keep track of editing statistics and other fun stats.
+You can even keep track of edits, contributors and other fun stats.
 There are a whole bunch of other great GitHub features, but we will leave many them for you to discover and some for you to read in later chapters.
 In essence, GitHub has democratized software development. It has substantially reduced the barrier to entry.
 
@@ -378,7 +379,7 @@ My first step when I get stuck is to Google the task that I am trying to achieve
 or the error message that I got.
 This generally leads me to [Stack Overflow](http://stackoverflow.com/),
 an excellent question and answer site for programming.
-If you don't find what you're looking for immediately try generalizing your search terms to find someone who is have a a similar problem.
+If you don't find what you're looking for immediately try generalizing your search terms to find someone who is having a similar problem.
 Sometimes, you realize that you might be the first person to have this specific question (this is particularly likely when you are using a brand new package), but not all is lost!
 As mentioned above, the SciPy community is a friendly bunch, and can be found scattered around various parts of the interwebs.
 Your next point of call is to Google "`<library name> mailing list`", and find
