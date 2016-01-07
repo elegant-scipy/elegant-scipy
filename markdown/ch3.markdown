@@ -412,6 +412,12 @@ It uses a
 to download a remote file to a local temporary file.
 (Your operating system provides Python with a place to put temporary files.)
 
+The funny `@something` syntax might be new to you.
+This is a Python [decorator](https://www.python.org/dev/peps/pep-0318/), a
+function that modifies another function.
+We won't go over decorators just yet, as they are a side point here.
+In Chapter 8, we will discuss a particular decorator in more detail.
+
 We then use the `xlrd` library to read the contents of the Excel file into a
 connectivity matrix.
 
