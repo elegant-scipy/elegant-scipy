@@ -201,9 +201,11 @@ shows a different feature of the signal.
 
 Now, think of what happens when the kernel is (1, 0, -1), the difference
 filter. At any position `i`, the convolution result is
-`1 * s[i+1] + 0 * s[i] - 1 * s[i-1]`, that is, `s[i+1] - s[i-1]`.
+`1*s[i+1] + 0*s[i] - 1*s[i-1]`, that is, `s[i+1] - s[i-1]`.
 Thus, when adjacent values are identical, the convolution gives 0, but when
-`s[i+1] > s[i-1]` (the signal is increasing), it gives a positive value.
+`s[i+1] > s[i-1]` (the signal is increasing), it gives a positive value, and,
+conversely, when `s[i+1] < s[i-1]`, it gives a negative value. You can think
+of this as an estimate of the derivative of the input function.
 
 In general, the formula for convolution is:
 $s'(t) = \sum_{j=t-\tau}^{t}{s(j)f(t-j)}$
