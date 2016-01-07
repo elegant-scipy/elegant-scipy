@@ -234,7 +234,9 @@ The plain difference filter can amplify that noise:
 plt.plot(ndi.convolve(sig, diff));
 ```
 
-In such cases, you can add smoothing to the filter:
+In such cases, you can add smoothing to the filter. The most common form of
+smoothing is *Gaussian* smoothing, which takes the weighted average of
+neighboring points in the signal.
 
 ```python
 smoothdiff = np.array([.5, 1.5, 3, 5, -5, -3, -1.5, -0.5]) / 10
