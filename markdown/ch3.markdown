@@ -466,10 +466,7 @@ connectivity matrix.
 import os
 import xlrd  # Excel-reading library in Python
 
-try:
-    from urllib.request import urlopen  # getting files from the web, Py3
-except ImportError:
-    from urllib2 import urlopen  # getting files from the web, Py2
+from urllib.request import urlopen  # getting files from the web, Py3
 
 import tempfile
 from contextlib import contextmanager
