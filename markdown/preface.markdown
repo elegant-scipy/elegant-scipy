@@ -7,7 +7,7 @@
 Welcome to Elegant SciPy.
 We’re going to spend rather a lot of time focusing on the “SciPy” bit of the title, so let’s take a moment to reflect on the "Elegant" bit.
 There are plenty of manuals, tutorials and documentation websites out there that describe the SciPy library.
-Elegant SciPy goes much further.
+Elegant SciPy goes further.
 More than just teaching you how to write code that works, we will inspire you to write code that rocks!
 
 In The Rosie Effect (hilarious book; go read its prequel [The Rosie Project](https://en.wikipedia.org/wiki/The_Rosie_Project) when you’re done with Elegant SciPy), Graeme Simsion twists the conventions of the word "elegant" around.
