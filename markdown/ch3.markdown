@@ -193,20 +193,27 @@ sigon = np.clip(sigdiff, 0, np.inf)
 print(1 + np.flatnonzero(sigon)[0], 'ms')
 ```
 
-It turns out that that can all be accomplished by *convolving* the signal
-with a *difference filter*. In convolution, at every point of the *signal*, we
-place the *filter* and produce the dot-product of the (reversed) filter against
-the signal values preceding that location:
+It turns out that this can be accomplished by an signal processing operation
+called *convolution*. At every point of the signal, we compute the dot-product
+between the values surrounding it and a *kernel* or *filter*, which is a
+predetermined vector of values. Depending on the kernel, then, the convolution
+shows a different feature of the signal.
+
+Now, think of what happens when the kernel is (1, 0, -1), the difference
+filter. At any position `i`, the convolution result is
+`1 * s[i+1] + 0 * s[i] - 1 * s[i-1]`, that is, `s[i+1] - s[i-1]`.
+Thus, when adjacent values are identical, the convolution gives 0, but when
+`s[i+1] > s[i-1]` (the signal is increasing), it gives a positive value.
+
+In general, the formula for convolution is:
 $s'(t) = \sum_{j=t-\tau}^{t}{s(j)f(t-j)}$
 where $s$ is the signal, $s'$ is the filtered signal, $f$ is the filter, and
 $\tau$ is the length of the filter.
 
-Now, think of what happens when the filter is (1, -1), the difference filter:
-when adjacent values (u, v) of the signal are identical, the filter produces
--u + v = 0. But when v > u, the signal produces some positive value.
+In scipy, you can use the `scipy.ndimage.convolve` to work on this.
 
 ```python
-diff = np.array([1, -1])
+diff = np.array([1, 0, -1])
 from scipy import ndimage as ndi
 dsig = ndi.convolve(sig, diff)
 plt.plot(dsig);
