@@ -158,7 +158,7 @@ def overlay_grid(image, spacing=128):
 # plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line to test your function
 ```
 
-# Image filters
+# Filters in signal processing
 
 Filtering is one of the most fundamental and common operations in image
 processing. You can filter an image to remove noise, to enhance features, or to
@@ -282,6 +282,8 @@ circuits, many of these operations are implemented by hardware that
 lets certain kinds of current through, but not others; these components
 are called filters. For example, a common filter that removes high-frequency
 voltage fluctuations from a current is called a *low-pass filter*.)
+
+# Filtering images (2D filters)
 
 Now that you've seen filtering in 1D, I hope you'll find it straightforward
 to extend these concepts to 2D. Here's a 2D difference filter finding the
