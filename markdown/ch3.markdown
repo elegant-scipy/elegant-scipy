@@ -386,7 +386,7 @@ from contextlib import contextmanager
 
 @contextmanager
 def url2filename(url):
-    _, ext = os.path.splitext(url)
+    base_filename, ext = os.path.splitext(url)
     with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as f:
         remote = urlopen(url)
         f.write(remote.read())
