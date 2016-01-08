@@ -79,8 +79,7 @@ This is the game of life (cellular automata) in 10 lines of python with numpy.
 The code is available from http://www.labri.fr/perso/nrougier/teaching/numpy.100/ (last question).
 (code explanations is available from http://www.labri.fr/perso/nrougier/teaching/numpy/numpy.html)
 
-
-**Exercise**: Use `scipy.optimize.curve_fit` to fit the tail of the
+**Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
 in-degree survival function to a power-law,
 $f(d) \sim d^{-\gamma}, d > d_0$,
 for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
