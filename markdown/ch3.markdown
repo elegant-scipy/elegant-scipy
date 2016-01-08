@@ -25,7 +25,7 @@ linked whenever their corresponding regions touch each other in the input
 image.
 
 Building such a structure could be a complicated
-affair, and even more difficult
+affair, and even more difficult 
 when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
 here we will show you how to produce a RAG in a few lines of code using
@@ -347,7 +347,7 @@ Sobel filter smooths the vertical filter horizontally: it looks for a strong
 edge at the central position that is corroborated by the adjacent positions:
 
 ```python
-hsobel = np.array([ 1,  2,  1],
+hsobel = np.array([[ 1,  2,  1],
                    [ 0,  0,  0],
                    [-1, -2, -1]])
 ```
