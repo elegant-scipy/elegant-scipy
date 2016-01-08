@@ -10,7 +10,7 @@ When I saw this bit of code, it blew me away, and over a year later, I still
 haven't seen anything like it.
 For the purposes of this book, it touches on many aspects of scientific Python.
 By the time you're done with this chapter, you should be able to process arrays
-of *any* dimension, rather than thinking of them as 1D lists or 2D tables.
+of *any* dimension, rather than thinking of them only as 1D lists or 2D tables.
 More than that, you'll understand the basics of image filtering and network
 processing.
 
@@ -20,7 +20,7 @@ on images, we often deal with objects much larger than individual pixels.
 In a landscape, the sky, earth, trees, rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
 or RAG. Its *nodes* hold properties of each region in the image, and its
-*links* hold the spatial relationships between the regions: two nodes are
+*links* hold the spatial relationships between the regions. Two nodes are
 linked whenever their corresponding regions touch each other in the input
 image.
 
@@ -149,7 +149,7 @@ plt.imshow(astro_sq);
 ```
 
 **Exercise:** We just saw how to select a square and paint it red. Can you
-extend that to other shapes and colors? Create a function to draw a green grid
+extend that to other shapes and colors? Create a function to draw a blue grid
 onto a color image, and apply it to the `astronaut` image of Eileen Collins
 (above). Your function should take
 two parameters: the input image, and the grid spacing.
@@ -169,7 +169,7 @@ def overlay_grid(image, spacing=128):
     Returns
     -------
     image_gridded : array, shape (M, N, 3)
-        The original image with a grid superimposed.
+        The original image with a blue grid superimposed.
     """
     image_gridded = image.copy()
     pass  # replace this line with your code...
@@ -202,7 +202,7 @@ To find *when* the light is turned on, you can *delay* it by 1ms, then
 unchanged from one millisecond to the next, the subtraction will give zero,
 but when the signal *increases*, you will get a positive signal.
 
-However, when the signal *decreases*, we will get a negative signal. If we are
+When the signal *decreases*, we will get a negative signal. If we are
 only interested in pinpointing the time when the light was turned on, we can
 *clip* the difference signal, so that any negative values are converted to 0.
 
@@ -294,7 +294,7 @@ sdsig = ndi.convolve(sig, smooth_diff)
 plt.plot(sdsig);
 ```
 
-Although it still looks wobbly, the *signal-to-noise ratio*, often called SNR,
+Although it still looks wobbly, the *signal-to-noise ratio* (SNR),
 is much greater in this version than when using the simple difference filter.
 
 (Note: this operation is called filtering because, in physical electrical
