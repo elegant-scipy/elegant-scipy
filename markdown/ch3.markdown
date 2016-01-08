@@ -148,8 +148,10 @@ astro_sq[sq_mask] = [0, 255, 0]
 plt.imshow(astro_sq);
 ```
 
-**Exercise:** Create a function to draw a green grid onto a color image, and
-apply it to the `astronaut` image of Eileen Collins (above). Your function should take
+**Exercise:** We just saw how to select a square and paint it red. Can you
+extend that to other shapes and colors? Create a function to draw a green grid
+onto a color image, and apply it to the `astronaut` image of Eileen Collins
+(above). Your function should take
 two parameters: the input image, and the grid spacing.
 Use the following template to help you get started.
 
