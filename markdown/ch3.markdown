@@ -19,9 +19,13 @@ the light signal *sampled on a regular grid*. When computing
 on images, we often deal with objects much larger than individual pixels.
 In a landscape, the sky, earth, trees, rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
-or RAG. It holds the properties of each region in the image, and the spatial
-relationships between them. Building such a structure could be a complicated
-affair, and even more difficult
+or RAG. Its *nodes* hold properties of each region in the image, and its
+*links* hold the spatial relationships between the regions: two nodes are
+linked whenever their corresponding regions touch each other in the input
+image.
+
+Building such a structure could be a complicated
+affair, and even more difficult 
 when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
 here we will show you how to produce a RAG in a few lines of code using NetworkX and
