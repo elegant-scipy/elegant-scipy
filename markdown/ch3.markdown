@@ -1,23 +1,36 @@
-```python
-# set up Py 2-3 compatibility
-from __future__ import print_function, division
-from six.moves import map, range, zip, filter
-```
+# Build a Region Adjacency Graph using ndimage.generic_filter
 
-# Vighnesh Birodkar: build a region adjacency graph from nD images
+### Code by Vighnesh Birodkar
+### Submitted by Juan Nunez-Iglesias
+
+This chapter gets a special mention because it inspired the whole book.
+Vighnesh Birodkar wrote this as an undergraduate while participating in
+Google Summer of Code (GSoC) 2014.
+When I saw this bit of code, it blew me away, and over a year later, I still
+haven't seen anything like it.
+For the purposes of this book, it touches on many aspects of scientific Python.
+By the time you're done with this chapter, you should be able to process arrays
+of *any* dimension, rather than thinking of them only as 1D lists or 2D tables.
+More than that, you'll understand the basics of image filtering and network
+processing.
 
 You probably know that digital images are made up of *pixels*. These are
 the light signal *sampled on a regular grid*. When computing
 on images, we often deal with objects much larger than individual pixels.
 In a landscape, the sky, earth, trees, rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
-or RAG. It holds the properties of each region in the image, and the spatial
-relationships between them. Building such a structure could be a complicated
-affair, and even more difficult
+or RAG. Its *nodes* hold properties of each region in the image, and its
+*links* hold the spatial relationships between the regions. Two nodes are
+linked whenever their corresponding regions touch each other in the input
+image.
+
+Building such a structure could be a complicated
+affair, and even more difficult 
 when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
-here we will show you how to produce a RAG in a few lines of code using NetworkX and
-a generalized filter from SciPy's N-dimensional image processing submodule.
+here we will show you how to produce a RAG in a few lines of code using
+NetworkX (a Python library to analyze graphs and networks), and
+a filter from SciPy's N-dimensional image processing submodule, `ndimage`.
 
 ```python
 import networkx as nx
@@ -25,33 +38,25 @@ import numpy as np
 from scipy import ndimage as nd
 
 def add_edge_filter(values, graph):
-    current = values[0]
-    neighbors = values[1:]
-    for neighbor in neighbors:
-        graph.add_edge(current, neighbor)
-    return 0.
+    center = values[len(values) // 2]
+    for neighbor in values:
+        if neighbor != center and not graph.has_edge(center, neighbor):
+            graph.add_edge(center, neighbor)
+    return 0.0
+
 
 def build_rag(labels, image):
     g = nx.Graph()
-    footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
-    for j in range(labels.ndim):
-        fp = np.swapaxes(footprint, j, 0)
-        fp[0, ...] = 0
-    _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
-                          mode='nearest', extra_arguments=(g,))
-    for n in g:
-        g.node[n]['total color'] = np.zeros(3, np.double)
-        g.node[n]['pixel count'] = 0
-    for index in np.ndindex(labels.shape):
-        n = labels[index]
-        g.node[n]['total color'] += image[index]
-        g.node[n]['pixel count'] += 1
+    footprint = ndi.generate_binary_structure(labels.ndim, connectivity=1)
+    _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
+                           mode='nearest', extra_arguments=(g,))
     return g
 ```
 
 There are a few things going on here: images being represented as numpy arrays,
-*filtering* of these images using `scipy.ndimage`, and building these into a
-graph (network) using the NetworkX library. We'll go over these in turn.
+*filtering* of these images using `scipy.ndimage`, and building of the image
+regions into a graph (network) using the NetworkX library. We'll go over these
+in turn.
 
 # Images are numpy arrays
 
@@ -67,7 +72,8 @@ inline` IPython magic to make our images appear below the code:
 %matplotlib inline
 import numpy as np
 import matplotlib as mpl
-from matplotlib import pyplot as plt, cm
+from matplotlib import pyplot as plt
+from matplotlib import cm  # colormap module
 ```
 
 Next, we set the default matplotlib colormap and interpolation method:
@@ -130,7 +136,9 @@ astro_sq[50:100, 50:100] = [0, 255, 0]  # red, green, blue
 plt.imshow(astro_sq);
 ```
 
-You can also use a boolean mask:
+You can also use a boolean *mask*, an array of `True` or `False` values.
+We saw these in Chapter 2 as a way to select rows of a table. In this case, we
+can use an array of the same shape as the image to select pixels:
 
 ```python
 astro_sq = np.copy(astro)
@@ -140,8 +148,10 @@ astro_sq[sq_mask] = [0, 255, 0]
 plt.imshow(astro_sq);
 ```
 
-**Exercise:** Create a function to draw a green grid onto a color image, and
-apply it to the `astronaut` image of Eileen Collins (above). Your function should take
+**Exercise:** We just saw how to select a square and paint it red. Can you
+extend that to other shapes and colors? Create a function to draw a blue grid
+onto a color image, and apply it to the `astronaut` image of Eileen Collins
+(above). Your function should take
 two parameters: the input image, and the grid spacing.
 Use the following template to help you get started.
 
@@ -159,7 +169,7 @@ def overlay_grid(image, spacing=128):
     Returns
     -------
     image_gridded : array, shape (M, N, 3)
-        The original image with a grid superimposed.
+        The original image with a blue grid superimposed.
     """
     image_gridded = image.copy()
     pass  # replace this line with your code...
@@ -168,7 +178,7 @@ def overlay_grid(image, spacing=128):
 # plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line to test your function
 ```
 
-# Image filters
+# Filters in signal processing
 
 Filtering is one of the most fundamental and common operations in image
 processing. You can filter an image to remove noise, to enhance features, or to
@@ -188,32 +198,46 @@ plt.ylim(-0.1, 1.1);
 ```
 
 To find *when* the light is turned on, you can *delay* it by 1ms, then
-*subtract* the delayed signal from the original, and finally *clip* this
-difference to be nonzero.
+*subtract* the original from delayed signal. This way, when the signal is
+unchanged from one millisecond to the next, the subtraction will give zero,
+but when the signal *increases*, you will get a positive signal.
+
+When the signal *decreases*, we will get a negative signal. If we are
+only interested in pinpointing the time when the light was turned on, we can
+*clip* the difference signal, so that any negative values are converted to 0.
 
 ```python
-sigdelta = sig[:-1]  # sigd[0] equals sig[1], and so on
-sigdiff = sig[1:] - sigdelta
+sigdelta = sig[1:]  # sigdelta[0] equals sig[1], and so on
+sigdiff = sigdelta - sig[:-1]
 sigon = np.clip(sigdiff, 0, np.inf)
 print(1 + np.flatnonzero(sigon)[0], 'ms')
 ```
 
-It turns out that that can all be accomplished by *convolving* the signal
-with a *difference filter*. In convolution, at every point of the *signal*, we
-place the *filter* and produce the dot-product of the (reversed) filter against
-the signal values preceding that location:
+It turns out that this can be accomplished by an signal processing operation
+called *convolution*. At every point of the signal, we compute the dot-product
+between the values surrounding it and a *kernel* or *filter*, which is a
+predetermined vector of values. Depending on the kernel, then, the convolution
+shows a different feature of the signal.
+
+Now, think of what happens when the kernel is (1, 0, -1), the difference
+filter, for a signal `s`. At any position `i`, the convolution result is
+`1*s[i+1] + 0*s[i] - 1*s[i-1]`, that is, `s[i+1] - s[i-1]`.
+Thus, when adjacent values are identical, the convolution gives 0, but when
+`s[i+1] > s[i-1]` (the signal is increasing), it gives a positive value, and,
+conversely, when `s[i+1] < s[i-1]`, it gives a negative value. You can think
+of this as an estimate of the derivative of the input function.
+
+In general, the formula for convolution is:
 $s'(t) = \sum_{j=t-\tau}^{t}{s(j)f(t-j)}$
 where $s$ is the signal, $s'$ is the filtered signal, $f$ is the filter, and
 $\tau$ is the length of the filter.
 
-Now, think of what happens when the filter is (1, -1), the difference filter:
-when adjacent values (u, v) of the signal are identical, the filter produces
--u + v = 0. But when v > u, the signal produces some positive value.
+In scipy, you can use the `scipy.ndimage.convolve` to work on this.
 
 ```python
-diff = np.array([1, -1])
-from scipy import ndimage as nd
-dsig = nd.convolve(sig, diff)
+diff = np.array([1, 0, -1])
+from scipy import ndimage as ndi
+dsig = ndi.convolve(sig, diff)
 plt.plot(dsig);
 ```
 
@@ -227,32 +251,59 @@ plt.plot(sig);
 The plain difference filter can amplify that noise:
 
 ```python
-plt.plot(nd.convolve(sig, diff));
+plt.plot(ndi.convolve(sig, diff));
 ```
 
-In such cases, you can add smoothing to the filter:
+In such cases, you can add smoothing to the filter. The most common form of
+smoothing is *Gaussian* smoothing, which takes the weighted average of
+neighboring points in the signal using the
+[Gaussian function](https://en.wikipedia.org/wiki/Gaussian_function). We can
+write a function to make a Gaussian smoothing kernel as follows:
 
 ```python
-smoothdiff = np.array([.5, 1.5, 3, 5, -5, -3, -1.5, -0.5]) / 10
+def gaussian_kernel(size, sigma):
+    """Make a 1D Gaussian kernel of the specified size and standard deviation.
+
+    The size should be an odd number and at least ~6 times greater than sigma
+    to ensure sufficient coverage.
+    """
+    positions = np.arange(size) - size // 2
+    kernel_raw = np.exp(-positions**2 / (2 * sigma**2))
+    kernel_normalized = kernel_raw / np.sum(kernel_raw)
+    return kernel_normalized
+```
+
+A really nice feature feature of convolution is that it's *associative*,
+meaning if you want to find the derivative of the smoothed signal, you can
+equivalently convolve the signal with the smoothed difference filter! This can
+save a lot of computation time, because you can smooth just the filter, which
+is usually much smaller than the data.
+
+```python
+smooth_diff = ndi.convolve(gaussian_kernel(25, 3), diff)
+plt.plot(smooth_diff)
 ```
 
 This smoothed difference filter looks for an edge in the central position,
-but also for that difference to continue. This is true in the case of a true
-edge, but not in "spurious" edges caused by noise. We then assign a
-weight of 0.5 to edges in the center, progressively decreasing as we move away
-from it.
-Check out the result:
+but also for that difference to continue. This continuation happens in the case
+of a true
+edge, but not in "spurious" edges caused by noise. Check out the result:
 
 ```python
-sdsig = nd.convolve(sig, smoothdiff)
+sdsig = ndi.convolve(sig, smooth_diff)
 plt.plot(sdsig);
 ```
+
+Although it still looks wobbly, the *signal-to-noise ratio* (SNR),
+is much greater in this version than when using the simple difference filter.
 
 (Note: this operation is called filtering because, in physical electrical
 circuits, many of these operations are implemented by hardware that
 lets certain kinds of current through, but not others; these components
 are called filters. For example, a common filter that removes high-frequency
 voltage fluctuations from a current is called a *low-pass filter*.)
+
+# Filtering images (2D filters)
 
 Now that you've seen filtering in 1D, I hope you'll find it straightforward
 to extend these concepts to 2D. Here's a 2D difference filter finding the
@@ -261,7 +312,7 @@ edges in the coins image:
 ```python
 coins = coins.astype(float) / 255  # prevents overflow errors
 diff2d = np.array([[0, 1, 0], [1, 0, -1], [0, -1, 0]])
-coins_edges = nd.convolve(coins, diff2d)
+coins_edges = ndi.convolve(coins, diff2d)
 io.imshow(coins_edges);
 ```
 
@@ -276,22 +327,63 @@ value (depending on whether the image is brighter towards the bottom-right
 or top-left at that point).
 
 Just as with the 1D filter, you can get more sophisticated and smooth out
-noise right within the filter. The *Sobel* filter is designed to do just that:
+noise right within the filter. The *Sobel* filter is designed to do just that.
+It comes in horizontal and vertical varieties, to find edges with that
+orientation in the data.
+Let's start with the horizontal filter first.
+To find a horizontal edge in a picture, you might try the following filter:
 
 ```python
-hsobel = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
-vsobel = hsobel.T
-coins_h = nd.convolve(coins, hsobel)
-coins_v = nd.convolve(coins, vsobel)
-coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
-plt.imshow(coins_sobel, cmap=plt.cm.YlGnBu);
-plt.colorbar();
+# column vector (vertical) to find horizontal edges
+hdiff = np.array([[1], [0], [-1]])
 ```
 
-In addition to dot-products, implemented by `nd.convolve`, SciPy lets you
+However, as we saw with 1D filters, this will result in a noisy estimate of the
+edges in the image. But rather than using Gaussian smoothing, which can cause
+blurry edges, the Sobel filter uses the property that edges in images tend to
+be continuous: a picture of the ocean, for example, will contain a horizontal
+edge along an entire line, not just at specific points of the image. So the
+Sobel filter smooths the vertical filter horizontally: it looks for a strong
+edge at the central position that is corroborated by the adjacent positions:
+
+```python
+hsobel = np.array([[ 1,  2,  1],
+                   [ 0,  0,  0],
+                   [-1, -2, -1]])
+```
+
+The vertical Sobel filter is simply the transpose of the horizontal:
+
+```python
+vsobel = hsobel.T
+```
+
+We can then find the horizontal and vertical edges in the coins image:
+
+```python
+coins_h = ndi.convolve(coins, hsobel)
+coins_v = ndi.convolve(coins, vsobel)
+
+fig, axes = plt.subplots(nrows=1, ncols=2)
+axes[0].imshow(coins_h, cmap=plt.cm.RdBu)
+axes[1].imshow(coins_v, cmap=plt.cm.RdBu)
+```
+
+And finally, just like the Pythagorean theorem, you can argue that the edge
+magnitude in *any* direction is equal to the square root of the sum of squares
+of the horizontal and vertical components:
+
+```python
+coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
+plt.imshow(coins_sobel, cmap=plt.cm.viridis);
+```
+
+# Generic filters
+
+In addition to dot-products, implemented by `ndi.convolve`, SciPy lets you
 define a filter that is an *arbitrary function* of the points in a neighborhood,
-implemented in `nd.generic_filter`. This can let you express arbitrarily complex
-filters.
+implemented in `ndi.generic_filter`. This can let you express arbitrarily
+complex filters.
 
 For example, suppose an image represents median house values in a county,
 with a 100m x 100m resolution. The local council decides to tax house sales as
@@ -305,7 +397,7 @@ def tax(prices):
     return 10 + 0.05 * np.percentile(prices, 90)
 house_price_map = (0.5 + np.random.rand(100, 100)) * 1e6
 footprint = morphology.disk(radius=10)
-tax_rate_map = nd.generic_filter(house_price_map, tax, footprint=footprint)
+tax_rate_map = ndi.generic_filter(house_price_map, tax, footprint=footprint)
 plt.imshow(tax_rate_map)
 plt.colorbar()
 ```
@@ -335,7 +427,13 @@ for example,
 and even
 [simulating Game of Life itself](https://www.youtube.com/watch?v=xP5-iIeKXE8)!
 
-Can you implement the Game of Life using `nd.generic_filter`?
+Can you implement the Game of Life using `ndi.generic_filter`?
+
+**Exercise:** Sobel gradient magnitude.
+
+Above, we saw how we can combine the output of two different filters, the
+horizontal Sobel filter, and the vertical one. Can you write a function that
+does this in a single pass using `ndi.generic_filter`?
 
 # Graphs and the NetworkX library
 
@@ -368,24 +466,34 @@ You can download the neuronal dataset in Excel format (yuck) from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
 The direct link to the data is:
 [http://www.wormatlas.org/images/NeuronConnect.xls](http://www.wormatlas.org/images/NeuronConnect.xls)
-Let's start by getting a list of rows out of the file. An elegant pattern from Tony
-Yu [^file-url] enables us to open a remote URL as a local file:
+Let's start by getting a list of rows out of the file. An elegant pattern from
+Tony Yu [^file-url] enables us to open a remote URL as a local file.
+It uses a
+[context manager](https://docs.python.org/3.5/library/contextlib.html#contextlib.contextmanager)
+to download a remote file to a local temporary file.
+(Your operating system provides Python with a place to put temporary files.)
+
+The funny `@something` syntax might be new to you.
+This is a Python [decorator](https://www.python.org/dev/peps/pep-0318/), a
+function that modifies another function.
+We won't go over decorators just yet, as they are a side point here.
+In Chapter 8, we will discuss a particular decorator in more detail.
+
+We then use the `xlrd` library to read the contents of the Excel file into a
+connectivity matrix.
 
 ```python
 import os
 import xlrd  # Excel-reading library in Python
 
-try:
-    from urllib.request import urlopen  # getting files from the web, Py3
-except ImportError:
-    from urllib2 import urlopen  # getting files from the web, Py2
+from urllib.request import urlopen  # getting files from the web, Py3
 
 import tempfile
 from contextlib import contextmanager
 
 @contextmanager
 def url2filename(url):
-    _, ext = os.path.splitext(url)
+    base_filename, ext = os.path.splitext(url)
     with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as f:
         remote = urlopen(url)
         f.write(remote.read())
@@ -734,20 +842,18 @@ import numpy as np
 from scipy import ndimage as nd
 
 def add_edge_filter(values, graph):
-    current = values[0]
-    neighbors = values[1:]
-    for neighbor in neighbors:
-        graph.add_edge(current, neighbor)
-    return 0. # generic_filter requires a return value, which we ignore!
+    center = values[len(values) // 2]
+    for neighbor in values:
+        if neighbor != center and not graph.has_edge(center, neighbor):
+            graph.add_edge(center, neighbor)
+    # float return value is unused but needed by `generic_filter`
+    return 0.0
 
 def build_rag(labels, image):
     g = nx.Graph()
-    footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
-    for j in range(labels.ndim):
-        fp = np.swapaxes(footprint, j, 0)
-        fp[0, ...] = 0  # zero out top of footprint on each axis
-    _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
-                          mode='nearest', extra_arguments=(g,))
+    footprint = ndi.generate_binary_structure(labels.ndim, connectivity=1)
+    _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
+                           mode='nearest', extra_arguments=(g,))
     for n in g:
         g.node[n]['total color'] = np.zeros(3, np.double)
         g.node[n]['pixel count'] = 0
@@ -760,12 +866,15 @@ def build_rag(labels, image):
 
 There's a few things to notice here:
 
+- we return "0.0" from the filter function because `generic_filter` requires
+  the filter function to return a float. However, we will ignore the filter
+  output, and only use it for its "side effect" of adding edges to the graph.
 - the loops are not nested several levels deep. This makes the code more
   compact, easier to take in in one go.
 - the code works identically for 1D, 2D, 3D, or even 8D images!
 - if we want to add support for diagonal connectivity, we just need to
-  change the `connectivity` parameter to `nd.generate_binary_structure`
-- `nd.generic_filter` iterates over array elements *with their neighbors*;
+  change the `connectivity` parameter to `ndi.generate_binary_structure`
+- `ndi.generic_filter` iterates over array elements *with their neighbors*;
   use `numpy.ndindex` to simply iterate over array indices.
 
 Overall, I think this is just a brilliant piece of code.
@@ -808,7 +917,7 @@ plt.imshow(color.label2rgb(segmented, tiger));
 
 Oops! Looks like the cat lost its tail!
 
-Still, I think that's a nice demonstration of the capabilities of RAGs...
+Still, we think that's a nice demonstration of the capabilities of RAGs...
 And the beauty with which SciPy and NetworkX make it feasible!
 
 Many of these functions are available in the scikit-image library. If you
