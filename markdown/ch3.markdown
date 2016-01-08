@@ -131,7 +131,9 @@ astro_sq[50:100, 50:100] = [0, 255, 0]  # red, green, blue
 plt.imshow(astro_sq);
 ```
 
-You can also use a boolean mask:
+You can also use a boolean *mask*, an array of `True` or `False` values.
+We saw these in Chapter 2 as a way to select rows of a table. In this case, we
+can use an array of the same shape as the image to select pixels:
 
 ```python
 astro_sq = np.copy(astro)
