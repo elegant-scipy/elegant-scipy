@@ -10,3 +10,4 @@
 - [Chapter 7: (optimization)](html/ch7.html)
 - [Chapter 8: streaming data analysis](html/ch8.html)
 - [Epilogue](html/epilogue.html)
+- [Appendix](html/appendix.html)

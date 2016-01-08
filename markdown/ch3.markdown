@@ -13,7 +13,7 @@ In a landscape, the sky, earth, trees, rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
 or RAG. It holds the properties of each region in the image, and the spatial
 relationships between them. Building such a structure could be a complicated
-affair, and even more difficult 
+affair, and even more difficult
 when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
 here we will show you how to produce a RAG in a few lines of code using NetworkX and
@@ -181,7 +181,7 @@ array of length 100. Suppose that after 30ms the light signal is turned on, and
 30ms later, it is switched off. You end up with a signal like this:
 
 ```python
-sig = np.zeros(100, np.float) # 
+sig = np.zeros(100, np.float) #
 sig[30:60] = 1  # signal = 1 during the period 30-60ms because light is observed
 plt.plot(sig);
 plt.ylim(-0.1, 1.1);
@@ -310,8 +310,11 @@ plt.imshow(tax_rate_map)
 plt.colorbar()
 ```
 
-**Exercise:** Conway's
-[Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) is a
+**Exercise:** Conway's Game of Life.
+
+Suggested by Nicolas Rougier.
+
+Conway's [Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) is a
 seemingly simple construct in which "cells" on a regular square grid live or die
 according to the cells in their immediate surroundings. At every timestep, we
 determine the state of position (i, j) according to its previous state and that
@@ -336,7 +339,7 @@ Can you implement the Game of Life using `nd.generic_filter`?
 
 # Graphs and the NetworkX library
 
-To introduce you to graphs, we will reproduce some results from the paper 
+To introduce you to graphs, we will reproduce some results from the paper
 ["Structural properties of the *Caenorhabditis elegans* neuronal networks"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Varshney *et al*, 2011.
 Note that in this context the term "graph" is synonymous with "network", but not with "plot".
 Mathematicians and computer scientists invented slightly different words to discuss these:
@@ -482,11 +485,11 @@ as the "brain" of the circuit, where the processing happens, while nodes
 upstream of it are inputs, and nodes downstream are outputs.
 
 > **Box**
-> 
+>
 > The idea of cyclical neuronal circuits dates back to the 1950s. Here's a
 > lovely paragraph about this idea from an article in *Nautilus*,
 > "The Man Who Tried to Redeem the World With Logic", by Amanda Gefter:
-> 
+>
 > If one were to see a lightning bolt flash on the sky, the eyes would send a signal to the brain, shuffling it through a chain of neurons. Starting with any given neuron in the chain, you could retrace the signal's steps and figure out just how long ago the lightning struck. Unless, that is, the chain is a loop. In that case, the information encoding the lightning bolt just spins in circles, endlessly. It bears no connection to the time at which the lightning actually occurred. It becomes, as McCulloch put it, "an idea wrenched out of time." In other words, a memory.
 
 NetworkX makes straightforward work out of getting the largest strongly
@@ -528,7 +531,7 @@ plt.ylim(0.002, 1.0)
 plt.show()
 ```
 
-**Exercise**: Use `scipy.optimize.curve_fit` to fit the tail of the
+**Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
 in-degree survival function to a power-law,
 $f(d) \sim d^{-\gamma}, d > d_0$,
 for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
