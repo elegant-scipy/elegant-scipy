@@ -347,7 +347,7 @@ Sobel filter smooths the vertical filter horizontally: it looks for a strong
 edge at the central position that is corroborated by the adjacent positions:
 
 ```python
-hsobel = np.array(([ 1,  2,  1],
+hsobel = np.array([[ 1,  2,  1],
                    [ 0,  0,  0],
                    [-1, -2, -1]])
 ```
