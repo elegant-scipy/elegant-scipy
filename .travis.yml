@@ -1,0 +1,45 @@
+sudo: false
+language: python
+python:
+  - "3.5"
+
+# Setup anaconda
+install:
+  # We do this conditionally because it saves us some downloading if the
+  # version is the same.
+  - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  # Useful for debugging any issues with conda
+  - conda info -a
+
+  # Create conda environment
+  - conda env create -f ./environment.yml
+  - source activate elegant
+
+  # Download data
+  - wget -P data http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz
+  - gzip -dc data/dm6.fa.gz > data/dm6.fa
+
+  # Create html and ipynb dirs (make doesn't do this automaticallly when making individual chapters first)
+  - mkdir html
+  - mkdir ipynb
+
+# command to run tests
+script:
+    - make html/preface.html
+    - make html/ch1.html
+    - make html/ch2.html
+    - make html/ch3.html
+    - make html/ch4.html
+    - make html/ch5.html
+    - make html/ch6.html
+    - make html/ch7.html
+    - make html/ch8.html
+    - make html/epilogue.html
+    - make html/appendix.html
+    - make all
+    - make zip
