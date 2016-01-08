@@ -126,9 +126,7 @@ provides image analysis tools that integrate cleanly with the rest of SciPy.
 There are others, and we will see some of them too.
 The takeaway here is that, although we will focus on NumPy and SciPy, it is the many surrounding packages that make Python a powerhouse for scientific computing.
 
-## Getting Started
-
-### Installation - Anaconda
+## Installing Python - Anaconda
 
 Throughout this book we’re going to assume that you have Python 3.4 (or a later version) and have all the major SciPy packages installed: NumPy, SciPy, Matplotlib, IPython, scikit-image, and others.
 We will list all of the requirements and the versions we used at the start of each chapter.
@@ -139,7 +137,7 @@ If you find that you need to keep track of multiple versions of Python or differ
 (if you've just downloaded the Anaconda Python distribution then you already have it!).
 
 
-### The Great Cataclysm: Python 2 vs. Python 3
+## The Great Cataclysm: Python 2 vs. Python 3
 
 In your Python travels, you may have already heard a few rumblings about which version of Python is better.
 You may wonder why it's not just the latest version.
@@ -222,8 +220,6 @@ from six.moves import zip, map, range, filter
 
 ## SciPy Ecosystem and Community
 
-### The SciPy Ecosystem
-
 SciPy is a major library with a lot of functionality.
 Together with NumPy, it is one of Python's killer apps.
 And such a killer app has launched a vast amount of related libraries that build on this functionality.
@@ -263,7 +259,6 @@ By making scientific software open source, we not only increase the quality of t
 What assumptions were made, and even hard-coded?
 Open source helps to solve many of these issues.
 It also enables other scientists to build on the code of their peers, fostering new collaborations and speeding up scientific progress.
-
 
 #### Open Source Licenses
 

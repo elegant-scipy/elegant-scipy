@@ -375,11 +375,11 @@ earlier!
          [PyFFTW](https://github.com/hgomersall/pyFFTW) for faster
          FFTs.
 
+## Discrete Fourier Transform concepts
+
 Next, we present a couple of common concepts worth knowing before
 operating heavy Fourier Transform machinery, whereafter we tackle
 another real-world problem: analyzing target detection in radar data.
-
-## Discrete Fourier Transform concepts
 
 ### Frequencies and their ordering
 
