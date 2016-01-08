@@ -310,7 +310,7 @@ plt.imshow(tax_rate_map)
 plt.colorbar()
 ```
 
-**Exercise:**
+**Exercise:** Conway's Game of Life.
 
 Suggested by Nicolas Rougier.
 
@@ -531,7 +531,7 @@ plt.ylim(0.002, 1.0)
 plt.show()
 ```
 
-**Exercise**: Use `scipy.optimize.curve_fit` to fit the tail of the
+**Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
 in-degree survival function to a power-law,
 $f(d) \sim d^{-\gamma}, d > d_0$,
 for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
