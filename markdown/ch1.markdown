@@ -643,7 +643,7 @@ Broadcasting a single value over a 2D array was pretty clear.
 We were just multiplying every element in the array by the value.
 But what happens when we need to divide a 2D array by a 1D array?
 
-#### Broadcasting rules [tip box?]
+#### Broadcasting rules
 
 Broadcasting allows calculations between ndarrays that have a different
 number of dimensions.
