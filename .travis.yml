@@ -1,3 +1,4 @@
+sudo: false
 language: python
 python:
   - "3.5"
@@ -19,5 +20,8 @@ install:
   - conda env create -f ./environment.yml
   - source activate elegant
 
+  # Download data
+  - wget -P data http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz
+  - gzip -dc data/dm6.fa.gz > data/dm6.fa
 # command to run tests
 script: make all
