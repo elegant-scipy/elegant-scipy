@@ -23,5 +23,23 @@ install:
   # Download data
   - wget -P data http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz
   - gzip -dc data/dm6.fa.gz > data/dm6.fa
+
+  # Create html and ipynb dirs (make doesn't do this automaticallly when making individual chapters first)
+  - mkdir html
+  - mkdir ipynb
+
 # command to run tests
-script: make all
+script:
+    - make html/preface.html
+    - make html/ch1.html
+    - make html/ch2.html
+    - make html/ch3.html
+    - make html/ch4.html
+    - make html/ch5.html
+    - make html/ch6.html
+    - make html/ch7.html
+    - make html/ch8.html
+    - make html/epilogue.html
+    - make html/appendix.html
+    - make all
+    - make zip
