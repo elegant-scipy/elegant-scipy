@@ -59,6 +59,7 @@ There are four kinds of bases, abbreviated to A, C, G, and T, constituting an al
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
+A section of DNA that encodes the information to make a protein (via mRNA) is called a gene.
 
 The amount of mRNA produced from a given gene is called the *expression* of that gene.
 Although we would ideally like to measure protein levels, this is a much harder task than measuring mRNA.
