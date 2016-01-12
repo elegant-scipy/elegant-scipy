@@ -67,7 +67,7 @@ Fortunately, expression levels of an mRNA and levels of its corresponding protei
 Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
-![Central Dogma of Biology](http://www.phschool.com/science/biology_place/biocoach/images/transcription/centdog.gif)
+![Central Dogma of Molecular Biology](https://upload.wikimedia.org/wikipedia/commons/5/50/Molbio-Header.svg)
 **[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
 
 It's important to note that the DNA in every cell of your body is identical.
