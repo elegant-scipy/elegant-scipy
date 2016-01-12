@@ -9,7 +9,6 @@ We will working towards this goal throughout Chapters 1 and 2, learning about so
 Before we can predict mortality, we will need to normalize the expression data using a method called RPKM normalization.
 This allows the comparison of measurements between different samples and genes.
 (We will unpack what "gene expression" means in just a moment.)
-In Chapter 2 we will continue working with the same data set, implementing a more sophisticated normalization technique, and then using clustering to make some predictions about mortality.
 
 Before we get into the details, let's start with a code snippet to tantalize, and motivate the ideas in this chapter.
 
@@ -827,3 +826,11 @@ Just looking at the raw counts, it looks like the shorter gene A is not expresse
 Once we normalize to RPKM values, the story changes substantially.
 Now it looks like gene A is actually expressed at a higher level than gene B.
 This is because RPKM includes normalization for gene length, so we can now directly compare between genes of dramatically different lengths.
+
+## Taking stock
+
+So far we have, imported data using Pandas, gotten to know the key NumPy data type: the ndarray, and used the power of broadcasting to make our calculations more elegant.
+We have used these skills to import, munge and transform our gene expression data set.
+Yay!
+
+In Chapter 2 we will continue working with the same data set, implementing a more sophisticated normalization technique, and then using clustering to make some predictions about mortality in skin cancer patients.
