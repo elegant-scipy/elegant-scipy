@@ -371,7 +371,7 @@ print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.sha
 
 ## Normalization
 
-Before we dive into the stats, it is important to first determine if we need to normalize our data.
+Before we do any kind of analysis with our data, it is important to take a look at it and determine if we need to normalize it first.
 
 ### Between samples
 
