@@ -870,7 +870,5 @@ This is because RPKM includes normalization for gene length, so we can now direc
 ## Taking stock
 
 So far we have, imported data using Pandas, gotten to know the key NumPy data type: the ndarray, and used the power of broadcasting to make our calculations more elegant.
-We have used these skills to import, munge and transform our gene expression data set.
-Yay!
 
 In Chapter 2 we will continue working with the same data set, implementing a more sophisticated normalization technique, and then using clustering to make some predictions about mortality in skin cancer patients.
