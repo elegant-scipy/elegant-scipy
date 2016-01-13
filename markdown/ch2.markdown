@@ -66,20 +66,9 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 
 ```python
 %matplotlib inline
-# Make all plots appear inline in the IPython notebook from now onwards
 
 import matplotlib.pyplot as plt
 plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
-```
-
-```python
-# Need to check if all these import statements are actually required.
-import numpy as np
-from scipy import stats
-import pandas as pd
-
-import seaborn as sns
-import itertools as it
 ```
 
 ### Get the data
