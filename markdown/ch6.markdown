@@ -48,7 +48,9 @@ https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector
 
 [Example with simple network]
 
-Here, we will demonstrate this by reproducing Figure 2 from the
+Here, we will demonstrate this by reproducing
+[Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
+from the
 [Varshney *et al* paper](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
 on the worm brain that we introduced in Chapter 3. (Information on
 how to do this is in the
