@@ -2,7 +2,6 @@
 
 This chapter touches on some statistical functions in SciPy, but more than that, it focuses on exploring the NumPy array, a data structure that underlies almost all numerical scientific computation in Python.
 We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
-Along the way, we will also use the Pandas library to manipulate our data.
 
 Our use case is using gene expression data from The Cancer Genome Atlas (TCGA) project to predict mortality in skin cancer patients.
 We will working towards this goal throughout Chapters 1 and 2, learning about some key SciPy concepts along the way.
