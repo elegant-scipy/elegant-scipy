@@ -257,11 +257,12 @@ If you want to manipulate the data without touching the original, it's easy to m
 y = np.copy(x[:2])
 ```
 
-### Broadcasting
+### Vectorization
 
-One of the most powerful and often misunderstood features of arrays is broadcasting.
-Broadcasting is a way of performing implicit operations between two arrays.
-Earlier when we talked about the speed of operations on arrays, what we were actually doing was broadcasting.
+Earlier we talked about the speed of operations on arrays.
+Once of the tricks Numpy uses to speed things up is *vectorization*.
+Vectorization is where you apply a calculation to each element in an array, without having to use a for loop.
+In addition to speeding things up, this can result in more natural, readable code.
 Let's look at some examples.
 
 ```python
@@ -269,7 +270,7 @@ x = np.array([1, 2, 3, 4])
 print(x * 2)
 ```
 
-Here, we have implicitly multiplied every element in `x`, an array of 4 values, by 2, a single value.
+Here, we have `x`, an array of 4 values, and we have implicitly multiplied every element in `x` by 2, a single value.
 
 ```python
 y = np.array([0, 1, 2, 1])
@@ -278,23 +279,55 @@ print(x + y)
 
 Now, we have added together each element in `x` to its corresponding element in `y`, an array of the same shape.
 
-Both of these operations are simple and, we hope, intuitive.
+Both of these operations are simple and, we hope, intuitive examples of vectorization.
 NumPy also makes them very fast, much faster than iterating over the arrays manually.
 (Feel free to play with this yourself using the `%%timeit` IPython magic.)
 
-But, the more advanced version of broadcasting allows you to perform operations on arrays of *compatible* shapes, to create arrays bigger than either of the starting ones.
+
+### Broadcasting
+
+One of the most powerful and often misunderstood features of ndarrays is broadcasting.
+Broadcasting is a way of performing implicit operations between two arrays.
+It allows you to perform operations on arrays of *compatible* shapes, to create arrays bigger than either of the starting ones.
 For example, we can compute the [outer product](https://en.wikipedia.org/wiki/Outer_product) of two vectors, by reshaping them appropriately:
 
 ```python
+x = np.array([1, 2, 3, 4])
 x = np.reshape(x, (len(x), 1))
-y = np.reshape(y, (1, len(y)))
+print(x)
+```
 
+```python
+y = np.array([0, 1, 2, 1])
+y = np.reshape(y, (1, len(y)))
+print(y)
+```
+
+In order to do broadcasting, the two arrays have to have the same number of dimensions and the sizes of the dimensions need to match (or be equal to 1).
+Let's check the shapes of these two arrays.
+
+```python
+print(x.shape)
+print(y.shape)
+```
+
+Both arrays have two dimensions and the inner dimensions of both arrays are 1, so the dimensions are compatible!
+
+```python
 outer = x * y
 print(outer)
 ```
 
+The outer dimensions tell you how size of the resulting array.
+In our case we expect a (4, 4) array:
+
+```python
+print(outer.shape)
+```
+
 You can see for yourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
-This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the correspoding dimension of the other array.
+
+This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the corresponding dimension of the other array.
 
 As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
 It allows us to express complex operations concisely and efficiently.
