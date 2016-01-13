@@ -347,7 +347,7 @@ We will be using this gene expression data to predict mortality in skin cancer p
 We're first going to use Pandas to read in the table of counts.
 Pandas is a Python library for data manipulation and analysis,
 with particular emphasis on tabular and time series data.
-It is particularly useful for reading in tabular data of mixed type.
+Here, we will use it here to read in tabular data of mixed type.
 It uses the DataFrame type, which is a flexible tabular format based on the data frame object in R.
 For example the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so it doesn't make sense to read this data in directly as an ndarray.
 By reading the data in as a Pandas DataFrame we can let Pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
