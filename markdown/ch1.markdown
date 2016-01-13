@@ -4,9 +4,15 @@ This chapter touches on some statistical functions in SciPy, but more than that,
 We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
 
 Our use case is using gene expression data from The Cancer Genome Atlas (TCGA) project to predict mortality in skin cancer patients.
-Before we can do this, we will need to normalize the expression data using a method called RPKM normalization.
+We will working towards this goal throughout Chapters 1 and 2, learning about some key SciPy concepts along the way.
+Before we can predict mortality, we will need to normalize the expression data using a method called RPKM normalization.
 This allows the comparison of measurements between different samples and genes.
 (We will unpack what "gene expression" means in just a moment.)
+
+Let's start with a code snippet to tantalize, and motivate the ideas in this chapter.
+As we will do in each chapter, we open with a code sample that we believe epitomizes the elegance and power of a particular function from the SciPy ecosystem.
+In this case, we want to highlight NumPy's vectorization and broadcasting rules, which allow us to manipulate and reason about data arrays very efficiently.
+
 
 ```python
 def rpkm(counts, lengths):
@@ -59,6 +65,7 @@ There are four kinds of bases, abbreviated to A, C, G, and T, constituting an al
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
+A section of DNA that encodes the information to make a protein (via mRNA) is called a gene.
 
 The amount of mRNA produced from a given gene is called the *expression* of that gene.
 Although we would ideally like to measure protein levels, this is a much harder task than measuring mRNA.
@@ -66,8 +73,8 @@ Fortunately, expression levels of an mRNA and levels of its corresponding protei
 Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
-![Central Dogma of Biology](http://www.phschool.com/science/biology_place/biocoach/images/transcription/centdog.gif)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+![Central Dogma of Molecular Biology](https://upload.wikimedia.org/wikipedia/commons/5/50/Molbio-Header.svg)
+**[ED NOTE, this image is from wikipedia, so attribution and share-alike. Appropriate license?]**
 
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of that DNA into RNA.
@@ -252,11 +259,12 @@ If you want to manipulate the data without touching the original, it's easy to m
 y = np.copy(x[:2])
 ```
 
-### Broadcasting
+### Vectorization
 
-One of the most powerful and often misunderstood features of arrays is broadcasting.
-Broadcasting is a way of performing implicit operations between two arrays.
-Earlier when we talked about the speed of operations on arrays, what we were actually doing was broadcasting.
+Earlier we talked about the speed of operations on arrays.
+Once of the tricks Numpy uses to speed things up is *vectorization*.
+Vectorization is where you apply a calculation to each element in an array, without having to use a for loop.
+In addition to speeding things up, this can result in more natural, readable code.
 Let's look at some examples.
 
 ```python
@@ -264,7 +272,7 @@ x = np.array([1, 2, 3, 4])
 print(x * 2)
 ```
 
-Here, we have implicitly multiplied every element in `x`, an array of 4 values, by 2, a single value.
+Here, we have `x`, an array of 4 values, and we have implicitly multiplied every element in `x` by 2, a single value.
 
 ```python
 y = np.array([0, 1, 2, 1])
@@ -273,23 +281,55 @@ print(x + y)
 
 Now, we have added together each element in `x` to its corresponding element in `y`, an array of the same shape.
 
-Both of these operations are simple and, we hope, intuitive.
+Both of these operations are simple and, we hope, intuitive examples of vectorization.
 NumPy also makes them very fast, much faster than iterating over the arrays manually.
 (Feel free to play with this yourself using the `%%timeit` IPython magic.)
 
-But, the more advanced version of broadcasting allows you to perform operations on arrays of *compatible* shapes, to create arrays bigger than either of the starting ones.
+
+### Broadcasting
+
+One of the most powerful and often misunderstood features of ndarrays is broadcasting.
+Broadcasting is a way of performing implicit operations between two arrays.
+It allows you to perform operations on arrays of *compatible* shapes, to create arrays bigger than either of the starting ones.
 For example, we can compute the [outer product](https://en.wikipedia.org/wiki/Outer_product) of two vectors, by reshaping them appropriately:
 
 ```python
+x = np.array([1, 2, 3, 4])
 x = np.reshape(x, (len(x), 1))
-y = np.reshape(y, (1, len(y)))
+print(x)
+```
 
+```python
+y = np.array([0, 1, 2, 1])
+y = np.reshape(y, (1, len(y)))
+print(y)
+```
+
+In order to do broadcasting, the two arrays have to have the same number of dimensions and the sizes of the dimensions need to match (or be equal to 1).
+Let's check the shapes of these two arrays.
+
+```python
+print(x.shape)
+print(y.shape)
+```
+
+Both arrays have two dimensions and the inner dimensions of both arrays are 1, so the dimensions are compatible!
+
+```python
 outer = x * y
 print(outer)
 ```
 
+The outer dimensions tell you how size of the resulting array.
+In our case we expect a (4, 4) array:
+
+```python
+print(outer.shape)
+```
+
 You can see for yourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
-This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the correspoding dimension of the other array.
+
+This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the corresponding dimension of the other array.
 
 As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
 It allows us to express complex operations concisely and efficiently.
@@ -304,7 +344,9 @@ We will be using this gene expression data to predict mortality in skin cancer p
 [Links to data!]
 
 We're first going to use Pandas to read in the table of counts.
-Pandas is particularly useful for reading in tabular data of mixed type.
+Pandas is a Python library for data manipulation and analysis,
+with particular emphasis on tabular and time series data.
+Here, we will use it here to read in tabular data of mixed type.
 It uses the DataFrame type, which is a flexible tabular format based on the data frame object in R.
 For example the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so it doesn't make sense to read this data in directly as an ndarray.
 By reading the data in as a Pandas DataFrame we can let Pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
@@ -364,12 +406,15 @@ print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.sha
 
 ## Normalization
 
-Before we dive into the stats, it is important to first determine if we need to normalize our data.
+Before we do any kind of analysis with our data, it is important to take a look at it and determine if we need to normalize it first.
 
 ### Between samples
 
 For example, the number of counts for each individual can vary substantially in RNAseq experiments.
-Let's take a look.
+Let's take a look at the distribution of expression counts over all the genes.
+First we will sum the rows to get the total counts of expression of all genes for each individual, so we can just look at the variation between individuals.
+To visualize the distribution of total counts, we will use a kernel density estimation (KDE) function.
+KDE is commonly used to smooth out histograms, which gives a clearer picture of the underlying distribution.
 
 ```python
 %matplotlib inline
@@ -387,6 +432,7 @@ density = stats.kde.gaussian_kde(total_counts) # Use gaussian smoothing to estim
 x = np.arange(min(total_counts), max(total_counts), 10000) # create ndarray of integers from min to max in steps of 10,000
 plt.plot(x, density(x))
 plt.xlabel("Total counts per individual")
+plt.ylabel("Density")
 plt.show()
 
 print("Min counts: {0}, Mean counts: {1}, Max counts: {2}".format(total_counts.min(), total_counts.mean(), total_counts.max()))
@@ -643,7 +689,7 @@ Broadcasting a single value over a 2D array was pretty clear.
 We were just multiplying every element in the array by the value.
 But what happens when we need to divide a 2D array by a 1D array?
 
-#### Broadcasting rules [tip box?]
+#### Broadcasting rules
 
 Broadcasting allows calculations between ndarrays that have a different
 number of dimensions.
@@ -819,3 +865,9 @@ Just looking at the raw counts, it looks like the shorter gene A is not expresse
 Once we normalize to RPKM values, the story changes substantially.
 Now it looks like gene A is actually expressed at a higher level than gene B.
 This is because RPKM includes normalization for gene length, so we can now directly compare between genes of dramatically different lengths.
+
+## Taking stock
+
+So far we have, imported data using Pandas, gotten to know the key NumPy data type: the ndarray, and used the power of broadcasting to make our calculations more elegant.
+
+In Chapter 2 we will continue working with the same data set, implementing a more sophisticated normalization technique, and then using clustering to make some predictions about mortality in skin cancer patients.
