@@ -409,7 +409,10 @@ Before we do any kind of analysis with our data, it is important to take a look 
 ### Between samples
 
 For example, the number of counts for each individual can vary substantially in RNAseq experiments.
-Let's take a look.
+Let's take a look at the distribution of expression counts over all the genes.
+First we will sum the rows to get the total counts of expression of all genes for each individual, so we can just look at the variation between individuals.
+To more easily visualize the distribution of total counts, we will use a kernel density estimation (KDE) function to smooth out the plot.
+We have chosen a gaussian KDE in this case.
 
 ```python
 %matplotlib inline
@@ -427,6 +430,7 @@ density = stats.kde.gaussian_kde(total_counts) # Use gaussian smoothing to estim
 x = np.arange(min(total_counts), max(total_counts), 10000) # create ndarray of integers from min to max in steps of 10,000
 plt.plot(x, density(x))
 plt.xlabel("Total counts per individual")
+plt.ylabel("Density")
 plt.show()
 
 print("Min counts: {0}, Mean counts: {1}, Max counts: {2}".format(total_counts.min(), total_counts.mean(), total_counts.max()))
