@@ -11,6 +11,9 @@ This allows the comparison of measurements between different samples and genes.
 (We will unpack what "gene expression" means in just a moment.)
 
 Before we get into the details, let's start with a code snippet to tantalize, and motivate the ideas in this chapter.
+As we will do in each chapter, we open with a code sample that we believe epitomizes the elegance and power of a particular function from the SciPy ecosystem.
+In this case, we want to highlight NumPy's vectorization and broadcasting rules, which allow us to manipulate and reason about data arrays very efficiently.
+
 
 ```python
 def rpkm(counts, lengths):
