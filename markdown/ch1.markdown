@@ -414,8 +414,8 @@ Before we do any kind of analysis with our data, it is important to take a look 
 For example, the number of counts for each individual can vary substantially in RNAseq experiments.
 Let's take a look at the distribution of expression counts over all the genes.
 First we will sum the rows to get the total counts of expression of all genes for each individual, so we can just look at the variation between individuals.
-To more easily visualize the distribution of total counts, we will use a kernel density estimation (KDE) function to smooth out the plot.
-We have chosen a gaussian KDE in this case.
+To visualize the distribution of total counts, we will use a kernel density estimation (KDE) function.
+KDE is commonly used to smooth out histograms, which gives a clearer picture of the underlying distribution.
 
 ```python
 %matplotlib inline
