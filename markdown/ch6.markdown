@@ -1,5 +1,9 @@
 # Linear algebra in SciPy
 
+```python
+%matplotlib inline
+```
+
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
 will feature an elegant *method*, not so much code, which is simple. We simply
 want to highlight the linear algebra packages available in SciPy, which form
@@ -59,7 +63,128 @@ for the paper.) To obtain their
 layout of the worm brain neurons, they used a related matrix, the
 *degree-normalized Laplacian*.
 
-[...]
+Because the order of the neurons is important in this analysis, we will use a
+preprocessed dataset, rather than clutter this chapter with data cleaning. We
+got the original data from Lars Varshney's
+[website](http://www.ifp.illinois.edu/~varshney/elegans),
+and the processed data is in our `data/` directory.
+
+First, let us load the data. There are four components: the chemical synapse
+network, the gap junction network (these are direct electrical contacts between
+neurons), the neuron IDs (names), and the three neuron types:
+- sensory neurons, those that detect signals coming from the outside world,
+  encoded as 0;
+- motor neurons, those that activate muscles, enabling the worm to move,
+  encoded as 2; and
+- interneurons, the neurons in between, which enable complex signal processing
+  to occur between sensory neurons and motor neurons, encoded as 1.
+
+```python
+import numpy as np
+chem = np.load('data/chem-network.npy')
+gap = np.load('data/gap-network.npy')
+neuron_ids = np.load('data/neurons.npy')
+neuron_types = np.load('data/neuron-types.npy')
+```
+
+We then simplify the network, adding the two kinds of connections together,
+and removing the directionality of the network by taking the average of
+in-connections and out-connections of neurons. This seems a bit like cheating
+but, since we are only looking for the *layout* of the neurons on a graph, we
+only care about *whether* neurons are connected, not in which direction.
+
+```python
+A = chem + gap
+C = (A + A.T) / 2
+```
+
+To get the Laplacian matrix, we need the degree matrix, which contains the
+degree of node i at position [i, i], and zeros everywhere else.
+
+```python
+n = C.shape[0]
+D = np.zeros((n, n), dtype=np.float)
+diag = (np.arange(n), np.arange(n))
+D[diag] = np.sum(C, axis=0)
+L = D - C
+```
+
+The vertical coordinates in Fig 2 are given by arranging nodes such that, on
+average, neurons are as close as possible to "just above" their downstream
+neighbors. Varshney et all call this measure "processing depth," and it's
+obtained by solving a linear equation involving the Laplacian. We use
+`scipy.linalg.pinv`, the pseudoinverse, to solve it:
+
+```python
+from scipy import linalg
+b = np.sum(C * np.sign(A - A.T), axis=1)
+z = linalg.pinv(L) @ b
+```
+
+(Note the use of the `@` symbol, which was introduced in Python 3.5 to denote
+matrix multiplication. In previous versions of Python, you would need to use
+the function `np.dot`.)
+
+In order to obtain the degree-normalized Laplacian, Q, we need the inverse
+square root of the D matrix:
+
+```python
+Dinv2 = np.zeros((n, n))
+Dinv2[diag] = D[diag] ** (-.5)
+Q = Dinv2 @ L @ Dinv2
+```
+
+Finally, we are able to extract the x coordinates of the neurons to ensure that
+highly-connected neurons remain close: the normalized second eigenvector of Q:
+
+```python
+eigvals, eigvecs = linalg.eig(Q)
+x = Dinv2 @ eigvecs[:, 1]
+```
+
+Now it's just a matter of drawing the nodes and the links. We color them
+according to the type stored in `neuron_types`:
+
+```python
+from matplotlib import pyplot as plt
+from matplotlib import colors
+
+def plot_connectome(neuron_x, neuron_y, links, labels, types):
+    colormap = colors.ListedColormap([(1, 0, 0),
+                                      (0, 0, 1),
+                                      (0, 1, 0)])
+    # plot neuron locations:
+    plt.scatter(neuron_x, neuron_y, c=types, cmap=colormap, zorder=1)
+
+    # add text labels:
+    for x, y, label in zip(neuron_x, neuron_y, labels):
+        plt.text(x, y, '  ' + label,
+                 horizontalalignment='left', verticalalignment='center',
+                 fontsize=5, zorder=2)
+
+    # plot links
+    pre, post = np.nonzero(links)
+    for src, dst in zip(pre, post):
+        plt.plot(neuron_x[[src, dst]], neuron_y[[src, dst]],
+                 c=(0.85, 0.85, 0.85), lw=0.2, alpha=0.5, zorder=0)
+
+    plt.show()
+```
+
+```python
+plt.figure(figsize=(16, 9))
+plot_connectome(x, z, C, neuron_ids, neuron_types)
+```
+
+There you are: a worm brain!
+As discussed in the original paper, you can see the top-down processing from
+sensory neurons to motor neurons through a network of interneurons. You can
+also see two distinct groups of motor neurons: these correspond to the neck
+(left) and body (right) body segments of the worm.
+
+**Exercise:** How do you modify the above code to show the affinity view in
+Figure 2B from the paper?
+
 
 ## Community detection
 
