@@ -333,6 +333,7 @@ Simple: we just call `linkage` for the input matrix and also for the transpose o
 Next, we define a function to visualize the output of that clustering.
 We are going to rearrange the rows and columns of the input data so that similar rows are together and similar columns are together.
 And we are additionally going to show the merge tree for both rows and columns, displaying which observations belong together for each.
+The merge trees are presented as dendograms, with the branch-lengths indicating how similar the obvservations are to each other (shorter = more similar).
 
 As a word of warning, there is a fair bit of hard-coding of parameters going on here.
 This is difficult to avoid for plotting, where design is often a matter of eyeballing to find the correct proportions.
