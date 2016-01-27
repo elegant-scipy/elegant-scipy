@@ -185,6 +185,35 @@ also see two distinct groups of motor neurons: these correspond to the neck
 **Exercise:** How do you modify the above code to show the affinity view in
 Figure 2B from the paper?
 
+### challenge: linear algebra with sparse matrices
+
+The above code uses numpy arrays to hold the matrix and perform
+the necessary computations. Because it is a small graph of fewer than 300
+nodes, this is feasible. However, for larger graphs, it would fail.
+
+In what follows, we will analyze the dependency graph for packages in the
+Python Package Index, or PyPI, which contains over 75 thousand packages. To
+hold the Laplacian matrix for this graph would take up
+$8 \left(75 \times 10^3\right)^2 = 45 \times 10^9$ bytes, or 45GB,
+of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
+and, say, two temporary matrices used during calculations, you climb up to
+270GB, beyond the reach of most desktop computers.
+
+However, we know that the dependency graph is *sparse*: packages usually depend
+on just a few other packages, not on the whole of PyPI. So we can hold the
+above matrices using the sparse data structures from `scipy.sparse` (see
+Chapter 5), and use the linear algebra functions in `scipy.sparse.linalg` to
+compute the values we need.
+
+Try to explore the documentation in `scipy.sparse.linalg` to come up with a
+sparse version of the above computation.
+
+Hint: the pseudoinverse of a sparse matrix is, in general, not sparse, so you
+can't use it here. Similarly, you can't get all the eigenvectors of a sparse
+matrix, because they would together make up a dense matrix.
+
+The solution is found in what follows, but we highly recommend that you try it
+on your own!
 
 ## Community detection
 
