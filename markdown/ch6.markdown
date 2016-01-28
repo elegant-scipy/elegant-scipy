@@ -212,8 +212,8 @@ Hint: the pseudoinverse of a sparse matrix is, in general, not sparse, so you
 can't use it here. Similarly, you can't get all the eigenvectors of a sparse
 matrix, because they would together make up a dense matrix.
 
-The solution is found in what follows, but we highly recommend that you try it
-on your own!
+The solution is found in the following section, but we highly recommend that
+you try it on your own!
 
 ## Community detection
 
@@ -221,6 +221,71 @@ Another application of the normalized graph Laplacian is in community
 detection. Mark Newman published a
 [seminal paper](http://www.pnas.org/content/103/23/8577.short)
 on the topic in 2006. We'll apply it to the Python library dependency graph.
+
+We've downloaded and preprocessed the data ahead of time, available as the file
+`pypi-dependencies.txt` in the `data/` folder. The data consists of a list of
+library-dependency pairs, one per line. The networkx library that we started
+using in Chapter 3 makes it easy to build a graph from these data. We will use
+a directed graph since the relationship is asymmetrical: one library depends
+on the other, not vice-versa.
+
+```python
+import networkx as nx
+
+dependencies = nx.DiGraph()
+
+with open('data/pypi-dependencies.txt') as lines:
+    lib_dep_pairs = (str.split(line) for line in lines)
+    dependencies.add_edges_from(lib_dep_pairs)
+```
+
+We can then get some statistics about this (incomplete) dataset by using
+networkx's built-in functions:
+
+```python
+print('number of packages: ', dependencies.number_of_nodes())
+print('number of dependencies: ', dependencies.number_of_edges())
+```
+
+What is the single most used Python package?
+
+```python
+print(max(dependencies.in_degree_iter(),
+          key=lambda x: x[1]))
+```
+
+We're not going to cover it here, but `setuptools` is not a surprising winner
+here. In fact, until we wrote this chapter, we had thought it was part of the
+Python standard library, in the same category as `os`, `sys`, and others!
+
+Since using setuptools is almost a requirement for being listed in PyPI, we are
+actually going to remove it from the dataset, because it has too much influence
+on the shape of the graph.
+
+```python
+dependencies.remove_node('setuptools')
+```
+
+What's the next most depended-upon package?
+
+```python
+print(max(dependencies.in_degree_iter(),
+          key=lambda x: x[1]))
+```
+
+The requests library is the foundation of a very large fraction of the web
+frameworks and web processing libraries.
+
+We can similarly find out the top-ten most depended-upon packages:
+
+```python
+packages_by_in = sorted(dependencies.in_degree_iter(),
+                        key=lambda x: x[1], reverse=True)
+print(packages_by_in[:40])
+```
+
+By this ranking, NumPy ranks 4 and SciPy 28 out of all of PyPI. Not bad!
+
 
 Where to get the data:
 
