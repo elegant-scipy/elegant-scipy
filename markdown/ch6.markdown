@@ -286,9 +286,89 @@ print(packages_by_in[:40])
 
 By this ranking, NumPy ranks 4 and SciPy 28 out of all of PyPI. Not bad!
 
+However, the number of incoming links to a package doesn't tell the whole
+story. As you might have heard, the key insight that drove Google's early
+success was that important webpages are not just linked to by many webpages, but
+also by *other* important webpages. This recursive definition implies that page
+importance can be measured by the eigenvector corresponding to the largest
+eigenvalue of the adjacency matrix.
+
+We can apply this insight to the network of Python dependencies. First, we
+ignore all the packages that are isolated:
+
+```python
+connected_packages = max(nx.connected_components(dependencies.to_undirected()),
+                         key=len)
+conn_dependencies = nx.subgraph(dependencies, connected_packages)
+```
+
+Next, we get the sparse matrix corresponding to the graph. Because a matrix
+only holds numerical information, we need to maintain the list of package names
+corresponding to the matrix rows/columns separately:
+
+```python
+package_names = conn_dependencies.nodes()
+adjacency_matrix = nx.to_scipy_sparse_matrix(conn_dependencies)
+```
+
+Normally, the pagerank score would simply be the first eigenvector of the
+adjacency matrix. However, this would give a huge advantage to "terminal" pages
+that don't link anywhere else: if you think of the eigenvector as the result of
+repeatedly hopping from one page to a random page it links to (this is the
+effect of matrix multiplication), then "terminal" pages start to accumulate all
+of the traffic they receive, without feeding into any other pages.
+
+To counteract this effect, the pagerank algorithm uses a so-called "damping
+factor", usually taken to be 0.85. This means that 85% of the time, the
+algorithm follows a link at random, but for the other 15%, it randomly jumps to
+another page.
+
+This formulation implies the following mathematical relationship. If $A$ is the
+adjacency matrix, let $K$ be the matrix with the degree of each page on the
+diagonal, and 0 elsewhere. Then the transition matrix, for which entry $(i, j)$
+contains the probability of going from page $i$ to page $j$, is $K^{-1}A$.
+Then, with $M = (K^{-1}A)^T$, $\boldsymbol{r}$ being the vector of
+pageranks, and $d$ being the damping factor, we have:
+
+$$
+\boldsymbol{r} = dM\boldsymbol{r} + \frac{1-d}{N} \boldsymbol(1)
+$$
+
+and
+
+$$
+(\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{N} \boldsymbol(1)
+$$
+
+We can solve this equation using `scipy.sparse`'s conjugate gradient solver:
+
+```python
+from scipy import sparse
+damping = 0.85
+n = len(package_names)
+degrees = np.asarray(adjacency_matrix.sum(axis=1)).ravel()
+degrees[degrees != 0] = 1 / degrees[degrees != 0]
+degrees_matrix = sparse.diags([degrees], [0], adjacency_matrix.shape,
+                              format='csr')
+transition_matrix = (degrees_matrix @ adjacency_matrix).T
+
+I = sparse.eye(n, format='csc')
+p = np.full(n, (1-damping) / n)
+
+r, error = sparse.linalg.isolve.cg(I - transition_matrix, p,
+                                   maxiter=int(1e4))
+```
+
+We now have the "dependency" pagerank of every package on PyPI! Here are the
+top 20 packages:
+
+```python
+top = np.argsort(r)[::-1]
+
+print([package_names[i] for i in top[:20]])
+```
 
 Where to get the data:
-
   * https://github.com/ogirardot/meta-deps/blob/master/PyPi%20Metadata.ipynb
   * https://ogirardot.wordpress.com/2013/01/05/state-of-the-pythonpypi-dependency-graph/
   * PyPI itself
