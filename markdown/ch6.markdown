@@ -355,7 +355,7 @@ transition_matrix = (degrees_matrix @ adjacency_matrix).T
 I = sparse.eye(n, format='csc')
 p = np.full(n, (1-damping) / n)
 
-r, error = sparse.linalg.isolve.cg(I - transition_matrix, p,
+r, error = sparse.linalg.isolve.cg(I - damping * transition_matrix, p,
                                    maxiter=int(1e4))
 ```
 
