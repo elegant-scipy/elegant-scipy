@@ -331,13 +331,13 @@ Then, with $M = (K^{-1}A)^T$, $\boldsymbol{r}$ being the vector of
 pageranks, and $d$ being the damping factor, we have:
 
 $$
-\boldsymbol{r} = dM\boldsymbol{r} + \frac{1-d}{N} \boldsymbol(1)
+\boldsymbol{r} = dM\boldsymbol{r} + \frac{1-d}{N} \boldsymbol{1}
 $$
 
 and
 
 $$
-(\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{N} \boldsymbol(1)
+(\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{N} \boldsymbol{1}
 $$
 
 We can solve this equation using `scipy.sparse`'s conjugate gradient solver:
