@@ -234,7 +234,7 @@ import networkx as nx
 
 dependencies = nx.DiGraph()
 
-with open('data/pypi-dependencies.txt') as lines:
+with open('data/pypi-deps.txt') as lines:
     lib_dep_pairs = (str.split(line) for line in lines)
     dependencies.add_edges_from(lib_dep_pairs)
 ```
