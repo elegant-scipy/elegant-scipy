@@ -358,7 +358,7 @@ I = sparse.eye(n, format='csc')
 With all the matrices we need in place, we can now solve the above equation:
 
 ```python
-from sparse.linalg.isolve import bicg  # biconjugate gradient solver
+from scipy.sparse.linalg.isolve import bicg  # biconjugate gradient solver
 
 pagerank, error = bicg(I - damping * transition_matrix,
                        np.full(n, (1-damping) / n),
