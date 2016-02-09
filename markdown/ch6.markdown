@@ -353,20 +353,40 @@ degrees_matrix = sparse.diags([degrees], [0], adjacency_matrix.shape,
 transition_matrix = (degrees_matrix @ adjacency_matrix).T
 
 I = sparse.eye(n, format='csc')
-p = np.full(n, (1-damping) / n)
-
-r, error = sparse.linalg.isolve.cg(I - damping * transition_matrix, p,
-                                   maxiter=int(1e4))
 ```
 
-We now have the "dependency" pagerank of every package on PyPI! Here are the
-top 20 packages:
+With all the matrices we need in place, we can now solve the above equation:
 
 ```python
-top = np.argsort(r)[::-1]
+from sparse.linalg.isolve import bicg  # biconjugate gradient solver
+
+pagerank, error = bicg(I - damping * transition_matrix,
+                       np.full(n, (1-damping) / n),
+                       maxiter=int(1e4))
+print('error code: ', error)
+```
+
+As can be seen in the documentation for the `bicg` solver, an error code of 0
+indicates that a solution was found. We now have the "dependency pagerank" of
+packages in PyPI:
+
+```python
+top = np.argsort(pagerank)[::-1]
 
 print([package_names[i] for i in top[:20]])
 ```
+
+
+A graph of 90,000 nodes is a bit unwieldy to display, so we are actually going
+to focus on the top 300, approximately matching the number of neurons in the
+nematode brain.
+
+```python
+ntop = 300
+top_package_names = [package_names[i] for i in top[:ntop]]
+top_adj = adjacency_matrix[top[:ntop], :][:, top[:ntop]]
+```
+
 
 Where to get the data:
   * https://github.com/ogirardot/meta-deps/blob/master/PyPi%20Metadata.ipynb
