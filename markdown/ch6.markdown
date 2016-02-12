@@ -276,7 +276,7 @@ print(max(dependencies.in_degree_iter(),
 The requests library is the foundation of a very large fraction of the web
 frameworks and web processing libraries.
 
-We can similarly find out the top-ten most depended-upon packages:
+We can similarly find out the top-40 most depended-upon packages:
 
 ```python
 packages_by_in = sorted(dependencies.in_degree_iter(),
@@ -285,6 +285,9 @@ print(packages_by_in[:40])
 ```
 
 By this ranking, NumPy ranks 4 and SciPy 28 out of all of PyPI. Not bad!
+Overall, though, one gets the impression that the web community dominates
+PyPI. As we saw in the preface, this is expected, since the scientific Python
+community is still growing!
 
 However, the number of incoming links to a package doesn't tell the whole
 story. As you might have heard, the key insight that drove Google's early
@@ -368,15 +371,16 @@ print('error code: ', error)
 
 As can be seen in the documentation for the `bicg` solver, an error code of 0
 indicates that a solution was found. We now have the "dependency pagerank" of
-packages in PyPI:
+packages in PyPI! Let's look at the top 40 packages:
 
 ```python
 top = np.argsort(pagerank)[::-1]
 
-print([package_names[i] for i in top[:20]])
+print([package_names[i] for i in top[:40]])
 ```
 
-
+NumPy actually falls one spot in this ranking, while SciPy drops out of the top
+40 entirely! (
 A graph of 90,000 nodes is a bit unwieldy to display, so we are actually going
 to focus on the top 300, approximately matching the number of neurons in the
 nematode brain.
