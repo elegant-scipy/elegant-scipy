@@ -350,7 +350,8 @@ from scipy import sparse
 damping = 0.85
 n = len(package_names)
 degrees = np.asarray(adjacency_matrix.sum(axis=1)).ravel()
-degrees[degrees != 0] = 1 / degrees[degrees != 0]
+non_dangling = (degrees != 0)
+degrees[non_dangling] = 1 / degrees[non_dangling]  # avoid divide-by-zero
 degrees_matrix = sparse.diags([degrees], [0], adjacency_matrix.shape,
                               format='csr')
 transition_matrix = (degrees_matrix @ adjacency_matrix).T
