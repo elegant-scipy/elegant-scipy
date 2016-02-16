@@ -311,7 +311,8 @@ corresponding to the matrix rows/columns separately:
 
 ```python
 package_names = conn_dependencies.nodes()
-adjacency_matrix = nx.to_scipy_sparse_matrix(conn_dependencies)
+adjacency_matrix = nx.to_scipy_sparse_matrix(conn_dependencies,
+                                             dtype=np.float64)
 ```
 
 Normally, the pagerank score would simply be the first eigenvector of the
