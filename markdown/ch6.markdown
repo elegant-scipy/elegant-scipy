@@ -522,6 +522,18 @@ probability that Debbie ends up at the Python package in question.
 
 <!-- exercise end -->
 
+
+<!-- exercise begin -->
+
+**Exercise:** Verify that these three methods all give the same ranking for the
+nodes. `numpy.corrcoef` might be a useful function for this.
+
+<!-- solution begin -->
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
 A graph of 90,000 nodes is a bit unwieldy to display, so we are actually going
 to focus on the top 300, approximately matching the number of neurons in the
 nematode brain.
