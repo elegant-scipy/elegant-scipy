@@ -289,12 +289,15 @@ Overall, though, one gets the impression that the web community dominates
 PyPI. As we saw in the preface, this is expected, since the scientific Python
 community is still growing!
 
-However, the number of incoming links to a package doesn't tell the whole
+Furthermore, the number of incoming links to a package doesn't tell the whole
 story. As you might have heard, the key insight that drove Google's early
 success was that important webpages are not just linked to by many webpages, but
-also by *other* important webpages. This recursive definition implies that page
-importance can be measured by the eigenvector corresponding to the largest
-eigenvalue of the adjacency matrix.
+also by *other* important webpages. As we will see, this recursive definition
+implies that page importance can be measured by the eigenvector corresponding
+to the largest eigenvalue of the so-called *transition matrix*. This matrix
+imagines a web surfer, often named Webster, randomly clicking a link from each
+webpage he visits, and then asks, what's the probability that probability that
+he ends up at any given page? This probability is called the pagerank.
 
 We can apply this insight to the network of Python dependencies. First, we
 ignore all the packages that are isolated:
@@ -306,8 +309,8 @@ conn_dependencies = nx.subgraph(dependencies, connected_packages)
 ```
 
 Next, we get the sparse matrix corresponding to the graph. Because a matrix
-only holds numerical information, we need to maintain the list of package names
-corresponding to the matrix rows/columns separately:
+only holds numerical information, we need to maintain a separate list of
+package names corresponding to the matrix rows/columns:
 
 ```python
 package_names = conn_dependencies.nodes()
@@ -315,64 +318,81 @@ adjacency_matrix = nx.to_scipy_sparse_matrix(conn_dependencies,
                                              dtype=np.float64)
 ```
 
+From the adjacency matrix, we can derive a *transition probability* matrix,
+where every link is replaced by a *probability* of 1 over the number of
+outgoing links from that page.
+
+The total number of packages in our matrix is going to be used a lot, so let's
+call it $n$:
+
+```python
+n = len(package_names)
+```
+
+Next, we need the degrees, and, in particular, the *diagonal matrix* containing
+the inverse of the out-degrees of each node on the diagonal:
+
+```python
+np.seterr(divide='ignore')  # ignore division-by-zero errors
+from scipy import sparse
+
+degrees = np.ravel(adjacency_matrix.sum(axis=1))
+degrees_matrix = sparse.spdiags(1 / degrees, 0, n, n, format='csr')
+```
+
+```python
+transition_matrix = (degrees_matrix @ adjacency_matrix).T
+```
+
 Normally, the pagerank score would simply be the first eigenvector of the
-adjacency matrix. However, this would give a huge advantage to "terminal" pages
-that don't link anywhere else: if you think of the eigenvector as the result of
-repeatedly hopping from one page to a random page it links to (this is the
-effect of matrix multiplication), then "terminal" pages start to accumulate all
-of the traffic they receive, without feeding into any other pages.
-
-To counteract this effect, the pagerank algorithm uses a so-called "damping
-factor", usually taken to be 0.85. This means that 85% of the time, the
-algorithm follows a link at random, but for the other 15%, it randomly jumps to
-another page.
-
-This formulation implies the following mathematical relationship. If $A$ is the
-adjacency matrix, let $K$ be the matrix with the degree of each page on the
-diagonal, and 0 elsewhere. Then the transition matrix, for which entry $(i, j)$
-contains the probability of going from page $i$ to page $j$, is $K^{-1}A$.
-Then, with $M = (K^{-1}A)^T$, $\boldsymbol{r}$ being the vector of
-pageranks, and $d$ being the damping factor, we have:
+transition matrix. If we call the transition matrix $M$ and the vector of
+pagerank values $r$, we have:
 
 $$
-\boldsymbol{r} = dM\boldsymbol{r} + \frac{1-d}{N} \boldsymbol{1}
+\boldsymbol{r} = M\boldsymbol{r}
+$$
+
+But the `np.seterr` call above is a clue that it's not quite
+so simple. The pagerank approach only works when the
+transition matrix is a *column-stochastic* matrix, in which every
+column sums to 1. Additionally, every page must be reachable
+from every other page, even if the path to reach it is very long.
+
+To deal with this, the pagerank algorithm uses a so-called "damping
+factor", usually taken to be 0.85. This means that 85% of the time, the
+algorithm follows a link at random, but for the other 15%, it randomly jumps to
+any arbitrary page. It's as if every page had a low probability link to every
+other page.
+
+If we call the damping factor $d$, then the modified pagerank equation is:
+
+$$
+\boldsymbol{r} = dM\boldsymbol{r} + \frac{1-d}{n} \boldsymbol{1}
 $$
 
 and
 
 $$
-(\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{N} \boldsymbol{1}
+(\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{n} \boldsymbol{1}
 $$
 
-We can solve this equation using `scipy.sparse`'s conjugate gradient solver:
-
-```python
-from scipy import sparse
-damping = 0.85
-n = len(package_names)
-degrees = np.asarray(adjacency_matrix.sum(axis=1)).ravel()
-non_dangling = (degrees != 0)
-degrees[non_dangling] = 1 / degrees[non_dangling]  # avoid divide-by-zero
-degrees_matrix = sparse.diags([degrees], [0], adjacency_matrix.shape,
-                              format='csr')
-transition_matrix = (degrees_matrix @ adjacency_matrix).T
-
-I = sparse.eye(n, format='csc')
-```
-
-With all the matrices we need in place, we can now solve the above equation:
+We can solve this equation using `scipy.sparse`'s biconjugate gradient solver:
 
 ```python
 from scipy.sparse.linalg.isolve import bicg  # biconjugate gradient solver
 
+damping = 0.85
+
+I = sparse.eye(n, format='csc')
+
 pagerank, error = bicg(I - damping * transition_matrix,
-                       np.full(n, (1-damping) / n),
+                       (1-damping) / n * np.ones(n)),
                        maxiter=int(1e4))
 print('error code: ', error)
 ```
 
 As can be seen in the documentation for the `bicg` solver, an error code of 0
-indicates that a solution was found. We now have the "dependency pagerank" of
+indicates that a solution was found! We now have the "dependency pagerank" of
 packages in PyPI! Let's look at the top 40 packages:
 
 ```python
@@ -381,8 +401,12 @@ top = np.argsort(pagerank)[::-1]
 print([package_names[i] for i in top[:40]])
 ```
 
-NumPy actually falls one spot in this ranking, while SciPy drops out of the top
-40 entirely! (
+NumPy actually falls to the 11th spot in this ranking, while SciPy drops out of
+the top 40 entirely! (It ranks 87, still great in 95,000 packages!)
+
+**Exercise:** Can you think of three reasons why pagerank might not be the best
+measure of importance for the Python dependency graph?
+
 A graph of 90,000 nodes is a bit unwieldy to display, so we are actually going
 to focus on the top 300, approximately matching the number of neurons in the
 nematode brain.
