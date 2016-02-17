@@ -470,21 +470,42 @@ throughout?
 
 <!-- solution begin -->
 
+**Solution:** In order to have a stochastic matrix, all columns of the
+transition matrix must sum to 1. This is not satisfied when a package doesn't
+have any dependencies: that column will consist of all zeroes. Replacing all
+those columns by $1/n \boldsymbol{1}$, however, would be expensive.
+
+The key is to realise that *every row* will contribute the *same amount* to the
+multiplication of the transition matrix by the current probability vector. That
+is to say, adding these columns will add a single value to the result of the
+iteration multiplication. What value? $1/n$ times the elements of $r$ that
+correspond to a dangling node. This can be expressed as a dot-product of a
+vector containing $1/n$ for positions corresponding to dangling nodes, and zero
+elswhere, with the vector $r$ for the current iteration.
+
 ```python
 def power2(trans, damping=0.85, max_iter=int(1e5)):
     n = trans.shape[0]
-    is_dangling = (np.ravel(trans.sum(axis=0)) == 0).astype(float) / n
+    is_dangling = np.ravel(trans.sum(axis=0) == 0)
+    dangling = np.zeros(n)
+    dangling[is_dangling] = 1 / n
     r0 = np.ones(n) / n
     r = r0
     for _ in range(max_iter):
-        rnext = (damping * (trans @ r + r @ is_dangling) +
+        rnext = (damping * (trans @ r + dangling @ r) +
                  (1 - damping) / n)
         if np.allclose(rnext, r):
-            print('converged')
-            break
-        r = rnext
+            return rnext
+        else:
+            r = rnext
     return r
 ```
+
+Try this out manually for a few iterations. Notice that if you start with a
+stochastic vector (a vector whose elements all sum to 1), the next vector will
+still be a stochastic vector. Thus, the output pagerank from this function will
+be a true probability vector, and the values will represent the actual
+probability that Debbie ends up at the Python package in question.
 
 <!-- solution end -->
 
