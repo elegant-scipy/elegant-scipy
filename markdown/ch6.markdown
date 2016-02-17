@@ -442,6 +442,54 @@ on PyPI!
 
 <!-- exercise end -->
 
+Before we move on, we'll note that there's another way to compute pagerank,
+often preferred to the above.
+
+```python
+def power(trans, damping=0.85, max_iter=int(1e5)):
+    n = trans.shape[0]
+    r0 = np.full(n, 1/n)
+    r = r0
+    for _ in range(max_iter):
+        rnext = damping * trans @ r + (1 - damping) / n
+        if np.allclose(rnext, r):
+            print('converged')
+            break
+        r = rnext
+    return r
+```
+
+<!-- exercise begin -->
+
+**Exercise:** In the above iteration, note that `trans` is *not*
+column-stochastic, so the vector gets shrunk at each iteration. In order to
+make the matrix stochastic, we have to replace every zero-column by a column of
+all $1/n$. This is too expensive, but computing the iteration is cheaper. How
+can you modify the code above to ensure that $r$ remains a probability vector
+throughout?
+
+<!-- solution begin -->
+
+```python
+def power2(trans, damping=0.85, max_iter=int(1e5)):
+    n = trans.shape[0]
+    is_dangling = (np.ravel(trans.sum(axis=0)) == 0).astype(float) / n
+    r0 = np.ones(n) / n
+    r = r0
+    for _ in range(max_iter):
+        rnext = (damping * (trans @ r + r @ is_dangling) +
+                 (1 - damping) / n)
+        if np.allclose(rnext, r):
+            print('converged')
+            break
+        r = rnext
+    return r
+```
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
 A graph of 90,000 nodes is a bit unwieldy to display, so we are actually going
 to focus on the top 300, approximately matching the number of neurons in the
 nematode brain.
