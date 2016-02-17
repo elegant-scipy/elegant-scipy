@@ -443,7 +443,18 @@ on PyPI!
 <!-- exercise end -->
 
 Before we move on, we'll note that there's another way to compute pagerank,
-often preferred to the above.
+often preferred to the above. It's called the *power method*, and stems from
+the [Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
+which states, among other things, that a stochastic matrix has 1 as an
+eigenvalue, and that this is its *largest* eigenvalue. (The corresponding
+eigenvector is the pagerank vector.) What this means is that, whenever we
+multiply *any* vector by $M$, its component pointing towards this major
+eigenvector stays the same, while *all other components shrink* by a
+multiplicative factor. The consequence is that if we multiply some random
+starting vector by $M$ repeatedly, we should eventually get the pagerank
+vector.
+
+SciPy makes this very efficient with its sparse matrix module:
 
 ```python
 def power(trans, damping=0.85, max_iter=int(1e5)):
