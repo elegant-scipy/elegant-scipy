@@ -404,8 +404,43 @@ print([package_names[i] for i in top[:40]])
 NumPy actually falls to the 11th spot in this ranking, while SciPy drops out of
 the top 40 entirely! (It ranks 87, still great in 95,000 packages!)
 
+<!-- exercise begin -->
+
 **Exercise:** Can you think of three reasons why pagerank might not be the best
 measure of importance for the Python dependency graph?
+
+<!-- solution begin -->
+
+**Solution:**
+
+Here's our theories. Yours might be different!
+
+First, the graph of dependencies is fundamentally different to the web. In the
+web, important pages reinforce each other: the Wikipedia pages for Newton's
+theory of gravitation and Einstein's theory of general relativity link to each
+other. Thus, our hypothetical Webster has some probability of bouncing between
+them. In contrast, Python dependencies form a directed acyclic graph (DAG).
+Whenever Debbie (our hypothetical dependency browser) arrives at a foundational
+package such as NumPy, she is instantly transported to a random package,
+instead of staying in the field of similar packages.
+
+Second, the DAG of dependencies is shallow: libraries will depend on, for
+example, scikit-learn, which depends on scipy, which depends on numpy, and
+that's it. Therefore, there is not much room for important packages to link to
+other important packages. The hierarchy is flat, and the importance is captured
+by the direct dependencies.
+
+Third, scientific programming itself is particularly prone to that flat
+hierarchy problem, more so than e.g. web frameworks, because scientists are
+doing the programming, rather than professional coders. In particular, a
+scientific analysis might end up in a script attached to a paper, or a Jupyter
+notebook, rather than another library on PyPI. We hope that this book will
+encourage more scientists to write great code that others can reuse, and put it
+on PyPI!
+
+<!-- solution end -->
+
+<!-- exercise end -->
 
 A graph of 90,000 nodes is a bit unwieldy to display, so we are actually going
 to focus on the top 300, approximately matching the number of neurons in the
