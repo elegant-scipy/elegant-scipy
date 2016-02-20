@@ -254,7 +254,8 @@ print(max(dependencies.in_degree_iter(),
           key=lambda x: x[1]))
 ```
 
-We're not going to cover it here, but `setuptools` is not a surprising winner
+We're not going to cover it in this book, but `setuptools` is not a surprising
+winner
 here. In fact, until we wrote this chapter, we had thought it was part of the
 Python standard library, in the same category as `os`, `sys`, and others!
 
@@ -289,7 +290,9 @@ Overall, though, one gets the impression that the web community dominates
 PyPI. As we saw in the preface, this is expected, since the scientific Python
 community is still growing!
 
-Furthermore, the number of incoming links to a package doesn't tell the whole
+### A detour: pagerank with SciPy
+
+The number of incoming links to a package doesn't tell the whole
 story. As you might have heard, the key insight that drove Google's early
 success was that important webpages are not just linked to by many webpages, but
 also by *other* important webpages. As we will see, this recursive definition
@@ -534,12 +537,15 @@ nodes. `numpy.corrcoef` might be a useful function for this.
 
 <!-- exercise end -->
 
+### ... back to graph layout and community detection
+
 A graph of 90,000 nodes is a bit unwieldy to display, so we are actually going
 to focus on the top 300, approximately matching the number of neurons in the
 nematode brain.
 
+
 ```python
-ntop = 300
+ntop = 3000
 top_package_names = [package_names[i] for i in top[:ntop]]
 top_adj = adjacency_matrix[top[:ntop], :][:, top[:ntop]]
 ```
