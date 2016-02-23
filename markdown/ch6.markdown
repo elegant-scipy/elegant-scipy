@@ -389,7 +389,7 @@ damping = 0.85
 I = sparse.eye(n, format='csc')
 
 pagerank, error = bicg(I - damping * transition_matrix,
-                       (1-damping) / n * np.ones(n)),
+                       (1-damping) / n * np.ones(n),
                        maxiter=int(1e4))
 print('error code: ', error)
 ```
