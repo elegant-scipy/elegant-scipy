@@ -533,6 +533,12 @@ nodes. `numpy.corrcoef` might be a useful function for this.
 
 <!-- solution begin -->
 
+**Solution:** `np.corrcoef` gives the Pearson correlation coefficient between
+all pairs of a list of vectors. This coefficient will be equal to 1 if and only
+if two vectors are scalar multiples of each other. Therefore, a correlation
+coefficient of 1 is sufficient to show that the above methods produce the same
+ranking.
+
 <!-- solution end -->
 
 <!-- exercise end -->
