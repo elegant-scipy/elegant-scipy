@@ -66,20 +66,9 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 
 ```python
 %matplotlib inline
-# Make all plots appear inline in the IPython notebook from now onwards
 
 import matplotlib.pyplot as plt
 plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
-```
-
-```python
-# Need to check if all these import statements are actually required.
-import numpy as np
-from scipy import stats
-import pandas as pd
-
-import seaborn as sns
-import itertools as it
 ```
 
 ### Get the data
@@ -341,9 +330,12 @@ def bicluster(data, linkage_method='average', distance_metric='correlation'):
 
 Simple: we just call `linkage` for the input matrix and also for the transpose of that matrix, in which columns become rows and rows become columns.
 
+# Visualizing clusters
+
 Next, we define a function to visualize the output of that clustering.
 We are going to rearrange the rows and columns of the input data so that similar rows are together and similar columns are together.
 And we are additionally going to show the merge tree for both rows and columns, displaying which observations belong together for each.
+The merge trees are presented as dendograms, with the branch-lengths indicating how similar the obvservations are to each other (shorter = more similar).
 
 As a word of warning, there is a fair bit of hard-coding of parameters going on here.
 This is difficult to avoid for plotting, where design is often a matter of eyeballing to find the correct proportions.
@@ -428,6 +420,8 @@ counts_var = most_variable_rows(counts_log, n=1500)
 yr, yc = bicluster(counts_var)
 plot_bicluster(counts_var, yr, yc)
 ```
+
+## Predicting survival
 
 We can see that the sample data naturally falls into at least 2 clusters.
 Are these clusters meaningful?
