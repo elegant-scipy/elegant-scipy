@@ -1,29 +1,55 @@
-Planning
-========
-Just some notes to help us plan
+# Planning
 
-Installing dependencies
-=======================
+Just some notes to help us plan.
 
-If you've installed [conda](http://conda.pydata.org/miniconda.html),
-the conda environment file should let you
-make a minimal environment to run everything in the book.
+## Installing dependencies
 
-```console
-conda env create
-```
+First, we build an isolated environment as not to interrupt any
+existing setup you may have.  You can do this either via *conda* or *pip*.
 
-This uses the provided `environment.yml` as default. You can also specify it
-directly:
+### Conda
+
+If you have a [conda](http://conda.pydata.org/miniconda.html) or
+Anaconda installation, build a minimal environment to run everything
+in the book as follows:
 
 ```console
-conda env create -f path/to/environment.yml
+conda env create --name elegant_scipy -f path/to/environment.yml
 ```
 
-Building chapters
-=================
-We are using `notedown` to convert a markdown file to an IPython notebook, run it,
- and then convert to html. For ease of use, this is done using a Makefile.
+### Pip
+
+If you do *not* have Conda installed, install **Python 3.5** and create a virtual
+environment as follows:
+
+```console
+pyvenv create ~/envs/elegant_scipy  # Build the new environment -- do this only once
+source ~/envs/elegant_scipy/bin/activate  # This switches into the new environment
+```
+
+Then, install the necessary requirements:
+
+```
+pip install -r requirements.txt
+```
+
+### Windows users
+
+If you're using Windows, this is going to be a bit harder to get
+going.  You need to make sure you have at least:
+
+- [GitBash](https://git-scm.com/downloads) for unix utilities such as "make"
+- [wget](https://sourceforge.net/projects/gnuwin32/files/wget/)
+
+Even with these utilities installed, the build process is likely to
+fail in unpredictable ways.  We suggest running virtual machine or
+docker instance to build the book.
+
+## Building chapters
+
+We are using `notedown` to convert a markdown file to an IPython
+notebook, run it, and then convert to html. For ease of use, this is
+done using a Makefile.
 
 You can use `make` to build all the chapters:
 
@@ -43,8 +69,8 @@ To generate a zip file containing html of all chapters along with a table of con
 $ make zip
 ```
 
-Deadlines
-========
+## Deadlines
+
 ~~Mar: 2 chs: 3/15/15~~  
 Jun: half chs: 6/1/15  
 Oct: Ch5 (sparse): 10/15/15  
@@ -53,8 +79,8 @@ Dec: Ch7 (optimize): 12/15/15
 Dec: first full draft! 12/15/15  
 Jan: All in:  1/15/16
 
-Availabilities
--------------
+## Availabilities
+
 Stéfan: ???
 
 Harriet: In the US late Oct, all Nov, early Dec. Some writing possible in
@@ -62,8 +88,8 @@ second half of this.
 
 Juan: Available for the rest of it!
 
-Chapters/Ideas
-==============
+## Chapters/Ideas
+
 Based on: https://github.com/jni/my-documents/blob/oreilly-book-proposal/oreilly.markdown
 
 *Preface/Introduction:* 
