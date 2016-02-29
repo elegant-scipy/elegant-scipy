@@ -52,13 +52,16 @@ import numpy as np
 
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
 
-This chapter will depart slightly from the format of the rest of the book.
-In particular, you may find the *code* in the chapter quite modest.
-Instead, we want to illustrate an elegant *algorithm*, the Fast Fourier Transform (FFT), that is endlessly useful, implemented in SciPy, and works, of course, on NumPy arrays.
+This chapter will depart slightly from the format of the rest of the
+book.  In particular, you may find the *code* in the chapter quite
+modest.  Instead, we want to illustrate an elegant *algorithm*, the
+Fast Fourier Transform (FFT), that is endlessly useful, implemented in
+SciPy, and works, of course, on NumPy arrays.
 
-The Fourier Transform (FT) is a mathematical technique to convert temporal or spatial data into *frequency domain* data.
-Take, for example, a simple periodic function, $\sin(10 * 2 \pi t)$.
-You can view it as a wave:
+The discrete[^discrete] Fourier Transform is a mathematical technique to convert
+temporal or spatial data into *frequency domain* data.  Take, for
+example, a simple periodic function, $\sin(10 * 2 \pi t)$.  You can
+view it as a wave:
 
 ```python
 f = 10  # Frequency, in cycles per second, or Herz
@@ -72,6 +75,10 @@ ax.plot(t, x)
 ax.set_xlabel('Time [s]')
 ax.set_ylabel('Signal amplitude')
 ```
+
+[^discrete]: The Discrete Fourier Transform operates on sampled data,
+             in contrast to the standard Fourier Transform which is
+             defined for continuous functions.
 
 But, you can equivalently think of it as an repeating signal of
 *frequency* 10 Hertz (it repeats once every $1/10$ seconds—a length of
@@ -96,9 +103,14 @@ ax.set_ylim(-5, 110)
 
 The Fourier transform takes us from the *time* to the *frequency*
 domain, and this turns out to have a massive number of applications.
-In this chapter, we'll guide you through a few of them to demonstrate
-that the FFT can be applied to multidimensional data (not just 1D
-signals) to achieve a variety of goals.
+The *Fast Fourier Transform (FFT)* is an algorithm for computing the
+discrete Fourier Transform; it achieves its high speed by storing and
+re-using results of computations as it progresses.
+
+In this chapter, we examine a few applications of the Discrete Fourier
+Transform to demonstrate that the FFT can be applied to
+multidimensional data (not just 1D measurements) to achieve a variety
+of goals.
 
 Let's start with one of the most common applications, converting a sound signal (consisting of variations of air pressure over time) to a *spectrogram*.
 (You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
