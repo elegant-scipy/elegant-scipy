@@ -2,7 +2,13 @@ IPython>=3,<4
 notedown>=1.4
 numpy
 scipy
+matplotlib
 scikit-image
 toolz
 networkx
 xlrd
+pandas
+seaborn
+astropy
+scikit-learn
+sympy
