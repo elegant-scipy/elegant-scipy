@@ -31,7 +31,7 @@ markdown/ch2.markdown: data/counts.txt
 data/counts.txt: data/counts.txt.bz2
 	 bunzip2 -d -k -f data/counts.txt.bz2
 
-ch8: data/dm6.fa
+markdown/ch8.markdown: data/dm6.fa
 
 data/dm6.fa: data/dm6.fa.gz
 	 gunzip -k $<
