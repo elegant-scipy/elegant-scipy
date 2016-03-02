@@ -560,3 +560,9 @@ top_package_names = [package_names[i] for i in top[:ntop]]
 top_adj = adjacency_matrix[top[:ntop], :][:, top[:ntop]]
 ```
 
+Aim: graph of top Python packages:
+- colored by community
+- sized by dependencies
+- alpha-d by pagerank
+- laid out by spectral affinity
+
