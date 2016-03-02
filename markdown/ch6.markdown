@@ -560,20 +560,3 @@ top_package_names = [package_names[i] for i in top[:ntop]]
 top_adj = adjacency_matrix[top[:ntop], :][:, top[:ntop]]
 ```
 
-
-Where to get the data:
-  * https://github.com/ogirardot/meta-deps/blob/master/PyPi%20Metadata.ipynb
-  * https://ogirardot.wordpress.com/2013/01/05/state-of-the-pythonpypi-dependency-graph/
-  * PyPI itself
-  * github
-  * something else?
-  * `install_requires` vs DEPENDS.txt vs requirements.txt vs imports
-  * http://furius.ca/snakefood/  (uses installed Python code. =\)
-
-## Exercise
-
-[ideas here?]
-
-## Pagerank on above graph
-
-
