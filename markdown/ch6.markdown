@@ -549,10 +549,10 @@ ranking.
 
 ### ... back to graph layout and community detection
 
-A graph of 90,000 nodes is a bit unwieldy to display, so we are actually going
-to focus on the top 300, approximately matching the number of neurons in the
-nematode brain.
-
+Because it's unwieldy to draw 90,000 nodes, we are only going to draw a
+fraction of PyPI, following the same ideas we used for the worm brain. Because
+3000 is still significantly bigger than 300, we will use a sparse matrix to do
+the graph layout computation.
 
 ```python
 ntop = 3000
