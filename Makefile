@@ -31,6 +31,15 @@ markdown/ch2.markdown: data/counts.txt
 data/counts.txt: data/counts.txt.bz2
 	 bunzip2 -d -k -f data/counts.txt.bz2
 
+markdown/ch8.markdown: data/dm6.fa
+
+data/dm6.fa: data/dm6.fa.gz
+	 gunzip -k $<
+
+data/dm6.fa.gz:
+	 curl --remote-name http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz
+	 mv dm6.fa.gz data
+
 $(FIGURES)/%.png: script/%.py $(FIGURES)
 	 MPLCONFIGDIR=./.matplotlib python $< $@
 
