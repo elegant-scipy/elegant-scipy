@@ -182,8 +182,12 @@ sensory neurons to motor neurons through a network of interneurons. You can
 also see two distinct groups of motor neurons: these correspond to the neck
 (left) and body (right) body segments of the worm.
 
+<!-- exercise begin -->
+
 **Exercise:** How do you modify the above code to show the affinity view in
 Figure 2B from the paper?
+
+<!-- exercise end -->
 
 ### challenge: linear algebra with sparse matrices
 
