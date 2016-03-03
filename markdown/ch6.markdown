@@ -31,14 +31,20 @@ numbers will start with lowercase.
 
 e.g. one-layer NN, kernel PCA, or NN from scratch
 
-## Graph Laplacian
+## Laplacian matrix of a graph
 
-We discussed graphs in chapter 3, but used a rather simple method of analysis:
-*thresholding* the graph, meaning, removing all the links having weight below
-some threshold. It turns out that we can think of a graph G as an *adjacency
-matrix* $A$, in which $A_{i, j} = 1$ if and only if the link (i, j) is in G.
-We can then use linear algebra techniques to study this matrix, with striking
-results.
+We discussed graphs in chapter 3, where we represented image regions as
+nodes, connected by edges between them. But we used a rather simple method of
+analysis: we *thresholded* the graph, removing all edges above some value.
+Thresholding works in simple cases, but can easily fail, because all you need
+is one noisy edge to fall on the wrong side of the threshold for the approach
+to fail.
+
+In this chapter, we will explore some alternative approaches to graph analysis,
+based on linear algebra. It turns out that we can think of a graph G as an
+*adjacency matrix* $A$, in which $A_{i, j} = 1$ if and only if the link
+(i, j) is in G. We can then use linear algebra techniques to study this matrix,
+with often striking results.
 
 The *Laplacian* matrix of a graph is defined as the *degree matrix*, $D$, which
 contains the degree of each node along the diagonal and 0 everywhere else,
