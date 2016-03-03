@@ -554,10 +554,82 @@ fraction of PyPI, following the same ideas we used for the worm brain. Because
 3000 is still significantly bigger than 300, we will use a sparse matrix to do
 the graph layout computation.
 
+We will need to graph subsets of rows and columns, for which we will write a
+function. NumPy (and SciPy) indexing by default considers the *exact* data
+points indicated by a list of rows/columns:
+
 ```python
-ntop = 3000
-top_package_names = [package_names[i] for i in top[:ntop]]
-top_adj = adjacency_matrix[top[:ntop], :][:, top[:ntop]]
+arr = np.array([[0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8]])
+submatrix = [0, 2]
+arr[submatrix, submatrix]
+```
+
+You might have expected the result to be [[0, 2], [6, 8]], but in fact NumPy
+and SciPy interpret these coordinates as (row, column) pairs, so that we only
+get two values back: `arr[0, 0]` (0) and `arr[2, 2]` (8).
+
+To get slices of rows and columns, we need to slice first along one dimension,
+then across the other:
+
+```python
+arr[submatrix, :][:, submatrix]
+```
+
+Since this is a bit cumbersome when we only want a square submatrix of a square
+matrix, we write a function:
+
+```python
+def sub(mat, idxs):
+    return mat[idxs, :][:, idxs]
+```
+
+Let's use this to look at the top 3,000 packages in PyPI:
+
+```python
+n = 3000
+top3k = top[:n]
+names = package_names[top3k]
+Adj = sub(adjacency_matrix, top3k)
+```
+
+As above, we need the connectivity matrix, the symmetric version of the
+adjacency matrix:
+
+```python
+Conn = (Adj + Adj.T) / 2
+```
+
+And the diagonal matrix of its degrees, as well as its inverse-square-root:
+
+```python
+degrees = np.ravel(Conn.sum(axis=0))
+Deg = sparse.spdiags(degrees, 0, n, n).tocsr()
+Dinv2 = sparse.spdiags(degrees ** (-.5), 0, n, n).tocsr()
+```
+
+From this we can generate the Laplacian of the dependency graph:
+
+```python
+lap = Deg - Conn
+```
+
+From this, we can generate an affinity view of these nodes, as shown above for
+the worm brain graph. We just need the second and third smallest eigenvectors
+of the *affinity matrix*, the degree-normalized version of the Laplacian. We
+can use `sparse.linalg.eigsh` to obtain these:
+
+```python
+Affn = Dinv2 @ lap @ Dinv2
+eigvals, vec = sparse.linalg.eigsh(Affn, k=3, which='SM')
+_, x, y = (Dinv2 @ vec).T
+```
+
+That should give us a nice layout for our Python packages!
+
+```python
+plt.plot(x, y)
 ```
 
 Aim: graph of top Python packages:
