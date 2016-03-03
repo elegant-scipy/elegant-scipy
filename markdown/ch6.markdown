@@ -5,9 +5,27 @@
 ```
 
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
-will feature an elegant *method*. We simply
+will feature an elegant *method*. We
 want to highlight the linear algebra packages available in SciPy, which form
 the basis of much scientific computing.
+
+A chapter in a programming book is not really the right place to learn about
+linear algebra itself, so we assume familiarity with linear algebra concepts.
+At a minimum, you should know that linear algebra involves vectors (ordered
+collections of numbers) and their transformations by multiplying them with
+matrices (collections of vectors). If all of this sounded like gibberish to
+you, you should probably pick up an introductory linear algebra textbook before
+reading this. Introductory is all you need though — we hope to convey the power
+of linear algebra while keeping the operations relatively simple!
+
+As an aside, we will break Python notation convention in order to match linear
+algebra conventions: in Python, variables names should usually begin with a
+lower case letter. However, in linear algebra, matrices are usually denoted by
+a capital letter, while vectors and scalar values are lowercase. Since we're
+going to be dealing with quite a few matrices and vectors, it helps to keep
+them straight to follow the linear algebra convention. Therefore, variables
+that represent matrices will start with a capital letter, while vectors and
+numbers will start with lowercase.
 
 ## Straight linear algebra problem
 
