@@ -658,7 +658,8 @@ In the worm brain, we had prior information about neuron types that helped us
 to make sense of the graph. Let's try to infer some similar information about
 PyPI packages.
 
-
+In the same way that the eigen-decomposition of the Laplacian matrix can tell
+us about graph layout, it can also tell us about connectivity.
 
 Aim: graph of top Python packages:
 - colored by community
