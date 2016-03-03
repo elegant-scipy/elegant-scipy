@@ -629,8 +629,18 @@ _, x, y = (Dinv2 @ vec).T
 That should give us a nice layout for our Python packages!
 
 ```python
-plt.plot(x, y)
+plt.figure()
+plt.scatter(x, y)
 ```
+
+That's looking promising! But, obviously, this plot is missing some critical
+details! Which packages depend on which? Where are the most important packages?
+Perhaps most critically, do particular packages naturally belong together?
+In the worm brain, we had prior information about neuron types that helped us
+to make sense of the graph. Let's try to infer some similar information about
+PyPI packages.
+
+
 
 Aim: graph of top Python packages:
 - colored by community
