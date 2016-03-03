@@ -5,7 +5,7 @@
 ```
 
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
-will feature an elegant *method*, not so much code, which is simple. We simply
+will feature an elegant *method*. We simply
 want to highlight the linear algebra packages available in SciPy, which form
 the basis of much scientific computing.
 
