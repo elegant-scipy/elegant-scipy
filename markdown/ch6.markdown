@@ -320,7 +320,7 @@ only holds numerical information, we need to maintain a separate list of
 package names corresponding to the matrix rows/columns:
 
 ```python
-package_names = conn_dependencies.nodes()
+package_names = np.array(conn_dependencies.nodes())  # array for multi-indexing
 adjacency_matrix = nx.to_scipy_sparse_matrix(conn_dependencies,
                                              dtype=np.float64)
 ```
