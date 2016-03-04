@@ -79,9 +79,12 @@ anyway.]**
 
 One way is to put nodes that share many links close together, and it turns out
 that this can be done by using the second-smallest eigenvalue of the Laplacian
-matrix.
-
-https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector
+matrix, and its corresponding eigenvector, which is so important it has its
+own name: the
+[Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector)
+(As a quick aside, an eigenvector $v$ of a matrix $M$ is a vector that
+satisfies the property $Mv = \lambda v$ for some number $\lambda$, known as the
+eigenvalue. They have numerous and seemingly magical properties.)
 
 [Example with simple network]
 
