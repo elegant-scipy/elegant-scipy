@@ -49,8 +49,14 @@ matrix $A$, then $A_{i, j} = 1$ if and only if the link
 (i, j) is in G. We can then use linear algebra techniques to study this matrix,
 with often striking results.
 
-The *Laplacian* matrix of a graph is defined as the *degree matrix*, $D$, which
-contains the degree of each node along the diagonal and 0 everywhere else,
+The degree of a node is the number of edges touching it. For example, if a node
+is connected to five other nodes in a graph, its degree is 5. (Sometimes we
+will differentiate between out-degree and in-degree, when edges have a "from"
+and "to".)
+
+The *Laplacian* matrix of a graph (just "the Laplacian" for short) is defined
+as the *degree matrix*, $D$, which
+contains the degree of each node along the diagonal and zero everywhere else,
 minus the adjacency matrix $A$:
 
 $$
