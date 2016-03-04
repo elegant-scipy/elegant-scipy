@@ -42,7 +42,10 @@ to fail.
 
 In this chapter, we will explore some alternative approaches to graph analysis,
 based on linear algebra. It turns out that we can think of a graph G as an
-*adjacency matrix* $A$, in which $A_{i, j} = 1$ if and only if the link
+*adjacency matrix*, in which we number the nodes of the graph from $0$ to
+$n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there
+is an edge from node $i$ to node $j$. In other words, if we call the adjacency
+matrix $A$, then $A_{i, j} = 1$ if and only if the link
 (i, j) is in G. We can then use linear algebra techniques to study this matrix,
 with often striking results.
 
