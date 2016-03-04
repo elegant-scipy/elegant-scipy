@@ -88,11 +88,11 @@ eigenvalue. They have numerous and seemingly magical properties.)
 
 [Example with simple network]
 
-Here, we will demonstrate this by reproducing
+Let's demonstrate this by laying out the brain cells in a worm, as shown in
 [Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
 from the
 [Varshney *et al* paper](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
-on the worm brain that we introduced in Chapter 3. (Information on
+that we introduced in Chapter 3. (Information on
 how to do this is in the
 [supplementary material](http://journals.plos.org/ploscompbiol/article/asset?unique&id=info:doi/10.1371/journal.pcbi.1001066.s001)
 for the paper.) To obtain their
@@ -105,15 +105,19 @@ got the original data from Lars Varshney's
 [website](http://www.ifp.illinois.edu/~varshney/elegans),
 and the processed data is in our `data/` directory.
 
-First, let us load the data. There are four components: the chemical synapse
-network, the gap junction network (these are direct electrical contacts between
-neurons), the neuron IDs (names), and the three neuron types:
-- sensory neurons, those that detect signals coming from the outside world,
-  encoded as 0;
-- motor neurons, those that activate muscles, enabling the worm to move,
-  encoded as 2; and
-- interneurons, the neurons in between, which enable complex signal processing
-  to occur between sensory neurons and motor neurons, encoded as 1.
+First, let us load the data. There are four components:
+- the network of chemical synapses, through which a *pre-synaptic neuron*
+  sends a chemical signal to a *post-synaptic* neuron,
+- the gap junction network, which contains direct electrical contacts between
+  neurons),
+- the neuron IDs (names), and
+- the three neuron types:
+  - sensory neurons, those that detect signals coming from the outside world,
+    encoded as 0;
+  - motor neurons, those that activate muscles, enabling the worm to move,
+    encoded as 2; and
+  - interneurons, the neurons in between, which enable complex signal processing
+    to occur between sensory neurons and motor neurons, encoded as 1.
 
 ```python
 import numpy as np
