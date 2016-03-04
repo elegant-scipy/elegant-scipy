@@ -132,14 +132,16 @@ and removing the directionality of the network by taking the average of
 in-connections and out-connections of neurons. This seems a bit like cheating
 but, since we are only looking for the *layout* of the neurons on a graph, we
 only care about *whether* neurons are connected, not in which direction.
+We are going to call the resulting matrix the *connectivity* matrix, $C$, which
+is just a different kind of adjacency matrix.
 
 ```python
 A = chem + gap
 C = (A + A.T) / 2
 ```
 
-To get the Laplacian matrix, we need the degree matrix, which contains the
-degree of node i at position [i, i], and zeros everywhere else.
+To get the Laplacian matrix $L$, we need the degree matrix $D$, which contains
+the degree of node i at position [i, i], and zeros everywhere else.
 
 ```python
 n = C.shape[0]
@@ -151,9 +153,11 @@ L = D - C
 
 The vertical coordinates in Fig 2 are given by arranging nodes such that, on
 average, neurons are as close as possible to "just above" their downstream
-neighbors. Varshney et all call this measure "processing depth," and it's
+neighbors. Varshney _et al_ call this measure "processing depth," and it's
 obtained by solving a linear equation involving the Laplacian. We use
-`scipy.linalg.pinv`, the pseudoinverse, to solve it:
+`scipy.linalg.pinv`, the
+[pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_pseudoinverse),
+to solve it:
 
 ```python
 from scipy import linalg
@@ -175,12 +179,16 @@ Q = Dinv2 @ L @ Dinv2
 ```
 
 Finally, we are able to extract the x coordinates of the neurons to ensure that
-highly-connected neurons remain close: the normalized second eigenvector of Q:
+highly-connected neurons remain close: the second eigenvector of Q, normalized
+by the degrees:
 
 ```python
 eigvals, eigvecs = linalg.eig(Q)
 x = Dinv2 @ eigvecs[:, 1]
 ```
+
+(The reasons for this are too long to explain here, but appear in the
+paper's supplementary material, linked above.)
 
 Now it's just a matter of drawing the nodes and the links. We color them
 according to the type stored in `neuron_types`:
