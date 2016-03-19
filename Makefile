@@ -46,7 +46,8 @@ $(FIGURES)/%.png: script/%.py $(FIGURES)
 # %.html: How to build an HTML file from its corresponding IPython
 #     notebook.
 $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
-	 ipython nbconvert --to html $< --stdout > $@
+	jupyter nbconvert --to html $< --stdout > $@
+	tools/split_exercise.py $@
 
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
