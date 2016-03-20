@@ -37,6 +37,10 @@ else:
 with open(fn_solutions_stripped, 'w') as f:
     f.write(html_no_exercise)
 
+# We would like to replace the HTML inside `content` with the HTML of
+# the exercizes.  Unfortunately, Beautiful Soup does escaping upon
+# assignment to `content.string`, so we just add a token here, and
+# then do the replacement right before writing to file.
 content.string = '{{REPLACE_ME}}'
 
 with open(fn_exercises, 'w') as f:
