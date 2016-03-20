@@ -47,7 +47,6 @@ $(FIGURES)/%.png: script/%.py $(FIGURES)
 #     notebook.
 $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	jupyter nbconvert --to html $< --stdout > $@
-	tools/split_exercise.py $@
 
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
@@ -75,8 +74,11 @@ $(BUILD_NB):
 $(FIGURES):
 	 mkdir -p $(FIGURES)
 
+exercises:
+	./tools/split_exercise.py html/ch*.html
+
 # all: build the book.
-all: chs
+all: chs exercises
 
 zip: all
 	 zip -r elegant-scipy.zip index.html html
