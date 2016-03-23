@@ -24,7 +24,11 @@ for fn in sys.argv[1:]:
     content = bs.find(id='notebook-container')
     exercises = re.findall('<!-- exercise begin -->(.*?)<!-- exercise end -->',
                            str(content), flags=re.DOTALL)
-    all_exercises.extend(exercises)
+
+    if exercises:
+        exercises.insert(0, '<h2>File: {}</h2>'.format(fn))
+    all_exercises.extend([BeautifulSoup(e, "html.parser").prettify()
+                          for e in exercises])
     print('{} exercises found in {}'.format(len(exercises), fn))
 
     html_no_exercise = re.sub('<!-- solution begin -->(.*?)<!-- solution end -->',
@@ -38,7 +42,8 @@ for fn in sys.argv[1:]:
 # the exercizes.  Unfortunately, Beautiful Soup does escaping upon
 # assignment to `content.string`, so we just add a token here, and
 # then do the replacement right before writing to file.
+
 content.string = '{{REPLACE_ME}}'
 
 with open(os.path.join(os.path.dirname(fn), 'exercises.html'), 'w') as f:
-    f.write(str(bs).replace('{{REPLACE_ME}}', '\n<hr/>\n'.join(exercises)))
+    f.write(str(bs).replace('{{REPLACE_ME}}', '\n<hr/>\n'.join(all_exercises)))

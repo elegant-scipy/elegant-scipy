@@ -75,7 +75,7 @@ $(FIGURES):
 	 mkdir -p $(FIGURES)
 
 exercises:
-	./tools/split_exercise.py html/ch*.html
+	./tools/split_exercise.py html/ch?.html
 
 # all: build the book.
 all: chs exercises
