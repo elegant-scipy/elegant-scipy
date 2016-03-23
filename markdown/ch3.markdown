@@ -910,7 +910,7 @@ Finally, we use the numpy index-with-an-array trick we learned in chapter 2:
 map_array = np.zeros(np.max(seg) + 1, int)
 for i, segment in enumerate(nx.connected_components(g)):
     for initial in segment:
-        map_array[initial] = i
+        map_array[int(initial)] = i
 segmented = map_array[seg]
 plt.imshow(color.label2rgb(segmented, tiger));
 ```

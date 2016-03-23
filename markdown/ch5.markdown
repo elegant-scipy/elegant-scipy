@@ -959,7 +959,7 @@ def RAG_segmentation(base_seg, image, threshold=80):
     map_array = np.zeros(np.max(seg) + 1, int)
     for i, segment in enumerate(nx.connected_components(g)):
         for initial in segment:
-            map_array[initial] = i
+            map_array[int(initial)] = i
     segmented = map_array[seg]
     return(segmented)
 ```
