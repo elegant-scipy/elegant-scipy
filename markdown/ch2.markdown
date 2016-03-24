@@ -202,42 +202,6 @@ log_quant_norm_counts = np.log(quantile_norm(counts)+1)
 plot_col_density(log_quant_norm_counts, xlabel="Log count distribution for each individual")
 ```
 
-
-## Principal Components Analysis
-
-```python
-from sklearn.decomposition import PCA
-
-def PCA_plot(data):
-    """Plot the first two principle components of the data
-
-    Parameters
-    ----------
-    data : 2D ndarray of counts (assumed to be genes X samples)
-    """
-
-    #construct your NumPy array of data
-    counts_transposed = np.array(data).T
-
-    # Set up PCA, set number of components
-    pca = PCA(n_components=2)
-
-    # project data into PCA space
-    pca_transformed = pca.fit_transform(counts_transposed)
-
-    # Plot the first two principal components
-    plt.scatter(x=pca_transformed[:,0], y=pca_transformed[:,1])
-    plt.title("PCA")
-    plt.xlabel("PC 1")
-    plt.ylabel("PC 2")
-    plt.show()
-```
-
-```python
-PCA_plot(counts)
-PCA_plot(quantile_norm(counts))
-```
-
 ## Biclustering the counts data
 
 Now that the data are normalized, we can cluster the genes (rows) and samples (columns) of the expression matrix.
