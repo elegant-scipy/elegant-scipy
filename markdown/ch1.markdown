@@ -126,7 +126,7 @@ First, Python lists are always lists of *objects*, so that the above list `gene2
 Additionally, this means that each of these lists and each of these integers end up in a completely different, random part of your computer's RAM.
 However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is very bad.
 
-This is the problem precisely solved by the *NumPy array*.
+This is precisely the problem solved by the *NumPy array*.
 
 ## NumPy N-dimensional arrays
 
@@ -180,7 +180,7 @@ NumPy arrays can represent data that has even more dimensions, such as magnetic 
 If we store MRI values over time, we might need a 4D NumPy array.
 
 For now, we'll stick to 2D data.
-Later chapters will introduce higher-D data and will teach you to write code that works for data of any number of dimensions!
+Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions!
 
 ### Why use ndarrays as opposed to Python lists?
 
@@ -330,6 +330,7 @@ print(outer.shape)
 You can see for yourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
 
 This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the corresponding dimension of the other array.
+Don't worry, we will talk about these rules in more detail later in this chapter.
 
 As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
 It allows us to express complex operations concisely and efficiently.
