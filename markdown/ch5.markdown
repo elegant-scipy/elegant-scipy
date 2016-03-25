@@ -105,6 +105,8 @@ confusion_matrix(pred, gt)
 
 **Question:** Why did we call this inefficient?
 
+<!-- exercise begin -->
+
 **Exercise:** Write an alternative way of computing the confusion matrix that only makes a single pass through `pred` and `gt`.
 
 ```python
@@ -113,6 +115,8 @@ def confusion_matrix1(pred, gt):
     # your code goes here
     return cont
 ```
+
+<!-- exercise end -->
 
 We can make this example a bit more general:
 Instead of classifying spam and non-spam, we can classify spam, newsletters,
@@ -127,6 +131,8 @@ result and ground truth arrays.
 This problem only grows as we add more email categories, such as social media
 notifications.
 
+<!-- exercise begin -->
+
 **Exercise:** Write a function to compute the confusion matrix in one pass, as
 above, but instead of assuming two categories, infer the number of categories
 from the input.
@@ -137,6 +143,8 @@ def general_confusion_matrix(pred, gt):
     # your code goes here
     return cont
 ```
+
+<!-- exercise end -->
 
 Your one-pass solution will scale well with the number of classes, but, because
 the for-loop runs in the Python interpreter, it will be slow when you have a
@@ -197,7 +205,9 @@ We can use this to check that we created `scoo` correctly:
 scoo.todense()
 ```
 
-**Exercise**: write out the COO representation of the following matrix:
+<!-- exercise begin -->
+
+**Exercise:** write out the COO representation of the following matrix:
 
 ```python
 s2 = np.array([[0, 0, 6, 0, 0],
@@ -206,6 +216,8 @@ s2 = np.array([[0, 0, 6, 0, 0],
                [9, 0, 0, 0, 0],
                [0, 0, 0, 6, 7]])
 ```
+
+<!-- exercise end -->
 
 Unfortunately, although the COO format is intuitive, it's not very optimized to
 use the minimum amount of memory, or to traverse the array as quickly as
@@ -667,6 +679,7 @@ rained.
 Intuitively, we know that this is better than going in blind, since it's
 more likely to rain in the winter months.
 
+<!-- exercise begin -->
 
 **Exercise:** Compute the conditional entropy of month given rain. What is the
 entropy of the month variable? (Ignore the different number of days in a
@@ -684,6 +697,8 @@ p_rain_month = None
 # Add your code below to compute H(M|R) and H(M)
 pass
 ```
+
+<!-- exercise end -->
 
 Together, these two values define the variation of information (VI):
 
@@ -1019,7 +1034,11 @@ auto_seg = RAG_segmentation(seg, tiger, threshold=80)
 plt.imshow(color.label2rgb(auto_seg, tiger));
 ```
 
+<!-- exercise begin -->
+
 **Exercise:** Segmentation in practice
 
 Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
 Using the mean or median of those thresholds, then go and segment a new image. Did you get a reasonable segmentation?
+
+<!-- exercise end -->

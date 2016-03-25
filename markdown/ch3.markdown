@@ -25,7 +25,7 @@ linked whenever their corresponding regions touch each other in the input
 image.
 
 Building such a structure could be a complicated
-affair, and even more difficult 
+affair, and even more difficult
 when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
 here we will show you how to produce a RAG in a few lines of code using
@@ -148,6 +148,8 @@ astro_sq[sq_mask] = [0, 255, 0]
 plt.imshow(astro_sq);
 ```
 
+<!-- exercise begin -->
+
 **Exercise:** We just saw how to select a square and paint it red. Can you
 extend that to other shapes and colors? Create a function to draw a blue grid
 onto a color image, and apply it to the `astronaut` image of Eileen Collins
@@ -177,6 +179,8 @@ def overlay_grid(image, spacing=128):
 
 # plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line to test your function
 ```
+
+<!-- exercise end -->
 
 # Filters in signal processing
 
@@ -402,6 +406,8 @@ plt.imshow(tax_rate_map)
 plt.colorbar()
 ```
 
+<!-- exercise begin -->
+
 **Exercise:** Conway's Game of Life.
 
 Suggested by Nicolas Rougier.
@@ -429,11 +435,34 @@ and even
 
 Can you implement the Game of Life using `ndi.generic_filter`?
 
+<!-- solution begin -->
+
+**Solution:**
+
+Code by: Nicolas Rougier (@rougier)
+
+This is the game of life (cellular automata) in 10 lines of python with numpy.
+The code is available from http://www.labri.fr/perso/nrougier/teaching/numpy.100/ (last question).
+(code explanations is available from http://www.labri.fr/perso/nrougier/teaching/numpy/numpy.html)
+
+**Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
+in-degree survival function to a power-law,
+$f(d) \sim d^{-\gamma}, d > d_0$,
+for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
+to include that line.
+
+<!-- solution end -->
+<!-- exercise end -->
+
+<!-- exercise begin -->
+
 **Exercise:** Sobel gradient magnitude.
 
 Above, we saw how we can combine the output of two different filters, the
 horizontal Sobel filter, and the vertical one. Can you write a function that
 does this in a single pass using `ndi.generic_filter`?
+
+<!-- exercise end -->
 
 # Graphs and the NetworkX library
 
@@ -639,11 +668,15 @@ plt.ylim(0.002, 1.0)
 plt.show()
 ```
 
+<!-- exercise begin -->
+
 **Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
 in-degree survival function to a power-law,
 $f(d) \sim d^{-\gamma}, d > d_0$,
 for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
 to include that line.
+
+<!-- exercise end -->
 
 # Region adjacency graphs
 

@@ -555,6 +555,8 @@ The clustering of gene expression profiles has identified a higher-risk subtype 
 This is indeed only the latest study to show such a result, with others identifying subtypes of leukemia (blood cancer), gut cancer, and more.
 Although the above clustering technique is quite fragile, there are other ways to explore this dataset and similar ones that are more robust.
 
+<!-- exercise begin -->
+
 **Exercise:** We leave you the exercise of implementing the approach described in the paper:
 
 1. Take bootstrap samples (random choice with replacement) of the genes used to cluster the samples;
@@ -566,3 +568,5 @@ This identifies groups of samples that frequently occur together in clusterings,
 Thus, these samples can be considered to robustly cluster together.
 
 *Hint: use `np.random.choice` with `replacement=True` to create bootstrap samples of row indices.*
+
+<!-- exercise end -->
