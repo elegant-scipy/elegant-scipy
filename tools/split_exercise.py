@@ -46,4 +46,6 @@ for fn in sys.argv[1:]:
 content.string = '{{REPLACE_ME}}'
 
 with open(os.path.join(os.path.dirname(fn), 'exercises.html'), 'w') as f:
-    f.write(str(bs).replace('{{REPLACE_ME}}', '\n<hr/>\n'.join(all_exercises)))
+    exercise_text = '\n<hr/>\n'.join(all_exercises)
+    exercise_text = exercise_text.replace('<!-- solution begin', '<p><br/></p><!-- solution begin')
+    f.write(str(bs).replace('{{REPLACE_ME}}', exercise_text))
