@@ -1,0 +1,9 @@
+box: python:3.5-slim
+
+build:
+  steps:
+    - pip-install
+    - script:
+        name: build book
+        code: |
+          make html
