@@ -28,13 +28,15 @@ markdown/ch1.markdown: data/counts.txt
 
 markdown/ch2.markdown: data/counts.txt
 
+.SECONDARY: data/counts.txt data/dm6.fa data/dm6.fa.gz
+
 data/counts.txt: data/counts.txt.bz2
 	 bunzip2 -d -k -f data/counts.txt.bz2
 
 markdown/ch8.markdown: data/dm6.fa
 
 data/dm6.fa: data/dm6.fa.gz
-	 gunzip -k $<
+	 gunzip -f -k $<
 
 data/dm6.fa.gz:
 	 curl --remote-name http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz
@@ -59,7 +61,7 @@ $(BUILD_NB)/%.ipynb: %.markdown
 # .SECONDARY: Ensure ipynb files are not deleted after being generated.
 NBS_ := $(addprefix $(BUILD_NB)/,$(TITLES))
 nbs: $(addsuffix .ipynb,$(NBS_))
-.SECONDARY: nbs
+.SECONDARY: nbs data/counts.txt data/dm6.fa data/dm6.fa.gz
 
 # .PHONY: Special Makefile variable specifying targets that don't
 #     correspond to any actual files.
@@ -78,6 +80,7 @@ exercises:
 	./tools/split_exercise.py html/ch?.html
 
 # all: build the book.
+.DEFAULT_GOAL := all
 all: chs exercises
 
 zip: all
