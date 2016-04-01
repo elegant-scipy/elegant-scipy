@@ -751,13 +751,17 @@ to some more sophisticated rule.
 As a simple example, suppose you want to segment out the tiger in this
 picture, from the Berkeley Segmentation DataSet (BSDS) [^bsds-tiger]:
 
+[BSDS-108073 tiger](https://raw.githubusercontent.com/BIDS/BSDS500/master/BSDS500/data/images/train/108073.jpg)
+
+<!--
 ![BSDS-108073 tiger](http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg)
+-->
 
 A clustering algorithm, simple linear iterative clustering (SLIC) [^slic], can give
 us a decent starting point. It is available in the scikit-image library.
 
 ```python
-url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
+url = 'https://raw.githubusercontent.com/BIDS/BSDS500/master/BSDS500/data/images/train/108073.jpg'
 tiger = io.imread(url)
 from skimage import segmentation
 seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
@@ -961,5 +965,5 @@ are interested in image analysis, check it out!
 [^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
 [^nxdoc]: http://networkx.github.io/documentation/latest/reference/index.html
 [^bwcdoc]: http://networkx.github.io/documentation/latest/reference/generated/networkx.algorithms.centrality.betweenness_centrality.html
-[^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
+[^bsdstiger]: http://web.archive.org/web/20090322214030/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/segbench/BSDS300/html/dataset/images/color/108073.html
 [^slic]: http://ivrg.epfl.ch/research/superpixels
