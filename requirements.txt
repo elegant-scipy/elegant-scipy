@@ -1,4 +1,5 @@
-IPython>=3,<4
+jupyter
+ipython
 notedown>=1.4
 numpy
 scipy

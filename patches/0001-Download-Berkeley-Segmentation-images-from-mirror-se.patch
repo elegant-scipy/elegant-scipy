@@ -1,0 +1,115 @@
+From beca56f7de262855361b9cf8a08ce674844a3c2c Mon Sep 17 00:00:00 2001
+From: Stefan van der Walt <stefanv@berkeley.edu>
+Date: Thu, 31 Mar 2016 18:24:51 -0700
+Subject: [PATCH] Download Berkeley Segmentation images from mirror (server
+ currently down)
+
+---
+ markdown/ch3.markdown |  8 ++++++--
+ markdown/ch5.markdown | 33 +++++++++++++++++++++++++++------
+ 2 files changed, 33 insertions(+), 8 deletions(-)
+
+diff --git a/markdown/ch3.markdown b/markdown/ch3.markdown
+index 5ffb1c8..1a884bc 100644
+--- a/markdown/ch3.markdown
++++ b/markdown/ch3.markdown
+@@ -751,13 +751,17 @@ to some more sophisticated rule.
+ As a simple example, suppose you want to segment out the tiger in this
+ picture, from the Berkeley Segmentation DataSet (BSDS) [^bsds-tiger]:
+ 
++[BSDS-108073 tiger](https://raw.githubusercontent.com/BIDS/BSDS500/master/BSDS500/data/images/train/108073.jpg)
++
++<!--
+ ![BSDS-108073 tiger](http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg)
++-->
+ 
+ A clustering algorithm, simple linear iterative clustering (SLIC) [^slic], can give
+ us a decent starting point. It is available in the scikit-image library.
+ 
+ ```python
+-url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
++url = 'https://raw.githubusercontent.com/BIDS/BSDS500/master/BSDS500/data/images/train/108073.jpg'
+ tiger = io.imread(url)
+ from skimage import segmentation
+ seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
+@@ -961,5 +965,5 @@ are interested in image analysis, check it out!
+ [^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
+ [^nxdoc]: http://networkx.github.io/documentation/latest/reference/index.html
+ [^bwcdoc]: http://networkx.github.io/documentation/latest/reference/generated/networkx.algorithms.centrality.betweenness_centrality.html
+-[^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
++[^bsdstiger]: http://web.archive.org/web/20090322214030/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/segbench/BSDS300/html/dataset/images/color/108073.html
+ [^slic]: http://ivrg.epfl.ch/research/superpixels
+diff --git a/markdown/ch5.markdown b/markdown/ch5.markdown
+index 8e96118..01dae86 100644
+--- a/markdown/ch5.markdown
++++ b/markdown/ch5.markdown
+@@ -869,13 +869,16 @@ You may remember our friendly stalking tiger from chapter 3.
+ Using our skills from chapter 3, we're going to generate a number of possible ways of segmenting the tiger image, and then figure out the best one.
+ 
+ [Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
+-May need to ask permission to use in the book. See: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/]
++May need to ask permission to use in the book. See: http://web.archive.org/web/20090616190102/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/
++
++S: Note that the newer BSDS500 seems to have a less restrictive license: http://web.archive.org/web/20160306133802/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html]
++
+ 
+ ```python
+ from skimage import io
+ from matplotlib import pyplot as plt
+ 
+-url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
++url = 'https://raw.githubusercontent.com/BIDS/BSDS500/master/BSDS500/data/images/train/108073.jpg'
+ tiger = io.imread(url)
+ 
+ plt.imshow(tiger);
+@@ -884,17 +887,35 @@ plt.imshow(tiger);
+ In order to check our image segmentation, we're going to need a ground truth.
+ It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
+ Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it.
+-Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
++Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](http://web.archive.org/web/20090616190102/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+ It's worth noting that there is quite substantial variation between the segmentations performed by humans.
+-If you look through the [various tiger segmentations](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html), you will see that some humans are more pedantic than others about tracing around the reeds, while others consider the reflections to be objects worth segmenting out from the rest of the water.
++If you look through the [various tiger segmentations](http://web.archive.org/web/20090322214030/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/segbench/BSDS300/html/dataset/images/color/108073.html), you will see that some humans are more pedantic than others about tracing around the reeds, while others consider the reflections to be objects worth segmenting out from the rest of the water.
+ We have chosen a segmentation that we like (one with pedantic-reed-tracing, because we are perfectionistic scientist-types.)
+ But to be clear, we really have no single ground truth!
+ 
++[S: Note to self: the outline image can also be read from the archive at
++
++https://github.com/BIDS/BSDS500/blob/master/BSDS500/data/groundTruth/train/108073.mat
++
++and then loaded using
++
++```
++from scipy import io
++f = io.loadmat('108073.mat')
++outline = f['groundTruth'][0, 3]['Boundaries'][0, 0]
++
++# ^ 3 refers to third segmentation, the one previously used in this
++example
++
++# I can also convert all the .mat files in the archive to .png files
++```
++]
++
+ ```python
+ from scipy import ndimage as nd
+ from skimage import color
+ 
+-human_seg_url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
++human_seg_url = 'http://web.archive.org/web/20070625225926/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/segbench/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
+ boundaries = io.imread(human_seg_url)
+ io.imshow(boundaries);
+ ```
+@@ -1038,7 +1059,7 @@ plt.imshow(color.label2rgb(auto_seg, tiger));
+ 
+ **Exercise:** Segmentation in practice
+ 
+-Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
++Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](http://web.archive.org/web/20090616190102/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+ Using the mean or median of those thresholds, then go and segment a new image. Did you get a reasonable segmentation?
+ 
+ <!-- exercise end -->
+-- 
+2.7.2
+

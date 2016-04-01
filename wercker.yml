@@ -1,0 +1,10 @@
+box: elegantscipy/elegantscipy
+
+build:
+  steps:
+    - pip-install
+    - script:
+        name: build book
+        code: |
+          mv /data/* ./data
+          make

@@ -14,7 +14,7 @@ FIGURES = figures/generated
 # TITLES: This should be an exhaustive list of all the chapters to be
 #     built, and correspond to markdown filenames in the markdown
 #     directory.
-TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue appendix
+TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue
 
 # CHS_, chs: some Makefile magic that prefixes all the titles with the
 #     HTML build directory, then suffixes them with the .html
@@ -22,19 +22,21 @@ TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue appendix
 CHS_ := $(addprefix $(BUILD_HTML)/,$(TITLES))
 chs: build_dirs $(addsuffix .html,$(CHS_))
 
-markdown/ch4.markdown: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
+ipynb/ch1.ipynb: data/counts.txt
 
-markdown/ch1.markdown: data/counts.txt
+ipynb/ch2.ipynb: data/counts.txt
 
-markdown/ch2.markdown: data/counts.txt
+ipynb/ch4.ipynb: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
+
+ipynb/ch8.ipynb: data/dm6.fa
+
+.SECONDARY: data/counts.txt data/dm6.fa data/dm6.fa.gz
 
 data/counts.txt: data/counts.txt.bz2
 	 bunzip2 -d -k -f data/counts.txt.bz2
 
-markdown/ch8.markdown: data/dm6.fa
-
 data/dm6.fa: data/dm6.fa.gz
-	 gunzip -k $<
+	 gunzip -f -k $<
 
 data/dm6.fa.gz:
 	 curl --remote-name http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz
@@ -59,7 +61,7 @@ $(BUILD_NB)/%.ipynb: %.markdown
 # .SECONDARY: Ensure ipynb files are not deleted after being generated.
 NBS_ := $(addprefix $(BUILD_NB)/,$(TITLES))
 nbs: $(addsuffix .ipynb,$(NBS_))
-.SECONDARY: nbs
+.SECONDARY: nbs data/counts.txt data/dm6.fa data/dm6.fa.gz
 
 # .PHONY: Special Makefile variable specifying targets that don't
 #     correspond to any actual files.
@@ -78,6 +80,7 @@ exercises:
 	./tools/split_exercise.py html/ch?.html
 
 # all: build the book.
+.DEFAULT_GOAL := all
 all: chs exercises
 
 zip: all
