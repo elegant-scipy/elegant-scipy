@@ -19,3 +19,8 @@ RUN mkdir /data
 RUN curl http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz \
          -o /data/dm6.fa.gz
 
+# gsutil is installed to deploy the book to Google Cloud Storage
+RUN apt-get install -y python-pip python-pkg-resources python-setuptools \
+                       libffi-dev libssl-dev
+RUN pip2 install gsutil
+
