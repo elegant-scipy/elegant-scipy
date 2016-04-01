@@ -6,4 +6,5 @@ build:
     - script:
         name: build book
         code: |
+          mv /data/* ./data
           make

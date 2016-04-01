@@ -14,3 +14,9 @@ RUN pip install setuptools
 RUN pip install jupyter notedown>=1.4 scikit-image toolz networkx \
                 xlrd seaborn sympy
 RUN ipython3 kernel install
+
+RUN mkdir /data
+RUN curl --remote-name \
+    http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz \
+    -o /data/dm6.fa.gz
+
