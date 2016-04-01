@@ -10,3 +10,6 @@ build:
           make zip
           mv *.zip $WERCKER_OUTPUT_DIR
 
+  after-steps:
+    - 1syo/gitter-notify@0.0.1:
+        token: 3f461c40d53d840b3ebc
