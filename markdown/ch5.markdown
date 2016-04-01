@@ -869,16 +869,13 @@ You may remember our friendly stalking tiger from chapter 3.
 Using our skills from chapter 3, we're going to generate a number of possible ways of segmenting the tiger image, and then figure out the best one.
 
 [Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
-May need to ask permission to use in the book. See: http://web.archive.org/web/20090616190102/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/
-
-S: Note that the newer BSDS500 seems to have a less restrictive license: http://web.archive.org/web/20160306133802/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html]
-
+May need to ask permission to use in the book. See: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/]
 
 ```python
 from skimage import io
 from matplotlib import pyplot as plt
 
-url = 'https://raw.githubusercontent.com/BIDS/BSDS500/master/BSDS500/data/images/train/108073.jpg'
+url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
 tiger = io.imread(url)
 
 plt.imshow(tiger);
@@ -887,35 +884,17 @@ plt.imshow(tiger);
 In order to check our image segmentation, we're going to need a ground truth.
 It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
 Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it.
-Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](http://web.archive.org/web/20090616190102/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
 It's worth noting that there is quite substantial variation between the segmentations performed by humans.
-If you look through the [various tiger segmentations](http://web.archive.org/web/20090322214030/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/segbench/BSDS300/html/dataset/images/color/108073.html), you will see that some humans are more pedantic than others about tracing around the reeds, while others consider the reflections to be objects worth segmenting out from the rest of the water.
+If you look through the [various tiger segmentations](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html), you will see that some humans are more pedantic than others about tracing around the reeds, while others consider the reflections to be objects worth segmenting out from the rest of the water.
 We have chosen a segmentation that we like (one with pedantic-reed-tracing, because we are perfectionistic scientist-types.)
 But to be clear, we really have no single ground truth!
-
-[S: Note to self: the outline image can also be read from the archive at
-
-https://github.com/BIDS/BSDS500/blob/master/BSDS500/data/groundTruth/train/108073.mat
-
-and then loaded using
-
-```
-from scipy import io
-f = io.loadmat('108073.mat')
-outline = f['groundTruth'][0, 3]['Boundaries'][0, 0]
-
-# ^ 3 refers to third segmentation, the one previously used in this
-example
-
-# I can also convert all the .mat files in the archive to .png files
-```
-]
 
 ```python
 from scipy import ndimage as nd
 from skimage import color
 
-human_seg_url = 'http://web.archive.org/web/20070625225926/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/segbench/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
+human_seg_url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
 boundaries = io.imread(human_seg_url)
 io.imshow(boundaries);
 ```
@@ -1059,7 +1038,7 @@ plt.imshow(color.label2rgb(auto_seg, tiger));
 
 **Exercise:** Segmentation in practice
 
-Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](http://web.archive.org/web/20090616190102/http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
 Using the mean or median of those thresholds, then go and segment a new image. Did you get a reasonable segmentation?
 
 <!-- exercise end -->
