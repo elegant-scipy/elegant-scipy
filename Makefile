@@ -22,18 +22,18 @@ TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue appendix
 CHS_ := $(addprefix $(BUILD_HTML)/,$(TITLES))
 chs: build_dirs $(addsuffix .html,$(CHS_))
 
-markdown/ch4.markdown: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
+ipynb/ch1.ipynb: data/counts.txt
 
-markdown/ch1.markdown: data/counts.txt
+ipynb/ch2.ipynb: data/counts.txt
 
-markdown/ch2.markdown: data/counts.txt
+ipynb/ch4.ipynb: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
+
+ipynb/ch8.ipynb: data/dm6.fa
 
 .SECONDARY: data/counts.txt data/dm6.fa data/dm6.fa.gz
 
 data/counts.txt: data/counts.txt.bz2
 	 bunzip2 -d -k -f data/counts.txt.bz2
-
-markdown/ch8.markdown: data/dm6.fa
 
 data/dm6.fa: data/dm6.fa.gz
 	 gunzip -f -k $<
