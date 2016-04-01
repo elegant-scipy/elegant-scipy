@@ -8,8 +8,18 @@ build:
         code: |
           mv /data/* ./data
           make zip
-          mv *.zip $WERCKER_OUTPUT_DIR
 
   after-steps:
     - 1syo/gitter-notify@0.0.1:
         token: 3f461c40d53d840b3ebc
+
+deploy:
+  steps:
+    - michilu/gcs-website-deploy:
+      bucket: elegant-scipy-proofs
+      project: $GOOGLE_PROJECT_ID
+      token: $GOOGLE_REFRESH_TOKEN
+      dir: html
+
+# See http://www.wllnr.nl/blog/2016/02/automatic-deployment-using-wrecker/
+# for more on GCS deployment

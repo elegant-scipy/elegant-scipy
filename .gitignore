@@ -7,7 +7,7 @@ html
 data/dm*
 *.pyc
 **/__pycache__
-\.*
+\.#*
 .*.swp
 data/counts.txt
 build_html/*
