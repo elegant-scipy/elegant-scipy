@@ -1,4 +1,4 @@
-box: python:3.5-slim
+box: elegantscipy/elegantscipy
 
 build:
   steps:
@@ -6,4 +6,4 @@ build:
     - script:
         name: build book
         code: |
-          make html
+          make
