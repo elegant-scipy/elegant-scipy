@@ -1,3 +1,13 @@
+Untitled*
+_builds
+_projects
+_steps
+ipynb
+html
+data/dm*
+*.pyc
+**/__pycache__
+\.*
 .*.swp
 data/counts.txt
 build_html/*
