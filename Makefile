@@ -1,6 +1,8 @@
 # This Makefile builds an HTML "book" from source files written in
 #     Markdown.
 
+SHELL = /bin/bash
+
 # VPATH: where to look for source files. This is a Makefile built-in
 #     special variable.
 VPATH = markdown
@@ -84,9 +86,16 @@ exercises:
 all: chs exercises
 
 zip: all
-	 cd .. && zip -r \
-		 elegant-scipy/elegant-scipy-`date +"%Y-%m-%d_%H-%M-%S"`.zip \
-		 elegant-scipy/index.html elegant-scipy/html
+	DATE=`date +"%Y-%m-%d_%H-%M-%S"` ; \
+	STAMP=elegant-scipy-$$DATE ; \
+	ES_DIR=`pwd` ; \
+	TMP_DIR=/tmp/$$STAMP ; \
+	\
+	rm -rf $$TMP_DIR ; \
+	mkdir $$TMP_DIR ; \
+	ln -s $$ES_DIR/index.html $$TMP_DIR ; \
+	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
+	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
 # clean: remove intermediate products (IPython notebooks)
 clean:
