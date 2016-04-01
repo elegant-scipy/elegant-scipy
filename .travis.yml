@@ -40,6 +40,6 @@ script:
     - make html/ch7.html
     - make html/ch8.html
     - make html/epilogue.html
-    - make html/appendix.html
+    - make exercises
     - make all
     - make zip
