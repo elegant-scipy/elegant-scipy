@@ -7,4 +7,6 @@ build:
         name: build book
         code: |
           mv /data/* ./data
-          make
+          make zip
+          mv *.zip $WERCKER_OUTPUT_DIR
+

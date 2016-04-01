@@ -84,7 +84,9 @@ exercises:
 all: chs exercises
 
 zip: all
-	 zip -r elegant-scipy.zip index.html html
+	 cd .. && zip -r \
+		 elegant-scipy/elegant-scipy-`date +"%Y-%m-%d_%H-%M-%S"`.zip \
+		 elegant-scipy/index.html elegant-scipy/html
 
 # clean: remove intermediate products (IPython notebooks)
 clean:
