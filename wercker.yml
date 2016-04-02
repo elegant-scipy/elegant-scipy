@@ -15,6 +15,11 @@ build:
 
 deploy:
   steps:
+    - script:
+      name: Use Python 2 for deployment
+      code: |
+        ln -sf /usr/bin/python2.7 /usr/bin/python
+
     - michilu/gcs-website-deploy:
       bucket: elegant-scipy-proofs
       project: $GOOGLE_PROJECT_ID
