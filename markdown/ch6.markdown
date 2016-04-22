@@ -202,7 +202,7 @@ def plot_connectome(neuron_x, neuron_y, links, labels, types):
                                       (0, 0, 1),
                                       (0, 1, 0)])
     # plot neuron locations:
-    plt.scatter(neuron_x, neuron_y, c=types, cmap=colormap, zorder=1)
+    points = plt.scatter(neuron_x, neuron_y, c=types, cmap=colormap, zorder=1)
 
     # add text labels:
     for x, y, label in zip(neuron_x, neuron_y, labels):
@@ -272,7 +272,8 @@ you try it on your own!
 Another application of the normalized graph Laplacian is in community
 detection. Mark Newman published a
 [seminal paper](http://www.pnas.org/content/103/23/8577.short)
-on the topic in 2006. We'll apply it to the Python library dependency graph.
+on the topic in 2006, and
+[refined it further](http://arxiv.org/abs/1307.7729) in 2013. We'll apply it to the Python library dependency graph.
 
 We've downloaded and preprocessed the data ahead of time, available as the file
 `pypi-dependencies.txt` in the `data/` folder. The data consists of a list of
