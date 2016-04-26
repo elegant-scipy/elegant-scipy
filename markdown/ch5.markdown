@@ -225,6 +225,24 @@ def general_confusion_matrix(pred, gt):
     return cont
 ```
 
+<!-- solution begin -->
+
+We merely need to make an initial pass through both input arrays to determine
+the maximum label. We then add 1 to it to account for the zero label and
+Python's 0-based indexing. We then create the matrix and fill it in the same
+way as above:
+
+```python
+def general_confusion_matrix(pred, gt):
+    n_classes = max(np.max(pred), np.max(gt)) + 1
+    cont = np.zeros((n_classes, n_classes))
+    for i, j in zip(pred, gt):
+        cont[i, j] += 1
+    return cont
+```
+
+<!-- solution end -->
+
 <!-- exercise end -->
 
 Your one-pass solution will scale well with the number of classes, but, because
