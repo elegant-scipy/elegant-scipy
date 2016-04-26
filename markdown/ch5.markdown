@@ -135,7 +135,22 @@ We can check that this gives use the right counts:
 confusion_matrix(pred, gt)
 ```
 
+<!-- exercise begin -->
 **Question:** Why did we call this inefficient?
+
+<!-- solution begin -->
+
+**Answer:** From chapter 1, you recall that `arr == k` creates an array of
+Boolean (`True` or `False`) values of the same size as `arr`. This, as you
+might expect, requires a full pass over `arr`. Therefore, in the above
+solution, we make a full pass over each of `pred` and `gt` for every
+combination of values in `pred` and `gt`. In principle, we can compute `cont`
+using just a single pass over both arrays, so these multiple passes are
+inefficient.
+
+<!-- solution end -->
+
+<!-- exercise end -->
 
 <!-- exercise begin -->
 
@@ -147,6 +162,40 @@ def confusion_matrix1(pred, gt):
     # your code goes here
     return cont
 ```
+
+<!-- solution begin -->
+
+We offer two solutions here, although many are possible.
+
+Our first solution uses Python's built-in `zip` function to pair together
+labels from `pred` and `gt`.
+
+```python
+def confusion_matrix1(pred, gt):
+    cont = np.zeros((2, 2))
+    for i, j in zip(pred, gt):
+        cont[i, j] += 1
+    return cont
+```
+
+Our second solution is to iterate over all possible indices of `pred` and `gt`
+and manually grab the corresponding value from each array:
+
+```python
+def confusion_matrix1(pred, gt):
+    cont = np.zeros((2, 2))
+    for idx in range(len(pred)):
+        i = pred[idx]
+        j = gt[idx]
+        cont[i, j] += 1
+    return cont
+```
+
+The first option would be considered the more "Pythonic" of the two, but the
+second one is easier to speed up by translating and compiling in languages or
+tools such as C, Cython, and Numba. (These are a topic for another book.)
+
+<!-- solution end -->
 
 <!-- exercise end -->
 
