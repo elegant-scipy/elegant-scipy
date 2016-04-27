@@ -269,11 +269,11 @@ Each of these arrays has length equal to the number of nonzero values in $A$,
 and together they list (i, j, value) coordinates of every entry that is not
 equal to 0.
 
-- the `i` and `j` arrays, which together specify the location of each non-zero
-  entry (row and column indices, respectively).
+- the `row` and `col` arrays, which together specify the location of each
+  non-zero entry (row and column indices, respectively).
 - the `data` array, which specifies the *value* at each location.
 
-Every part of the matrix that is not represented by the `(i, j)` pairs is
+Every part of the matrix that is not represented by the `(row, col)` pairs is
 considered to be 0.
 Much more efficient!
 
@@ -290,18 +290,18 @@ We can do the following:
 from scipy import sparse
 
 data = np.array([4, 3, 32], dtype=float)
-i = np.array([0, 0, 1])
-j = np.array([0, 2, 1])
+row = np.array([0, 0, 1])
+col = np.array([0, 2, 1])
 
-scoo = sparse.coo_matrix((data, (i, j)))
+s_coo = sparse.coo_matrix((data, (row, col)))
 ```
 
 The `.todense()` method of every sparse format in `scipy.sparse` returns a
 numpy array representation of the sparse data.
-We can use this to check that we created `scoo` correctly:
+We can use this to check that we created `s_coo` correctly:
 
 ```python
-scoo.todense()
+s_coo.todense()
 ```
 
 <!-- exercise begin -->
@@ -316,6 +316,46 @@ s2 = np.array([[0, 0, 6, 0, 0],
                [0, 0, 0, 6, 7]])
 ```
 
+<!-- solution begin -->
+
+We first list the non-zero elements of the array, left-to-right and
+top-to-bottom, as if reading a book:
+
+```python
+s2_data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
+```
+
+We then list the row indices of those values in the same order:
+
+```python
+s2_row = np.array([0, 1, 1, 1, 1, 2, 3, 4, 4])
+```
+
+And finally the column indices:
+
+```python
+s2_col = np.array([2, 0, 1, 3, 4, 1, 0, 3, 4])
+```
+
+We can easily check that these produce the right matrix, by checking equality
+in both directions:
+
+```python
+s2_coo0 = sparse.coo_matrix(s2)
+print(s2_coo0.data)
+print(s2_coo0.row)
+print(s2_coo0.col)
+```
+
+and:
+
+```python
+s2_coo1 = sparse.coo_matrix((s2_data, (s2_row, s2_col)))
+print(s2_coo1.todense())
+```
+
+<!-- solution end -->
+
 <!-- exercise end -->
 
 Unfortunately, although the COO format is intuitive, it's not very optimized to
@@ -329,27 +369,26 @@ Notice all those repeated `1`s?
 
 If we use COO to enumerate the nonzero entries row-by-row, rather than in
 arbitrary order (which the format allows), we end up with many consecutive,
-repeated values in the `i` array.
-These can be compressed by indicating the *indices* in `j` where the next row
+repeated values in the `row` array.
+These can be compressed by indicating the *indices* in `col` where the next row
 starts, rather than repeatedly writing the row index.
 This is the basis for the *compressed sparse row* or *CSR* format.
 
-Let's work through the example above.
-In CSR format, the `j` and `data` arrays are unchanged (but `j` is renamed to
-`indices`).
-However, the `i` array, instead of indicating the rows, indicates *where* in
-`j` each row begins, and is renamed to `indptr`, for "index pointer".
+Let's work through the example above.  In CSR format, the `col` and `data`
+arrays are unchanged (but `col` is renamed to `indices`).  However, the `row`
+array, instead of indicating the rows, indicates *where* in `col` each row
+begins, and is renamed to `indptr`, for "index pointer".
 
-So, let's look at `i` and `j` in COO format, ignoring `data`:
+So, let's look at `row` and `col` in COO format, ignoring `data`:
 
 ```python
-i = [0, 1, 1, 1, 1, 2, 3, 4, 4]
-j = [2, 0, 1, 3, 4, 1, 0, 3, 4]
+row = [0, 1, 1, 1, 1, 2, 3, 4, 4]
+col = [2, 0, 1, 3, 4, 1, 0, 3, 4]
 ```
 
-Each new row begins at the index where `i` changes.
+Each new row begins at the index where `row` changes.
 The 0th row starts at index 0, and the 1st row starts at index 1, but the 2nd
-row starts where "2" first appears in `i`, at index 5.
+row starts where "2" first appears in `row`, at index 5.
 Then, the indices increase by 1 for rows 3 and 4, to 6 and 7.
 The final index, indicating the end of the matrix, is the total number of
 nonzero values (9).
@@ -366,7 +405,7 @@ CSR representations to the numpy array `s2` that we defined earlier.
 ```python
 data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
 
-coo = sparse.coo_matrix((data, (i, j)))
+coo = sparse.coo_matrix((data, (row, col)))
 csr = sparse.csr_matrix((data, j, indptr))
 
 print('The COO and CSR arrays are equal: ',
