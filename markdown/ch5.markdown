@@ -470,6 +470,23 @@ H = np.array([[c, -s,  0],
               [s,  c,  0],
               [0,  0,  1]])
 ```
+
+You can verify that this works by multiplying H with the point (1, 0). A
+30-degree counterclockwise rotation around the origin (0, 0) should take us
+to point $(\frac{\sqrt{3}}{2}, \frac{1}{2})$:
+
+```python
+point = np.array([1, 0, 1])
+print(np.sqrt(3) / 2)
+print(H @ start)
+```
+
+Similarly, applying the 30-degree rotation three times should get us to the
+column axis, at point (0, 1). We can see that this works, minus some floating
+point approximation error:
+
+```python
+print(H @ H @ H @ start)
 ```
 
 Now, we will build a function that defines a "sparse operator".  The
