@@ -437,7 +437,7 @@ regions of the brain! [SvdW TODO: Double check Newman algorithm in BrainX]
 
 Libraries like scikit-image and SciPy already contain algorithms for
 transforming (rotating & warping) images effectively, but what if you
-were head of the Numpy Agency for Space Affairs and had to rotate
+were head of the NumPy Agency for Space Affairs and had to rotate
 millions of images streaming in from the newly launched Jupyter
 Orbiter?
 
@@ -456,10 +456,10 @@ image = data.camera()
 plt.imshow(image, cmap='gray');
 ```
 
-As a test operation, we'll be rotating the image by 30 degrees.  Let
-us define the translation matrix, $H$ which, when multiplied with a
-coordinate from the input image, $[x, y, 1]$, will give us the
-corresponding coordinate in the output, $[x', y', 1]$.
+As a test operation, we'll be rotating the image by 30 degrees. We begin
+by defining the translation matrix, $H$ which, when multiplied with a
+coordinate from the input image, $[r, c, 1]$, will give us the
+corresponding coordinate in the output, $[r', c', 1]$.
 
 ```python
 angle = 30
