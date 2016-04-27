@@ -463,12 +463,13 @@ corresponding coordinate in the output, $[r', c', 1]$.
 
 ```python
 angle = 30
-C = np.cos(np.deg2rad(angle))
-S = np.sin(np.deg2rad(angle))
+c = np.cos(np.deg2rad(angle))
+s = np.sin(np.deg2rad(angle))
 
-H = np.array([[C, -S, 0],
-              [S, C, 0],
-              [0, 0, 1]])
+H = np.array([[c, -s,  0],
+              [s,  c,  0],
+              [0,  0,  1]])
+```
 ```
 
 Now, we will build a function that defines a "sparse operator".  The
