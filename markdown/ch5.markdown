@@ -512,7 +512,7 @@ out_flat = input_flat @ Sparse_operator
 out_image = out_flat.reshape(input_flat.shape)
 ```
 
-<img src="https://en.wikipedia.org/wiki/Bilinear_interpolation#/media/File:Bilinear_interpolation.png"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg"/>
 
 Let's look at the function that builds our sparse operator:
 
