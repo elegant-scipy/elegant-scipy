@@ -406,7 +406,7 @@ CSR representations to the numpy array `s2` that we defined earlier.
 data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
 
 coo = sparse.coo_matrix((data, (row, col)))
-csr = sparse.csr_matrix((data, j, indptr))
+csr = sparse.csr_matrix((data, col, indptr))
 
 print('The COO and CSR arrays are equal: ',
       np.all(coo.todense() == csr.todense()))
