@@ -68,7 +68,7 @@ def vi(x, y):
 > `hygx = -px.T * xlog(Px_inv * Pxy).sum(axis=1)`
 > 
 > But there is a huge catch: this code will behave differently when `px` or
-> `Px_inv` are SciPy matrices than when they are not! If Px_inv and Pxy are
+> `Px_inv` are SciPy matrices than when they are not! If `Px_inv` and `Pxy` are
 > NumPy arrays, `*` produces the element-wise multiplication, while if they are
 > SciPy matrices, it produces the matrix product! As you can imagine, this is
 > the source of a great many errors, and much of the SciPy community has
@@ -794,7 +794,8 @@ gt = np.array([[1, 1, 1],
                [2, 2, 2]], dtype=int)
 ```
 
-We can think of these two as classifications, just like before:
+We can think of these two as classifications, just like before. Every pixel is
+a different prediction.
 
 ```python
 print(seg.ravel())
@@ -816,15 +817,21 @@ COO format to confirm that this represents the matrix we want:
 print(cont.todense())
 ```
 
-Segmentation is a hard problem, so it's important to measure how well a segmentation algorithm is doing, by comparing its output to a "ground truth" segmentation that is manually produced by a human.
+Segmentation is a hard problem, so it's important to measure how well a
+segmentation algorithm is doing, by comparing its output to a "ground truth"
+segmentation that is manually produced by a human.
 
-But, even this comparison is not an easy task.
-How do we define how "close" an automated segmentation is to a ground truth?
-We'll illustrate one method, the *variation of information* or VI (Meila, 2005).
-This is defined as the answer to the following question: on average, for a random pixel, if we are given its segment ID in one segmentation, how much more *information* do we need to determine its ID in the other segmentation?
+But, even this comparison is not an easy task. How do we define how "close" an
+automated segmentation is to a ground truth?  We'll illustrate one method, the
+*variation of information* or VI (Meila, 2005). This is defined as the answer
+to the following question: on average, for a random pixel, if we are given its
+segment ID in one segmentation, how much more *information* do we need to
+determine its ID in the other segmentation?
 
 In order to answer this question, we'll need a quick primer on information
-theory.
+theory. We need to be brief but if you want more information (heh), you should
+look at Christopher Olah's stellar blog post,
+[Visual Information Theory](https://colah.github.io/posts/2015-09-Visual-Information/).
 
 The basic unit of information is the *bit*, commonly shown as a 0 or 1,
 representing choice between two options.
@@ -853,7 +860,7 @@ Generally, we measure this for any random variable $X$ (which could have more
 than two possible values) by using the *entropy* function $H$:
 
 $$
-H(X) = - \sum_{x}{p_x \log_2\left(p_x\right)}
+H(X) = \sum_{x}{p_x \log_2\left(\frac{1}{p_x}\right)}
 $$
 
 where the $x$s are possible values of $X$, and $p_x$ is the probability of $X$
