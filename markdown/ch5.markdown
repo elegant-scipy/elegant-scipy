@@ -481,7 +481,7 @@ to point $(\frac{\sqrt{3}}{2}, \frac{1}{2})$:
 ```python
 point = np.array([1, 0, 1])
 print(np.sqrt(3) / 2)
-print(H @ start)
+print(H @ point)
 ```
 
 Similarly, applying the 30-degree rotation three times should get us to the
@@ -489,7 +489,7 @@ column axis, at point (0, 1). We can see that this works, minus some floating
 point approximation error:
 
 ```python
-print(H @ H @ H @ start)
+print(H @ H @ H @ point)
 ```
 
 Now, we will build a function that defines a "sparse operator".  The
