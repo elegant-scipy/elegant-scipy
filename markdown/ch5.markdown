@@ -595,63 +595,11 @@ def homography(tf, image_shape):
     return operator
 ```
 
-    # For each pixel in the output image
-    for i in range(M):
-        for j in range(N):
-
-            # Compute where it came from in the input image
-            jj, ii, zz = np.dot(H, [j, i, 1])
-            jj = jj / zz
-            ii = ii / zz
-
-            # We want to find the four surrounding pixels, so that we
-            # can interpolate their values to find an accurate
-            # estimation of the output pixel value
-
-            xx = (int)(floor(jj))
-            yy = (int)(floor(ii))
-
-            # If any of those four pixels lie outside the image, give up
-            if xx < 0 or yy < 0 or yy >= (M - 1) or xx >= (N - 1):
-                continue
-
-            # Calculate the position of the output pixel, mapped into
-            # the input image, within the four selected pixels
-            # https://en.wikipedia.org/wiki/Bilinear_interpolation#/media/File:Bilinear_interpolation.png
-            t = ii - yy
-            u = jj - xx
-
-            # The sparse matrix is going to be of shape (M * N, M *
-            # N).  Each of the (M * N) columns represents a pixel in
-            # the input image.  Each of the (M * N) rows represents a
-            # pixel in the output image.  The position of the output
-            # pixel is calculated here, and repeated four times
-            # (because it will become a weighted average of four input pixels).
-
-            R = i * N + j
-            I.extend([R, R, R, R])
-
-            # The actual weights are calculated according to bilinear
-            # interpolation, as shown at
-            # https://en.wikipedia.org/wiki/Bilinear_interpolation
-
-            J.extend([yy * N + xx,
-                      (yy + 1) * N + xx,
-                      (yy + 1) * N + xx + 1,
-                      yy * N + xx + 1])
-            V.extend([(1 - t) * (1 - u),
-                      t * (1 - u),
-                      t * u,
-                      (1 - t) * u])
-
-    return sparse.coo_matrix((V, (I, J)), shape=(M * N, M * N)).tocsr()
-```
-
 Recall that we apply the sparse operator as follows:
 
 ```python
 def apply_transform(image, tf):
-   return (tf * image.flat).reshape(image.shape)
+    return (tf @ image.flat).reshape(image.shape)
 ```
 
 Let's try it out!
