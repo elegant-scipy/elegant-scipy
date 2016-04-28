@@ -639,7 +639,8 @@ do is slide the image so that the center is at the origin, rotate it, and then
 slide it back.
 
 ```python
-def rotate_about_center(image, degrees):
+def transform_rotate_about_center(shape, degrees):
+    """Return the homography matrix for a rotation about an image center."""
     c = np.cos(np.deg2rad(angle))
     s = np.sin(np.deg2rad(angle))
 
@@ -661,13 +662,14 @@ def rotate_about_center(image, degrees):
 
     sparse_op = homography(H_rot_cent, image.shape)
 
-    return apply_transform(image, sparse_op)
+    return sparse_op
 ```
 
 We can test that this works:
 
 ```python
-plt.imshow(rotate_about_center(image, 30), cmap='gray')
+tf = transform_rotate_about_center(image.shape, 30)
+plt.imshow(apply_transform(image, tf), cmap='gray')
 ```
 
 <!-- solution end -->
