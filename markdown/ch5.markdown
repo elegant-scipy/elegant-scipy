@@ -662,6 +662,69 @@ out = apply_transform(image, tf)
 plt.imshow(out, cmap='gray');
 ```
 
+There's that rotation!
+
+<!-- exercise begin -->
+
+**Exercise:** The rotation happens around the origin, coordinate (0, 0). But
+can you rotate the image around its center?
+
+**Hint:** The transformation matrix for a *translation*, i.e. sliding the image
+up/down or left/right, is given by:
+
+$$
+H_{tr} = 
+\begin{bmatrix}
+    1 & 0 & t_r \\
+    0 & 1 & t_c \\
+    0 & 0 &   1
+\end{bmatrix}
+$$
+
+when you want to move the image $t_r$ pixels down and $t_c$ pixels right.
+
+<!-- solution begin -->
+
+We can *compose* transformations by multiplying them. We know how to rotate
+an image about the origin, as well as how to slide it around. So what we will
+do is slide the image so that the center is at the origin, rotate it, and then
+slide it back.
+
+```python
+def rotate_about_center(image, degrees):
+    c = np.cos(np.deg2rad(angle))
+    s = np.sin(np.deg2rad(angle))
+
+    H_rot = np.array([[c, -s,  0],
+                      [s,  c,  0],
+                      [0,  0,  1]])
+    # compute image center coordinates
+    center = np.array(image.shape) / 2
+    # matrix to center image on origin
+    H_tr0 = np.array([[1, 0, -center[0]],
+                      [0, 1, -center[1]],
+                      [0, 0,          1]])
+    # matrix to move center back
+    H_tr1 = np.array([[1, 0, center[0]],
+                      [0, 1, center[1]],
+                      [0, 0,         1]])
+    # complete transformation matrix
+    H_rot_cent = H_tr1 @ H_rot @ H_tr0
+
+    sparse_op = homography(H_rot_cent, image.shape)
+
+    return apply_transform(image, sparse_op)
+```
+
+We can test that this works:
+
+```python
+plt.imshow(rotate_about_center(image, 30), cmap='gray')
+```
+
+<!-- solution end -->
+
+<!-- exercise end -->
 And measure how it performs in comparison to ndimage:
 
 ```python
