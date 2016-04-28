@@ -517,10 +517,10 @@ out_image = out_flat.reshape(input_flat.shape)
 Let's look at the function that builds our sparse operator:
 
 ```python
-from math import floor
+from itertools import product
 
 def homography(tf, image_shape):
-    """Represent homographic transformation + bilinear interpolation as a linear operator.
+    """Represent homographic transformation & interpolation as linear operator.
 
     Parameters
     ----------
@@ -531,7 +531,7 @@ def homography(tf, image_shape):
 
     Returns
     -------
-    A : (M * N, M * N) sparse COO matrix
+    A : (M * N, M * N) sparse matrix
         Linear-operator representing transformation + bilinear interpolation.
 
     """
@@ -539,11 +539,61 @@ def homography(tf, image_shape):
     # find its corresponding input pixel.
     H = np.linalg.inv(tf)
 
-    M, N = image_shape
+    m, n = image_shape
 
     # We are going to construct a COO matrix, for which we'll need I
-    # (row coordinates), J (column coordinates), and K (values)
-    I, J, V = [], [], []
+    # (row coordinates), col (column coordinates), and K (values)
+    row, col, values = [], [], []
+
+    # For each pixel in the output image...
+    for sparse_op_row, (out_row, out_col) in \
+            enumerate(product(range(m), range(n))):
+
+        # Compute where it came from in the input image
+        in_row, in_col, in_abs = H @ [out_row, out_col, 1]
+        in_row /= in_abs
+        in_col /= in_abs
+
+        # if the coordinates are outside of the original image, ignore this
+        # coordinate; we will have 0 at this position
+        if (not 0 <= in_row < m - 1 or
+                not 0 <= in_col < n - 1):
+            continue
+
+        # We want to find the four surrounding pixels, so that we
+        # can interpolate their values to find an accurate
+        # estimation of the output pixel value
+        # We start with the top, left corner, noting that the remaining
+        # points are 1 away in each direction.
+        top = int(np.floor(in_row))
+        left = int(np.floor(in_col))
+
+        # Calculate the position of the output pixel, mapped into
+        # the input image, within the four selected pixels
+        # https://commons.wikimedia.org/wiki/File:BilinearInterpolation.svg
+        t = in_row - top
+        u = in_col - left
+
+        # The current row of the sparse operator matrix is given by the
+        # raveled output pixel coordinates, contained in `sparse_op_row`.
+        # We will take the weighted average of the four surrounding input
+        # pixels, corresponding to four columns. So we need to repeat the row
+        # index four times.
+        row.extend([sparse_op_row] * 4)
+
+        # The actual weights are calculated according to the bilinear
+        # interpolation algorithm, as shown at
+        # https://en.wikipedia.org/wiki/Bilinear_interpolation
+        sparse_op_col = np.ravel_multi_index(
+                ([top,  top,      top + 1, top + 1 ],
+                 [left, left + 1, left,    left + 1]), dims=(m, n))
+        col.extend(sparse_op_col)
+        values.extend([(1-t) * (1-u), (1-t) * u, t * (1-u), t * u])
+
+    operator = sparse.coo_matrix((values, (row, col)),
+                                 shape=(m*n, m*n)).tocsr()
+    return operator
+```
 
     # For each pixel in the output image
     for i in range(M):
