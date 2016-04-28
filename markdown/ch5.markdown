@@ -675,24 +675,32 @@ plt.imshow(apply_transform(image, tf), cmap='gray')
 <!-- solution end -->
 
 <!-- exercise end -->
-And measure how it performs in comparison to ndimage:
+
+As mentioned above, this sparse linear operator approach to image
+transformation is extremely fast.
+Let's measure how it performs in comparison to ndimage. To make the comparison
+fair, we need to tell ndimage that we want linear interpolation with `order=1`,
+and that we want to ignore pixels outside of the original shape, with
+`reshape=False`.
 
 ```python
 %timeit apply_transform(image, tf)
 ```
 
 ```python
-from scipy import ndimage
-%timeit ndimage.rotate(image, 30)
+from scipy import ndimage as ndi
+%timeit ndi.rotate(image, 30, reshape=False, order=1)
 ```
 
-On our machines, we see a speed-up of approximately 30 times.  While
+On our machines, we see a speed-up of approximately 10 times.  While
 this example does only a rotation, there is no reason why we cannot do
-more complicated warping operations, like correct for a distorted
-telescope lens, or make people pull funny faces.
+more complicated warping operations, such as correcting for a distorted lens
+during imaging, or making people pull funny faces. Once the transform has been
+computed, applying it repeatedly is extremely fast, thanks to sparse matrix
+algebra.
 
-We won't claim that this hack was quick or cheap, but let's hope it was
-educational!
+So now that we've seen a "standard" use of SciPy's sparse matrices, let's have
+a look at the out-of-the-box use that inspired this chapter!
 
 ## Back to contingency matrices
 
