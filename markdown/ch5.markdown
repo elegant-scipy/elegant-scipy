@@ -420,7 +420,7 @@ one can think of the entire web as a large, sparse, $N \times N$ matrix.
 Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
 By normalizing this matrix and solving for its dominant eigenvector,
 one obtains the so-called PageRank—one of the numbers Google uses to
-order your search results.
+order your search results. (You can read more about this in the next chapter!)
 
 Now, consider studying the human brain, and represent it as a large $M
 \times M$ graph, where there are $M$ nodes (positions) in which you
@@ -704,9 +704,36 @@ a look at the out-of-the-box use that inspired this chapter!
 
 ## Back to contingency matrices
 
-[Extend to *unknown number* of classes]
+You might recall that we are trying to quickly build a sparse, joint
+probability matrix using SciPy's sparse formats. We know that the COO format
+stores sparse data as three arrays, containing the row and column coordinates
+of nonzero entries, as well as their values. But we can use a little known
+feature of COO to obtain our matrix extremely quickly.
 
-So, because the COO format (a) only stores a `rows` array, a `columns` array, and a `values` array, and (b) sums the values whenever the same (row column) pair appears twice, we are already done, just by making `rows = pred`, `columns = gt`, and `values = np.ones(pred.size)`!
+Have a look at this data:
+
+```python
+row = [0, 0, 2]
+col = [1, 1, 2]
+dat = [5, 7, 1]
+S = sparse.coo_matrix((dat, (row, col)))
+```
+
+Notice that the entry at (row, column) position (0, 1) appears twice: first as
+5, and then at 7. What should the matrix value at (0, 1) be? Cases could be
+made for both the earliest entry encountered, or the latest, but what was in
+fact chosen is the *sum*:
+
+```python
+print(S.todense())
+```
+
+So, COO format will sum together repeated entries... Which is exactly what we
+need to do to make a contingency matrix! Indeed, our task is pretty much done:
+we can set `pred` as the rows, `gt` as the columns, and simply 1 as the values.
+The ones will get summed together and count the number of times that label $i$
+in `pred` occurs together with label $j$ in `gt` at position $i, j$ in the
+matrix! Let's try it out:
 
 ```python
 from scipy import sparse
@@ -726,6 +753,24 @@ print(cont)
 ```python
 print(cont.todense())
 ```
+
+It works!
+
+<!-- exercise begin -->
+
+**Exercise:** Remember from Chapter 1 that NumPy has built-in tools for
+repeating arrays using *broadcasting*. How can you reduce the memory footprint
+required for the contingency matrix computation?
+
+**Hint:** Look at the documentation for the function `np.broadcast_to`.
+
+<!-- solution begin -->
+
+The `np.ones` array that we create is read-only: it will only be used as the
+values to sum by `coo_matrix`.
+
+<!-- solution end -->
+<!-- exercise end -->
 
 # Contingency matrices in segmentation
 
