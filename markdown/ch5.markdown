@@ -963,13 +963,13 @@ The conditional entropy of rain given month is then:
 
 $$
 \begin{align}
-H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(0.25) +
-                               0.75 \log_2(0.75) \right) +
-           \frac{1}{12} \left( 0.27 \log_2(0.27) +
-                               0.73 \log_2(0.73) \right) +
+H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(1/0.25) +
+                               0.75 \log_2(1/0.75) \right) +
+           \frac{1}{12} \left( 0.27 \log_2(1/0.27) +
+                               0.73 \log_2(1/0.73) \right) +
            ... +
-           \frac{1}{12} \left( 0.23 \log_2(0.23) +
-                               0.77 \log_2(0.77) \right) \\
+           \frac{1}{12} \left( 0.23 \log_2(1/0.23) +
+                               0.77 \log_2(1/0.77) \right) \\
        & \approx 0.626 \textrm{bits}
 \end{align}
 $$
