@@ -767,9 +767,29 @@ required for the contingency matrix computation?
 <!-- solution begin -->
 
 The `np.ones` array that we create is read-only: it will only be used as the
-values to sum by `coo_matrix`.
+values to sum by `coo_matrix`. We can use `broadcast_to` to create a similar
+array with only one element, "virtually" repeated n times:
+
+```python
+def confusion_matrix(pred, gt):
+    n = pred.size
+    ones = np.broadcast_to(1., n)  # virtual array of 1s of size n
+    cont = sparse.coo_matrix((ones, (pred, gt)))
+    return cont
+```
+
+Let's make sure it still works as expected:
+
+```python
+cont = confusion_matrix(pred, gt)
+print(cont.todense())
+```
+
+Boom. Instead of making an array as big as the original data, we just make
+one of size 1.
 
 <!-- solution end -->
+
 <!-- exercise end -->
 
 # Contingency matrices in segmentation
