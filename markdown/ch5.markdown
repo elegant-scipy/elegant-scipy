@@ -891,9 +891,9 @@ So, the entropy of a coin toss $T$ that can take values heads ($h$) and tails
 
 $$
 \begin{align}
-H(T) & = - p_h \log_2(p_h) - p_t \log_2(p_t) \\
-     & = - 1/2 \log_2(1/2) - 1/2 \log_2(1/2) \\
-     & = - 1/2 \cdot (-1) - 1/2 \cdot (-1) \\
+H(T) & = p_h \log_2(1/p_h) + p_t \log_2(1/p_t) \\
+     & = 1/2 log_2(2) + 1/2 \log_2(2) \\
+     & = 1/2 \cdot 1 + 1/2 \cdot 1 \\
      & = 1
 \end{align}
 $$
@@ -903,8 +903,8 @@ the entropy of rain in LA, $R$, taking values rain ($r$) or shine ($s$) is:
 
 $$
 \begin{align}
-H(R) & = - p_r \log_2(p_r) - p_s \log_2(p_s) \\
-     & =  - 1/6 \log_2(1/6) - 5/6 \log_2(1/6) \\
+H(R) & = p_r \log_2(1/p_r) + p_s \log_2(1/p_s) \\
+     & = 1/6 \log_2(6) + 5/6 \log_2(6/5) \\
      & \approx 0.65 \textrm{bits}
 \end{align}
 $$
@@ -923,10 +923,10 @@ and
 
 $$
 \begin{align}
-H(R | M=m) &= {p_{r|m}\log_2\left(p_{r|m}\right) +
-               p_{s|m}\log_2\left(p_{s|m}\right)} \\
-           &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_{rm}}{p_m}\right) +
-               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_{sm}}{p_m}\right)}
+H(R | M=m) &= {p_{r|m}\log_2\left(\frac{1}{p_{r|m}}\right) +
+               p_{s|m}\log_2\left(\frac{1}{p_{s|m}}\right)} \\
+           &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_m}{p_{rm}}\right) +
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)}
 \end{align}
 $$
 
@@ -1050,7 +1050,7 @@ truth measures how much additional
 information we need to determine a pixel's identity in AS if we are told its
 identity in GT.
 For example, if every GT segment $g$ is split into two equally-sized
-segments $a_1$ and $a_2$ in AS, then H(AS|GT) = 1, because after knowing a
+segments $a_1$ and $a_2$ in AS, then $H(AS|GT) = 1$, because after knowing a
 pixel is in $g$, you
 still need 1 additional bit to know whether it belongs to $a_1$ or $a_2$.
 However, H(GT|AS) = 0, because regardless of whether a pixel is in $a_1$ or
@@ -1093,7 +1093,7 @@ Now we can just make the contingency table in the same way as when we were
 predicting spam:
 
 ```python
-cont = sparse.coo_matrix((np.ones(aseg.size, dtype=float),
+cont = sparse.coo_matrix((np.broadcast_to(1., aseg.size),
                           (aseg.ravel(), gt.ravel())))
 cont = np.asarray(cont.todense())
 cont
@@ -1116,28 +1116,68 @@ p_gt = np.sum(cont, axis=0)
 
 There is a small kink in writing Python code to compute entropy:
 although $0 \log(0)$ is defined to be equal to 0, in Python, it is undefined,
-and results in a `nan` (not a number) value.
+and results in a `nan` (not a number) value:
+
+```python
+print('The log of 0 is: ', np.log2(0))
+print('0 times the log of 0 is: ', 0 * np.log2(0))
+```
 Therefore, we have to use numpy indexing to mask out the 0 values.
+Additionally, we'll need a slightly different strategy depending on whether the
+input is a numpy array or a SciPy sparse matrix.
 We'll write the following convenience function:
 
 ```python
-def xlogx(arr):
-    out = arr.copy()
+def xlog1x(arr_or_mat):
+    """Compute the element-wise entropy function of an array or matrix.
+    
+    Parameters
+    ----------
+    arr_or_mat : numpy array or scipy sparse matrix
+        The input array of probabilities. Only sparse matrix formats with a
+        `data` attribute are supported.
+        
+    Returns
+    -------
+    out : array or sparse matrix, same type as input
+        The resulting array. Zero entries in the input remain as zero,
+        all other entries are multiplied by the log (base 2) of their
+        inverse.
+    """
+    out = arr_or_mat.copy()
+    if isinstance(out, sparse.spmatrix):
+        arr = out.data
+    else:
+        arr = out
     nz = np.nonzero(arr)
-    out[nz] = arr[nz] * np.log2(arr[nz])
+    arr[nz] *= np.log2(1/arr[nz])
     return out
 ```
+
+Let's make sure it works:
+
+```python
+a = np.array([0.25, 0.25, 0, 0.25, 0.25])
+xlog1x(a)
+```
+
+```python
+mat = sparse.csr_matrix([[0.125, 0.125, 0.25,    0],
+                         [0.125, 0.125,    0, 0.25]])
+xlog1x(a).todense()
+```
+
 So, the conditional entropy of AS given GT:
 
 ```python
-H_ag = -np.sum(np.sum(xlogx(cont / p_gt), axis=0) * p_gt)
+H_ag = np.sum(np.sum(xlog1x(cont / p_gt), axis=0) * p_gt)
 H_ag
 ```
 
 And the converse:
 
 ```python
-H_ga = -np.sum(np.sum(xlogx(cont / p_as[:, np.newaxis]), axis=1) * p_as)
+H_ga = np.sum(np.sum(xlog1x(cont / p_as[:, np.newaxis]), axis=1) * p_as)
 H_ga
 ```
 
@@ -1149,41 +1189,60 @@ We can instead use `sparse` throughout the calculation, and recast some of the
 NumPy magic as linear algebra operations.
 This was
 [suggested](http://stackoverflow.com/questions/16043299/substitute-for-numpy-broadcasting-using-scipy-sparse-csc-matrix)
-by Warren Weckesser on StackOverflow.
+to me by Warren Weckesser on StackOverflow.
 
-When reading the code, keep in mind that the `sparse` module is optimized for
-linear algebra, and as such it recasts Python's "times" operator `*` as matrix
-multiplication.
+The linear algebra version efficiently computes a contingency matrix for very
+large amounts of data, up to billions of points, and is elegantly concise.
 
 ```python
 import numpy as np
 from scipy import sparse
 
 
-def invert_nonzero(mat):
-    mat_inv = mat.copy()
-    nz = np.nonzero(mat)
-    mat_inv[nz] = 1 / mat[nz]
-    return mat_inv
+def diag(arr):
+    """Return a diagonal square matrix with `arr` as its nonzero elements.
+
+    Parameters
+    ----------
+    arr : array
+        The input array.
+
+    Returns
+    -------
+    D : the output matrix
+    """
 
 
-def xlogx(mat):
-    matlog = mat.copy()
-    nz = np.nonzero(mat)
-    matlog[nz] = np.multiply(mat[nz], np.log2(mat[nz]))
-    return matlog
+def invert_nonzero(arr):
+    arr_inv = arr.copy()
+    nz = np.nonzero(arr)
+    arr_inv[nz] = 1 / arr[nz]
+    return arr_inv
 
 
 def vi(x, y):
-    pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
+
+    # Compute the joint probability matrix
+    ones = np.broadcast_to(1., x.size)
+    pxy = sparse.coo_matrix((ones, (x.ravel(), y.ravel())),
                             dtype=float).tocsr()
     pxy.data /= np.sum(pxy.data)
-    px = pxy.sum(axis=1)
-    py = pxy.sum(axis=0)
-    px_inv = sparse.diags(invert_nonzero(px).A.T, [0])
-    py_inv = sparse.diags(invert_nonzero(py).A, [0])
-    hygx = - px.T * xlogx(px_inv * pxy).sum(axis=1)
-    hxgy = - xlogx(pxy * py_inv).sum(axis=0) * py.T
+
+    # Compute the marginals
+    # Use .A.ravel() to make them 1D arrays instead of flat matrices
+    px = pxy.sum(axis=1).A.ravel()
+    py = pxy.sum(axis=0).A.ravel()
+
+    # Compute the inverse diagonal matrices, which will help
+    # compute the conditional probabilities
+    px_inv = sparse.diags(invert_nonzero(px))
+    py_inv = sparse.diags(invert_nonzero(py))
+
+    # Finally, compute the entropies
+    hygx = px @ xlog1x(px_inv @ pxy).sum(axis=1)
+    hxgy = xlog1x(pxy @ py_inv).sum(axis=0) @ py
+
+    # return their sum
     return float(hygx + hxgy)
 ```
 
@@ -1218,7 +1277,7 @@ and then loaded using
 from scipy import io
 f = io.loadmat('108073.mat')
 outline = f['groundTruth'][0, 3]['Boundaries'][0, 0]
-
+```
 # ^ 3 refers to third segmentation, the one previously used in this
 example
 
