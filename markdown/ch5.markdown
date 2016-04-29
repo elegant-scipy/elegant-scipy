@@ -999,8 +999,41 @@ p_rain_g_month = np.array((prains, pshine)).T
 # table. Hint: the values in the table must sum to 1.
 p_rain_month = None
 # Add your code below to compute H(M|R) and H(M)
-pass
 ```
+
+<!-- solution begin -->
+
+To obtain the joint probability table, we simply divide the table by its total,
+in this case, 12:
+
+```python
+print('table total:', np.sum(p_rain_g_month))
+p_rain_month = p_rain_g_month / np.sum(p_rain_g_month)
+```
+
+Now we can compute the conditional entropy of the month given rain. (This is
+like asking: if we know it's raining, how much more information do we need to
+know to figure out what month it is, on average?)
+
+```python
+p_rain = np.sum(p_rain_month, axis=0)
+p_month_g_rain = p_rain_month / p_rain
+Hmr = np.sum(p_rain * p_month_g_rain * np.log2(1 / p_month_g_rain))
+print(Hmr)
+```
+
+Let's compare that to the entropy of the months:
+
+```python
+p_month = np.sum(p_rain_month, axis=1)  # 1/12, but this method is more general
+Hm = np.sum(p_month * np.log2(1 / p_month))
+print(Hm)
+```
+
+So we can see that knowing whether it rained today got us 2 hundredths of a bit
+closer to guessing what month it is! Don't bet the farm on that guess.
+
+<!-- solution end -->
 
 <!-- exercise end -->
 
