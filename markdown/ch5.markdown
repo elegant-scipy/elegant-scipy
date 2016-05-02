@@ -1267,7 +1267,7 @@ Using our skills from chapter 3, we're going to generate a number of possible wa
 [Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
 May need to ask permission to use in the book. See: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/]
 
-[S: Note to self: the outline image can also be read from the archive at
+S: Note to self: the outline image can also be read from the archive at
 
 https://github.com/BIDS/BSDS500/blob/master/BSDS500/data/groundTruth/train/108073.mat
 
@@ -1277,14 +1277,12 @@ and then loaded using
 from scipy import io
 f = io.loadmat('108073.mat')
 outline = f['groundTruth'][0, 3]['Boundaries'][0, 0]
-```
 # ^ 3 refers to third segmentation, the one previously used in this
 example
 
 # I can also convert all the .mat files in the archive to .png files,
 # if needed
 ```
-]
 
 
 ```python
