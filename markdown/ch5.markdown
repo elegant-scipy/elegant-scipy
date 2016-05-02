@@ -1164,7 +1164,7 @@ xlog1x(a)
 ```python
 mat = sparse.csr_matrix([[0.125, 0.125, 0.25,    0],
                          [0.125, 0.125,    0, 0.25]])
-xlog1x(a).todense()
+xlog1x(mat).todense()
 ```
 
 So, the conditional entropy of AS given GT:
