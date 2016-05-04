@@ -27,23 +27,57 @@ segmentations.
 
 ```python
 def vi(x, y):
-    # compute contingency matrix
-    pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
+    # compute contingency matrix, aka joint probability matrix
+    Pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
                             dtype=float).tocsr()
-    pxy.data /= np.sum(pxy.data)
+    Pxy.data /= np.sum(Pxy.data)
 
-    # compute marginal probabilities
-    px = pxy.sum(axis=1)
-    py = pxy.sum(axis=0)
+    # compute marginal probabilities, converting to array
+    px = Pxy.sum(axis=1).A
+    py = Pxy.sum(axis=0).A
 
     # use sparse matrix linear algebra to compute VI
-    px_inv = sparse.diags(invert_nonzero(px).A.T, [0])
-    py_inv = sparse.diags(invert_nonzero(py).A, [0])
-    hygx = - px.T * xlogx(px_inv * pxy).sum(axis=1)
-    hxgy = - xlogx(pxy * py_inv).sum(axis=0) * py.T
+    Px_inv = sparse.diags(invert_nonzero(px).T, [0])
+    Py_inv = sparse.diags(invert_nonzero(py), [0])
+    hygx = -px.T @ xlogx(Px_inv @ Pxy).sum(axis=1)
+    hxgy = -xlogx(Pxy @ Py_inv).sum(axis=0) @ py.T
 
     return float(hygx + hxgy)
 ```
+
+> **Python 3.5 pro-tip!**
+> 
+> The `@` symbols in the above paragraph represent the *matrix multiplication*
+> operator, and were introduced in Python 3.5 in 2015. This is one of the most
+> compelling arguments to use Python 3 for scientific programmers: they enable
+> the programming of linear algebra algorithms using code that remains very
+> close to the original mathematics. Compare the above:
+> 
+> `hygx = -px.T @ xlogx(Px_inv @ Pxy).sum(axis=1)`
+> 
+> with the equivalent Python 2 code:
+> 
+> `hygx = -px.T.dot(xlogx(Px_inv.dot(Pxy)).sum(axis=1))`
+> 
+> Yuck! By using the `@` operator to stay closer to mathematical notation, we
+> can avoid implementation errors and produce code that is much easier to read.
+> 
+> Actually, SciPy's authors knew this long before the `@` operator was
+> introduced, and actually altered the meaning of the
+> `*` operator when the inputs are SciPy matrices. Available in Python
+> 2.7, it lets us produce nice, readable code like the above:
+> 
+> `hygx = -px.T * xlog(Px_inv * Pxy).sum(axis=1)`
+> 
+> But there is a huge catch: this code will behave differently when `px` or
+> `Px_inv` are SciPy matrices than when they are not! If `Px_inv` and `Pxy` are
+> NumPy arrays, `*` produces the element-wise multiplication, while if they are
+> SciPy matrices, it produces the matrix product! As you can imagine, this is
+> the source of a great many errors, and much of the SciPy community has
+> abandoned this use in favor of the uglier but unambiguous `.dot` method.
+> 
+> Python 3.5's `@` operator gives us the best of both worlds!
+
 
 But let's start simple and work our way up to segmentations.
 
@@ -103,7 +137,22 @@ We can check that this gives use the right counts:
 confusion_matrix(pred, gt)
 ```
 
+<!-- exercise begin -->
 **Question:** Why did we call this inefficient?
+
+<!-- solution begin -->
+
+**Answer:** From chapter 1, you recall that `arr == k` creates an array of
+Boolean (`True` or `False`) values of the same size as `arr`. This, as you
+might expect, requires a full pass over `arr`. Therefore, in the above
+solution, we make a full pass over each of `pred` and `gt` for every
+combination of values in `pred` and `gt`. In principle, we can compute `cont`
+using just a single pass over both arrays, so these multiple passes are
+inefficient.
+
+<!-- solution end -->
+
+<!-- exercise end -->
 
 <!-- exercise begin -->
 
@@ -115,6 +164,40 @@ def confusion_matrix1(pred, gt):
     # your code goes here
     return cont
 ```
+
+<!-- solution begin -->
+
+We offer two solutions here, although many are possible.
+
+Our first solution uses Python's built-in `zip` function to pair together
+labels from `pred` and `gt`.
+
+```python
+def confusion_matrix1(pred, gt):
+    cont = np.zeros((2, 2))
+    for i, j in zip(pred, gt):
+        cont[i, j] += 1
+    return cont
+```
+
+Our second solution is to iterate over all possible indices of `pred` and `gt`
+and manually grab the corresponding value from each array:
+
+```python
+def confusion_matrix1(pred, gt):
+    cont = np.zeros((2, 2))
+    for idx in range(len(pred)):
+        i = pred[idx]
+        j = gt[idx]
+        cont[i, j] += 1
+    return cont
+```
+
+The first option would be considered the more "Pythonic" of the two, but the
+second one is easier to speed up by translating and compiling in languages or
+tools such as C, Cython, and Numba (which are a topic for another book).
+
+<!-- solution end -->
 
 <!-- exercise end -->
 
@@ -144,6 +227,24 @@ def general_confusion_matrix(pred, gt):
     return cont
 ```
 
+<!-- solution begin -->
+
+We merely need to make an initial pass through both input arrays to determine
+the maximum label. We then add 1 to it to account for the zero label and
+Python's 0-based indexing. We then create the matrix and fill it in the same
+way as above:
+
+```python
+def general_confusion_matrix(pred, gt):
+    n_classes = max(np.max(pred), np.max(gt)) + 1
+    cont = np.zeros((n_classes, n_classes))
+    for i, j in zip(pred, gt):
+        cont[i, j] += 1
+    return cont
+```
+
+<!-- solution end -->
+
 <!-- exercise end -->
 
 Your one-pass solution will scale well with the number of classes, but, because
@@ -170,11 +271,11 @@ Each of these arrays has length equal to the number of nonzero values in $A$,
 and together they list (i, j, value) coordinates of every entry that is not
 equal to 0.
 
-- the `i` and `j` arrays, which together specify the location of each non-zero
-  entry (row and column indices, respectively).
+- the `row` and `col` arrays, which together specify the location of each
+  non-zero entry (row and column indices, respectively).
 - the `data` array, which specifies the *value* at each location.
 
-Every part of the matrix that is not represented by the `(i, j)` pairs is
+Every part of the matrix that is not represented by the `(row, col)` pairs is
 considered to be 0.
 Much more efficient!
 
@@ -191,18 +292,18 @@ We can do the following:
 from scipy import sparse
 
 data = np.array([4, 3, 32], dtype=float)
-i = np.array([0, 0, 1])
-j = np.array([0, 2, 1])
+row = np.array([0, 0, 1])
+col = np.array([0, 2, 1])
 
-scoo = sparse.coo_matrix((data, (i, j)))
+s_coo = sparse.coo_matrix((data, (row, col)))
 ```
 
 The `.todense()` method of every sparse format in `scipy.sparse` returns a
 numpy array representation of the sparse data.
-We can use this to check that we created `scoo` correctly:
+We can use this to check that we created `s_coo` correctly:
 
 ```python
-scoo.todense()
+s_coo.todense()
 ```
 
 <!-- exercise begin -->
@@ -217,6 +318,46 @@ s2 = np.array([[0, 0, 6, 0, 0],
                [0, 0, 0, 6, 7]])
 ```
 
+<!-- solution begin -->
+
+We first list the non-zero elements of the array, left-to-right and
+top-to-bottom, as if reading a book:
+
+```python
+s2_data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
+```
+
+We then list the row indices of those values in the same order:
+
+```python
+s2_row = np.array([0, 1, 1, 1, 1, 2, 3, 4, 4])
+```
+
+And finally the column indices:
+
+```python
+s2_col = np.array([2, 0, 1, 3, 4, 1, 0, 3, 4])
+```
+
+We can easily check that these produce the right matrix, by checking equality
+in both directions:
+
+```python
+s2_coo0 = sparse.coo_matrix(s2)
+print(s2_coo0.data)
+print(s2_coo0.row)
+print(s2_coo0.col)
+```
+
+and:
+
+```python
+s2_coo1 = sparse.coo_matrix((s2_data, (s2_row, s2_col)))
+print(s2_coo1.todense())
+```
+
+<!-- solution end -->
+
 <!-- exercise end -->
 
 Unfortunately, although the COO format is intuitive, it's not very optimized to
@@ -230,27 +371,26 @@ Notice all those repeated `1`s?
 
 If we use COO to enumerate the nonzero entries row-by-row, rather than in
 arbitrary order (which the format allows), we end up with many consecutive,
-repeated values in the `i` array.
-These can be compressed by indicating the *indices* in `j` where the next row
+repeated values in the `row` array.
+These can be compressed by indicating the *indices* in `col` where the next row
 starts, rather than repeatedly writing the row index.
 This is the basis for the *compressed sparse row* or *CSR* format.
 
-Let's work through the example above.
-In CSR format, the `j` and `data` arrays are unchanged (but `j` is renamed to
-`indices`).
-However, the `i` array, instead of indicating the rows, indicates *where* in
-`j` each row begins, and is renamed to `indptr`, for "index pointer".
+Let's work through the example above.  In CSR format, the `col` and `data`
+arrays are unchanged (but `col` is renamed to `indices`).  However, the `row`
+array, instead of indicating the rows, indicates *where* in `col` each row
+begins, and is renamed to `indptr`, for "index pointer".
 
-So, let's look at `i` and `j` in COO format, ignoring `data`:
+So, let's look at `row` and `col` in COO format, ignoring `data`:
 
 ```python
-i = [0, 1, 1, 1, 1, 2, 3, 4, 4]
-j = [2, 0, 1, 3, 4, 1, 0, 3, 4]
+row = [0, 1, 1, 1, 1, 2, 3, 4, 4]
+col = [2, 0, 1, 3, 4, 1, 0, 3, 4]
 ```
 
-Each new row begins at the index where `i` changes.
+Each new row begins at the index where `row` changes.
 The 0th row starts at index 0, and the 1st row starts at index 1, but the 2nd
-row starts where "2" first appears in `i`, at index 5.
+row starts where "2" first appears in `row`, at index 5.
 Then, the indices increase by 1 for rows 3 and 4, to 6 and 7.
 The final index, indicating the end of the matrix, is the total number of
 nonzero values (9).
@@ -267,8 +407,8 @@ CSR representations to the numpy array `s2` that we defined earlier.
 ```python
 data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
 
-coo = sparse.coo_matrix((data, (i, j)))
-csr = sparse.csr_matrix((data, j, indptr))
+coo = sparse.coo_matrix((data, (row, col)))
+csr = sparse.csr_matrix((data, col, indptr))
 
 print('The COO and CSR arrays are equal: ',
       np.all(coo.todense() == csr.todense()))
@@ -282,7 +422,7 @@ one can think of the entire web as a large, sparse, $N \times N$ matrix.
 Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
 By normalizing this matrix and solving for its dominant eigenvector,
 one obtains the so-called PageRank—one of the numbers Google uses to
-order your search results.
+order your search results. (You can read more about this in the next chapter!)
 
 Now, consider studying the human brain, and represent it as a large $M
 \times M$ graph, where there are $M$ nodes (positions) in which you
@@ -299,7 +439,7 @@ regions of the brain! [SvdW TODO: Double check Newman algorithm in BrainX]
 
 Libraries like scikit-image and SciPy already contain algorithms for
 transforming (rotating & warping) images effectively, but what if you
-were head of the Numpy Agency for Space Affairs and had to rotate
+were head of the NumPy Agency for Space Affairs and had to rotate
 millions of images streaming in from the newly launched Jupyter
 Orbiter?
 
@@ -318,48 +458,71 @@ image = data.camera()
 plt.imshow(image, cmap='gray');
 ```
 
-As a test operation, we'll be rotating the image by 30 degrees.  Let
-us define the translation matrix, $H$ which, when multiplied with a
-coordinate from the input image, $[x, y, 1]$, will give us the
-corresponding coordinate in the output, $[x', y', 1]$.
+As a test operation, we'll be rotating the image by 30 degrees. We begin
+by defining the transformation matrix, $H$ which, when multiplied with a
+coordinate from the input image, $[r, c, 1]$, will give us the
+corresponding coordinate in the output, $[r', c', 1]$. (Note: we are using
+[homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates),
+which have a 1 appended to them and which give greater flexibility when
+defining linear transforms.)
 
 ```python
 angle = 30
-C = np.cos(np.deg2rad(angle))
-S = np.sin(np.deg2rad(angle))
+c = np.cos(np.deg2rad(angle))
+s = np.sin(np.deg2rad(angle))
 
-H = np.array([[C, -S, 0],
-              [S, C, 0],
-              [0, 0, 1]])
+H = np.array([[c, -s,  0],
+              [s,  c,  0],
+              [0,  0,  1]])
+```
+
+You can verify that this works by multiplying H with the point (1, 0). A
+30-degree counterclockwise rotation around the origin (0, 0) should take us
+to point $(\frac{\sqrt{3}}{2}, \frac{1}{2})$:
+
+```python
+point = np.array([1, 0, 1])
+print(np.sqrt(3) / 2)
+print(H @ point)
+```
+
+Similarly, applying the 30-degree rotation three times should get us to the
+column axis, at point (0, 1). We can see that this works, minus some floating
+point approximation error:
+
+```python
+print(H @ H @ H @ point)
 ```
 
 Now, we will build a function that defines a "sparse operator".  The
 goal of the sparse operator is to take all pixels of the output image,
 figure out where they came from in the input image and, doing the
-appropriate (bi-linear) interpolation, calculate their values.
+appropriate (bi-linear) interpolation, calculate their values. It does this
+using just matrix multiplication on the image values, and
+thus is extremely fast.
 
 It will be used as follows:
 
 ```
 ## Turn input image into a vector
-# input_flat = input_image.ravel()
+input_flat = input_image.ravel()
 
 ## Multiply input image by sparse operator
-# out_flat = input_flat * sparse_operator
+out_flat = input_flat @ Sparse_operator
 
 ## Reshape output vector back into an image of the same shape as the input
-# out_image = out_flat.reshape(input_flat.shape)
+out_image = out_flat.reshape(input_flat.shape)
 ```
 
-<img src="https://en.wikipedia.org/wiki/Bilinear_interpolation#/media/File:Bilinear_interpolation.png"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg"/>
 
 Let's look at the function that builds our sparse operator:
 
 ```python
-from math import floor
+from itertools import product
 
 def homography(tf, image_shape):
-    """Represent homographic transformation + bilinear interpolation as a linear operator.
+    """Represent homographic transformation & interpolation as linear operator.
 
     Parameters
     ----------
@@ -370,7 +533,7 @@ def homography(tf, image_shape):
 
     Returns
     -------
-    A : (M * N, M * N) sparse COO matrix
+    A : (M * N, M * N) sparse matrix
         Linear-operator representing transformation + bilinear interpolation.
 
     """
@@ -378,69 +541,67 @@ def homography(tf, image_shape):
     # find its corresponding input pixel.
     H = np.linalg.inv(tf)
 
-    M, N = image_shape
+    m, n = image_shape
 
     # We are going to construct a COO matrix, for which we'll need I
-    # (row coordinates), J (column coordinates), and K (values)
-    I, J, V = [], [], []
+    # (row coordinates), col (column coordinates), and K (values)
+    row, col, values = [], [], []
 
-    # For each pixel in the output image
-    for i in range(M):
-        for j in range(N):
+    # For each pixel in the output image...
+    for sparse_op_row, (out_row, out_col) in \
+            enumerate(product(range(m), range(n))):
 
-            # Compute where it came from in the input image
-            jj, ii, zz = np.dot(H, [j, i, 1])
-            jj = jj / zz
-            ii = ii / zz
+        # Compute where it came from in the input image
+        in_row, in_col, in_abs = H @ [out_row, out_col, 1]
+        in_row /= in_abs
+        in_col /= in_abs
 
-            # We want to find the four surrounding pixels, so that we
-            # can interpolate their values to find an accurate
-            # estimation of the output pixel value
+        # if the coordinates are outside of the original image, ignore this
+        # coordinate; we will have 0 at this position
+        if (not 0 <= in_row < m - 1 or
+                not 0 <= in_col < n - 1):
+            continue
 
-            xx = (int)(floor(jj))
-            yy = (int)(floor(ii))
+        # We want to find the four surrounding pixels, so that we
+        # can interpolate their values to find an accurate
+        # estimation of the output pixel value
+        # We start with the top, left corner, noting that the remaining
+        # points are 1 away in each direction.
+        top = int(np.floor(in_row))
+        left = int(np.floor(in_col))
 
-            # If any of those four pixels lie outside the image, give up
-            if xx < 0 or yy < 0 or yy >= (M - 1) or xx >= (N - 1):
-                continue
+        # Calculate the position of the output pixel, mapped into
+        # the input image, within the four selected pixels
+        # https://commons.wikimedia.org/wiki/File:BilinearInterpolation.svg
+        t = in_row - top
+        u = in_col - left
 
-            # Calculate the position of the output pixel, mapped into
-            # the input image, within the four selected pixels
-            # https://en.wikipedia.org/wiki/Bilinear_interpolation#/media/File:Bilinear_interpolation.png
-            t = ii - yy
-            u = jj - xx
+        # The current row of the sparse operator matrix is given by the
+        # raveled output pixel coordinates, contained in `sparse_op_row`.
+        # We will take the weighted average of the four surrounding input
+        # pixels, corresponding to four columns. So we need to repeat the row
+        # index four times.
+        row.extend([sparse_op_row] * 4)
 
-            # The sparse matrix is going to be of shape (M * N, M *
-            # N).  Each of the (M * N) columns represents a pixel in
-            # the input image.  Each of the (M * N) rows represents a
-            # pixel in the output image.  The position of the output
-            # pixel is calculated here, and repeated four times
-            # (because it will become a weighted average of four input pixels).
+        # The actual weights are calculated according to the bilinear
+        # interpolation algorithm, as shown at
+        # https://en.wikipedia.org/wiki/Bilinear_interpolation
+        sparse_op_col = np.ravel_multi_index(
+                ([top,  top,      top + 1, top + 1 ],
+                 [left, left + 1, left,    left + 1]), dims=(m, n))
+        col.extend(sparse_op_col)
+        values.extend([(1-t) * (1-u), (1-t) * u, t * (1-u), t * u])
 
-            R = i * N + j
-            I.extend([R, R, R, R])
-
-            # The actual weights are calculated according to bilinear
-            # interpolation, as shown at
-            # https://en.wikipedia.org/wiki/Bilinear_interpolation
-
-            J.extend([yy * N + xx,
-                      (yy + 1) * N + xx,
-                      (yy + 1) * N + xx + 1,
-                      yy * N + xx + 1])
-            V.extend([(1 - t) * (1 - u),
-                      t * (1 - u),
-                      t * u,
-                      (1 - t) * u])
-
-    return sparse.coo_matrix((V, (I, J)), shape=(M * N, M * N)).tocsr()
+    operator = sparse.coo_matrix((values, (row, col)),
+                                 shape=(m*n, m*n)).tocsr()
+    return operator
 ```
 
 Recall that we apply the sparse operator as follows:
 
 ```python
 def apply_transform(image, tf):
-   return (tf * image.flat).reshape(image.shape)
+    return (tf @ image.flat).reshape(image.shape)
 ```
 
 Let's try it out!
@@ -451,30 +612,130 @@ out = apply_transform(image, tf)
 plt.imshow(out, cmap='gray');
 ```
 
-And measure how it performs in comparison to ndimage:
+There's that rotation!
+
+<!-- exercise begin -->
+
+**Exercise:** The rotation happens around the origin, coordinate (0, 0). But
+can you rotate the image around its center?
+
+**Hint:** The transformation matrix for a *translation*, i.e. sliding the image
+up/down or left/right, is given by:
+
+$$
+H_{tr} = 
+\begin{bmatrix}
+    1 & 0 & t_r \\
+    0 & 1 & t_c \\
+    0 & 0 &   1
+\end{bmatrix}
+$$
+
+when you want to move the image $t_r$ pixels down and $t_c$ pixels right.
+
+<!-- solution begin -->
+
+We can *compose* transformations by multiplying them. We know how to rotate
+an image about the origin, as well as how to slide it around. So what we will
+do is slide the image so that the center is at the origin, rotate it, and then
+slide it back.
+
+```python
+def transform_rotate_about_center(shape, degrees):
+    """Return the homography matrix for a rotation about an image center."""
+    c = np.cos(np.deg2rad(angle))
+    s = np.sin(np.deg2rad(angle))
+
+    H_rot = np.array([[c, -s,  0],
+                      [s,  c,  0],
+                      [0,  0,  1]])
+    # compute image center coordinates
+    center = np.array(image.shape) / 2
+    # matrix to center image on origin
+    H_tr0 = np.array([[1, 0, -center[0]],
+                      [0, 1, -center[1]],
+                      [0, 0,          1]])
+    # matrix to move center back
+    H_tr1 = np.array([[1, 0, center[0]],
+                      [0, 1, center[1]],
+                      [0, 0,         1]])
+    # complete transformation matrix
+    H_rot_cent = H_tr1 @ H_rot @ H_tr0
+
+    sparse_op = homography(H_rot_cent, image.shape)
+
+    return sparse_op
+```
+
+We can test that this works:
+
+```python
+tf = transform_rotate_about_center(image.shape, 30)
+plt.imshow(apply_transform(image, tf), cmap='gray')
+```
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+As mentioned above, this sparse linear operator approach to image
+transformation is extremely fast.
+Let's measure how it performs in comparison to ndimage. To make the comparison
+fair, we need to tell ndimage that we want linear interpolation with `order=1`,
+and that we want to ignore pixels outside of the original shape, with
+`reshape=False`.
 
 ```python
 %timeit apply_transform(image, tf)
 ```
 
 ```python
-from scipy import ndimage
-%timeit ndimage.rotate(image, 30)
+from scipy import ndimage as ndi
+%timeit ndi.rotate(image, 30, reshape=False, order=1)
 ```
 
-On our machines, we see a speed-up of approximately 30 times.  While
+On our machines, we see a speed-up of approximately 10 times.  While
 this example does only a rotation, there is no reason why we cannot do
-more complicated warping operations, like correct for a distorted
-telescope lens, or make people pull funny faces.
+more complicated warping operations, such as correcting for a distorted lens
+during imaging, or making people pull funny faces. Once the transform has been
+computed, applying it repeatedly is extremely fast, thanks to sparse matrix
+algebra.
 
-We won't claim that this hack was quick or cheap, but let's hope it was
-educational!
+So now that we've seen a "standard" use of SciPy's sparse matrices, let's have
+a look at the out-of-the-box use that inspired this chapter!
 
 ## Back to contingency matrices
 
-[Extend to *unknown number* of classes]
+You might recall that we are trying to quickly build a sparse, joint
+probability matrix using SciPy's sparse formats. We know that the COO format
+stores sparse data as three arrays, containing the row and column coordinates
+of nonzero entries, as well as their values. But we can use a little known
+feature of COO to obtain our matrix extremely quickly.
 
-So, because the COO format (a) only stores a `rows` array, a `columns` array, and a `values` array, and (b) sums the values whenever the same (row column) pair appears twice, we are already done, just by making `rows = pred`, `columns = gt`, and `values = np.ones(pred.size)`!
+Have a look at this data:
+
+```python
+row = [0, 0, 2]
+col = [1, 1, 2]
+dat = [5, 7, 1]
+S = sparse.coo_matrix((dat, (row, col)))
+```
+
+Notice that the entry at (row, column) position (0, 1) appears twice: first as
+5, and then at 7. What should the matrix value at (0, 1) be? Cases could be
+made for both the earliest entry encountered, or the latest, but what was in
+fact chosen is the *sum*:
+
+```python
+print(S.todense())
+```
+
+So, COO format will sum together repeated entries... Which is exactly what we
+need to do to make a contingency matrix! Indeed, our task is pretty much done:
+we can set `pred` as the rows, `gt` as the columns, and simply 1 as the values.
+The ones will get summed together and count the number of times that label $i$
+in `pred` occurs together with label $j$ in `gt` at position $i, j$ in the
+matrix! Let's try it out:
 
 ```python
 from scipy import sparse
@@ -494,6 +755,44 @@ print(cont)
 ```python
 print(cont.todense())
 ```
+
+It works!
+
+<!-- exercise begin -->
+
+**Exercise:** Remember from Chapter 1 that NumPy has built-in tools for
+repeating arrays using *broadcasting*. How can you reduce the memory footprint
+required for the contingency matrix computation?
+
+**Hint:** Look at the documentation for the function `np.broadcast_to`.
+
+<!-- solution begin -->
+
+The `np.ones` array that we create is read-only: it will only be used as the
+values to sum by `coo_matrix`. We can use `broadcast_to` to create a similar
+array with only one element, "virtually" repeated n times:
+
+```python
+def confusion_matrix(pred, gt):
+    n = pred.size
+    ones = np.broadcast_to(1., n)  # virtual array of 1s of size n
+    cont = sparse.coo_matrix((ones, (pred, gt)))
+    return cont
+```
+
+Let's make sure it still works as expected:
+
+```python
+cont = confusion_matrix(pred, gt)
+print(cont.todense())
+```
+
+Boom. Instead of making an array as big as the original data, we just make
+one of size 1.
+
+<!-- solution end -->
+
+<!-- exercise end -->
 
 # Contingency matrices in segmentation
 
@@ -517,7 +816,8 @@ gt = np.array([[1, 1, 1],
                [2, 2, 2]], dtype=int)
 ```
 
-We can think of these two as classifications, just like before:
+We can think of these two as classifications, just like before. Every pixel is
+a different prediction.
 
 ```python
 print(seg.ravel())
@@ -539,15 +839,21 @@ COO format to confirm that this represents the matrix we want:
 print(cont.todense())
 ```
 
-Segmentation is a hard problem, so it's important to measure how well a segmentation algorithm is doing, by comparing its output to a "ground truth" segmentation that is manually produced by a human.
+Segmentation is a hard problem, so it's important to measure how well a
+segmentation algorithm is doing, by comparing its output to a "ground truth"
+segmentation that is manually produced by a human.
 
-But, even this comparison is not an easy task.
-How do we define how "close" an automated segmentation is to a ground truth?
-We'll illustrate one method, the *variation of information* or VI (Meila, 2005).
-This is defined as the answer to the following question: on average, for a random pixel, if we are given its segment ID in one segmentation, how much more *information* do we need to determine its ID in the other segmentation?
+But, even this comparison is not an easy task. How do we define how "close" an
+automated segmentation is to a ground truth?  We'll illustrate one method, the
+*variation of information* or VI (Meila, 2005). This is defined as the answer
+to the following question: on average, for a random pixel, if we are given its
+segment ID in one segmentation, how much more *information* do we need to
+determine its ID in the other segmentation?
 
 In order to answer this question, we'll need a quick primer on information
-theory.
+theory. We need to be brief but if you want more information (heh), you should
+look at Christopher Olah's stellar blog post,
+[Visual Information Theory](https://colah.github.io/posts/2015-09-Visual-Information/).
 
 The basic unit of information is the *bit*, commonly shown as a 0 or 1,
 representing choice between two options.
@@ -576,7 +882,7 @@ Generally, we measure this for any random variable $X$ (which could have more
 than two possible values) by using the *entropy* function $H$:
 
 $$
-H(X) = - \sum_{x}{p_x \log_2\left(p_x\right)}
+H(X) = \sum_{x}{p_x \log_2\left(\frac{1}{p_x}\right)}
 $$
 
 where the $x$s are possible values of $X$, and $p_x$ is the probability of $X$
@@ -587,9 +893,9 @@ So, the entropy of a coin toss $T$ that can take values heads ($h$) and tails
 
 $$
 \begin{align}
-H(T) & = - p_h \log_2(p_h) - p_t \log_2(p_t) \\
-     & = - 1/2 \log_2(1/2) - 1/2 \log_2(1/2) \\
-     & = - 1/2 \cdot (-1) - 1/2 \cdot (-1) \\
+H(T) & = p_h \log_2(1/p_h) + p_t \log_2(1/p_t) \\
+     & = 1/2 log_2(2) + 1/2 \log_2(2) \\
+     & = 1/2 \cdot 1 + 1/2 \cdot 1 \\
      & = 1
 \end{align}
 $$
@@ -599,8 +905,8 @@ the entropy of rain in LA, $R$, taking values rain ($r$) or shine ($s$) is:
 
 $$
 \begin{align}
-H(R) & = - p_r \log_2(p_r) - p_s \log_2(p_s) \\
-     & =  - 1/6 \log_2(1/6) - 5/6 \log_2(1/6) \\
+H(R) & = p_r \log_2(1/p_r) + p_s \log_2(1/p_s) \\
+     & = 1/6 \log_2(6) + 5/6 \log_2(6/5) \\
      & \approx 0.65 \textrm{bits}
 \end{align}
 $$
@@ -619,10 +925,10 @@ and
 
 $$
 \begin{align}
-H(R | M=m) &= {p_{r|m}\log_2\left(p_{r|m}\right) +
-               p_{s|m}\log_2\left(p_{s|m}\right)} \\
-           &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_{rm}}{p_m}\right) +
-               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_{sm}}{p_m}\right)}
+H(R | M=m) &= {p_{r|m}\log_2\left(\frac{1}{p_{r|m}}\right) +
+               p_{s|m}\log_2\left(\frac{1}{p_{s|m}}\right)} \\
+           &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_m}{p_{rm}}\right) +
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)}
 \end{align}
 $$
 
@@ -659,13 +965,13 @@ The conditional entropy of rain given month is then:
 
 $$
 \begin{align}
-H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(0.25) +
-                               0.75 \log_2(0.75) \right) +
-           \frac{1}{12} \left( 0.27 \log_2(0.27) +
-                               0.73 \log_2(0.73) \right) +
+H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(1/0.25) +
+                               0.75 \log_2(1/0.75) \right) +
+           \frac{1}{12} \left( 0.27 \log_2(1/0.27) +
+                               0.73 \log_2(1/0.73) \right) +
            ... +
-           \frac{1}{12} \left( 0.23 \log_2(0.23) +
-                               0.77 \log_2(0.77) \right) \\
+           \frac{1}{12} \left( 0.23 \log_2(1/0.23) +
+                               0.77 \log_2(1/0.77) \right) \\
        & \approx 0.626 \textrm{bits}
 \end{align}
 $$
@@ -695,8 +1001,41 @@ p_rain_g_month = np.array((prains, pshine)).T
 # table. Hint: the values in the table must sum to 1.
 p_rain_month = None
 # Add your code below to compute H(M|R) and H(M)
-pass
 ```
+
+<!-- solution begin -->
+
+To obtain the joint probability table, we simply divide the table by its total,
+in this case, 12:
+
+```python
+print('table total:', np.sum(p_rain_g_month))
+p_rain_month = p_rain_g_month / np.sum(p_rain_g_month)
+```
+
+Now we can compute the conditional entropy of the month given rain. (This is
+like asking: if we know it's raining, how much more information do we need to
+know to figure out what month it is, on average?)
+
+```python
+p_rain = np.sum(p_rain_month, axis=0)
+p_month_g_rain = p_rain_month / p_rain
+Hmr = np.sum(p_rain * p_month_g_rain * np.log2(1 / p_month_g_rain))
+print(Hmr)
+```
+
+Let's compare that to the entropy of the months:
+
+```python
+p_month = np.sum(p_rain_month, axis=1)  # 1/12, but this method is more general
+Hm = np.sum(p_month * np.log2(1 / p_month))
+print(Hm)
+```
+
+So we can see that knowing whether it rained today got us 2 hundredths of a bit
+closer to guessing what month it is! Don't bet the farm on that guess.
+
+<!-- solution end -->
 
 <!-- exercise end -->
 
@@ -713,7 +1052,7 @@ truth measures how much additional
 information we need to determine a pixel's identity in AS if we are told its
 identity in GT.
 For example, if every GT segment $g$ is split into two equally-sized
-segments $a_1$ and $a_2$ in AS, then H(AS|GT) = 1, because after knowing a
+segments $a_1$ and $a_2$ in AS, then $H(AS|GT) = 1$, because after knowing a
 pixel is in $g$, you
 still need 1 additional bit to know whether it belongs to $a_1$ or $a_2$.
 However, H(GT|AS) = 0, because regardless of whether a pixel is in $a_1$ or
@@ -756,7 +1095,7 @@ Now we can just make the contingency table in the same way as when we were
 predicting spam:
 
 ```python
-cont = sparse.coo_matrix((np.ones(aseg.size, dtype=float),
+cont = sparse.coo_matrix((np.broadcast_to(1., aseg.size),
                           (aseg.ravel(), gt.ravel())))
 cont = np.asarray(cont.todense())
 cont
@@ -779,28 +1118,68 @@ p_gt = np.sum(cont, axis=0)
 
 There is a small kink in writing Python code to compute entropy:
 although $0 \log(0)$ is defined to be equal to 0, in Python, it is undefined,
-and results in a `nan` (not a number) value.
+and results in a `nan` (not a number) value:
+
+```python
+print('The log of 0 is: ', np.log2(0))
+print('0 times the log of 0 is: ', 0 * np.log2(0))
+```
 Therefore, we have to use numpy indexing to mask out the 0 values.
+Additionally, we'll need a slightly different strategy depending on whether the
+input is a numpy array or a SciPy sparse matrix.
 We'll write the following convenience function:
 
 ```python
-def xlogx(arr):
-    out = arr.copy()
+def xlog1x(arr_or_mat):
+    """Compute the element-wise entropy function of an array or matrix.
+    
+    Parameters
+    ----------
+    arr_or_mat : numpy array or scipy sparse matrix
+        The input array of probabilities. Only sparse matrix formats with a
+        `data` attribute are supported.
+        
+    Returns
+    -------
+    out : array or sparse matrix, same type as input
+        The resulting array. Zero entries in the input remain as zero,
+        all other entries are multiplied by the log (base 2) of their
+        inverse.
+    """
+    out = arr_or_mat.copy()
+    if isinstance(out, sparse.spmatrix):
+        arr = out.data
+    else:
+        arr = out
     nz = np.nonzero(arr)
-    out[nz] = arr[nz] * np.log2(arr[nz])
+    arr[nz] *= np.log2(1/arr[nz])
     return out
 ```
+
+Let's make sure it works:
+
+```python
+a = np.array([0.25, 0.25, 0, 0.25, 0.25])
+xlog1x(a)
+```
+
+```python
+mat = sparse.csr_matrix([[0.125, 0.125, 0.25,    0],
+                         [0.125, 0.125,    0, 0.25]])
+xlog1x(mat).todense()
+```
+
 So, the conditional entropy of AS given GT:
 
 ```python
-H_ag = -np.sum(np.sum(xlogx(cont / p_gt), axis=0) * p_gt)
+H_ag = np.sum(np.sum(xlog1x(cont / p_gt), axis=0) * p_gt)
 H_ag
 ```
 
 And the converse:
 
 ```python
-H_ga = -np.sum(np.sum(xlogx(cont / p_as[:, np.newaxis]), axis=1) * p_as)
+H_ga = np.sum(np.sum(xlog1x(cont / p_as[:, np.newaxis]), axis=1) * p_as)
 H_ga
 ```
 
@@ -812,41 +1191,60 @@ We can instead use `sparse` throughout the calculation, and recast some of the
 NumPy magic as linear algebra operations.
 This was
 [suggested](http://stackoverflow.com/questions/16043299/substitute-for-numpy-broadcasting-using-scipy-sparse-csc-matrix)
-by Warren Weckesser on StackOverflow.
+to me by Warren Weckesser on StackOverflow.
 
-When reading the code, keep in mind that the `sparse` module is optimized for
-linear algebra, and as such it recasts Python's "times" operator `*` as matrix
-multiplication.
+The linear algebra version efficiently computes a contingency matrix for very
+large amounts of data, up to billions of points, and is elegantly concise.
 
 ```python
 import numpy as np
 from scipy import sparse
 
 
-def invert_nonzero(mat):
-    mat_inv = mat.copy()
-    nz = np.nonzero(mat)
-    mat_inv[nz] = 1 / mat[nz]
-    return mat_inv
+def diag(arr):
+    """Return a diagonal square matrix with `arr` as its nonzero elements.
+
+    Parameters
+    ----------
+    arr : array
+        The input array.
+
+    Returns
+    -------
+    D : the output matrix
+    """
 
 
-def xlogx(mat):
-    matlog = mat.copy()
-    nz = np.nonzero(mat)
-    matlog[nz] = np.multiply(mat[nz], np.log2(mat[nz]))
-    return matlog
+def invert_nonzero(arr):
+    arr_inv = arr.copy()
+    nz = np.nonzero(arr)
+    arr_inv[nz] = 1 / arr[nz]
+    return arr_inv
 
 
 def vi(x, y):
-    pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
+
+    # Compute the joint probability matrix
+    ones = np.broadcast_to(1., x.size)
+    pxy = sparse.coo_matrix((ones, (x.ravel(), y.ravel())),
                             dtype=float).tocsr()
     pxy.data /= np.sum(pxy.data)
-    px = pxy.sum(axis=1)
-    py = pxy.sum(axis=0)
-    px_inv = sparse.diags(invert_nonzero(px).A.T, [0])
-    py_inv = sparse.diags(invert_nonzero(py).A, [0])
-    hygx = - px.T * xlogx(px_inv * pxy).sum(axis=1)
-    hxgy = - xlogx(pxy * py_inv).sum(axis=0) * py.T
+
+    # Compute the marginals
+    # Use .A.ravel() to make them 1D arrays instead of flat matrices
+    px = pxy.sum(axis=1).A.ravel()
+    py = pxy.sum(axis=0).A.ravel()
+
+    # Compute the inverse diagonal matrices, which will help
+    # compute the conditional probabilities
+    px_inv = sparse.diags(invert_nonzero(px))
+    py_inv = sparse.diags(invert_nonzero(py))
+
+    # Finally, compute the entropies
+    hygx = px @ xlog1x(px_inv @ pxy).sum(axis=1)
+    hxgy = xlog1x(pxy @ py_inv).sum(axis=0) @ py
+
+    # return their sum
     return float(hygx + hxgy)
 ```
 
@@ -871,7 +1269,7 @@ Using our skills from chapter 3, we're going to generate a number of possible wa
 [Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
 May need to ask permission to use in the book. See: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/]
 
-[S: Note to self: the outline image can also be read from the archive at
+S: Note to self: the outline image can also be read from the archive at
 
 https://github.com/BIDS/BSDS500/blob/master/BSDS500/data/groundTruth/train/108073.mat
 
@@ -881,14 +1279,12 @@ and then loaded using
 from scipy import io
 f = io.loadmat('108073.mat')
 outline = f['groundTruth'][0, 3]['Boundaries'][0, 0]
-
 # ^ 3 refers to third segmentation, the one previously used in this
 example
 
 # I can also convert all the .mat files in the archive to .png files,
 # if needed
 ```
-]
 
 
 ```python
