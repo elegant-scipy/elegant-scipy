@@ -195,7 +195,7 @@ def confusion_matrix1(pred, gt):
 
 The first option would be considered the more "Pythonic" of the two, but the
 second one is easier to speed up by translating and compiling in languages or
-tools such as C, Cython, and Numba. (These are a topic for another book.)
+tools such as C, Cython, and Numba (which are a topic for another book).
 
 <!-- solution end -->
 
