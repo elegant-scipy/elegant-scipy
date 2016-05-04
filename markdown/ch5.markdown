@@ -61,7 +61,9 @@ def vi(x, y):
 > 
 > Yuck! By using the `@` operator to stay closer to mathematical notation, we
 > can avoid implementation errors and produce code that is much easier to read.
-> Actually, SciPy's authors knew this and actually altered the meaning of the
+> 
+> Actually, SciPy's authors knew this long before the `@` operator was
+> introduced, and actually altered the meaning of the
 > `*` operator when the inputs are SciPy matrices. Available in Python
 > 2.7, it lets us produce nice, readable code like the above:
 > 
