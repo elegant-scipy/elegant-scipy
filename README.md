@@ -5,32 +5,15 @@ Just some notes to help us plan.
 ## Installing dependencies
 
 First, we build an isolated environment as not to interrupt any
-existing setup you may have.  You can do this either via *conda* or *pip*.
+existing setup you may have.  This can be done using, e.g., Conda:
 
-### Conda
+1. Install [conda](http://conda.pydata.org/miniconda.html) or Anaconda
 
-If you have a [conda](http://conda.pydata.org/miniconda.html) or
-Anaconda installation, build a minimal environment to run everything
-in the book as follows:
+2. Build an isolated environment called "elegant_scipy" and install the 
+   necessary dependencies:
 
 ```console
 conda env create --name elegant_scipy -f path/to/environment.yml
-```
-
-### Pip
-
-If you do *not* have Conda installed, install **Python 3.5** and create a virtual
-environment as follows:
-
-```console
-pyvenv create ~/envs/elegant_scipy  # Build the new environment -- do this only once
-source ~/envs/elegant_scipy/bin/activate  # This switches into the new environment
-```
-
-Then, install the necessary requirements:
-
-```
-pip install -r requirements.txt
 ```
 
 ### Windows users
@@ -43,7 +26,7 @@ going.  You need to make sure you have at least:
 
 Even with these utilities installed, the build process is likely to
 fail in unpredictable ways.  We suggest running virtual machine or
-docker instance to build the book.
+docker instance to build the book (see "Building with Docker" below).
 
 ## Building chapters
 
@@ -68,6 +51,12 @@ To generate a zip file containing html of all chapters along with a table of con
 ```console
 $ make zip
 ```
+
+## Building with Docker
+
+0. Switch to the directory containing this file
+1. [Install docker-machine](https://docs.docker.com/machine/install-machine/)
+2. Run `docker-compose up`
 
 ## Deadlines
 

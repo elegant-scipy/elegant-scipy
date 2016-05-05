@@ -1,0 +1,7 @@
+book_builder:
+  build: docker
+  volumes:
+    - .:/repo
+  working_dir: /repo
+  command: make
+
