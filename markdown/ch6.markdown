@@ -592,6 +592,12 @@ if two vectors are scalar multiples of each other. Therefore, a correlation
 coefficient of 1 is sufficient to show that the above methods produce the same
 ranking.
 
+```python
+pagerank_power = power(transition_matrix)
+pagerank_power2 = power2(transition_matrix)
+np.corrcoef([pagerank, pagerank_power, pagerank_power2])
+```
+
 <!-- solution end -->
 
 <!-- exercise end -->
