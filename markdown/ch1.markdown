@@ -387,7 +387,8 @@ print(gene_info.iloc[:5, :5])
 
 ```python
 #Subset gene info to match the count data
-matched_index = data_table.index.intersection(gene_info.index)
+matched_index = data_table.index.intersection(gene_info.index) # Get the intersection of indexes
+# Check the dimensions will match up once we subset the gene info and counts
 print(gene_info.loc[matched_index].shape)
 print(data_table.loc[matched_index].shape)
 ```
@@ -420,7 +421,7 @@ KDE is commonly used to smooth out histograms, which gives a clearer picture of 
 
 ```python
 %matplotlib inline
-# Make all plots appear inline in the IPython notebook from now onwards
+# Make all plots appear inline in the Jupyter notebook from now onwards
 
 import matplotlib.pyplot as plt
 plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
