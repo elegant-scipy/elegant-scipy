@@ -73,6 +73,10 @@ plt.style.use('ggplot') # Use ggplot style graphs for something a little prettie
 
 ### Get the data
 
+As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq data set.
+Our goal is to predict mortality in skin cancer patients using their RNA expression data.
+By the end of this chapter we will have reproduced a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
+
 ```python
 import numpy as np
 import pandas as pd
