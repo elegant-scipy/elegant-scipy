@@ -7,4 +7,24 @@ build:
         name: build book
         code: |
           mv /data/* ./data
-          make
+          make zip
+
+  after-steps:
+    - 1syo/gitter-notify@0.0.1:
+        token: 3f461c40d53d840b3ebc
+
+deploy:
+  steps:
+    - script:
+      name: Use Python 2 for deployment
+      code: |
+        ln -sf /usr/bin/python2.7 /usr/bin/python
+
+    - michilu/gcs-website-deploy:
+      bucket: elegant-scipy-proofs
+      project: $GOOGLE_PROJECT_ID
+      token: $GOOGLE_REFRESH_TOKEN
+      dir: html
+
+# See http://www.wllnr.nl/blog/2016/02/automatic-deployment-using-wrecker/
+# for more on GCS deployment
