@@ -352,11 +352,13 @@ also by *other* important webpages. As we will see, this recursive definition
 implies that page importance can be measured by the eigenvector corresponding
 to the largest eigenvalue of the so-called *transition matrix*. This matrix
 imagines a web surfer, often named Webster, randomly clicking a link from each
-webpage he visits, and then asks, what's the probability that probability that
+webpage he visits, and then asks, what's the probability that
 he ends up at any given page? This probability is called the pagerank.
 
 We can apply this insight to the network of Python dependencies. First, we
-ignore all the packages that are isolated:
+ignore all the packages that are isolated, not connected to the bulk of Python
+packages. We do this by finding the *connected components* of the graph, and
+then choosing the largest of them.
 
 ```python
 connected_packages = max(nx.connected_components(dependencies.to_undirected()),
