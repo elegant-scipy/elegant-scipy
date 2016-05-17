@@ -32,11 +32,11 @@ def rpkm(counts, lengths):
         as the rows in counts.
     """
 
-    N = counts.sum(axis=0) # sum each column to get total reads per sample
+    N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
     L = lengths
     C = counts
 
-    rpkm = ( (10^9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
+    rpkm = ( (10e9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
 
     return(rpkm)
 ```
@@ -792,30 +792,32 @@ rpkm_counts = C_tmp / N
 Let's put this in a function so we can reuse it.
 
 ```python
-def rpkm(data, lengths):
-    """calculate reads per kilobase transcript per million reads
+def rpkm(counts, lengths):
+    """Calculate reads per kilobase transcript per million reads.
     RPKM = (10^9 * C) / (N * L)
 
-    Where:  
-    C = Number of reads mapped to a gene  
-    N = Total mapped reads in the experiment  
-    L = exon length in base-pairs for a gene
+    Where:
+    C = Number of reads mapped to a gene
+    N = Total mapped reads in the experiment
+    L = Exon length in base pairs for a gene
 
-    data: 2d ndarray of counts where columns are individual samples and rows
-        are genes
-    lengths: list or 1d nd array of the gene lengths in bp in the same order
-        as the rows
+    counts: 2D numpy ndarray (numerical)
+        RNAseq (or similar) count data where columns are individual samples
+        and rows are genes.
+    lengths: list or 1D numpy ndarray (numerical)
+        Gene lengths in base pairs in the same order
+        as the rows in counts.
     """
 
-    N = data.sum(axis=0) # sum each column to get total reads per sample
+    N = np.sum(counts, axis=0) # sum each column to get total reads per sample
     L = lengths
-    C = data
+    C = counts
 
-    rpkm = ( (10^9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
+    rpkm = ( (10e9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
 
     return(rpkm)
 
-counts_rpkm = rpkm(counts, gene_lengths)  
+counts_rpkm = rpkm(counts, gene_lengths) 
 ```
 
 ```python
@@ -842,7 +844,7 @@ Let's choose a short gene and a long gene and compare their counts before and af
 # Boxplot of expression from a short gene vs. a long gene
 # showing how normalization can influence interpretation
 
-genes2_idx = [108, 103]
+genes2_idx = [80, 186]
 genes2_lengths = gene_lengths[genes2_idx]
 genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]), 'Gene B, {}bp'.format(genes2_lengths[1])]
 
@@ -864,9 +866,9 @@ plt.ylabel('log RPKM gene expression counts over all samples')
 plt.show()
 ```
 
-Just looking at the raw counts, it looks like the shorter gene A is not expressed, while gene B has some gene expression.
-Once we normalize to RPKM values, the story changes substantially.
-Now it looks like gene A is actually expressed at a higher level than gene B.
+Just looking at the raw counts, it looks like the longer gene B is expressed slightly more than gene A.
+Yet once we normalize to RPKM values, the story changes substantially.
+Now it looks like gene A is actually expressed at a much higher level than gene B.
 This is because RPKM includes normalization for gene length, so we can now directly compare between genes of dramatically different lengths.
 
 ## Taking stock
