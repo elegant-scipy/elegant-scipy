@@ -32,11 +32,11 @@ def rpkm(counts, lengths):
         as the rows in counts.
     """
 
-    N = counts.sum(axis=0) # sum each column to get total reads per sample
+    N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
     L = lengths
     C = counts
 
-    rpkm = ( (10^9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
+    rpkm = ( (10e9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
 
     return(rpkm)
 ```
@@ -126,7 +126,7 @@ First, Python lists are always lists of *objects*, so that the above list `gene2
 Additionally, this means that each of these lists and each of these integers end up in a completely different, random part of your computer's RAM.
 However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is very bad.
 
-This is the problem precisely solved by the *NumPy array*.
+This is precisely the problem solved by the *NumPy array*.
 
 ## NumPy N-dimensional arrays
 
@@ -180,7 +180,7 @@ NumPy arrays can represent data that has even more dimensions, such as magnetic 
 If we store MRI values over time, we might need a 4D NumPy array.
 
 For now, we'll stick to 2D data.
-Later chapters will introduce higher-D data and will teach you to write code that works for data of any number of dimensions!
+Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions!
 
 ### Why use ndarrays as opposed to Python lists?
 
@@ -330,6 +330,7 @@ print(outer.shape)
 You can see for yourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
 
 This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the corresponding dimension of the other array.
+Don't worry, we will talk about these rules in more detail later in this chapter.
 
 As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
 It allows us to express complex operations concisely and efficiently.
@@ -337,7 +338,8 @@ It allows us to express complex operations concisely and efficiently.
 ## Exploring a gene expression data set
 
 The data set that we'll be using is an RNAseq experiment of skin cancer samples from The Cancer Genome Atlas (TCGA) project (http://cancergenome.nih.gov/).
-We will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
+In Chapter 2 we will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
+But first we need to get our heads around the biases in our data, and think about how we could improve it.
 
 ### Downloading the data
 
@@ -385,7 +387,8 @@ print(gene_info.iloc[:5, :5])
 
 ```python
 #Subset gene info to match the count data
-matched_index = data_table.index.intersection(gene_info.index)
+matched_index = data_table.index.intersection(gene_info.index) # Get the intersection of indexes
+# Check the dimensions will match up once we subset the gene info and counts
 print(gene_info.loc[matched_index].shape)
 print(data_table.loc[matched_index].shape)
 ```
@@ -418,7 +421,7 @@ KDE is commonly used to smooth out histograms, which gives a clearer picture of 
 
 ```python
 %matplotlib inline
-# Make all plots appear inline in the IPython notebook from now onwards
+# Make all plots appear inline in the Jupyter notebook from now onwards
 
 import matplotlib.pyplot as plt
 plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
@@ -789,30 +792,32 @@ rpkm_counts = C_tmp / N
 Let's put this in a function so we can reuse it.
 
 ```python
-def rpkm(data, lengths):
-    """calculate reads per kilobase transcript per million reads
+def rpkm(counts, lengths):
+    """Calculate reads per kilobase transcript per million reads.
     RPKM = (10^9 * C) / (N * L)
 
-    Where:  
-    C = Number of reads mapped to a gene  
-    N = Total mapped reads in the experiment  
-    L = exon length in base-pairs for a gene
+    Where:
+    C = Number of reads mapped to a gene
+    N = Total mapped reads in the experiment
+    L = Exon length in base pairs for a gene
 
-    data: 2d ndarray of counts where columns are individual samples and rows
-        are genes
-    lengths: list or 1d nd array of the gene lengths in bp in the same order
-        as the rows
+    counts: 2D numpy ndarray (numerical)
+        RNAseq (or similar) count data where columns are individual samples
+        and rows are genes.
+    lengths: list or 1D numpy ndarray (numerical)
+        Gene lengths in base pairs in the same order
+        as the rows in counts.
     """
 
-    N = data.sum(axis=0) # sum each column to get total reads per sample
+    N = np.sum(counts, axis=0) # sum each column to get total reads per sample
     L = lengths
-    C = data
+    C = counts
 
-    rpkm = ( (10^9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
+    rpkm = ( (10e9 * C) / N[np.newaxis, :] ) / L[:, np.newaxis]
 
     return(rpkm)
 
-counts_rpkm = rpkm(counts, gene_lengths)  
+counts_rpkm = rpkm(counts, gene_lengths) 
 ```
 
 ```python
@@ -839,7 +844,7 @@ Let's choose a short gene and a long gene and compare their counts before and af
 # Boxplot of expression from a short gene vs. a long gene
 # showing how normalization can influence interpretation
 
-genes2_idx = [108, 103]
+genes2_idx = [80, 186]
 genes2_lengths = gene_lengths[genes2_idx]
 genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]), 'Gene B, {}bp'.format(genes2_lengths[1])]
 
@@ -861,9 +866,9 @@ plt.ylabel('log RPKM gene expression counts over all samples')
 plt.show()
 ```
 
-Just looking at the raw counts, it looks like the shorter gene A is not expressed, while gene B has some gene expression.
-Once we normalize to RPKM values, the story changes substantially.
-Now it looks like gene A is actually expressed at a higher level than gene B.
+Just looking at the raw counts, it looks like the longer gene B is expressed slightly more than gene A.
+Yet once we normalize to RPKM values, the story changes substantially.
+Now it looks like gene A is actually expressed at a much higher level than gene B.
 This is because RPKM includes normalization for gene length, so we can now directly compare between genes of dramatically different lengths.
 
 ## Taking stock

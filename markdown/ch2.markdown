@@ -73,6 +73,10 @@ plt.style.use('ggplot') # Use ggplot style graphs for something a little prettie
 
 ### Get the data
 
+As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq data set.
+Our goal is to predict mortality in skin cancer patients using their RNA expression data.
+By the end of this chapter we will have reproduced a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
+
 ```python
 import numpy as np
 import pandas as pd
@@ -200,42 +204,6 @@ def quantile_norm(X):
 log_quant_norm_counts = np.log(quantile_norm(counts)+1)
 
 plot_col_density(log_quant_norm_counts, xlabel="Log count distribution for each individual")
-```
-
-
-## Principal Components Analysis
-
-```python
-from sklearn.decomposition import PCA
-
-def PCA_plot(data):
-    """Plot the first two principle components of the data
-
-    Parameters
-    ----------
-    data : 2D ndarray of counts (assumed to be genes X samples)
-    """
-
-    #construct your NumPy array of data
-    counts_transposed = np.array(data).T
-
-    # Set up PCA, set number of components
-    pca = PCA(n_components=2)
-
-    # project data into PCA space
-    pca_transformed = pca.fit_transform(counts_transposed)
-
-    # Plot the first two principal components
-    plt.scatter(x=pca_transformed[:,0], y=pca_transformed[:,1])
-    plt.title("PCA")
-    plt.xlabel("PC 1")
-    plt.ylabel("PC 2")
-    plt.show()
-```
-
-```python
-PCA_plot(counts)
-PCA_plot(quantile_norm(counts))
 ```
 
 ## Biclustering the counts data
