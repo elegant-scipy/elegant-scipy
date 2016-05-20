@@ -435,22 +435,116 @@ and repeat to form more and more and more sub-groups.  It turns out
 that these subgroups, or communities, tell us a lot about functional
 regions of the brain! [SvdW TODO: Double check Newman algorithm in BrainX]
 
-|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-|           | ``bsr_matrix``                                            | ``coo_matrix``                                                                                         | ``csc_matrix``                                                                                    | ``csr_matrix``                                             | ``dia_matrix``                                    | ``dok_matrix``                                          | ``lil_matrix``                                   |
-|-----------|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------------------------------|---------------------------------------------------|---------------------------------------------------------|--------------------------------------------------|
-| Full name | Block Sparse Row                                          | Coordinate                                                                                             | Compressed Sparse Column                                                                          | Compressed Sparse Row                                      | Diagonal                                          | Dictionary of Keys                                      | Row-based linked-list                            |
-|-----------|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------------------------------|---------------------------------------------------|---------------------------------------------------------|--------------------------------------------------|
-| Note      | Similar to CSR                                            | Only used to construct sparse matrices, which are then converted to CSC or CSR for further operations. |                                                                                                   |                                                            |                                                   | Used to construct sparse matrices incrementally.        | Used to construct sparse matrices incrementally. |
-|-----------|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------------------------------|---------------------------------------------------|---------------------------------------------------------|--------------------------------------------------|
-| Use cases | Storage of dense sub-matrices                             | Fast and straightforward way of constructing sparse matrices                                           | Arithmetic operations (supports addition, subtraction, multiplication, division, and matrix power | Arithmetic operations                                      | Arithmetic operations                             | Changes in sparsity structure are inexpensive           | Changes in sparsity structure are inexpensive    |
-|           | Often used in numerical analyses of discretized problems, | During construction, duplicate coordinates are summed—useful for, e.g., finite element analysis        | Efficient column slicing                                                                          | Efficient row slicing                                      |                                                   | Arithmetic operations                                   | Flexible slicing                                 |
-|           | such as finite elements, differential equations           |                                                                                                        | Fast matrix-vector products (CSR, BSR can be faster, depending on the problem)                    | Fast matrix-vector products                                |                                                   | Fast access to individual elements                      |                                                  |
-|           |                                                           |                                                                                                        |                                                                                                   |                                                            |                                                   | Efficient conversion to COO (but no duplicates allowed) |                                                  |
-|-----------|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------------------------------|---------------------------------------------------|---------------------------------------------------------|--------------------------------------------------|
-| Cons      |                                                           | No arithmetic operations                                                                               | Slow row slicing (see CSR)                                                                        | Slow column slicing (see CSC)                              | Sparsity structure limited to values on diagonals | Expensive for arithmetic operations                     | Expensive for arithmetic operations              |
-|           |                                                           | No slicing                                                                                             | Changes to sparsity structure are expensive (see LIL, DOK)                                        | Changes to sparsity structure are expensive (see LIL, DOK) |                                                   | Slow matrix-vector products                             | Slow column slicing                              |
-|           |                                                           |                                                                                                        |                                                                                                   |                                                            |                                                   |                                                         | Slow matrix-vector products                      |
-|-----------|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|------------------------------------------------------------|---------------------------------------------------|---------------------------------------------------------|--------------------------------------------------|
+<table style="font-size: 50%;">
+<colgroup>
+<col width="2%" />
+<col width="11%" />
+<col width="20%" />
+<col width="20%" />
+<col width="12%" />
+<col width="10%" />
+<col width="11%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">bsr_matrix</th>
+<th align="left">coo_matrix</th>
+<th align="left">csc_matrix</th>
+<th align="left">csr_matrix</th>
+<th align="left">dia_matrix</th>
+<th align="left">dok_matrix</th>
+<th align="left">lil_matrix</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><p>Full name</p></td>
+<td align="left"><p>Block Sparse Row</p></td>
+<td align="left"><p>Coordinate</p></td>
+<td align="left"><p>Compressed Sparse Column</p></td>
+<td align="left"><p>Compressed Sparse Row</p></td>
+<td align="left"><p>Diagonal</p></td>
+<td align="left"><p>Dictionary of Keys</p></td>
+<td align="left"><p>Row-based linked-list</p></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Note</p></td>
+<td align="left"><p>Similar to CSR</p></td>
+<td align="left"><p>Only used to construct sparse matrices, which are then converted to CSC or CSR for further operations.</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><p>Used to construct sparse matrices incrementally.</p></td>
+<td align="left"><p>Used to construct sparse matrices incrementally.</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>Use cases</p></td>
+<td align="left"><ul>
+<li>Storage of dense sub-matrices</li>
+<li>Often used in numerical analyses of discretized problems,</li>
+<li>such as finite elements, differential equations</li>
+</ul></td>
+<td align="left"><ul>
+<li>Fast and straightforward way of constructing sparse matrices</li>
+<li>During construction, duplicate coordinates are summed—useful for, e.g., finite element analysis</li>
+</ul></td>
+<td align="left"><ul>
+<li>Arithmetic operations (supports addition, subtraction, multiplication, division, and matrix power</li>
+<li>Efficient column slicing</li>
+<li>Fast matrix-vector products (CSR, BSR can be faster, depending on the problem)</li>
+</ul></td>
+<td align="left"><ul>
+<li>Arithmetic operations</li>
+<li>Efficient row slicing</li>
+<li>Fast matrix-vector products</li>
+</ul></td>
+<td align="left"><ul>
+<li>Arithmetic operations</li>
+</ul></td>
+<td align="left"><ul>
+<li>Changes in sparsity structure are inexpensive</li>
+<li>Arithmetic operations</li>
+<li>Fast access to individual elements</li>
+<li>Efficient conversion to COO (but no duplicates allowed)</li>
+</ul></td>
+<td align="left"><ul>
+<li>Changes in sparsity structure are inexpensive</li>
+<li>Flexible slicing</li>
+</ul></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Cons</p></td>
+<td align="left"></td>
+<td align="left"><ul>
+<li>No arithmetic operations</li>
+<li>No slicing</li>
+</ul></td>
+<td align="left"><ul>
+<li>Slow row slicing (see CSR)</li>
+<li>Changes to sparsity structure are expensive (see LIL, DOK)</li>
+</ul></td>
+<td align="left"><ul>
+<li>Slow column slicing (see CSC)</li>
+<li>Changes to sparsity structure are expensive (see LIL, DOK)</li>
+</ul></td>
+<td align="left"><ul>
+<li>Sparsity structure limited to values on diagonals</li>
+</ul></td>
+<td align="left"><ul>
+<li>Expensive for arithmetic operations</li>
+<li>Slow matrix-vector products</li>
+</ul></td>
+<td align="left"><ul>
+<li>Expensive for arithmetic operations</li>
+<li>Slow column slicing</li>
+<li>Slow matrix-vector products</li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+
 
 ## Applications of sparse matrices: image transformations
 
