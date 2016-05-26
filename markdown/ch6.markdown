@@ -198,11 +198,12 @@ from matplotlib import pyplot as plt
 from matplotlib import colors
 
 def plot_connectome(neuron_x, neuron_y, links, labels, types):
-    colormap = colors.ListedColormap([(1, 0, 0),
-                                      (0, 0, 1),
-                                      (0, 1, 0)])
+    colormap = colors.ListedColormap([[ 0.   ,  0.447,  0.698],
+                                      [ 0.   ,  0.62 ,  0.451],
+                                      [ 0.835,  0.369,  0.   ]])
     # plot neuron locations:
-    points = plt.scatter(neuron_x, neuron_y, c=types, cmap=colormap, zorder=1)
+    points = plt.scatter(neuron_x, neuron_y, c=types, cmap=colormap,
+                         edgecolors='face', zorder=1)
 
     # add text labels:
     for x, y, label in zip(neuron_x, neuron_y, labels):
