@@ -255,6 +255,16 @@ also see two distinct groups of motor neurons: these correspond to the neck
 **Exercise:** How do you modify the above code to show the affinity view in
 Figure 2B from the paper?
 
+<!-- solution begin -->
+In the affinity view, instead of using the processing depth on the y-axis,
+we use the normalized third eigenvector of Q, just like we did with x:
+
+```python
+y = Dinv2 @ eigvecs[:, 2]
+plot_connectome(x, y, C, neuron_ids, neuron_types)
+```
+<!-- solution end -->
+
 <!-- exercise end -->
 
 ### challenge: linear algebra with sparse matrices
