@@ -179,16 +179,35 @@ Q = Dinv2 @ L @ Dinv2
 ```
 
 Finally, we are able to extract the x coordinates of the neurons to ensure that
-highly-connected neurons remain close: the second eigenvector of Q, normalized
-by the degrees:
+highly-connected neurons remain close: the eigenvector of Q corresponding to
+its second-smallest eigenvalue, normalized by the degrees:
 
 ```python
 eigvals, eigvecs = linalg.eig(Q)
+```
+
+Note from the documentation of `numpy.linalg.eig`:
+
+> "The eigenvalues are not necessarily ordered."
+
+Although the documentation in SciPy's `eig` lacks this warning
+(disappointingly, we must add), it remains true in this case. We must therefore
+sort the eigenvalues and the corresponding eigenvector columns ourselves:
+
+```python
+smallest_first = np.argsort(eigvals)
+eigvals = eigvals[smallest_first]
+eigvecs = eigvecs[:, smallest_first]
+```
+
+Now we can find the eigenvector we need to compute the affinity coordinates:
+
+```python
 x = Dinv2 @ eigvecs[:, 1]
 ```
 
-(The reasons for this are too long to explain here, but appear in the
-paper's supplementary material, linked above.)
+(The reasons for using this vector are too long to explain here, but appear in
+the paper's supplementary material, linked above.)
 
 Now it's just a matter of drawing the nodes and the links. We color them
 according to the type stored in `neuron_types`:
