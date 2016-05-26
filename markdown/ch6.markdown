@@ -256,7 +256,7 @@ also see two distinct groups of motor neurons: these correspond to the neck
 Figure 2B from the paper?
 
 <!-- solution begin -->
-In the affinity view, instead of using the processing depth on the y-axis,
+**Solution:** In the affinity view, instead of using the processing depth on the y-axis,
 we use the normalized third eigenvector of Q, just like we did with x:
 
 ```python
