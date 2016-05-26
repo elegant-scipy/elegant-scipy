@@ -261,6 +261,7 @@ we use the normalized third eigenvector of Q, just like we did with x:
 
 ```python
 y = Dinv2 @ eigvecs[:, 2]
+plt.figure(figsize=(16, 9))
 plot_connectome(x, y, C, neuron_ids, neuron_types)
 ```
 <!-- solution end -->
