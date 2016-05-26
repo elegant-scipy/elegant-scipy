@@ -268,10 +268,12 @@ plot_connectome(x, y, C, neuron_ids, neuron_types)
 
 <!-- exercise end -->
 
+<!-- exercise begin -->
+
 ### challenge: linear algebra with sparse matrices
 
 The above code uses numpy arrays to hold the matrix and perform
-the necessary computations. Because it is a small graph of fewer than 300
+the necessary computations. Because we are using a small graph of fewer than 300
 nodes, this is feasible. However, for larger graphs, it would fail.
 
 In what follows, we will analyze the dependency graph for packages in the
@@ -282,9 +284,17 @@ of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
 and, say, two temporary matrices used during calculations, you climb up to
 270GB, beyond the reach of most desktop computers.
 
-However, we know that the dependency graph is *sparse*: packages usually depend
-on just a few other packages, not on the whole of PyPI. So we can hold the
-above matrices using the sparse data structures from `scipy.sparse` (see
+"Ha!", some of you might be thinking. "Ha! My desktop has 512GB of RAM! It would
+make short work of this so-called 'large' graph!"
+
+Perhaps. But we will also be analysing the Association for Computing Machinery
+(ACM) citation graph, a network of over two million scholarly works and
+references. *That* Laplacian would take up 32 terabytes of RAM.
+
+However, we know that the dependency and reference graphs are *sparse*:
+packages usually depend on just a few other packages, not on the whole of PyPI.
+And papers and books usually only reference a few others, too. So we can hold
+the above matrices using the sparse data structures from `scipy.sparse` (see
 Chapter 5), and use the linear algebra functions in `scipy.sparse.linalg` to
 compute the values we need.
 
@@ -295,8 +305,10 @@ Hint: the pseudoinverse of a sparse matrix is, in general, not sparse, so you
 can't use it here. Similarly, you can't get all the eigenvectors of a sparse
 matrix, because they would together make up a dense matrix.
 
-The solution is found in the following section, but we highly recommend that
-you try it on your own!
+You'll find parts of the solution below (and of course in the solutions
+chapter), but we highly recommend that you try it out on your own.
+
+<!-- exercise end -->
 
 ## Community detection
 
