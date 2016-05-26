@@ -308,6 +308,59 @@ matrix, because they would together make up a dense matrix.
 You'll find parts of the solution below (and of course in the solutions
 chapter), but we highly recommend that you try it out on your own.
 
+<!-- solution begin -->
+
+### challenge accepted
+
+For the purposes of this challenge, we are going to use the small connectome
+above, because it's easier to visualise what is going on. In later parts of the
+challenge we'll use these techniques to analyze larger networks.
+
+First, we start with the adjacency matrix, A, in a sparse matrix format, in
+this case, CSR, which is the most common format for linear algebra.
+
+```python
+from scipy import sparse
+
+As = sparse.csr_matrix(A)
+```
+
+We can create our connectivity matrix in much the same way:
+
+```python
+Cs = (A + A.T) / 2
+```
+
+In order to get the degrees matrix, we can use the "diags" sparse format, which
+stores diagonal and off-diagonal matrices.
+
+```python
+degrees = np.ravel(A.sum(axis=1))
+Ds = sparse.diags(degrees, 0)
+```
+
+You might recall from Chapter 5 that the numerical data in sparse matrices is
+in the `.data` attribute. We use that to invert the degrees matrix:
+
+```python
+Dsinv2 = Ds.copy()
+Dsinv2.data = Ds.data ** (-0.5)
+```
+
+That's it for the "sparse format wrangling" in this challenge. The rest will be
+straightforward application of linear algebra operations and functions. Getting
+the Laplacian is straightforward:
+
+```python
+Ls = Ds - Cs
+```
+
+Now we want to get the processing depth. Remember that getting the
+pseudo-inverse of the Laplacian matrix is out of the question. However, we were
+actually using it to compute a vector $b$ that would solve $L b = z$.
+
+<!-- solution end -->
+
 <!-- exercise end -->
 
 ## Community detection
