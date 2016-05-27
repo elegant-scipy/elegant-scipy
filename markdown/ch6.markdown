@@ -317,10 +317,12 @@ above, because it's easier to visualise what is going on. In later parts of the
 challenge we'll use these techniques to analyze larger networks.
 
 First, we start with the adjacency matrix, A, in a sparse matrix format, in
-this case, CSR, which is the most common format for linear algebra.
+this case, CSR, which is the most common format for linear algebra. We'll
+append `s` to the names of all the matrices to indicate that they are sparse.
 
 ```python
 from scipy import sparse
+import scipy.sparse.linalg
 
 As = sparse.csr_matrix(A)
 ```
@@ -328,16 +330,38 @@ As = sparse.csr_matrix(A)
 We can create our connectivity matrix in much the same way:
 
 ```python
-Cs = (A + A.T) / 2
+Cs = (As + As.T) / 2
 ```
 
 In order to get the degrees matrix, we can use the "diags" sparse format, which
 stores diagonal and off-diagonal matrices.
 
 ```python
-degrees = np.ravel(A.sum(axis=1))
+degrees = np.ravel(Cs.sum(axis=0))
 Ds = sparse.diags(degrees, 0)
 ```
+
+Getting the Laplacian is straightforward:
+
+```python
+Ls = Ds - Cs
+```
+
+Now we want to get the processing depth. Remember that getting the
+pseudo-inverse of the Laplacian matrix is out of the question. However, we were
+actually using it to compute a vector $z$ that would solve $L z = b$, where
+$b = C \odot \sign\left(A - A^T\right) \mathbb{1}$. With dense matrices,
+we can simply use $z = L^+b$. With sparse ones, though, we can use one of the
+*solvers* in `sparse.linalg.isolve` to get the `z` vector after providing `L`
+and `b`, no inversion required!
+
+```python
+b = Cs.multiply((As - As.T).sign()).sum(axis=1)
+z, error = sparse.linalg.isolve.cg(Ls, b, maxiter=10000)
+```
+
+Finally, we must find the eigenvectors of $Q$, the degree-normalized Laplacian,
+corresponding to its second and third smallest eigenvalues.
 
 You might recall from Chapter 5 that the numerical data in sparse matrices is
 in the `.data` attribute. We use that to invert the degrees matrix:
@@ -347,17 +371,36 @@ Dsinv2 = Ds.copy()
 Dsinv2.data = Ds.data ** (-0.5)
 ```
 
-That's it for the "sparse format wrangling" in this challenge. The rest will be
-straightforward application of linear algebra operations and functions. Getting
-the Laplacian is straightforward:
+Finally, we use SciPy's sparse linear algebra functions to find the desired
+eigenvectors. The $Q$ matrix is symmetric, so we can use the `eigsh` function,
+specialized for symmetric matrices, to compute them. We use the `which` keyword
+argument to specify that we want the eigenvectors corresponding to the smallest
+eigenvalues, and `k` to specify that we need the 3 smallest:
 
 ```python
-Ls = Ds - Cs
+
+Qs = Dsinv2 @ Ls @ Dsinv2
+eigvals, eigvecs = sparse.linalg.eigsh(Qs, k=3, which='SM')
 ```
 
-Now we want to get the processing depth. Remember that getting the
-pseudo-inverse of the Laplacian matrix is out of the question. However, we were
-actually using it to compute a vector $b$ that would solve $L b = z$.
+Finally, we normalize the eigenvectors to get the x and y coordinates:
+
+```python
+_, x, y = (Dsinv2 @ eigvecs).T
+```
+
+We can now reproduce the above plots!
+
+```python
+plt.figure(figsize=(16, 9))
+plot_connectome(x, z, C, neuron_ids, neuron_types)
+
+plt.figure(figsize=(16, 9))
+plot_connectome(x, y, C, neuron_ids, neuron_types)
+```
+
+Note that eigenvectors are defined only up to a (possibly negative)
+multiplicative constant, so the plots may have ended up reversed!
 
 <!-- solution end -->
 
