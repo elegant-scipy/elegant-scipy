@@ -86,7 +86,85 @@ own name: the
 satisfies the property $Mv = \lambda v$ for some number $\lambda$, known as the
 eigenvalue. They have numerous and seemingly magical properties.)
 
-[Example with simple network]
+Let's use a minimal network to illustrate this.
+
+```python
+import numpy as np
+A = np.array([[0, 1, 1, 0, 0, 0],
+              [1, 0, 1, 0, 0, 0],
+              [1, 1, 0, 1, 0, 0],
+              [0, 0, 1, 0, 1, 1],
+              [0, 0, 0, 1, 0, 1],
+              [0, 0, 0, 1, 1, 0]], dtype=float)
+```
+
+We can use NetworkX to draw this network:
+
+```python
+import networkx as nx
+g = nx.from_numpy_matrix(A)
+nx.draw_spring(g, with_labels=True, node_color='white')
+```
+
+You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
+Can the Fiedler vector tell us this? First, we must compute the degree matrix
+and the Laplacian. We use `scipy.sparse.diags` to build the matrix of diagonal
+degrees.
+
+```python
+d = np.sum(A, axis=0)
+
+from scipy import sparse
+D = sparse.diags(d).toarray()
+L = D - A
+```
+
+Because $L$ is symmetric, we can use the `np.linalg.eigh` function to compute
+the eigenvalues and eigenvectors:
+
+```python
+eigvals, Eigvecs = np.linalg.eigh(L)
+```
+
+You can verify that the values returned satisfy the definition of eigenvalues
+and eigenvectors. For example, the third eigenvalue is 3:
+
+```python
+eigvals[2]
+```
+
+And we can check that multiplying the matrix $L$ by the second eigenvector does
+indeed multiply the vector by 3:
+
+```python
+v2 = Eigvecs[:, 2]
+(L @ v2) / v2
+```
+
+As mentioned above, the Fiedler vector is the vector corresponding to the
+second-smallest eigenvalue of $L$. Plotting the eigenvalues tells us which one
+is the second-smallest:
+
+```python
+from matplotlib import pyplot as plt
+
+plt.plot(eigvals)
+```
+
+It's the second eigenvalue. The Fiedler vector is thus the second eigenvector:
+
+```python
+f = Eigvecs[:, 1]
+plt.plot(f)
+```
+
+It's pretty remarkable: by looking at the *sign* of the Fiedler vector, we can
+separate the nodes into the two groups we identified in the drawing!
+
+```python
+colors = np.array(['orange', 'gray'])[(f > 0).astype(int)]
+nx.draw_spring(g, with_labels=True, node_color=colors)
+```
 
 Let's demonstrate this by laying out the brain cells in a worm, as shown in
 [Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
