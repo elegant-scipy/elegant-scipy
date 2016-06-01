@@ -94,67 +94,12 @@ print(data_table.iloc[:5, :5])
 
 Looking at the first 5 rows and columns of `data_table` you we can see that the
 columns are the samples and the rows are the genes.
-Let's pull out our sample names from the column headings. We will need them later.
-
-```python
-# Sample names
-samples = list(data_table.columns)
-```
-
-We will also need some information about the lengths of the genes for our normalization.
-So that we can take advantage of some fancy pandas indexing, we're going to set
-the index of the pandas table to be the gene names in the first column.
-
-```python
-# Import gene lengths
-filename = 'data/genes.csv'
-with open(filename, 'rt') as f:
-    gene_info = pd.read_csv(f, index_col=0) # Parse file with pandas, index by GeneSymbol
-print(gene_info.iloc[:5, :])
-```
-
-Let's check how well our gene length data matches up with our count data.
-
-```python
-print("Genes in data_table: ", data_table.shape[0])
-print("Genes in gene_info: ", gene_info.shape[0])
-```
-
-There are more genes in our gene length data than were actually measured in the experiment.
-Let's filter so we only get the relevant genes, and we want to make sure they are
-in the same order as in our count data.
-This is where fancy indexing comes in handy!
-We can get the intersection of the gene names from our our two sources of data
-and use these to index both data sets, ensuring they have the same genes in the same order.
-
-```python
-#Subset gene info to match the count data
-matched_index = pd.Index.intersection(data_table.index, gene_info.index)
-```
-
-Now let's use the intersection of the gene names to index our count data.
+Now let's put our counts in an ndarray.
 
 ```python
 # 2D ndarray containing expression counts for each gene in each individual
-counts = np.asarray(data_table.loc[matched_index], dtype=int)
+counts = np.asarray(data_table, dtype=int)
 ```
-
-And our gene lengths.
-
-```python
-# 1D ndarray containing the lengths of each gene
-gene_lengths = np.asarray(gene_info.loc[matched_index]['GeneLength'],
-                          dtype=int)
-```
-
-And let's check the dimensions of our objects.
-
-```python
-print(counts.shape)
-print(gene_lengths.shape)
-```
-
-As expected, they now match up nicely!
 
 Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
 We will use a gaussian kernel to smooth out bumps in our data so we can get a
