@@ -122,20 +122,34 @@ def plot_col_density(data, xlabel=None):
     plt.xlabel(xlabel)
     plt.show()
 
-
 # Before normalization
 log_counts = np.log(counts + 1)
 plot_col_density(log_counts, xlabel="Log count distribution for each individual")
 ```
 
-Given an expression matrix (microarray data, read counts, etc) of ngenes by nsamples, quantile normalization ensures all samples have the same spread of data (by construction). It involves:
+We can see that while the distributions of counts are broadly similar,
+some individuals have flatter distributions and a few are pushed right over to the left.
+When doing our analysis of the counts data later in this chapter, we will be assuming
+that changes in gene expression are due to biological differences between our samples.
+But a major distribution shift like this suggests that the differences are technical.
+So we will try to normalise out these global differences between individuals.
 
-(optionally) log-transforming the data
-sorting all the data points column-wise
-averaging the rows
-replacing each column quantile with the quantile of the average column.
-This can be done with NumPy and scipy easily and efficiently.
-Assume we've read in the input matrix as X:
+To do this, we will be performing quantile normalisation.
+The idea is that we assume all our samples should have a similar distribution,
+so any differences in the shape are due to some technical variation.
+We can fix this by forcing all the samples to have the same distribution.
+More formally, given an expression matrix (microarray data, read counts, etc) of
+ngenes by nsamples, quantile normalization ensures all samples have the same spread
+of data (by construction). It involves:
+
+- (optionally) log-transforming the data
+- sorting all the data points column-wise
+- averaging the rows and
+- replacing each column quantile with the quantile of the average column.
+
+With NumPy and SciPy, this can be done easily and efficiently.
+
+Let's assume we've read in the input matrix as X:
 
 ```python
 import numpy as np
@@ -180,9 +194,9 @@ def quantile_norm(X):
     # convert the data back to counts (casting to int is optional)
     Xn = np.round(2**logXn - 1).astype(int)
     return(Xn)
-
-# Example usage: quantile_norm(counts_lib_norm)
 ```
+
+Now, let's see what our distributions look like after quantile normalization.
 
 ```python
 # After normalization
@@ -190,6 +204,10 @@ log_quant_norm_counts = np.log(quantile_norm(counts)+1)
 
 plot_col_density(log_quant_norm_counts, xlabel="Log count distribution for each individual")
 ```
+
+As you might expect, the distributions now look virtually identical!
+
+Now that we have normalized our counts, we can start using our gene expression data to predict mortality
 
 ## Biclustering the counts data
 
