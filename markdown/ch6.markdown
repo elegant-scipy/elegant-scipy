@@ -1,0 +1,925 @@
+# Linear algebra in SciPy
+
+```python
+%matplotlib inline
+```
+
+Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
+will feature an elegant *method*. We
+want to highlight the linear algebra packages available in SciPy, which form
+the basis of much scientific computing.
+
+A chapter in a programming book is not really the right place to learn about
+linear algebra itself, so we assume familiarity with linear algebra concepts.
+At a minimum, you should know that linear algebra involves vectors (ordered
+collections of numbers) and their transformations by multiplying them with
+matrices (collections of vectors). If all of this sounded like gibberish to
+you, you should probably pick up an introductory linear algebra textbook before
+reading this. Introductory is all you need though — we hope to convey the power
+of linear algebra while keeping the operations relatively simple!
+
+As an aside, we will break Python notation convention in order to match linear
+algebra conventions: in Python, variables names should usually begin with a
+lower case letter. However, in linear algebra, matrices are usually denoted by
+a capital letter, while vectors and scalar values are lowercase. Since we're
+going to be dealing with quite a few matrices and vectors, it helps to keep
+them straight to follow the linear algebra convention. Therefore, variables
+that represent matrices will start with a capital letter, while vectors and
+numbers will start with lowercase.
+
+## Straight linear algebra problem
+
+e.g. one-layer NN, kernel PCA, or NN from scratch
+
+## Laplacian matrix of a graph
+
+We discussed graphs in chapter 3, where we represented image regions as
+nodes, connected by edges between them. But we used a rather simple method of
+analysis: we *thresholded* the graph, removing all edges above some value.
+Thresholding works in simple cases, but can easily fail, because all you need
+is one noisy edge to fall on the wrong side of the threshold for the approach
+to fail.
+
+In this chapter, we will explore some alternative approaches to graph analysis,
+based on linear algebra. It turns out that we can think of a graph G as an
+*adjacency matrix*, in which we number the nodes of the graph from $0$ to
+$n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there
+is an edge from node $i$ to node $j$. In other words, if we call the adjacency
+matrix $A$, then $A_{i, j} = 1$ if and only if the link
+(i, j) is in G. We can then use linear algebra techniques to study this matrix,
+with often striking results.
+
+The degree of a node is the number of edges touching it. For example, if a node
+is connected to five other nodes in a graph, its degree is 5. (Sometimes we
+will differentiate between out-degree and in-degree, when edges have a "from"
+and "to".)
+
+The *Laplacian* matrix of a graph (just "the Laplacian" for short) is defined
+as the *degree matrix*, $D$, which
+contains the degree of each node along the diagonal and zero everywhere else,
+minus the adjacency matrix $A$:
+
+$$
+L = D - A
+$$
+
+We definitely can't fit all of the linear algebra theory needed to understand
+the properties of this matrix, but suffice it to say: it has some *great*
+properties. We will exploit a couple in the following paragraphs.
+
+For example, a common problem in network analysis is visualization. How do you
+draw nodes and links in such a way that you don't get a complete mess such as
+this one?
+
+![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
+**Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
+**[Ed note: my reading is that we can use this figure as long as we include the
+copyright notice and don't put DRM on the books, which O'Reilly doesn't do
+anyway.]**
+
+One way is to put nodes that share many links close together, and it turns out
+that this can be done by using the second-smallest eigenvalue of the Laplacian
+matrix, and its corresponding eigenvector, which is so important it has its
+own name: the
+[Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector)
+(As a quick aside, an eigenvector $v$ of a matrix $M$ is a vector that
+satisfies the property $Mv = \lambda v$ for some number $\lambda$, known as the
+eigenvalue. They have numerous and seemingly magical properties.)
+
+Let's use a minimal network to illustrate this.
+
+```python
+import numpy as np
+A = np.array([[0, 1, 1, 0, 0, 0],
+              [1, 0, 1, 0, 0, 0],
+              [1, 1, 0, 1, 0, 0],
+              [0, 0, 1, 0, 1, 1],
+              [0, 0, 0, 1, 0, 1],
+              [0, 0, 0, 1, 1, 0]], dtype=float)
+```
+
+We can use NetworkX to draw this network:
+
+```python
+import networkx as nx
+g = nx.from_numpy_matrix(A)
+nx.draw_spring(g, with_labels=True, node_color='white')
+```
+
+You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
+Can the Fiedler vector tell us this? First, we must compute the degree matrix
+and the Laplacian. We use `scipy.sparse.diags` to build the matrix of diagonal
+degrees.
+
+```python
+d = np.sum(A, axis=0)
+
+from scipy import sparse
+D = sparse.diags(d).toarray()
+L = D - A
+```
+
+Because $L$ is symmetric, we can use the `np.linalg.eigh` function to compute
+the eigenvalues and eigenvectors:
+
+```python
+eigvals, Eigvecs = np.linalg.eigh(L)
+```
+
+You can verify that the values returned satisfy the definition of eigenvalues
+and eigenvectors. For example, the third eigenvalue is 3:
+
+```python
+eigvals[2]
+```
+
+And we can check that multiplying the matrix $L$ by the second eigenvector does
+indeed multiply the vector by 3:
+
+```python
+v2 = Eigvecs[:, 2]
+(L @ v2) / v2
+```
+
+As mentioned above, the Fiedler vector is the vector corresponding to the
+second-smallest eigenvalue of $L$. Plotting the eigenvalues tells us which one
+is the second-smallest:
+
+```python
+from matplotlib import pyplot as plt
+
+plt.plot(eigvals)
+```
+
+It's the second eigenvalue. The Fiedler vector is thus the second eigenvector:
+
+```python
+f = Eigvecs[:, 1]
+plt.plot(f)
+```
+
+It's pretty remarkable: by looking at the *sign* of the Fiedler vector, we can
+separate the nodes into the two groups we identified in the drawing!
+
+```python
+colors = np.array(['orange', 'gray'])[(f > 0).astype(int)]
+nx.draw_spring(g, with_labels=True, node_color=colors)
+```
+
+Let's demonstrate this by laying out the brain cells in a worm, as shown in
+[Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
+from the
+[Varshney *et al* paper](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
+that we introduced in Chapter 3. (Information on
+how to do this is in the
+[supplementary material](http://journals.plos.org/ploscompbiol/article/asset?unique&id=info:doi/10.1371/journal.pcbi.1001066.s001)
+for the paper.) To obtain their
+layout of the worm brain neurons, they used a related matrix, the
+*degree-normalized Laplacian*.
+
+Because the order of the neurons is important in this analysis, we will use a
+preprocessed dataset, rather than clutter this chapter with data cleaning. We
+got the original data from Lars Varshney's
+[website](http://www.ifp.illinois.edu/~varshney/elegans),
+and the processed data is in our `data/` directory.
+
+First, let us load the data. There are four components:
+- the network of chemical synapses, through which a *pre-synaptic neuron*
+  sends a chemical signal to a *post-synaptic* neuron,
+- the gap junction network, which contains direct electrical contacts between
+  neurons),
+- the neuron IDs (names), and
+- the three neuron types:
+  - sensory neurons, those that detect signals coming from the outside world,
+    encoded as 0;
+  - motor neurons, those that activate muscles, enabling the worm to move,
+    encoded as 2; and
+  - interneurons, the neurons in between, which enable complex signal processing
+    to occur between sensory neurons and motor neurons, encoded as 1.
+
+```python
+import numpy as np
+chem = np.load('data/chem-network.npy')
+gap = np.load('data/gap-network.npy')
+neuron_ids = np.load('data/neurons.npy')
+neuron_types = np.load('data/neuron-types.npy')
+```
+
+We then simplify the network, adding the two kinds of connections together,
+and removing the directionality of the network by taking the average of
+in-connections and out-connections of neurons. This seems a bit like cheating
+but, since we are only looking for the *layout* of the neurons on a graph, we
+only care about *whether* neurons are connected, not in which direction.
+We are going to call the resulting matrix the *connectivity* matrix, $C$, which
+is just a different kind of adjacency matrix.
+
+```python
+A = chem + gap
+C = (A + A.T) / 2
+```
+
+To get the Laplacian matrix $L$, we need the degree matrix $D$, which contains
+the degree of node i at position [i, i], and zeros everywhere else.
+
+```python
+n = C.shape[0]
+D = np.zeros((n, n), dtype=np.float)
+diag = (np.arange(n), np.arange(n))
+D[diag] = np.sum(C, axis=0)
+L = D - C
+```
+
+The vertical coordinates in Fig 2 are given by arranging nodes such that, on
+average, neurons are as close as possible to "just above" their downstream
+neighbors. Varshney _et al_ call this measure "processing depth," and it's
+obtained by solving a linear equation involving the Laplacian. We use
+`scipy.linalg.pinv`, the
+[pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_pseudoinverse),
+to solve it:
+
+```python
+from scipy import linalg
+b = np.sum(C * np.sign(A - A.T), axis=1)
+z = linalg.pinv(L) @ b
+```
+
+(Note the use of the `@` symbol, which was introduced in Python 3.5 to denote
+matrix multiplication. In previous versions of Python, you would need to use
+the function `np.dot`.)
+
+In order to obtain the degree-normalized Laplacian, Q, we need the inverse
+square root of the D matrix:
+
+```python
+Dinv2 = np.zeros((n, n))
+Dinv2[diag] = D[diag] ** (-.5)
+Q = Dinv2 @ L @ Dinv2
+```
+
+Finally, we are able to extract the x coordinates of the neurons to ensure that
+highly-connected neurons remain close: the eigenvector of Q corresponding to
+its second-smallest eigenvalue, normalized by the degrees:
+
+```python
+eigvals, eigvecs = linalg.eig(Q)
+```
+
+Note from the documentation of `numpy.linalg.eig`:
+
+> "The eigenvalues are not necessarily ordered."
+
+Although the documentation in SciPy's `eig` lacks this warning
+(disappointingly, we must add), it remains true in this case. We must therefore
+sort the eigenvalues and the corresponding eigenvector columns ourselves:
+
+```python
+smallest_first = np.argsort(eigvals)
+eigvals = eigvals[smallest_first]
+eigvecs = eigvecs[:, smallest_first]
+```
+
+Now we can find the eigenvector we need to compute the affinity coordinates:
+
+```python
+x = Dinv2 @ eigvecs[:, 1]
+```
+
+(The reasons for using this vector are too long to explain here, but appear in
+the paper's supplementary material, linked above.)
+
+Now it's just a matter of drawing the nodes and the links. We color them
+according to the type stored in `neuron_types`:
+
+```python
+from matplotlib import pyplot as plt
+from matplotlib import colors
+
+def plot_connectome(neuron_x, neuron_y, links, labels, types):
+    colormap = colors.ListedColormap([[ 0.   ,  0.447,  0.698],
+                                      [ 0.   ,  0.62 ,  0.451],
+                                      [ 0.835,  0.369,  0.   ]])
+    # plot neuron locations:
+    points = plt.scatter(neuron_x, neuron_y, c=types, cmap=colormap,
+                         edgecolors='face', zorder=1)
+
+    # add text labels:
+    for x, y, label in zip(neuron_x, neuron_y, labels):
+        plt.text(x, y, '  ' + label,
+                 horizontalalignment='left', verticalalignment='center',
+                 fontsize=5, zorder=2)
+
+    # plot links
+    pre, post = np.nonzero(links)
+    for src, dst in zip(pre, post):
+        plt.plot(neuron_x[[src, dst]], neuron_y[[src, dst]],
+                 c=(0.85, 0.85, 0.85), lw=0.2, alpha=0.5, zorder=0)
+
+    plt.show()
+```
+
+```python
+plt.figure(figsize=(16, 9))
+plot_connectome(x, z, C, neuron_ids, neuron_types)
+```
+
+There you are: a worm brain!
+As discussed in the original paper, you can see the top-down processing from
+sensory neurons to motor neurons through a network of interneurons. You can
+also see two distinct groups of motor neurons: these correspond to the neck
+(left) and body (right) body segments of the worm.
+
+<!-- exercise begin -->
+
+**Exercise:** How do you modify the above code to show the affinity view in
+Figure 2B from the paper?
+
+<!-- solution begin -->
+**Solution:** In the affinity view, instead of using the processing depth on the y-axis,
+we use the normalized third eigenvector of Q, just like we did with x:
+
+```python
+y = Dinv2 @ eigvecs[:, 2]
+plt.figure(figsize=(16, 9))
+plot_connectome(x, y, C, neuron_ids, neuron_types)
+```
+<!-- solution end -->
+
+<!-- exercise end -->
+
+<!-- exercise begin -->
+
+### challenge: linear algebra with sparse matrices
+
+The above code uses numpy arrays to hold the matrix and perform
+the necessary computations. Because we are using a small graph of fewer than 300
+nodes, this is feasible. However, for larger graphs, it would fail.
+
+In what follows, we will analyze the dependency graph for packages in the
+Python Package Index, or PyPI, which contains over 75 thousand packages. To
+hold the Laplacian matrix for this graph would take up
+$8 \left(75 \times 10^3\right)^2 = 45 \times 10^9$ bytes, or 45GB,
+of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
+and, say, two temporary matrices used during calculations, you climb up to
+270GB, beyond the reach of most desktop computers.
+
+"Ha!", some of you might be thinking. "Ha! My desktop has 512GB of RAM! It would
+make short work of this so-called 'large' graph!"
+
+Perhaps. But we will also be analysing the Association for Computing Machinery
+(ACM) citation graph, a network of over two million scholarly works and
+references. *That* Laplacian would take up 32 terabytes of RAM.
+
+However, we know that the dependency and reference graphs are *sparse*:
+packages usually depend on just a few other packages, not on the whole of PyPI.
+And papers and books usually only reference a few others, too. So we can hold
+the above matrices using the sparse data structures from `scipy.sparse` (see
+Chapter 5), and use the linear algebra functions in `scipy.sparse.linalg` to
+compute the values we need.
+
+Try to explore the documentation in `scipy.sparse.linalg` to come up with a
+sparse version of the above computation.
+
+Hint: the pseudoinverse of a sparse matrix is, in general, not sparse, so you
+can't use it here. Similarly, you can't get all the eigenvectors of a sparse
+matrix, because they would together make up a dense matrix.
+
+You'll find parts of the solution below (and of course in the solutions
+chapter), but we highly recommend that you try it out on your own.
+
+<!-- solution begin -->
+
+### challenge accepted
+
+For the purposes of this challenge, we are going to use the small connectome
+above, because it's easier to visualise what is going on. In later parts of the
+challenge we'll use these techniques to analyze larger networks.
+
+First, we start with the adjacency matrix, A, in a sparse matrix format, in
+this case, CSR, which is the most common format for linear algebra. We'll
+append `s` to the names of all the matrices to indicate that they are sparse.
+
+```python
+from scipy import sparse
+import scipy.sparse.linalg
+
+As = sparse.csr_matrix(A)
+```
+
+We can create our connectivity matrix in much the same way:
+
+```python
+Cs = (As + As.T) / 2
+```
+
+In order to get the degrees matrix, we can use the "diags" sparse format, which
+stores diagonal and off-diagonal matrices.
+
+```python
+degrees = np.ravel(Cs.sum(axis=0))
+Ds = sparse.diags(degrees, 0)
+```
+
+Getting the Laplacian is straightforward:
+
+```python
+Ls = Ds - Cs
+```
+
+Now we want to get the processing depth. Remember that getting the
+pseudo-inverse of the Laplacian matrix is out of the question. However, we were
+actually using it to compute a vector $z$ that would solve $L z = b$, where
+$b = C \odot \sign\left(A - A^T\right) \mathbb{1}$. With dense matrices,
+we can simply use $z = L^+b$. With sparse ones, though, we can use one of the
+*solvers* in `sparse.linalg.isolve` to get the `z` vector after providing `L`
+and `b`, no inversion required!
+
+```python
+b = Cs.multiply((As - As.T).sign()).sum(axis=1)
+z, error = sparse.linalg.isolve.cg(Ls, b, maxiter=10000)
+```
+
+Finally, we must find the eigenvectors of $Q$, the degree-normalized Laplacian,
+corresponding to its second and third smallest eigenvalues.
+
+You might recall from Chapter 5 that the numerical data in sparse matrices is
+in the `.data` attribute. We use that to invert the degrees matrix:
+
+```python
+Dsinv2 = Ds.copy()
+Dsinv2.data = Ds.data ** (-0.5)
+```
+
+Finally, we use SciPy's sparse linear algebra functions to find the desired
+eigenvectors. The $Q$ matrix is symmetric, so we can use the `eigsh` function,
+specialized for symmetric matrices, to compute them. We use the `which` keyword
+argument to specify that we want the eigenvectors corresponding to the smallest
+eigenvalues, and `k` to specify that we need the 3 smallest:
+
+```python
+
+Qs = Dsinv2 @ Ls @ Dsinv2
+eigvals, eigvecs = sparse.linalg.eigsh(Qs, k=3, which='SM')
+```
+
+Finally, we normalize the eigenvectors to get the x and y coordinates:
+
+```python
+_, x, y = (Dsinv2 @ eigvecs).T
+```
+
+We can now reproduce the above plots!
+
+```python
+plt.figure(figsize=(16, 9))
+plot_connectome(x, z, C, neuron_ids, neuron_types)
+
+plt.figure(figsize=(16, 9))
+plot_connectome(x, y, C, neuron_ids, neuron_types)
+```
+
+Note that eigenvectors are defined only up to a (possibly negative)
+multiplicative constant, so the plots may have ended up reversed!
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+## Community detection
+
+Another application of the normalized graph Laplacian is in community
+detection. Mark Newman published a
+[seminal paper](http://www.pnas.org/content/103/23/8577.short)
+on the topic in 2006, and
+[refined it further](http://arxiv.org/abs/1307.7729) in 2013. We'll apply it to the Python library dependency graph.
+
+We've downloaded and preprocessed the data ahead of time, available as the file
+`pypi-dependencies.txt` in the `data/` folder. The data consists of a list of
+library-dependency pairs, one per line. The networkx library that we started
+using in Chapter 3 makes it easy to build a graph from these data. We will use
+a directed graph since the relationship is asymmetrical: one library depends
+on the other, not vice-versa.
+
+```python
+import networkx as nx
+
+dependencies = nx.DiGraph()
+
+with open('data/pypi-deps.txt') as lines:
+    lib_dep_pairs = (str.split(line) for line in lines)
+    dependencies.add_edges_from(lib_dep_pairs)
+```
+
+We can then get some statistics about this (incomplete) dataset by using
+networkx's built-in functions:
+
+```python
+print('number of packages: ', dependencies.number_of_nodes())
+print('number of dependencies: ', dependencies.number_of_edges())
+```
+
+What is the single most used Python package?
+
+```python
+print(max(dependencies.in_degree_iter(),
+          key=lambda x: x[1]))
+```
+
+We're not going to cover it in this book, but `setuptools` is not a surprising
+winner
+here. In fact, until we wrote this chapter, we had thought it was part of the
+Python standard library, in the same category as `os`, `sys`, and others!
+
+Since using setuptools is almost a requirement for being listed in PyPI, we are
+actually going to remove it from the dataset, because it has too much influence
+on the shape of the graph.
+
+```python
+dependencies.remove_node('setuptools')
+```
+
+What's the next most depended-upon package?
+
+```python
+print(max(dependencies.in_degree_iter(),
+          key=lambda x: x[1]))
+```
+
+The requests library is the foundation of a very large fraction of the web
+frameworks and web processing libraries.
+
+We can similarly find out the top-40 most depended-upon packages:
+
+```python
+packages_by_in = sorted(dependencies.in_degree_iter(),
+                        key=lambda x: x[1], reverse=True)
+print(packages_by_in[:40])
+```
+
+By this ranking, NumPy ranks 4 and SciPy 28 out of all of PyPI. Not bad!
+Overall, though, one gets the impression that the web community dominates
+PyPI. As we saw in the preface, this is expected, since the scientific Python
+community is still growing!
+
+### A detour: pagerank with SciPy
+
+The number of incoming links to a package doesn't tell the whole
+story. As you might have heard, the key insight that drove Google's early
+success was that important webpages are not just linked to by many webpages, but
+also by *other* important webpages. As we will see, this recursive definition
+implies that page importance can be measured by the eigenvector corresponding
+to the largest eigenvalue of the so-called *transition matrix*. This matrix
+imagines a web surfer, often named Webster, randomly clicking a link from each
+webpage he visits, and then asks, what's the probability that
+he ends up at any given page? This probability is called the pagerank.
+
+We can apply this insight to the network of Python dependencies. First, we
+ignore all the packages that are isolated, not connected to the bulk of Python
+packages. We do this by finding the *connected components* of the graph, and
+then choosing the largest of them.
+
+```python
+connected_packages = max(nx.connected_components(dependencies.to_undirected()),
+                         key=len)
+conn_dependencies = nx.subgraph(dependencies, connected_packages)
+```
+
+Next, we get the sparse matrix corresponding to the graph. Because a matrix
+only holds numerical information, we need to maintain a separate list of
+package names corresponding to the matrix rows/columns:
+
+```python
+package_names = np.array(conn_dependencies.nodes())  # array for multi-indexing
+adjacency_matrix = nx.to_scipy_sparse_matrix(conn_dependencies,
+                                             dtype=np.float64)
+```
+
+From the adjacency matrix, we can derive a *transition probability* matrix,
+where every link is replaced by a *probability* of 1 over the number of
+outgoing links from that page.
+
+The total number of packages in our matrix is going to be used a lot, so let's
+call it $n$:
+
+```python
+n = len(package_names)
+```
+
+Next, we need the degrees, and, in particular, the *diagonal matrix* containing
+the inverse of the out-degrees of each node on the diagonal:
+
+```python
+np.seterr(divide='ignore')  # ignore division-by-zero errors
+from scipy import sparse
+
+degrees = np.ravel(adjacency_matrix.sum(axis=1))
+degrees_matrix = sparse.spdiags(1 / degrees, 0, n, n, format='csr')
+```
+
+```python
+transition_matrix = (degrees_matrix @ adjacency_matrix).T
+```
+
+Normally, the pagerank score would simply be the first eigenvector of the
+transition matrix. If we call the transition matrix $M$ and the vector of
+pagerank values $r$, we have:
+
+$$
+\boldsymbol{r} = M\boldsymbol{r}
+$$
+
+But the `np.seterr` call above is a clue that it's not quite
+so simple. The pagerank approach only works when the
+transition matrix is a *column-stochastic* matrix, in which every
+column sums to 1. Additionally, every page must be reachable
+from every other page, even if the path to reach it is very long.
+
+To deal with this, the pagerank algorithm uses a so-called "damping
+factor", usually taken to be 0.85. This means that 85% of the time, the
+algorithm follows a link at random, but for the other 15%, it randomly jumps to
+any arbitrary page. It's as if every page had a low probability link to every
+other page.
+
+If we call the damping factor $d$, then the modified pagerank equation is:
+
+$$
+\boldsymbol{r} = dM\boldsymbol{r} + \frac{1-d}{n} \boldsymbol{1}
+$$
+
+and
+
+$$
+(\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{n} \boldsymbol{1}
+$$
+
+We can solve this equation using `scipy.sparse`'s biconjugate gradient solver:
+
+```python
+from scipy.sparse.linalg.isolve import bicg  # biconjugate gradient solver
+
+damping = 0.85
+
+I = sparse.eye(n, format='csc')
+
+pagerank, error = bicg(I - damping * transition_matrix,
+                       (1-damping) / n * np.ones(n),
+                       maxiter=int(1e4))
+print('error code: ', error)
+```
+
+As can be seen in the documentation for the `bicg` solver, an error code of 0
+indicates that a solution was found! We now have the "dependency pagerank" of
+packages in PyPI! Let's look at the top 40 packages:
+
+```python
+top = np.argsort(pagerank)[::-1]
+
+print([package_names[i] for i in top[:40]])
+```
+
+NumPy actually falls to the 11th spot in this ranking, while SciPy drops out of
+the top 40 entirely! (It ranks 87, still great in 95,000 packages!)
+
+<!-- exercise begin -->
+
+**Exercise:** Can you think of three reasons why pagerank might not be the best
+measure of importance for the Python dependency graph?
+
+<!-- solution begin -->
+
+**Solution:**
+
+Here's our theories. Yours might be different!
+
+First, the graph of dependencies is fundamentally different to the web. In the
+web, important pages reinforce each other: the Wikipedia pages for Newton's
+theory of gravitation and Einstein's theory of general relativity link to each
+other. Thus, our hypothetical Webster has some probability of bouncing between
+them. In contrast, Python dependencies form a directed acyclic graph (DAG).
+Whenever Debbie (our hypothetical dependency browser) arrives at a foundational
+package such as NumPy, she is instantly transported to a random package,
+instead of staying in the field of similar packages.
+
+Second, the DAG of dependencies is shallow: libraries will depend on, for
+example, scikit-learn, which depends on scipy, which depends on numpy, and
+that's it. Therefore, there is not much room for important packages to link to
+other important packages. The hierarchy is flat, and the importance is captured
+by the direct dependencies.
+
+Third, scientific programming itself is particularly prone to that flat
+hierarchy problem, more so than e.g. web frameworks, because scientists are
+doing the programming, rather than professional coders. In particular, a
+scientific analysis might end up in a script attached to a paper, or a Jupyter
+notebook, rather than another library on PyPI. We hope that this book will
+encourage more scientists to write great code that others can reuse, and put it
+on PyPI!
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+Before we move on, we'll note that there's another way to compute pagerank,
+often preferred to the above. It's called the *power method*, and stems from
+the [Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
+which states, among other things, that a stochastic matrix has 1 as an
+eigenvalue, and that this is its *largest* eigenvalue. (The corresponding
+eigenvector is the pagerank vector.) What this means is that, whenever we
+multiply *any* vector by $M$, its component pointing towards this major
+eigenvector stays the same, while *all other components shrink* by a
+multiplicative factor. The consequence is that if we multiply some random
+starting vector by $M$ repeatedly, we should eventually get the pagerank
+vector.
+
+SciPy makes this very efficient with its sparse matrix module:
+
+```python
+def power(trans, damping=0.85, max_iter=int(1e5)):
+    n = trans.shape[0]
+    r0 = np.full(n, 1/n)
+    r = r0
+    for _ in range(max_iter):
+        rnext = damping * trans @ r + (1 - damping) / n
+        if np.allclose(rnext, r):
+            print('converged')
+            break
+        r = rnext
+    return r
+```
+
+<!-- exercise begin -->
+
+**Exercise:** In the above iteration, note that `trans` is *not*
+column-stochastic, so the vector gets shrunk at each iteration. In order to
+make the matrix stochastic, we have to replace every zero-column by a column of
+all $1/n$. This is too expensive, but computing the iteration is cheaper. How
+can you modify the code above to ensure that $r$ remains a probability vector
+throughout?
+
+<!-- solution begin -->
+
+**Solution:** In order to have a stochastic matrix, all columns of the
+transition matrix must sum to 1. This is not satisfied when a package doesn't
+have any dependencies: that column will consist of all zeroes. Replacing all
+those columns by $1/n \boldsymbol{1}$, however, would be expensive.
+
+The key is to realise that *every row* will contribute the *same amount* to the
+multiplication of the transition matrix by the current probability vector. That
+is to say, adding these columns will add a single value to the result of the
+iteration multiplication. What value? $1/n$ times the elements of $r$ that
+correspond to a dangling node. This can be expressed as a dot-product of a
+vector containing $1/n$ for positions corresponding to dangling nodes, and zero
+elswhere, with the vector $r$ for the current iteration.
+
+```python
+def power2(trans, damping=0.85, max_iter=int(1e5)):
+    n = trans.shape[0]
+    is_dangling = np.ravel(trans.sum(axis=0) == 0)
+    dangling = np.zeros(n)
+    dangling[is_dangling] = 1 / n
+    r0 = np.ones(n) / n
+    r = r0
+    for _ in range(max_iter):
+        rnext = (damping * (trans @ r + dangling @ r) +
+                 (1 - damping) / n)
+        if np.allclose(rnext, r):
+            return rnext
+        else:
+            r = rnext
+    return r
+```
+
+Try this out manually for a few iterations. Notice that if you start with a
+stochastic vector (a vector whose elements all sum to 1), the next vector will
+still be a stochastic vector. Thus, the output pagerank from this function will
+be a true probability vector, and the values will represent the actual
+probability that Debbie ends up at the Python package in question.
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+
+<!-- exercise begin -->
+
+**Exercise:** Verify that these three methods all give the same ranking for the
+nodes. `numpy.corrcoef` might be a useful function for this.
+
+<!-- solution begin -->
+
+**Solution:** `np.corrcoef` gives the Pearson correlation coefficient between
+all pairs of a list of vectors. This coefficient will be equal to 1 if and only
+if two vectors are scalar multiples of each other. Therefore, a correlation
+coefficient of 1 is sufficient to show that the above methods produce the same
+ranking.
+
+```python
+pagerank_power = power(transition_matrix)
+pagerank_power2 = power2(transition_matrix)
+np.corrcoef([pagerank, pagerank_power, pagerank_power2])
+```
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+### ... back to graph layout and community detection
+
+Because it's unwieldy to draw 90,000 nodes, we are only going to draw a
+fraction of PyPI, following the same ideas we used for the worm brain. Because
+3000 is still significantly bigger than 300, we will use a sparse matrix to do
+the graph layout computation.
+
+We will need to graph subsets of rows and columns, for which we will write a
+function. NumPy (and SciPy) indexing by default considers the *exact* data
+points indicated by a list of rows/columns:
+
+```python
+arr = np.array([[0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8]])
+submatrix = [0, 2]
+arr[submatrix, submatrix]
+```
+
+You might have expected the result to be [[0, 2], [6, 8]], but in fact NumPy
+and SciPy interpret these coordinates as (row, column) pairs, so that we only
+get two values back: `arr[0, 0]` (0) and `arr[2, 2]` (8).
+
+To get slices of rows and columns, we need to slice first along one dimension,
+then across the other:
+
+```python
+arr[submatrix, :][:, submatrix]
+```
+
+Since this is a bit cumbersome when we only want a square submatrix of a square
+matrix, we write a function:
+
+```python
+def sub(mat, idxs):
+    return mat[idxs, :][:, idxs]
+```
+
+Let's use this to look at the top 3,000 packages in PyPI:
+
+```python
+n = 3000
+top3k = top[:n]
+names = package_names[top3k]
+Adj = sub(adjacency_matrix, top3k)
+```
+
+As above, we need the connectivity matrix, the symmetric version of the
+adjacency matrix:
+
+```python
+Conn = (Adj + Adj.T) / 2
+```
+
+And the diagonal matrix of its degrees, as well as its inverse-square-root:
+
+```python
+degrees = np.ravel(Conn.sum(axis=0))
+Deg = sparse.spdiags(degrees, 0, n, n).tocsr()
+Dinv2 = sparse.spdiags(degrees ** (-.5), 0, n, n).tocsr()
+```
+
+From this we can generate the Laplacian of the dependency graph:
+
+```python
+lap = Deg - Conn
+```
+
+From this, we can generate an affinity view of these nodes, as shown above for
+the worm brain graph. We just need the second and third smallest eigenvectors
+of the *affinity matrix*, the degree-normalized version of the Laplacian. We
+can use `sparse.linalg.eigsh` to obtain these:
+
+```python
+Affn = Dinv2 @ lap @ Dinv2
+eigvals, vec = sparse.linalg.eigsh(Affn, k=3, which='SM')
+_, x, y = (Dinv2 @ vec).T
+```
+
+That should give us a nice layout for our Python packages!
+
+```python
+plt.figure()
+plt.scatter(x, y)
+```
+
+That's looking promising! But, obviously, this plot is missing some critical
+details! Which packages depend on which? Where are the most important packages?
+Perhaps most critically, do particular packages naturally belong together?
+In the worm brain, we had prior information about neuron types that helped us
+to make sense of the graph. Let's try to infer some similar information about
+PyPI packages.
+
+In the same way that the eigen-decomposition of the Laplacian matrix can tell
+us about graph layout, it can also tell us about connectivity.
+
+Aim: graph of top Python packages:
+- colored by community
+- sized by dependencies
+- alpha-d by pagerank
+- laid out by spectral affinity
+
