@@ -399,7 +399,7 @@ print("Genes in gene_info: ", gene_info.shape[0])
 There are more genes in our gene length data than were actually measured in the experiment.
 Let's filter so we only get the relevant genes, and we want to make sure they are
 in the same order as in our count data.
-This is where fancy indexing comes in handy!
+This is where pandas indexing comes in handy!
 We can get the intersection of the gene names from our our two sources of data
 and use these to index both data sets, ensuring they have the same genes in the same order.
 
