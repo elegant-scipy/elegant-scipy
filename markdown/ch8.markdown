@@ -575,6 +575,8 @@ def streaming_pca(samples, n_components=2, batch_size=100):
 ```
 
 ```python
+reshape = tz.curry(np.reshape)
+
 def array_from_txt(line, sep=',', dtype=np.float):
     return np.array(line.rstrip().split(sep), dtype=dtype)
 
@@ -584,6 +586,7 @@ with open('data/iris.csv') as fin:
 with open('data/iris.csv') as fin:
     components = np.squeeze(list(tz.pipe(fin,
                                          c.map(array_from_txt),
+                                         c.map(reshape(newshape=(1, -1))),
                                          c.map(pca_obj.transform))))
 
 from matplotlib import pyplot as plt
