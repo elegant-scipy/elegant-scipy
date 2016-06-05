@@ -10,7 +10,7 @@ book.
 Next, the many contributors to the wider scientific Python ecosystem, including
 those provided the foundation for several of our chapters, but also
 those whose contributions we were unable to include come press time. You work
-ispired us and we hope to include it in future versions of the book.
+inspired us and we hope to include it in future versions of the book.
 
 Others provided us with data and code which saved us hours of searching and
 sleuthing. We thank Lav Varshney for the original Matlab code for spectral
