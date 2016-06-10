@@ -436,7 +436,7 @@ For historical reasons, most implementations return an array where
 frequencies vary from low-to-high-to-low.  E.g., when we do the real
 Fourier transform of a signal of all ones, an input that has no
 variation and therefore only has the slowest, constant Fourier
-component (also known as the "DC" or Direct Current component—-just
+component (also known as the "DC" or Direct Current component—just
 electronics jargon for "mean of the signal"), appearing as the first
 entry:
 
@@ -532,7 +532,7 @@ From the photo, we can see that the noise (measurement artifacts) is
 highly periodic, so we hope to remove it by zeroing out the
 corresponding parts of the spectrum.
 
-The image with those peaks suppressed indeed looks quite differently!
+The image with those peaks suppressed indeed looks quite different!
 
 ```python
 # Set block around center of spectrum to zero
@@ -1380,7 +1380,7 @@ plt.show()
 
 ```
 
-![[fig:axes_slices]Diagram showing azimuth, elevation and range slices through
+![Diagram showing azimuth, elevation and range slices through
 data volume](../figures/axes_slices.png)
 
 Please refer to the diagram above to see how the different slices are
