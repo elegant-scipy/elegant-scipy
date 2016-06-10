@@ -6,12 +6,6 @@ sns.set_style('white')
 sns.despine()
 
 import matplotlib.pyplot as plt
-if hasattr(plt.cm, 'inferno'):
-    plt.rcParams['image.cmap'] = 'inferno'
-    viridis = 'viridis'
-else:
-    viridis = 'summer'
-
 import numpy as np
 ```
 
@@ -58,10 +52,17 @@ modest.  Instead, we want to illustrate an elegant *algorithm*, the
 Fast Fourier Transform (FFT), that is endlessly useful, implemented in
 SciPy, and works, of course, on NumPy arrays.
 
-The discrete[^discrete] Fourier Transform is a mathematical technique to convert
-temporal or spatial data into *frequency domain* data.  Take, for
-example, a simple periodic function, $\sin(10 * 2 \pi t)$.  You can
-view it as a wave:
+The discrete[^discrete] Fourier Transform is a mathematical technique
+to convert temporal or spatial data into *frequency domain* data.
+*Frequency* is a familiar concept, due to its colloquial occurrence in
+the English language: the lowest notes your headphones can rumble out
+are around 20 Hertz, whereas middle C on a piano lies around 261.6
+Hertz.  Hertz (Hz), or oscillations per second, in this case literally
+refers to the number of times per second at which the membrane inside
+the headphone moves to-and-fro.  That, in turn, creates compressed
+pulses of air which, upon arrival at your eardrum, induces a vibration
+at the same frequency.  So, if you take a simple periodic function,
+$\sin(10 * 2 \pi t)$, you can view it as a wave:
 
 ```python
 f = 10  # Frequency, in cycles per second, or Herz
@@ -80,7 +81,7 @@ ax.set_ylabel('Signal amplitude')
              in contrast to the standard Fourier Transform which is
              defined for continuous functions.
 
-But, you can equivalently think of it as an repeating signal of
+Or you can equivalently think of it as an repeating signal of
 *frequency* 10 Hertz (it repeats once every $1/10$ seconds—a length of
 time we call its *period*):
 
@@ -132,25 +133,29 @@ rrr-whi-wheo-wheo-wheo-wheo-wheo-wheo.
 
 Since we realise that not everyone is fluent in bird-speak, perhaps
 it's best if we visualize the measurements—better known as "the
-signal"—instead:
+signal"—instead.
+
+We load the audio file (released under CC BY 4.0 at
+http://www.orangefreesounds.com/nightingale-sound/), which gives us
+the sampling rate (number of measurements per second) as well as audio
+data as an `(N, 2)` array—two columns because this is a stereo
+recording.
 
 ```python
 from scipy.io import wavfile
 
-# Read audio file released under CC BY 4.0 at
-# http://www.orangefreesounds.com/nightingale-sound/
-
-# Get sampling rate (number of measurements per second)
-# as well as audio data as an (N, 2) array -- two columns
-# because this is a stereo recording.
-
 rate, audio = wavfile.read('data/nightingale.wav')
+```
 
-# Average left and right audio channels
+We convert to mono by averaging the left and right channels.
+
+```python
 audio = np.mean(audio, axis=1)
+```
 
-# How long is the audio snippet?
+Then, calculate the length of the snippet and plot the audio.
 
+```python
 N = audio.shape[0]
 L = N / rate
 
@@ -168,11 +173,10 @@ speaker, I might hear a bird chirping, but I can't very well imagine
 how it would sound like in my head.  Is there a better way of *seeing*
 what is going on?
 
-It turns out there is: it is called the Discrete Fast Fourier
-Transform (discrete, because our recording consists of discrete
-measurements, and fast—because we're in a hurry!).  The Fast Fourier
-Transform (FFT) tells us which frequencies or "notes" to expect in our
-signal.
+There is, and it is called the Discrete Fast Fourier Transform
+(discrete, because our recording consists of discrete measurements,
+and fast—because we're in a hurry!).  The Fast Fourier Transform (FFT)
+tells us which frequencies or "notes" to expect in our signal.
 
 Of course, a bird sings many notes throughout the song, so we'd also
 like to know *when* each note occurs.  The Fourier transform takes a
@@ -207,37 +211,58 @@ samples as shown here:
 
 ![Sliding window](../figures/generated/sliding_window.png)
 
+Start by chopping up the signal into slices of 1024 samples, each
+slice overlapping the previous by 100 samples.  The resulting `slices`
+object contains one slice per row.
+
 ```python
 from skimage import util
 
 M = 1024
 
-# Chop up the signal into slices of 1024 samples, each slice
-# overlapping the previous by 100 samples
 slices = util.view_as_windows(audio, window_shape=(M,), step=100)
 print('Audio shape: {}, Sliced audio shape: {}'.format(audio.shape, slices.shape))
+```
 
-# Generate a windowing function and multiply it with the signal—more on this later
+Generate a windowing function and multiply it with the signal—more on
+this later:
+
+```python
 win = np.hanning(M + 1)[:-1]
 slices = slices * win
+```
 
-# Calculate the Fourier transform for each slice.
-spectrum = np.fft.fft(slices, axis=1)[:, :M //2 + 1:-1].T
+It's more convenient to have one slice per column, so we take the transpose:
+
+```python
+slices = slices.T
+print('Shape of `slices`:', slices.shape)
+```
+
+For each slice, calculate the Fourier transform.  The Fourier
+transform returns both positive and "negative" frequencies (more on
+that in "Frequencies and their ordering"), so we slice out the
+positive M / 2 frequencies for now.
+
+```python
+spectrum = np.fft.fft(slices, axis=0)[:M // 2 + 1:-1]
 spectrum = np.abs(spectrum)
+```
 
-# Do a log plot of the ratio of the signal / the maximum signal
-# The unit for such a ratio is the decibel.
+Do a log plot of the ratio of the signal / the maximum signal
+The unit for such a ratio is the decibel.
 
-# Another reason to take logs is because the spectrum can contain both
-# very large and very small values.  Taking the log compresses the
-# range significantly.
+Another reason to take logs is because the spectrum can contain both
+very large and very small values.  Taking the log compresses the
+range significantly.
 
+```python
 f, ax = plt.subplots(figsize=(10, 5))
 
 S = np.abs(spectrum)
 S = 20 * np.log10(S / S.max())
 
-ax.imshow(S, cmap=viridis, origin='lower',
+ax.imshow(S, cmap='viridis', origin='lower',
           extent=(0, L, 0, rate / 2 / 1000))
 ax.axis('tight')
 ax.set_ylabel('Frequency [kHz]')
@@ -266,7 +291,7 @@ freqs, times, Sx = signal.spectrogram(audio, fs=rate, window='hanning',
 # plt.pcolormesh(times, freqs, 10 * np.log10(Sx), cmap='viridis');
 ```
 
-The only differences are that SciPy returnes the spectrum squared
+The only differences are that SciPy returns the spectrum squared
 (which turns measured voltage into measured energy), and multiplies it
 by some normalization factors[^scaling].
 
@@ -318,16 +343,23 @@ there, but unlike packages such as FFTW, it has a permissive free
 software license.
 
 Consider that a naive calculation of the FFT takes
-$\mathcal{O}\left(N^2\right)$ operations, whereas the Fast Fourier
-Transform is $\mathcal{O}(N \log N)$ in the ideal case—a great
-improvement!  However, the classical Cooley-Tukey algorithm
-implemented in FFTPACK recursively breaks up the transform into
-smaller (prime-sized) pieces and only shows this improvement for
-highly "smooth" input lengths (an input length is considered smooth when
-its largest prime factor is small).  For large prime sized pieces, the
-Bluestein or Rader algorithms can be used in conjunction with the
-Cooley-Tukey algorithm, but this optimization is not implemented in
-FFTPACK.[^fast]
+$\mathcal{O}\left(N^2\right)$ operations.  How come?  Well, you have N
+(complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
+1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
+strongly your signal corresponds to each.  Starting with the first,
+you take the dot product with the signal (which, in itself, entails N
+multiplication operations).  Repeating this operation N times, once
+for each sinusoid, then gives $N^2$ operations.
+
+Now, contrast that with the Fast Fourier Transform, which is
+$\mathcal{O}(N \log N)$ in the ideal case—a great improvement!
+However, the classical Cooley-Tukey algorithm implemented in FFTPACK
+recursively breaks up the transform into smaller (prime-sized) pieces
+and only shows this improvement for "smooth" input lengths (an
+input length is considered smooth when its largest prime factor is
+small).  For large prime sized pieces, the Bluestein or Rader
+algorithms can be used in conjunction with the Cooley-Tukey algorithm,
+but this optimization is not implemented in FFTPACK.[^fast]
 
 Let us illustrate:
 
@@ -368,13 +400,18 @@ ax0.set_xlabel('Length of input')
 ax0.set_ylabel('Execution time (seconds)')
 
 ax1.stem(lengths, smoothness)
-ax1.set_ylabel('Smoothness of input length')
+ax1.set_ylabel('Smoothness of input length\n(lower is better)')
 
 plt.show()
 ```
 
-This explains why we chose a length of 1024 for our audio slices
-earlier!
+The intuition is that, for smooth numbers, the FFT can be broken up
+into many small pieces. After performing the FFT on the first piece,
+those results can be reused in subsequent computations.  This explains
+why we chose a length of 1024 for our audio slices earlier—it has a
+smoothness of only 2, resulting in the optimal "radix-2 Cooley-Tukey"
+algorithm, which computes the FFT using only $(N/2) \log_2 N = 5120$ complex
+multiplications, instead of $N^2 = 1048576$.
 
 [^fast]: While ideally we don't want to reimplement existing
          algorithms, sometimes it becomes necessary in order to obtain
@@ -399,7 +436,7 @@ For historical reasons, most implementations return an array where
 frequencies vary from low-to-high-to-low.  E.g., when we do the real
 Fourier transform of a signal of all ones, an input that has no
 variation and therefore only has the slowest, constant Fourier
-component (also known as the "DC" or Direct Current component---just
+component (also known as the "DC" or Direct Current component—just
 electronics jargon for "mean of the signal"), appearing as the first
 entry:
 
@@ -426,7 +463,7 @@ fftpack.fft(z)
 
 The `fftfreq` function tells us which frequencies we are looking at:
 
-```
+```python
 fftpack.fftfreq(10)
 ```
 
@@ -440,32 +477,48 @@ won't dive too deeply into the concept of negative frequency, other
 than saying a real-world sine wave is produced by a combination of
 positive and negative frequencies).  We re-shuffle the spectrum using
 the `fftshift` function.  Let's examine the frequency components in a
-noisy image:
+noisy image.
+
+First, load and display the image:
 
 ```python
 from skimage import io
 image = io.imread('images/moonlanding.png')
 M, N = image.shape
 
+f, ax = plt.subplots(figsize=(10, 10))
+ax.imshow(image, cmap='gray')
+
 print((M, N), image.dtype)
+```
 
-# We now need to use `fftn` since we're working in higher than one
-# dimension.  The two-dimensional FFT is equivalent to taking the 1-D
-# FFT across rows and then across columns (or vice versa).
+Do not adjust your monitor!  The image you are seeing is real,
+although clearly distorted by either the measurement or transmission
+equipment.
 
+To examine the spectrum of the image, we use `fftn` (instead of `fft`)
+to compute the FFT, since it has more than one dimension.  The
+two-dimensional FFT is equivalent to taking the 1-D FFT across rows
+and then across columns (or vice versa).
+
+```python
 F = fftpack.fftn(image)
 
 F_magnitude = np.abs(F)
 F_magnitude = fftpack.fftshift(F_magnitude)
 
-f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
-ax0.imshow(image, cmap='gray')
+```
 
-# Take log of spectrum to compress value range and display.
-ax1.imshow(np.log(1 + F_magnitude),
-           cmap='viridis', interpolation='nearest',
-           extent=(-N // 2, N // 2, -M // 2, M // 2))
-ax1.set_title('Spectrum magnitude')
+Again, we take the log of the spectrum to compress the range of
+values, before displaying:
+
+```python
+f, ax = plt.subplots(figsize=(10, 10))
+
+ax.imshow(np.log(1 + F_magnitude),
+          cmap='viridis', interpolation='nearest',
+          extent=(-N // 2, N // 2, -M // 2, M // 2))
+ax.set_title('Spectrum magnitude')
 plt.show()
 ```
 
@@ -475,7 +528,11 @@ image; a vague canvas of the photo.  Higher frequency components,
 spread throughout the spectrum, fill in the edges and detail.  Peaks
 around higher frequencies correspond to the periodic noise.
 
-The image with those peaks suppressed would look quite differently:
+From the photo, we can see that the noise (measurement artifacts) is
+highly periodic, so we hope to remove it by zeroing out the
+corresponding parts of the spectrum.
+
+The image with those peaks suppressed indeed looks quite different!
 
 ```python
 # Set block around center of spectrum to zero
@@ -542,18 +599,17 @@ have the ringing shape shown.
 Importantly, the Fourier transform assumes that the input signal is
 periodic.  If the signal is not, the assumption is simply that, right
 at the end of the signal, it jumps back to its beginning value.
-Consider the function, $x(t)$, show here:
+Consider the function, $x(t)$, shown here:
 
 ![[fig:Periodicity anomaly]Eight samples have been taken of a given
  function with effective length $T_{eff}$.  With the Fourier transform
  assuming periodicity, it creates a step discontinuity between the
  first and last samples.](../figures/periodic.png)
 
-
-The Fourier transform assumes that $x(8) = x(0)$, and that the signal
-is continued as the dashed, rather than the solid line.  This
-introduces a big jump at the edge, with the expected ossilation in the
-spectrum:
+We only measure the signal for a short time, labeled $T_{eff}$.  The
+Fourier transform assumes that $x(8) = x(0)$, and that the signal is
+continued as the dashed, rather than the solid line.  This introduces
+a big jump at the edge, with the expected ossilation in the spectrum:
 
 ```python
 t = np.linspace(0, 1, 500)
@@ -576,31 +632,44 @@ spectrum.
 
 We can counter this effect by a process called *windowing*. The
 original function is multiplied with a window function such as the
-Kaiser window $K(N,\beta)$:
+Kaiser window $K(N,\beta)$.  Here we visualize it for $\beta$ ranging
+from 0 to 100:
 
 ```python
-f, axes = plt.subplots(1, 3, figsize=(10, 5))
+f, ax = plt.subplots()
 
-for i, beta in enumerate([0, 3, 10]):
-    axes[i].plot(np.kaiser(N, beta))
-    axes[i].set_xlabel(r'$\beta = {}$'.format(beta))
-    axes[i].set_xlim(0, N - 1)
+N = 500
+beta_max = 100
+colormap = plt.cm.plasma
+
+norm = plt.Normalize(vmin=0, vmax=beta_max)
+
+lines = [
+    ax.plot(np.kaiser(N, beta), color=colormap(norm(beta)))
+    for beta in np.linspace(0, beta_max, N)
+    ]
+
+sm = plt.cm.ScalarMappable(cmap=colormap, norm=norm)
+
+# Dirty hack, not sure why matplotlib >= 1.4 introduced this "feature"
+sm._A = []
+
+plt.colorbar(sm).set_label(r'Kaiser $\beta$')
 
 plt.show()
 ```
 
-By changing the parameter $\beta$, the shape of the
-window can be changed from rectangular (i.e. no windowing) with
-$\beta=0$ to a window that produces signals that smoothly increase
-from zero and decrease to zero at the endpoints of the sampled
-interval, producing very low side lobes with values of $\beta$ between
-5 and 10.
+By changing the parameter $\beta$, the shape of the window can be
+changed from rectangular ($\beta=0$, no windowing) to a window that
+produces signals that smoothly increase from zero and decrease to zero
+at the endpoints of the sampled interval, producing very low side
+lobes ($\beta$ typically between 5 and 10).
 
 Applying the Kaiser window here, we see that the peaks are
 significantly sharper, at the cost of some reduction in peak width
 (spectrum resolution):
 
-**TODO:** Better illustrate widening.  Use something like:
+*For online notebook, use something like:*
 
 ```
 
@@ -613,6 +682,8 @@ significantly sharper, at the cost of some reduction in peak width
 #    axes[1].set_xlim(2*2480, 2*2520)
 #    plt.show()
 ```
+
+The effect of windowing our previous example is noticeable:
 
 ```python
 win = np.kaiser(len(t), 5)
@@ -761,14 +832,25 @@ proportional to the range to the target.
  linear frequency modulation.](../figures/FMCW waveform.png)
 
 To start off, we'll generate some synthetic signals, after which we'll
-turn our focus to the output of an actual radar.  We'll use the
-following formula for the difference in frequency, $f_d$, that
-corresponds to a target range of $R$:
+turn our focus to the output of an actual radar.
 
-$$ f_{d}=\frac{2SR}{v}\label{eq:difference frequency}$$
+Recall that the radar is increasing its frequency as it transmits at a
+rate of $S$ Hz/s.  After a certain amount of time, $t$, has passed,
+the frequency will now be $t S$ higher.  In that same time span, the
+radar signal has traveled $d = t / v$ meters, where $v$ is the speed of
+the transmitted wave through air (roughly the same as the speed of
+light, $3 \times 10^8$ m/s).
 
-where $v$ is the speed of the transmitted wave through air (roughly
-the same as the speed of light, $3 \times 10^8$ m/s).
+Combining the above observations, we can calculate the amount of time
+it would change the signal to travel to, bounce off, and return from a
+target that is distance $R$ away:
+
+$$ t_R = 2R / v $$
+
+Therefore, the change in frequency for a target at range $R$ will be:
+
+$$ f_{d}= t_R S = \frac{2RS}{v}\label{eq:difference frequency}$$
+
 
 ```python
 pi = np.pi
@@ -819,10 +901,10 @@ v_sim = np.sum(M * signals, axis=1)
 
 ```
 
-Above, we generate a synthetic signal, $v_single$, received when
-looking at a single target.  By counting the number of cycles seen in
-a given time period, we can compute the frequency of the signal and
-thus the distance to the target.
+Above, we generate a synthetic signal, $v_{single}$, received when
+looking at a single target (see figure below).  By counting the number
+of cycles seen in a given time period, we can compute the frequency of
+the signal and thus the distance to the target.
 
 A real radar will rarely receive only a single echo, though. The
 simulated signal $v_\mathrm{sim}$ shows what a radar signal will look
@@ -1092,7 +1174,7 @@ this time against a logarithmic y-axis.  The traces were all
 normalized by dividing the amplitudes with the maximum value.
 -->
 
-This result is quite satisfying--but the dynamic range is so large
+This result is quite satisfying—but the dynamic range is so large
 that we could very easily miss some peaks.  Let's take the $\log$ as
 before with the spectrogram:
 
@@ -1239,6 +1321,12 @@ diameter <!-- on the half power contour at a distance of 60 m
 -->. Outside this spot the power drops off quite rapidly but strong
 echoes from outside the spot will nevertheless still be visible.
 
+By varying the pencil beam's azimuth and elevation, we can sweep it
+across the target area of interest.  When reflections are picked up,
+we can calculate the distance to the reflector (the object hit by the
+radar signal).  Together with the current pencil beam azimuth and
+elevation, this defines the reflector's position in 3D.
+
 A rock slope consists of thousands of reflectors. A range bin can be
 thought of as a large sphere with the radar at its center that
 intersects the slope along a ragged line. The scatterers on this line
@@ -1254,6 +1342,7 @@ apparent spots of strong reflections. This specific radar moves its
 antenna in order to scan small regions consisting of $20^\circ$
 azimuth and $30^\circ$ elevation bins scanned in steps of $0.5^\circ$.
 
+Finally, lets draw some contour plots of the resulting radar data.
 
 ```python
 data = np.load('data/radar_scan_1.npz')
@@ -1274,21 +1363,31 @@ contours = np.arange(-40, 1, 2)
 
 f, axes = plt.subplots(1, 3, figsize=(16, 5))
 
-for n, (radar_slice, title) in enumerate([ (V[:, :, 250], 'Range Sphere 250'),
-                                           (V[6, :, :], 'Elevation Plane 6'),
-                                           (V[:,  3, :], 'Azimuth Plane 3') ]):
+labels = ('Range', 'Azimuth', 'Elevation')
 
-    axes[n].contourf(dB(radar_slice), contours)
-    axes[n].set_title(title)
+def plot_slice(ax, radar_slice, title, xlabel, ylabel):
+    ax.contourf(dB(radar_slice), contours, cmap='magma_r')
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_axis_bgcolor(plt.cm.magma_r(-40))
+
+plot_slice(axes[0], V[:, :, 250], 'Range == 250 slice', 'Azimuth', 'Elevation')
+plot_slice(axes[1], V[:, 3, :], 'Azimuth == 3 slice', 'Range', 'Elevation')
+plot_slice(axes[2], V[6, :, :], 'Elevation == 6 slice', 'Range', 'Azimuth')
 
 plt.show()
 
 ```
 
-Contour plots of the radar data, showing the strength of echoes
-against elevation and azimuth, a cut through the slope in an elevation
-plane and acut through the slope in an azimuth plane.  The stepped
-construction of the high wall in an opencast mine is clearly visible.
+![Diagram showing azimuth, elevation and range slices through
+data volume](../figures/axes_slices.png)
+
+Please refer to the diagram above to see how the different slices are
+taken.  A first slice at fixed range shows the strength of echoes
+against elevation and azimuth.  Another two slices at fixed elevation
+and azimuth respectively shows the slope.  The stepped construction of
+the high wall in an opencast mine is visible in the azimuth plane.
 
 ### Further applications of the FFT
 
@@ -1298,3 +1397,48 @@ and target recognition.  The Fourier Transform is pervasive, and is
 seen anywhere from Magnetic Resonance Imaging (MRI) to statistics.
 With the basic techniques that this chapter outlines in hand, you
 should be well equipped to use it!
+
+<!-- exercise begin -->
+
+**Exercise:** The FFT is often used to speed up image convolution
+(convolution is the application of a moving filter mask).  Convolve an
+image with ``np.ones((5, 5))``, using a) numpy's ``np.convolve`` and
+b) ``np.fft.fft2``.  Confirm that the results are identical.
+
+Hints:
+
+ - The convolution of `x` and `y` is equivalent to `ifft2(X * Y)`, where
+   `X` and `Y` are the FFTs of x and y respectively.
+ - In order to multiply `X` and `Y`, they have to be the same size.
+   Use `np.pad` to extend `x` and `y` with zeros (toward the right and
+   bottom) *before* taking their FFT.
+ - You may see some edge effects.  These can be removed by increasing
+   the padding size, so that both `x` and `y` have dimensions
+   `shape(x) + shape(y) - 1`.
+
+<!-- solution begin -->
+
+```python
+from scipy import signal
+
+x = np.random.random((50, 50))
+y = np.ones((5, 5))
+
+L = x.shape[0] + y.shape[0] - 1
+Px = L - x.shape[0]
+Py = L - y.shape[0]
+
+xx = np.pad(x, ((0, Px), (0, Px)), mode='constant')
+yy = np.pad(y, ((0, Py), (0, Py)), mode='constant')
+
+zz = np.fft.ifft2(np.fft.fft2(xx) * np.fft.fft2(yy)).real
+print('Resulting shape:', zz.shape, ' <-- Why?')
+
+z = signal.convolve2d(x, y)
+
+print('Results are equal?', np.allclose(zz, z))
+```
+
+<!-- solution end -->
+
+<!-- exercise end -->

@@ -25,11 +25,12 @@ for fn in sys.argv[1:]:
     exercises = re.findall('<!-- exercise begin -->(.*?)<!-- exercise end -->',
                            str(content), flags=re.DOTALL)
 
+    print('{} exercises found in {}'.format(len(exercises), fn))
+
     if exercises:
         exercises.insert(0, '<h2>File: {}</h2>'.format(fn))
     all_exercises.extend([BeautifulSoup(e, "html.parser").prettify()
                           for e in exercises])
-    print('{} exercises found in {}'.format(len(exercises), fn))
 
     html_no_exercise = re.sub('<!-- solution begin -->(.*?)<!-- solution end -->',
                               '', html, flags=re.DOTALL)
@@ -48,4 +49,8 @@ content.string = '{{REPLACE_ME}}'
 with open(os.path.join(os.path.dirname(fn), 'exercises.html'), 'w', encoding='utf-8') as f:
     exercise_text = '\n<hr/>\n'.join(all_exercises)
     exercise_text = exercise_text.replace('<!-- solution begin', '<p><br/></p><!-- solution begin')
-    f.write(str(bs).replace('{{REPLACE_ME}}', exercise_text))
+
+    # Remove CSS rule that adds newlines after inline code snippets
+    bs = str(bs).replace('white-space: pre-wrap;', '')
+
+    f.write(bs.replace('{{REPLACE_ME}}', exercise_text))

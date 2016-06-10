@@ -783,8 +783,7 @@ from scikit-image — indeed, the library that contains this chapter's code snip
 ```python
 from skimage.future import graph
 g = graph.rag_mean_color(tiger, seg)
-io.imshow(graph.draw_rag(seg, g, tiger, desaturate=True,
-                         colormap=plt.cm.YlGnBu))
+graph.draw_rag(seg, g, tiger)
 ```
 
 Here, you can see the nodes corresponding to each segment, and the edges

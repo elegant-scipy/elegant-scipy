@@ -52,13 +52,13 @@ scan = np.load(pjoin(os.path.dirname(__file__),
 
 fig, (ax0, ax1, ax2) = plt.subplots(3, 1, figsize=(15, 7))
 ax0.plot(1000 * t, v0)
-ax0.set_ylabel("$v_0 (t)$, V")
+ax0.set_ylabel("$v_{single} (t)$, V")
 ax0.set_ylim(-1.1, 1.1)
 ax0.set_xlim(0, Teff * 1000)
 ax0.grid()
 
 ax1.plot(t * 1000, v5)
-ax1.set_ylabel("$v_5 (t)$, V")
+ax1.set_ylabel("$v_{sim} (t)$, V")
 ax1.set_xlim(0, Teff * 1024)
 ax1.set_ylim(-1.5, 1.5)
 ax1.grid()
