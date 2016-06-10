@@ -9,7 +9,7 @@ This requires a strong assumption: if the data are not distributed according to 
 But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
 For example, Bolstad and colleagues [showed](http://bioinformatics.oxfordjournals.org/content/19/2/185.full.pdf) that it performs admirably in recovering known expression levels in microarray data.
 
-Using NumPy indexing tricks and the `scipy.stats.rank_data` function, quantile normalization in Python is fast, efficient, and elegant.
+Using NumPy indexing tricks and the `scipy.stats.mstats.rankdata` function, quantile normalization in Python is fast, efficient, and elegant.
 
 ```python
 import numpy as np
@@ -46,8 +46,7 @@ def quantile_norm(X):
     # compute the column-wise ranks. Each observation is replaced with its
     # rank in that column: the smallest observation is replaced by 0, the
     # second-smallest by 1, ..., and the largest by M, the number of rows.
-    ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
-                          for col in X.T])
+    ranks = stats.mstats.rankdata(X, axis=0).astype(int) - 1
 
     # index the quantiles for each rank with the ranks matrix
     logXn = log_quantiles[ranks]
@@ -62,7 +61,7 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
 - Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
 - Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
-- Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
+- Arrays underpin the scientific Python ecosystem. The `scipy.stats.mstats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
 - Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
 
 
@@ -185,9 +184,8 @@ def quantile_norm(X):
     # compute the quantiles
     log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
 
-    # compute the column-wise ranks; need to do a round-trip through list
-    ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
-                        for col in X.T])
+    # compute the column-wise ranks
+    ranks = stats.mstats.rankdata(X, axis=0).astype(int) - 1
     # alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
 
     # index the quantiles for each rank with the ranks matrix
