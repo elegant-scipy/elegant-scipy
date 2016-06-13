@@ -1,5 +1,7 @@
 # Quantile normalization with NumPy and SciPy
 
+**Code by Juan Nunez-Iglesias**  
+
 Our use case is using gene expression data to predict mortality in skin cancer patients. We will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this  [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
 
 The code we will work to understand is an implementation of [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
@@ -7,7 +9,7 @@ This requires a strong assumption: if the data are not distributed according to 
 But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
 For example, Bolstad and colleagues [showed](http://bioinformatics.oxfordjournals.org/content/19/2/185.full.pdf) that it performs admirably in recovering known expression levels in microarray data.
 
-Using NumPy indexing tricks and the `scipy.stats.rank_data` function, quantile normalization in Python is fast, efficient, and elegant.
+Using NumPy indexing tricks and the `scipy.stats.mstats.rankdata` function, quantile normalization in Python is fast, efficient, and elegant.
 
 ```python
 import numpy as np
@@ -44,8 +46,7 @@ def quantile_norm(X):
     # compute the column-wise ranks. Each observation is replaced with its
     # rank in that column: the smallest observation is replaced by 0, the
     # second-smallest by 1, ..., and the largest by M, the number of rows.
-    ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
-                          for col in X.T])
+    ranks = stats.mstats.rankdata(X, axis=0).astype(int) - 1
 
     # index the quantiles for each rank with the ranks matrix
     logXn = log_quantiles[ranks]
@@ -60,7 +61,7 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
 - Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
 - Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
-- Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
+- Arrays underpin the scientific Python ecosystem. The `scipy.stats.mstats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
 - Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
 
 
@@ -77,6 +78,9 @@ As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin
 Our goal is to predict mortality in skin cancer patients using their RNA expression data.
 By the end of this chapter we will have reproduced a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 
+As in Chapter 1, first we will use Pandas to make our job of reading in the data much easier.
+First we will read in our counts data as a pandas table.
+
 ```python
 import numpy as np
 import pandas as pd
@@ -89,36 +93,18 @@ with open(filename, 'rt') as f:
 print(data_table.iloc[:5, :5])
 ```
 
-```python
-# Sample names
-samples = list(data_table.columns)
-```
-
-```python
-# Import gene lengths
-filename = 'data/genes.csv'
-with open(filename, 'rt') as f:
-    gene_info = pd.read_csv(f, index_col=0) # Parse file with pandas, index by GeneSymbol
-print(gene_info.iloc[:5, :5])
-```
-
-```python
-#Subset gene info to match the count data
-matched_index = data_table.index.intersection(gene_info.index)
-print(gene_info.loc[matched_index].shape)
-print(data_table.loc[matched_index].shape)
-```
-
-```python
-# 1D ndarray containing the lengths of each gene
-gene_lengths = np.asarray(gene_info.loc[matched_index]['GeneLength'],
-                          dtype=int)
-```
+Looking at the first 5 rows and columns of `data_table` you we can see that the
+columns are the samples and the rows are the genes.
+Now let's put our counts in an ndarray.
 
 ```python
 # 2D ndarray containing expression counts for each gene in each individual
-counts = np.asarray(data_table.loc[matched_index], dtype=int)
+counts = np.asarray(data_table, dtype=int)
 ```
+
+Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
+We will use a gaussian kernel to smooth out bumps in our data so we can get a
+better idea of the overall shape.
 
 ```python
 def plot_col_density(data, xlabel=None):
@@ -137,20 +123,34 @@ def plot_col_density(data, xlabel=None):
     plt.xlabel(xlabel)
     plt.show()
 
-
 # Before normalization
 log_counts = np.log(counts + 1)
 plot_col_density(log_counts, xlabel="Log count distribution for each individual")
 ```
 
-Given an expression matrix (microarray data, read counts, etc) of ngenes by nsamples, quantile normalization ensures all samples have the same spread of data (by construction). It involves:
+We can see that while the distributions of counts are broadly similar,
+some individuals have flatter distributions and a few are pushed right over to the left.
+When doing our analysis of the counts data later in this chapter, we will be assuming
+that changes in gene expression are due to biological differences between our samples.
+But a major distribution shift like this suggests that the differences are technical.
+So we will try to normalise out these global differences between individuals.
 
-(optionally) log-transforming the data
-sorting all the data points column-wise
-averaging the rows
-replacing each column quantile with the quantile of the average column.
-This can be done with NumPy and scipy easily and efficiently.
-Assume we've read in the input matrix as X:
+To do this, we will be performing quantile normalisation.
+The idea is that we assume all our samples should have a similar distribution,
+so any differences in the shape are due to some technical variation.
+We can fix this by forcing all the samples to have the same distribution.
+More formally, given an expression matrix (microarray data, read counts, etc) of
+ngenes by nsamples, quantile normalization ensures all samples have the same spread
+of data (by construction). It involves:
+
+- (optionally) log-transforming the data
+- sorting all the data points column-wise
+- averaging the rows and
+- replacing each column quantile with the quantile of the average column.
+
+With NumPy and SciPy, this can be done easily and efficiently.
+
+Let's assume we've read in the input matrix as X:
 
 ```python
 import numpy as np
@@ -184,9 +184,8 @@ def quantile_norm(X):
     # compute the quantiles
     log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
 
-    # compute the column-wise ranks; need to do a round-trip through list
-    ranks = np.transpose([np.round(stats.rankdata(col)).astype(int) - 1
-                        for col in X.T])
+    # compute the column-wise ranks
+    ranks = stats.mstats.rankdata(X, axis=0).astype(int) - 1
     # alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
 
     # index the quantiles for each rank with the ranks matrix
@@ -195,9 +194,9 @@ def quantile_norm(X):
     # convert the data back to counts (casting to int is optional)
     Xn = np.round(2**logXn - 1).astype(int)
     return(Xn)
-
-# Example usage: quantile_norm(counts_lib_norm)
 ```
+
+Now, let's see what our distributions look like after quantile normalization.
 
 ```python
 # After normalization
@@ -205,6 +204,10 @@ log_quant_norm_counts = np.log(quantile_norm(counts)+1)
 
 plot_col_density(log_quant_norm_counts, xlabel="Log count distribution for each individual")
 ```
+
+As you might expect, the distributions now look virtually identical!
+
+Now that we have normalized our counts, we can start using our gene expression data to predict mortality
 
 ## Biclustering the counts data
 
@@ -249,9 +252,10 @@ The SciPy library happens to have a perfectly good hierarchical clustering modul
 
 As a reminder, hierarchical clustering is a method to group observations using sequential merging of clusters:
 initially, every observation is its own cluster.
-Then, the two nearest clusters are repeatedly merged, until every observation is in a single cluster.
+Then, the two nearest clusters are repeatedly merged, and then the next two,
+and so on, until every observation is in a single cluster.
 This sequence of merges forms a *merge tree*.
-By cutting the tree at a particular distance threshold, we can get a finer or coarser clustering of observations.
+By cutting the tree at a specific height, we can get a finer or coarser clustering of observations.
 
 The `linkage` function in `scipy.cluster.hierarchy` performs a hierarchical clustering of the rows of a matrix, using a particular metric (for example, Euclidean distance, Manhattan distance, or others) and a particular linkage method, the distance between two clusters (for example, the average distance between all the observations in a pair of clusters).
 
@@ -268,7 +272,7 @@ First, we define a function, `bicluster`, that clusters both the rows *and* the 
 
 ```python
 import matplotlib.pyplot as plt
-from scipy.cluster.hierarchy import linkage, fcluster, dendrogram, leaves_list
+from scipy.cluster.hierarchy import linkage
 
 
 def bicluster(data, linkage_method='average', distance_metric='correlation'):
@@ -309,6 +313,7 @@ As a word of warning, there is a fair bit of hard-coding of parameters going on 
 This is difficult to avoid for plotting, where design is often a matter of eyeballing to find the correct proportions.
 
 ```python
+from scipy.cluster.hierarchy import dendrogram, leaves_list
 def plot_bicluster(data, row_linkage, col_linkage,
                    row_nclusters=10, col_nclusters=3):
     """Perform a biclustering, plot a heatmap with dendrograms on each axis.
@@ -340,7 +345,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
     # matrix.
     threshold_r = (row_linkage[-row_nclusters, 2] +
                    row_linkage[-row_nclusters+1, 2]) / 2
-    dendrogram(row_linkage, orientation='right', color_threshold=threshold_r)
+    dendrogram(row_linkage, orientation='left', color_threshold=threshold_r)
 
     # Compute and plot column-wise dendogram
     # See notes above for explanation of parameters to `add_axes`
@@ -394,7 +399,7 @@ plot_bicluster(counts_var, yr, yc)
 We can see that the sample data naturally falls into at least 2 clusters.
 Are these clusters meaningful?
 To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
-After some preprocessing, we get the [patients table]() (LINK TO FINAL PATIENTS TABLE), which contains survival information for each patient.
+After some preprocessing, we get the [patients table]() (TODO: LINK TO FINAL PATIENTS TABLE), which contains survival information for each patient.
 We can then match these to the counts clusters, and understand whether the patients' gene expression can predict differences in their pathology.
 
 ```python
@@ -402,12 +407,22 @@ patients = pd.read_csv('data/patients.csv', index_col=0)
 patients.head()
 ```
 
+For each patient (the rows) we have:
+
+- UV­ signature: Ultraviolet light tends to cause specific DNA mutations.
+By looking for this mutation signature they can infer that UV light likely caused the mutation(s) that lead to cancer in these patients.
+- original­ clusters: In the paper, the patients were clustered using gene expression data.
+These clusters were classified according to the types of genes that typified that cluster.
+The main clusters were "immune" (n = 168; 51%), "keratin" (n = 102; 31%), and "MITF-low" (n = 59; 18%).
+- melanoma­ survival­ time: Number of days that the patient survived.
+- melanoma­ dead: 1 if the patient died of melanoma, 0 if they are alive or died of something else.
+
 Now we need to draw *survival curves* for each group of patients defined by the clustering.
 This is a plot of the fraction of a population that remains alive over a period of time.
-Note that some data is *right-censored*, which means that in some cases, don't actually know when the patient died, or the patient might have died of causes unrelated to the melanoma.
-We counts these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
+Note that some data is *right-censored*, which means that in some cases, we don't actually know when the patient died, or the patient might have died of causes unrelated to the melanoma.
+We count these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
 
-To obtain a survival curve from survival times, we create a step function that decreases by $1/n$ at each step, where $n$ is the population size.
+To obtain a survival curve from survival times, we create a step function that decreases by $1/n$ at each step, where $n$ is the number of patients in the group.
 We then match that function against the non-censored survival times.
 
 ```python
@@ -512,6 +527,7 @@ The `fcluster` function takes a linkage matrix, as returned by `linkage`, and a 
 It's difficult to know a-priori what the threshold should be, but we can obtain the appropriate threshold for a fixed number of clusters by checking the distances in the linkage matrix.
 
 ```python
+from scipy.cluster.hierarchy import fcluster
 n_clusters = 3
 threshold_distance = (yc[-n_clusters, 2] + yc[-n_clusters+1, 2]) / 2
 clusters = fcluster(yc, threshold_distance, 'distance')
@@ -522,6 +538,12 @@ plot_cluster_survival_curves(clusters, data_table.columns, patients)
 The clustering of gene expression profiles has identified a higher-risk subtype of melanoma, which constitutes the majority of patients.
 This is indeed only the latest study to show such a result, with others identifying subtypes of leukemia (blood cancer), gut cancer, and more.
 Although the above clustering technique is quite fragile, there are other ways to explore this dataset and similar ones that are more robust.
+
+<!-- exercise begin -->
+**Exercise:** Do our clusters do a better job of predicting survival than the original clusters in the paper? What about UV signature?
+
+Plot survival curves using the original­ clusters and UV signature columns of the patient data. How do they compare to our clusters?
+<!-- exercise end -->
 
 <!-- exercise begin -->
 
