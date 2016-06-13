@@ -252,9 +252,10 @@ The SciPy library happens to have a perfectly good hierarchical clustering modul
 
 As a reminder, hierarchical clustering is a method to group observations using sequential merging of clusters:
 initially, every observation is its own cluster.
-Then, the two nearest clusters are repeatedly merged, until every observation is in a single cluster.
+Then, the two nearest clusters are repeatedly merged, and then the next two,
+and so on, until every observation is in a single cluster.
 This sequence of merges forms a *merge tree*.
-By cutting the tree at a particular distance threshold, we can get a finer or coarser clustering of observations.
+By cutting the tree at a specific height, we can get a finer or coarser clustering of observations.
 
 The `linkage` function in `scipy.cluster.hierarchy` performs a hierarchical clustering of the rows of a matrix, using a particular metric (for example, Euclidean distance, Manhattan distance, or others) and a particular linkage method, the distance between two clusters (for example, the average distance between all the observations in a pair of clusters).
 
@@ -397,7 +398,7 @@ plot_bicluster(counts_var, yr, yc)
 We can see that the sample data naturally falls into at least 2 clusters.
 Are these clusters meaningful?
 To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
-After some preprocessing, we get the [patients table]() (LINK TO FINAL PATIENTS TABLE), which contains survival information for each patient.
+After some preprocessing, we get the [patients table]() (TODO: LINK TO FINAL PATIENTS TABLE), which contains survival information for each patient.
 We can then match these to the counts clusters, and understand whether the patients' gene expression can predict differences in their pathology.
 
 ```python
@@ -405,12 +406,18 @@ patients = pd.read_csv('data/patients.csv', index_col=0)
 patients.head()
 ```
 
+For each patient (the rows) we have
+UV­ signature
+original­ clusters
+melanoma­ survival­ time
+melanoma­ dead
+
 Now we need to draw *survival curves* for each group of patients defined by the clustering.
 This is a plot of the fraction of a population that remains alive over a period of time.
-Note that some data is *right-censored*, which means that in some cases, don't actually know when the patient died, or the patient might have died of causes unrelated to the melanoma.
-We counts these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
+Note that some data is *right-censored*, which means that in some cases, we don't actually know when the patient died, or the patient might have died of causes unrelated to the melanoma.
+We count these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
 
-To obtain a survival curve from survival times, we create a step function that decreases by $1/n$ at each step, where $n$ is the population size.
+To obtain a survival curve from survival times, we create a step function that decreases by $1/n$ at each step, where $n$ is the number of patients in the group.
 We then match that function against the non-censored survival times.
 
 ```python
