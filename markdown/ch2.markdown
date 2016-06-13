@@ -272,7 +272,7 @@ First, we define a function, `bicluster`, that clusters both the rows *and* the 
 
 ```python
 import matplotlib.pyplot as plt
-from scipy.cluster.hierarchy import linkage, fcluster, dendrogram, leaves_list
+from scipy.cluster.hierarchy import linkage
 
 
 def bicluster(data, linkage_method='average', distance_metric='correlation'):
@@ -313,6 +313,7 @@ As a word of warning, there is a fair bit of hard-coding of parameters going on 
 This is difficult to avoid for plotting, where design is often a matter of eyeballing to find the correct proportions.
 
 ```python
+from scipy.cluster.hierarchy import dendrogram, leaves_list
 def plot_bicluster(data, row_linkage, col_linkage,
                    row_nclusters=10, col_nclusters=3):
     """Perform a biclustering, plot a heatmap with dendrograms on each axis.
@@ -344,7 +345,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
     # matrix.
     threshold_r = (row_linkage[-row_nclusters, 2] +
                    row_linkage[-row_nclusters+1, 2]) / 2
-    dendrogram(row_linkage, orientation='right', color_threshold=threshold_r)
+    dendrogram(row_linkage, orientation='left', color_threshold=threshold_r)
 
     # Compute and plot column-wise dendogram
     # See notes above for explanation of parameters to `add_axes`
@@ -522,6 +523,7 @@ The `fcluster` function takes a linkage matrix, as returned by `linkage`, and a 
 It's difficult to know a-priori what the threshold should be, but we can obtain the appropriate threshold for a fixed number of clusters by checking the distances in the linkage matrix.
 
 ```python
+from scipy.cluster.hierarchy import fcluster
 n_clusters = 3
 threshold_distance = (yc[-n_clusters, 2] + yc[-n_clusters+1, 2]) / 2
 clusters = fcluster(yc, threshold_distance, 'distance')
