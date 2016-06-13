@@ -1,14 +1,3 @@
-```python
-%matplotlib inline
-
-import seaborn as sns
-sns.set_style('white')
-sns.despine()
-
-import matplotlib.pyplot as plt
-import numpy as np
-```
-
 <!--
 
 ## Notes
@@ -42,7 +31,7 @@ import numpy as np
 
 -->
 
-# Frequency
+# Frequency and the Fast Fourier Transform
 
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
 
@@ -51,6 +40,20 @@ book.  In particular, you may find the *code* in the chapter quite
 modest.  Instead, we want to illustrate an elegant *algorithm*, the
 Fast Fourier Transform (FFT), that is endlessly useful, implemented in
 SciPy, and works, of course, on NumPy arrays.
+
+We'll start by setting up some plotting styles and importing the usual
+suspects:
+
+```python
+%matplotlib inline
+
+import seaborn as sns
+sns.set_style('white')
+sns.despine()
+
+import matplotlib.pyplot as plt
+import numpy as np
+```
 
 The discrete[^discrete] Fourier Transform is a mathematical technique
 to convert temporal or spatial data into *frequency domain* data.
