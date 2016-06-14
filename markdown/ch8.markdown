@@ -1,7 +1,7 @@
 ```python
 %matplotlib inline
 ```
-# Dealing with Big Data with Toolz
+# Big Data in Little Laptop with Toolz
 
 Whenever I think too hard about streaming data analysis, my head hurts.
 
