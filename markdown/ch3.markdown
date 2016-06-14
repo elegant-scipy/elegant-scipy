@@ -1,7 +1,4 @@
-# Build a Region Adjacency Graph using ndimage.generic_filter
-
-### Code by Vighnesh Birodkar
-### Submitted by Juan Nunez-Iglesias
+# Networks of Image Regions with ndimage
 
 This chapter gets a special mention because it inspired the whole book.
 Vighnesh Birodkar wrote this as an undergraduate while participating in

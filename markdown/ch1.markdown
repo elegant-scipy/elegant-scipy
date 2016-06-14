@@ -1,4 +1,4 @@
-# Elegant NumPy: The foundation of scientific computing in Python
+# Elegant NumPy: The Foundation of Scientific Python
 
 This chapter touches on some statistical functions in SciPy, but more than that, it focuses on exploring the NumPy array, a data structure that underlies almost all numerical scientific computation in Python.
 We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
