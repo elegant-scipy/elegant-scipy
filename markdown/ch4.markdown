@@ -119,8 +119,8 @@ of goals.
 Let's start with one of the most common applications, converting a sound signal (consisting of variations of air pressure over time) to a *spectrogram*.
 (You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
 
-![Stereo spectrogram](http://img.canuckaudiomart.com/uploads/large/383877-yamaha_eq550_ten_band_stereo_graphic_equalizer.jpg)
-**[ED NOTE: this image is just an example, would need to find one with correct license]**
+![Stereo spectrogram](../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG)
+**[ED NOTE: Used with permission from the author, Sergey Gerasimuk, http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html]**
 
 Listen to the following snippet of nightingale birdsong:
 
