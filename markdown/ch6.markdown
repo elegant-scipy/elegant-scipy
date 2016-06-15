@@ -81,19 +81,70 @@ One way is to put nodes that share many links close together, and it turns out
 that this can be done by using the second-smallest eigenvalue of the Laplacian
 matrix, and its corresponding eigenvector, which is so important it has its
 own name: the
-[Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector)
-(As a quick aside, an eigenvector $v$ of a matrix $M$ is a vector that
-satisfies the property $Mv = \lambda v$ for some number $\lambda$, known as the
-eigenvalue.  In other words, $v$ is a special vector w.r.t $M$ because
-$Mv$ simply scales the vector, without changing its
-direction.[^eigenvector_example]
+[Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector).
 
-[^eigenvector_example]: As an example, consider a 3x3 rotation matrix
-$R$ that, when multiplied by any 3-dimensional vector $p$, rotates it
-$30^\circ$ degrees around the z-axis.  $R$ will rotate all vectors
-except for those that lie *on* the z-axis.  For those, we'll see no
-effect, or $Rp = p$, i.e. $Rp = \lambda p$ with eigenvalue $\lambda =
-1$.
+As a quick aside, an eigenvector $v$ of a matrix $M$ is a vector that
+satisfies the property $Mv = \lambda v$ for some number $\lambda$,
+known as the eigenvalue.  In other words, $v$ is a special vector in
+relation to $M$ because $Mv$ simply scales the vector, without
+changing its direction.[^eigv_example]
+
+[^eigv_example]: As an example, consider a 3x3 rotation matrix $R$
+                 that, when multiplied by any 3-dimensional vector
+                 $p$, rotates it $30^\circ$ degrees around the z-axis.
+                 $R$ will rotate all vectors except for those that lie
+                 *on* the z-axis.  For those, we'll see no effect, or
+                 $Rp = p$, i.e. $Rp = \lambda p$ with eigenvalue
+                 $\lambda = 1$.
+
+<!-- exercise begin -->
+
+**Exercise:** Consider the rotation matrix
+
+$$
+R = \begin{bmatrix}
+  \cos \theta &  -\sin \theta & 0 \\[3pt]
+  \sin \theta & \cos \theta & 0\\[3pt]
+  0 & 0 & 1\\
+\end{bmatrix}
+$$
+
+When R is multiplied with a 3-dimensional column-vector $p =
+\left[ x\, y\, z \right]^T$, the resulting vector $R p$ is rotated
+by $\theta$ degrees around the z-axis.
+
+1. For $\theta = 45^\circ$, verify (by testing on a few arbitrary
+   vectors) that R rotates these vectors around the z axis.
+
+2. Now, verify that multiplying by $R$ leaves the vector
+   $\left[ 0\, 0\, 1\right]^T$ unchanged.  In other words, $R p = 1
+   p$, which means $p$ is an eigenvector of R with eigenvalue 1.
+
+<!-- solution begin -->
+
+**Solution:**
+
+```python
+import numpy as np
+
+theta = np.deg2rad(45)
+R = np.array([[np.cos(theta), -np.sin(theta), 0],
+              [np.sin(theta),  np.cos(theta), 0],
+              [0,              0,             1]])
+
+print("R @ x-axis:", R @ [1, 0, 0])
+print("R @ y-axis:", R @ [0, 1, 0])
+print("R @ z-axis:", R @ [0, 0, 1])
+
+```
+
+R rotates both the x and y axes, but not the z-axis.
+
+----
+
+<!-- solution end -->
+
+<!-- exercise end -->
 
 The eigenvectors have numerous useful--sometimes almost magical!--properties.
 
