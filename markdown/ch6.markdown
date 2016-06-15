@@ -84,7 +84,18 @@ own name: the
 [Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector)
 (As a quick aside, an eigenvector $v$ of a matrix $M$ is a vector that
 satisfies the property $Mv = \lambda v$ for some number $\lambda$, known as the
-eigenvalue. They have numerous and seemingly magical properties.)
+eigenvalue.  In other words, $v$ is a special vector w.r.t $M$ because
+$Mv$ simply scales the vector, without changing its
+direction.[^eigenvector_example]
+
+[^eigenvector_example]: As an example, consider a 3x3 rotation matrix
+$R$ that, when multiplied by any 3-dimensional vector $p$, rotates it
+$30^\circ$ degrees around the z-axis.  $R$ will rotate all vectors
+except for those that lie *on* the z-axis.  For those, we'll see no
+effect, or $Rp = p$, i.e. $Rp = \lambda p$ with eigenvalue $\lambda =
+1$.
+
+The eigenvectors have numerous useful--sometimes almost magical!--properties.
 
 Let's use a minimal network to illustrate this.
 
