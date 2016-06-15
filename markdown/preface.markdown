@@ -73,7 +73,7 @@ loops, and maybe a bit of NumPy.  Perhaps you've even honed your
 Python skills with some more advanced material, such as Fluent Python
 (http://shop.oreilly.com/product/0636920032519.do).
 
-But you don't know whether the "SciPy stack" is a library or a menu item from IHOP, and you aren't sure about best practices.
+But you don't know whether the "SciPy stack" is a library or a menu item from International House of Pancakes, and you aren't sure about best practices.
 Perhaps you are a scientist who has read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of their own lab, and have fiddled with them.
 And you might think that you are more or less alone when you learn to code SciPy.
 You are not.
@@ -142,13 +142,14 @@ as Effective Computation in Physics (http://physics.codes/).
 
 ## Installing Python - Anaconda
 
-Throughout this book we’re going to assume that you have Python 3.4 (or a later version) and have all the major SciPy packages installed: NumPy, SciPy, Matplotlib, IPython, scikit-image, and others.
-We will list all of the requirements and the versions we used at the start of each chapter.
+Throughout this book we’re going to assume that you have Python 3.5 (or a later version) and have all the major SciPy packages installed: NumPy, SciPy, Matplotlib, IPython, scikit-image, and others.
+We will list all of the requirements and the versions we used in the environment.yml that you can find packaged with the data for this book.
 The easiest way to get all of these components is to install the Anaconda Python distribution.
 You can download Anaconda here: http://continuum.io/downloads. You will also find detailed installation instructions.
 
 If you find that you need to keep track of multiple versions of Python or different sets of packages, try Conda
 (if you've just downloaded the Anaconda Python distribution then you already have it!).
+That environment.yml can be passed to conda to install the right versions of everything in one go.
 
 ## The Great Cataclysm: Python 2 vs. Python 3
 
@@ -196,6 +197,9 @@ Another change is the way Python 3 treats integer division, which is the way mos
 2.5
 ```
 
+We were also pretty excited about the new `@` *matrix multiplication* operator introduced in Python 3.5 in 2015.
+Check out chapters 5 and 6 for some examples of this operator in use!
+
 Possibly the biggest improvement in Python 3 is its support for Unicode, a way of encoding text that allows one to use not just the English alphabet, but rather any alphabet in the world.
 Python 2 allowed you to define a Unicode string, like so:
 
@@ -220,16 +224,21 @@ Given the divided state of the community, many developers now write code that is
 
 For new learners, the right thing to do is to use Python 3.
 It is the future of the language, and there is no sense in adding to the dead weight of Python 2 code littering the interwebs (including much from your authors!).
-In Elegant SciPy, we're going to use Python 3.4.
+In Elegant SciPy, we're going to use Python 3.5.
 
-For more reading, you might like to check out Ed Schofield's python-future.org, and Nick Coghlan's book-length guide on the transition [^py3].
-
-However, if you *must* use Python 2, you can make the code in this book compatible with Python 2, assuming you have the following imports at the start of your code:
+However, if you *must* use Python 2, you can make a fair bit of the code in this book compatible with Python 2, assuming you have the following imports at the start of your code:
 
 ```
 from __future__ import division, print_function
 from six.moves import zip, map, range, filter
 ```
+
+A word of warning for Python 2.7 enthusiasts: chapters 5 and 6 rely heavily on the new `@` *matrix multiplication* operator (mentioned above), which is only available in Python 3.5+.
+Trying to use `@` in earlier version of Python will give you a nasty syntax error.
+To make the code in these chapters work with Python 2.7 you will have to use the `.dot` method of NumPy arrays and SciPy matrices, which is decidedly inelegant.
+More on how to do this in chapter 5.
+
+For more reading, you might like to check out Ed Schofield's python-future.org, and Nick Coghlan's book-length guide on the transition [^py3].
 
 ## SciPy Ecosystem and Community
 
