@@ -428,12 +428,20 @@ Now, consider studying the human brain, and represent it as a large $M
 \times M$ graph, where there are $M$ nodes (positions) in which you
 measure activity using an MRI scanner.  After a while of measuring,
 correlations can be calculated and entered into a matrix $C_{ij}$.
-The matrix is thresholded (which makes it sparse) and normalized, and
-its dominant eigenvector calculated.  The sign of each entry in the
-(length $M$) eigenvector groups the nodes into two sub-groups.  Rinse
-and repeat to form more and more and more sub-groups.  It turns out
-that these subgroups, or communities, tell us a lot about functional
-regions of the brain! [SvdW TODO: Double check Newman algorithm in BrainX]
+The matrix is thresholded (which makes it sparse and fills it with
+ones and zeros), representing an adjacency matrix.  The dominant
+eigenvector of this matrix is then calculated.  The sign of each entry
+in the (length $M$) eigenvector groups the nodes into two sub-groups
+(see Newman (2006), Modularity and community structure in networks,
+http://www.pnas.org/content/103/23/8577.full).  Rinse and repeat to
+form more and more and more sub-groups [^submod].  It turns out that
+these subgroups, or communities, tell us a lot about functional
+regions of the brain!
+
+[^submod]: One has to be careful when subdividing the network into
+           more than one group.  The graph under analysis remains the
+           original, *not* the previously split result.  A correct
+           approach is explained in detail in Newman (2006).
 
 <table style="font-size: 50%;">
 <colgroup>
