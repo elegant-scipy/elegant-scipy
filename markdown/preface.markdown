@@ -73,7 +73,7 @@ loops, and maybe a bit of NumPy.  Perhaps you've even honed your
 Python skills with some more advanced material, such as Fluent Python
 (http://shop.oreilly.com/product/0636920032519.do).
 
-But you don't know whether the "SciPy stack" is a library or a menu item from IHOP, and you aren't sure about best practices.
+But you don't know whether the "SciPy stack" is a library or a menu item from International House of Pancakes, and you aren't sure about best practices.
 Perhaps you are a scientist who has read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of their own lab, and have fiddled with them.
 And you might think that you are more or less alone when you learn to code SciPy.
 You are not.
