@@ -43,9 +43,12 @@ This is elegant code.
 
 Now that we’ve dealt with the elegant part of the title, let’s bring back the SciPy.
 
-SciPy is a library, an ecosystem, and a community.
-Part of what makes these great is that they have excellent online documentation, rendering a complete reference book pointless.
-Instead, in Elegant SciPy we want to present the best code built using these libraries.
+SciPy is a library, an ecosystem, and a community.  Part of what makes
+these great is that they have excellent online documentation and
+tutorials (see, e.g., https://docs.scipy.org and
+http://www.scipy-lectures.org/), rendering Just Another Reference book
+pointless; instead, Elegant SciPy wants to present the best code built
+using these libraries.
 
 The code we have chosen highlights clever, elegant uses of advanced features of NumPy, SciPy, and related libraries.
 The beginning reader will learn to apply these libraries to real world problems using beautiful code.
@@ -64,8 +67,12 @@ We have pitched this book towards people who have a decent beginner grounding in
 If you are not yet familiar with Python basics, work through a beginner tutorial before tackling this book.
 There are some great resources to get to get you started with Python, such as Software Carpentry (http://software-carpentry.org/).
 
-We expect that you will be familiar with the Python programming language.
-You have seen Python, and know about variables, functions, loops, and maybe even a bit of NumPy.
+We expect that you will be familiar with the Python programming
+language.  You have seen Python, and know about variables, functions,
+loops, and maybe a bit of NumPy.  Perhaps you've even honed your
+Python skills with some more advanced material, such as Fluent Python
+(http://shop.oreilly.com/product/0636920032519.do).
+
 But you don't know whether the "SciPy stack" is a library or a menu item from IHOP, and you aren't sure about best practices.
 Perhaps you are a scientist who has read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of their own lab, and have fiddled with them.
 And you might think that you are more or less alone when you learn to code SciPy.
@@ -95,7 +102,7 @@ In short, SciPy and related libraries will be driving much of scientific data an
 > -- http://www.scipy.org/
 
 The SciPy ecosystem is a loosely defined collection of Python packages.
-In Elegant SciPy we will see many of its main players:
+In Elegant SciPy we will see many of its main players [^learn]:
 
 * **NumPy** is the foundation of scientific computing in Python. It
 provides efficient numeric arrays and  wide support for numerical computation, including linear algebra, random numbers, and Fourier transforms.
@@ -124,7 +131,14 @@ http://pandas.pydata.org/
 provides image analysis tools that integrate cleanly with the rest of SciPy.
 
 There are others, and we will see some of them too.
-The takeaway here is that, although we will focus on NumPy and SciPy, it is the many surrounding packages that make Python a powerhouse for scientific computing.
+The takeaway here is that, although we will focus on NumPy and SciPy,
+it is the many surrounding packages that make Python a powerhouse for
+scientific computing.
+
+[^learn]: You can learn more about many of the tools mentioned here at
+http://www.scipy-lectures.org/, or through field-specific guides such
+as Effective Computation in Physics (http://physics.codes/).
+
 
 ## Installing Python - Anaconda
 
@@ -135,7 +149,6 @@ You can download Anaconda here: http://continuum.io/downloads. You will also fin
 
 If you find that you need to keep track of multiple versions of Python or different sets of packages, try Conda
 (if you've just downloaded the Anaconda Python distribution then you already have it!).
-
 
 ## The Great Cataclysm: Python 2 vs. Python 3
 
@@ -222,11 +235,11 @@ from six.moves import zip, map, range, filter
 
 SciPy is a major library with a lot of functionality.
 Together with NumPy, it is one of Python's killer apps.
-And such a killer app has launched a vast amount of related libraries that build on this functionality.
+And such a killer app has launched a vast number of related libraries that build on this functionality.
 You'll encounter many of these throughout this book.
 
 The creators of these libraries and many of their users gather at many events and conferences around the world.
-These include the yearly SciPy conference in Austin, Texas, EuroSciPy, SciPy India, PyData and others.
+These include the yearly SciPy conference in Austin, EuroSciPy, SciPy India, PyData and others.
 We highly recommend attending one of these, and meeting the authors of the best scientific software in the Python world.
 If you can't get there, or simply want a taste of these conferences, many [publish their talks online](https://www.youtube.com/user/EnthoughtMedia/playlists).
 
