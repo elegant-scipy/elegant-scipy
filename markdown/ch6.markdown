@@ -46,7 +46,7 @@ matrix $A$, then $A_{i, j} = 1$ if and only if the link
 with often striking results.
 
 The degree of a node is the number of edges touching it. For example, if a node
-is connected to five other nodes in a graph, its degree is 5. (Sometimes we
+is connected to five other nodes in a graph, its degree is 5. (Later, we
 will differentiate between out-degree and in-degree, when edges have a "from"
 and "to".)
 
@@ -144,7 +144,8 @@ R rotates both the x and y axes, but not the z-axis.
 
 The eigenvectors have numerous useful--sometimes almost magical!--properties.
 
-Let's use a minimal network to illustrate this.
+Let's use a minimal network to illustrate this. We start by creating the
+adjacency matrix:
 
 ```python
 import numpy as np
@@ -166,15 +167,28 @@ nx.draw_spring(g, with_labels=True, node_color='white')
 
 You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
 Can the Fiedler vector tell us this? First, we must compute the degree matrix
-and the Laplacian. We use `scipy.sparse.diags` to build the matrix of diagonal
-degrees.
+and the Laplacian. We first get the degrees by summing along either axis of A.
+(Either axis works because A is symmetric.)
 
 ```python
 d = np.sum(A, axis=0)
+print(d)
+```
 
+We then put those degrees into the diagonal of a matrix of the same shape
+as A, the *degree matrix*. We can use `scipy.sparse.diags` to do this:
+
+```python
 from scipy import sparse
 D = sparse.diags(d).toarray()
+print(D)
+```
+
+Finally, we get the Laplacian from the definition:
+
+```python
 L = D - A
+print(L)
 ```
 
 Because $L$ is symmetric, we can use the `np.linalg.eigh` function to compute
@@ -205,11 +219,11 @@ is the second-smallest:
 
 ```python
 from matplotlib import pyplot as plt
-
+print(eigvals)
 plt.plot(eigvals)
 ```
 
-It's the second eigenvalue. The Fiedler vector is thus the second eigenvector:
+It's the second eigenvalue. The Fiedler vector is thus the second eigenvector.
 
 ```python
 f = Eigvecs[:, 1]
@@ -224,7 +238,7 @@ colors = np.array(['orange', 'gray'])[(f > 0).astype(int)]
 nx.draw_spring(g, with_labels=True, node_color=colors)
 ```
 
-Let's demonstrate this by laying out the brain cells in a worm, as shown in
+Let's demonstrate this in a real-world example by laying out the brain cells in a worm, as shown in
 [Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
 from the
 [Varshney *et al* paper](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
@@ -241,7 +255,7 @@ got the original data from Lars Varshney's
 [website](http://www.ifp.illinois.edu/~varshney/elegans),
 and the processed data is in our `data/` directory.
 
-First, let us load the data. There are four components:
+First, let's load the data. There are four components:
 - the network of chemical synapses, through which a *pre-synaptic neuron*
   sends a chemical signal to a *post-synaptic* neuron,
 - the gap junction network, which contains direct electrical contacts between
@@ -302,8 +316,8 @@ z = linalg.pinv(L) @ b
 ```
 
 (Note the use of the `@` symbol, which was introduced in Python 3.5 to denote
-matrix multiplication. In previous versions of Python, you would need to use
-the function `np.dot`.)
+matrix multiplication. As we noted in the preface and in Chapter 5, in previous
+versions of Python, you would need to use the function `np.dot`.)
 
 In order to obtain the degree-normalized Laplacian, Q, we need the inverse
 square root of the D matrix:
