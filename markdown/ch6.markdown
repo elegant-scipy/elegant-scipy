@@ -27,10 +27,6 @@ them straight to follow the linear algebra convention. Therefore, variables
 that represent matrices will start with a capital letter, while vectors and
 numbers will start with lowercase.
 
-## Straight linear algebra problem
-
-e.g. one-layer NN, kernel PCA, or NN from scratch
-
 ## Laplacian matrix of a graph
 
 We discussed graphs in chapter 3, where we represented image regions as
