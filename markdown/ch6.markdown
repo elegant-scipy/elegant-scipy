@@ -175,7 +175,7 @@ d = np.sum(A, axis=0)
 print(d)
 ```
 
-We then put those degrees into the diagonal of a matrix of the same shape
+We then put those degrees into a diagonal matrix of the same shape
 as A, the *degree matrix*. We can use `scipy.sparse.diags` to do this:
 
 ```python
