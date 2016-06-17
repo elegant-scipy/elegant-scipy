@@ -610,6 +610,7 @@ The counts are the number of reads from that gene in a given sample.
 So if a gene is twice as long, we are twice as likely to sample it.
 
 ![Relationship between counts and gene length](../figures/gene_length_counts.png)
+**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 Let's see if the relationship between gene length and counts plays out in our data set.
 
