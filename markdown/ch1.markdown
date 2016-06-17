@@ -609,8 +609,8 @@ Remember, that when we do an RNAseq experiment, we are fragmenting the transcrip
 The counts are the number of reads from that gene in a given sample.
 So if a gene is twice as long, we are twice as likely to sample it.
 
-![Relationship between counts and gene length](https://izabelcavassim.files.wordpress.com/2015/03/screenshot-from-2015-03-08-2245511.png)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+![Relationship between counts and gene length](../figures/gene_length_counts.png)
+**[ED NOTE, this is a placeholder doodle. We would actually like one more like this: https://izabelcavassim.files.wordpress.com/2015/03/screenshot-from-2015-03-08-2245511.png]**
 
 Let's see if the relationship between gene length and counts plays out in our data set.
 
