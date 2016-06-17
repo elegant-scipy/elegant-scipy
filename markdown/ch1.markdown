@@ -73,15 +73,15 @@ Fortunately, expression levels of an mRNA and levels of its corresponding protei
 Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
-![Central Dogma of Molecular Biology](https://upload.wikimedia.org/wikipedia/commons/5/50/Molbio-Header.svg)
-**[ED NOTE, this image is from wikipedia, so attribution and share-alike. Appropriate license?]**
+![Central Dogma of Molecular Biology](../figures/central_dogma.png)
+**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of that DNA into RNA.
 Similarly, as we shall see in this chapter, differential expression can distinguish different kinds of cancer.
 
-![Gene expression](http://www.ncbi.nlm.nih.gov/Class/MLACourse/Original8Hour/Genetics/cgap_conceptual_tour1.gif)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+![Gene expression](../figures/differential_gene_expression.png)
+**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
 RNA is extracted from a tissue, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
@@ -89,8 +89,8 @@ Currently, high-throughput sequencing machines can only read short fragments (ap
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
 For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
 
-![RNAseq](http://bio.lundberg.gu.se/courses/vt13/rna4.JPG.jpg)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+![RNAseq](../figures/RNAseq.png)
+**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 Here's an example of what this gene expression data looks like.
 
@@ -165,8 +165,8 @@ print(two_d_array.shape)
 
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
 
-![2-dimensional array diagram](http://www.inf.ethz.ch/personal/gonnet/DarwinManual/img24.gif)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+![multi-dimensional array diagram](../figures/NumPy_ndarrays.png)
+**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 Arrays have other attributes, such as `ndim`, the number of dimensions:
 
@@ -605,12 +605,12 @@ Let's say we have gene A and gene B.
 Gene B is twice as long as gene A.
 Both are expressed at similar levels in the sample, i.e. both produce a similar number of mRNA molecules.
 Therefore you would expect that gene B would have about twice as many counts as gene A.
-Remember, that when we do an RNAseq experiement, we are fragmenting the transcript, and sampling reads from that pool of fragments.
+Remember, that when we do an RNAseq experiment, we are fragmenting the transcript, and sampling reads from that pool of fragments.
 The counts are the number of reads from that gene in a given sample.
 So if a gene is twice as long, we are twice as likely to sample it.
 
-![Relationship between counts and gene length](https://izabelcavassim.files.wordpress.com/2015/03/screenshot-from-2015-03-08-2245511.png)
-**[ED NOTE, this is a placeholder image only. We do not have license to use it.]**
+![Relationship between counts and gene length](../figures/gene_length_counts.png)
+**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 Let's see if the relationship between gene length and counts plays out in our data set.
 
