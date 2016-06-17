@@ -498,12 +498,15 @@ Ls = Ds - Cs
 ```
 
 Now we want to get the processing depth. Remember that getting the
-pseudo-inverse of the Laplacian matrix is out of the question. However, we were
-actually using it to compute a vector $z$ that would solve $L z = b$, where
-$b = C \odot \sign\left(A - A^T\right) \mathbb{1}$. With dense matrices,
-we can simply use $z = L^+b$. With sparse ones, though, we can use one of the
-*solvers* in `sparse.linalg.isolve` to get the `z` vector after providing `L`
-and `b`, no inversion required!
+pseudo-inverse of the Laplacian matrix is out of the question, because it will
+be a dense matrix (the inverse of a sparse matrix is not generally sparse
+itself). However, we were actually using the pseudo-inverse to compute a vector
+$z$ that would satisfy $L z = b$, where
+$b = C \odot \textrm{sign}\left(A - A^T\right) \mathbb{1}$.
+(You can see this in the supplementary material for Varshney *et al*.) With
+dense matrices, we can simply use $z = L^+b$. With sparse ones, though, we can
+use one of the *solvers* in `sparse.linalg.isolve` to get the `z` vector after
+providing `L` and `b`, no inversion required!
 
 ```python
 b = Cs.multiply((As - As.T).sign()).sum(axis=1)
@@ -531,14 +534,18 @@ eigenvalues, and `k` to specify that we need the 3 smallest:
 
 Qs = Dsinv2 @ Ls @ Dsinv2
 eigvals, eigvecs = sparse.linalg.eigsh(Qs, k=3, which='SM')
+sorted_indices = np.argsort(eigvals)
+eigvecs = eigvecs[:, sorted_indices]
 ```
 
 Finally, we normalize the eigenvectors to get the x and y coordinates:
 
 ```python
-_, x, y = (Dsinv2 @ eigvecs).T
+_dsinv, x, y = (Dsinv2 @ eigvecs).T
 ```
 
+(Note that the eigenvector corresponding to the smallest eigenvalue is always a
+vector of all ones, which we're not interested in.)
 We can now reproduce the above plots!
 
 ```python
@@ -550,7 +557,8 @@ plot_connectome(x, y, C, neuron_ids, neuron_types)
 ```
 
 Note that eigenvectors are defined only up to a (possibly negative)
-multiplicative constant, so the plots may have ended up reversed!
+multiplicative constant, so the plots may have ended up reversed! (That is,
+left is right, or up is down, or both!)
 
 <!-- solution end -->
 
