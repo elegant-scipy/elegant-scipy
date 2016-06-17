@@ -579,7 +579,9 @@ original page.
 
 The key insight that drove Google's early success was that important webpages
 are not just linked to by many webpages, but also by *other*, *important*
-webpages. As we will see, this recursive definition implies that page
+webpages. And how do we know that those other pages are important? Because
+they themselves are linked to by important pages. And so on.
+As we will see, this recursive definition implies that page
 importance can be measured by the eigenvector corresponding to the largest
 eigenvalue of the so-called *transition matrix*. This matrix imagines a web
 surfer, often named Webster, randomly clicking a link from each webpage he
