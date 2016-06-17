@@ -564,103 +564,56 @@ left is right, or up is down, or both!)
 
 <!-- exercise end -->
 
-## Community detection
+## Pagerank: linear algebra for reputation and importance
 
-Another application of the normalized graph Laplacian is in community
-detection. Mark Newman published a
-[seminal paper](http://www.pnas.org/content/103/23/8577.short)
-on the topic in 2006, and
-[refined it further](http://arxiv.org/abs/1307.7729) in 2013. We'll apply it to the Python library dependency graph.
+Another application of linear algebra and eigenvectors is Google's Pagerank
+algorithm, which is punnily named both for webpages and for one of its
+co-founders, Larry Page.
 
-We've downloaded and preprocessed the data ahead of time, available as the file
-`pypi-dependencies.txt` in the `data/` folder. The data consists of a list of
-library-dependency pairs, one per line. The networkx library that we started
-using in Chapter 3 makes it easy to build a graph from these data. We will use
-a directed graph since the relationship is asymmetrical: one library depends
-on the other, not vice-versa.
+If you're trying to rank webpages by importance, one thing you might look at
+is how many other webpages link to it. After all, if everyone is linking to a
+particular page, it must be good, right? But the problem is that this metric is
+easily gamed: to make your own webpage rise in the rankings, you just have to
+create as many other webpages as you can and have them all link to your
+original page.
+
+The key insight that drove Google's early success was that important webpages
+are not just linked to by many webpages, but also by *other*, *important*
+webpages. As we will see, this recursive definition implies that page
+importance can be measured by the eigenvector corresponding to the largest
+eigenvalue of the so-called *transition matrix*. This matrix imagines a web
+surfer, often named Webster, randomly clicking a link from each webpage he
+visits, and then asks, what's the probability that he ends up at any given
+page? This probability is called the pagerank.
+
+Since Google's rise, researchers have been applying pagerank to all sorts of
+networks. We'll start with an example by Stefano Allesina and Mercedes Pascual,
+which they
+[published](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000494i)
+in PLoS Computational Biology. They thought to apply the method in ecological
+*food webs*, networks that link species to those that they eat.
+
+Naively, if you wanted to see how critical a species was for an ecosystem, you
+would look at how many species eat it. If it's many, and that species
+disappeared, then all its "dependent" species might disappear with it. In
+network parlance, you could say that its *in-degree* determines its ecological
+importance.
+
+Could pagerank be a better measure of importance for an ecosystem?
+
+Now-Professor Allesina kindly provided us with a few food webs to play around
+with. We've saved one of these, from the St Marks National Wildlife Refuge in
+Florida, in the Graph Markup Language format. The web was
+[described](http://www.sciencedirect.com/science/article/pii/S0304380099000228)
+in 1999 by Robert R. Christian and Joseph J. Luczovich. In the dataset, a node
+$i$ has a link to node $j$ if species $i$ eats species $j$.
+
+We'll start by loading in the data, which NetworkX knows how to read trivially:
 
 ```python
 import networkx as nx
 
-dependencies = nx.DiGraph()
-
-with open('data/pypi-deps.txt') as lines:
-    lib_dep_pairs = (str.split(line) for line in lines)
-    dependencies.add_edges_from(lib_dep_pairs)
-```
-
-We can then get some statistics about this (incomplete) dataset by using
-networkx's built-in functions:
-
-```python
-print('number of packages: ', dependencies.number_of_nodes())
-print('number of dependencies: ', dependencies.number_of_edges())
-```
-
-What is the single most used Python package?
-
-```python
-print(max(dependencies.in_degree_iter(),
-          key=lambda x: x[1]))
-```
-
-We're not going to cover it in this book, but `setuptools` is not a surprising
-winner
-here. In fact, until we wrote this chapter, we had thought it was part of the
-Python standard library, in the same category as `os`, `sys`, and others!
-
-Since using setuptools is almost a requirement for being listed in PyPI, we are
-actually going to remove it from the dataset, because it has too much influence
-on the shape of the graph.
-
-```python
-dependencies.remove_node('setuptools')
-```
-
-What's the next most depended-upon package?
-
-```python
-print(max(dependencies.in_degree_iter(),
-          key=lambda x: x[1]))
-```
-
-The requests library is the foundation of a very large fraction of the web
-frameworks and web processing libraries.
-
-We can similarly find out the top-40 most depended-upon packages:
-
-```python
-packages_by_in = sorted(dependencies.in_degree_iter(),
-                        key=lambda x: x[1], reverse=True)
-print(packages_by_in[:40])
-```
-
-By this ranking, NumPy ranks 4 and SciPy 28 out of all of PyPI. Not bad!
-Overall, though, one gets the impression that the web community dominates
-PyPI. As we saw in the preface, this is expected, since the scientific Python
-community is still growing!
-
-### A detour: pagerank with SciPy
-
-The number of incoming links to a package doesn't tell the whole
-story. As you might have heard, the key insight that drove Google's early
-success was that important webpages are not just linked to by many webpages, but
-also by *other* important webpages. As we will see, this recursive definition
-implies that page importance can be measured by the eigenvector corresponding
-to the largest eigenvalue of the so-called *transition matrix*. This matrix
-imagines a web surfer, often named Webster, randomly clicking a link from each
-webpage he visits, and then asks, what's the probability that
-he ends up at any given page? This probability is called the pagerank.
-
-We can apply this insight to the network of Python dependencies. First, we
-ignore all the packages that are isolated, not connected to the bulk of Python
-packages. We do this by finding the *connected components* of the graph, and
-then choosing the largest of them.
-
-```python
-connected_packages = max(nx.connected_components(dependencies.to_undirected()),
-                         key=len)
-conn_dependencies = nx.subgraph(dependencies, connected_packages)
+stmarks = nx.read_gml('data/stmarks.gml')
 ```
 
 Next, we get the sparse matrix corresponding to the graph. Because a matrix
@@ -668,20 +621,20 @@ only holds numerical information, we need to maintain a separate list of
 package names corresponding to the matrix rows/columns:
 
 ```python
-package_names = np.array(conn_dependencies.nodes())  # array for multi-indexing
-adjacency_matrix = nx.to_scipy_sparse_matrix(conn_dependencies,
-                                             dtype=np.float64)
+species = np.array(stmarks.nodes())  # array for multi-indexing
+Adj = nx.to_scipy_sparse_matrix(stmarks, dtype=np.float64)
 ```
 
 From the adjacency matrix, we can derive a *transition probability* matrix,
 where every link is replaced by a *probability* of 1 over the number of
-outgoing links from that page.
+outgoing links from that species. In the food web, it might make more sense
+to call this a lunch probability matrix.
 
-The total number of packages in our matrix is going to be used a lot, so let's
+The total number of species in our matrix is going to be used a lot, so let's
 call it $n$:
 
 ```python
-n = len(package_names)
+n = len(species)
 ```
 
 Next, we need the degrees, and, in particular, the *diagonal matrix* containing
@@ -691,12 +644,12 @@ the inverse of the out-degrees of each node on the diagonal:
 np.seterr(divide='ignore')  # ignore division-by-zero errors
 from scipy import sparse
 
-degrees = np.ravel(adjacency_matrix.sum(axis=1))
-degrees_matrix = sparse.spdiags(1 / degrees, 0, n, n, format='csr')
+degrees = np.ravel(Adj.sum(axis=1))
+Deginv = sparse.diags(1 / degrees).tocsr()
 ```
 
 ```python
-transition_matrix = (degrees_matrix @ adjacency_matrix).T
+Trans = (Deginv @ Adj).T
 ```
 
 Normally, the pagerank score would simply be the first eigenvector of the
@@ -713,11 +666,20 @@ transition matrix is a *column-stochastic* matrix, in which every
 column sums to 1. Additionally, every page must be reachable
 from every other page, even if the path to reach it is very long.
 
+In our food web, this causes problems, because the bottom of the food chain,
+what the authors call *detritus* (basically sea sludge), doesn't actually *eat*
+anything (the Circle of Life notwithstanding), so you can't reach other species
+from it.
+
 To deal with this, the pagerank algorithm uses a so-called "damping
 factor", usually taken to be 0.85. This means that 85% of the time, the
 algorithm follows a link at random, but for the other 15%, it randomly jumps to
 any arbitrary page. It's as if every page had a low probability link to every
-other page.
+other page. Or, in our case, it's as if shrimp, on rare occasions, ate sharks.
+It might seem non-sensical but bear with us! It is, in fact, the mathematical
+representation of the Circle of Life. We'll set it to 0.99, but actually it
+doesn't really matter for this analysis: the results are similar for a large
+range of possible damping factors.
 
 If we call the damping factor $d$, then the modified pagerank equation is:
 
@@ -731,93 +693,83 @@ $$
 (\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{n} \boldsymbol{1}
 $$
 
-We can solve this equation using `scipy.sparse`'s biconjugate gradient solver:
+We can solve this equation using `scipy.sparse`'s *biconjugate gradient* solver:
 
 ```python
-from scipy.sparse.linalg.isolve import bicg  # biconjugate gradient solver
+from scipy.sparse.linalg.isolve import bicg
 
-damping = 0.85
+damping = 0.99
 
-I = sparse.eye(n, format='csc')
+I = sparse.eye(n, format='csc')  # Same sparse format as Trans
 
-pagerank, error = bicg(I - damping * transition_matrix,
+pagerank, error = bicg(I - damping * Trans,
                        (1-damping) / n * np.ones(n),
                        maxiter=int(1e4))
 print('error code: ', error)
 ```
 
 As can be seen in the documentation for the `bicg` solver, an error code of 0
-indicates that a solution was found! We now have the "dependency pagerank" of
-packages in PyPI! Let's look at the top 40 packages:
+indicates that a solution was found! We now have the "foodrank" of the
+St. Marks food web!
+
+So how does a species' foodrank compare to the number of other species eating
+it?
 
 ```python
-top = np.argsort(pagerank)[::-1]
+def pagerank_plot(names, in_degrees, pageranks,
+                  annotations=[]):
+    fig, ax = plt.subplots(figsize=(9, 5))
+    ax.scatter(in_degrees, pageranks, c=[0.835, 0.369, 0], lw=0)
+    labels = []
+    for name, indeg, pr in zip(names, in_degrees, pageranks):
+        if name in annotations:
+            text = ax.text(indeg + 0.1, pr, name)
+            labels.append(text)
+    ax.set_ylim(0, np.max(pageranks) * 1.1)
+    ax.set_xlim(-1, np.max(in_degrees) * 1.1)
 
-print([package_names[i] for i in top[:40]])
+interesting = ['detritus', 'phytoplankton', 'benthic algae', 'micro-epiphytes',
+               'microfauna', 'zooplankton', 'predatory shrimps', 'meiofauna', 'gulls']
+in_degrees = np.ravel(Adj.sum(axis=0))
+pagerank_plot(species, in_degrees, pagerank, annotations=interesting)
 ```
 
-NumPy actually falls to the 11th spot in this ranking, while SciPy drops out of
-the top 40 entirely! (It ranks 87, still great in 95,000 packages!)
+Having explored the dataset ahead of time, we have pre-labeled some interesting
+nodes in the plot. Sea sludge is the most important element both by number of
+species feeding on it (15) and by pagerank (>0.003). But the second most
+important element is *not* benthic algae, which feeds 13 other species, but
+rather phytoplankton, which feeds just 7! That's because other *important*
+species feed on it! On the bottom left, we've got sea gulls, who, we can now
+confirm, do bugger-all for the ecosystem. Those vicious *predatory shrimps*
+(we're not making this up) support the same number of species as phytoplankton,
+but they are less essential species, so they end up with a lower foodrank.
 
-<!-- exercise begin -->
+Although we won't do it here, Allesina and Pascual go on to model the
+ecological impact of species extinction, and indeed find that pagerank
+predicts ecological importance better than in-degree.
 
-**Exercise:** Can you think of three reasons why pagerank might not be the best
-measure of importance for the Python dependency graph?
-
-<!-- solution begin -->
-
-**Solution:**
-
-Here's our theories. Yours might be different!
-
-First, the graph of dependencies is fundamentally different to the web. In the
-web, important pages reinforce each other: the Wikipedia pages for Newton's
-theory of gravitation and Einstein's theory of general relativity link to each
-other. Thus, our hypothetical Webster has some probability of bouncing between
-them. In contrast, Python dependencies form a directed acyclic graph (DAG).
-Whenever Debbie (our hypothetical dependency browser) arrives at a foundational
-package such as NumPy, she is instantly transported to a random package,
-instead of staying in the field of similar packages.
-
-Second, the DAG of dependencies is shallow: libraries will depend on, for
-example, scikit-learn, which depends on scipy, which depends on numpy, and
-that's it. Therefore, there is not much room for important packages to link to
-other important packages. The hierarchy is flat, and the importance is captured
-by the direct dependencies.
-
-Third, scientific programming itself is particularly prone to that flat
-hierarchy problem, more so than e.g. web frameworks, because scientists are
-doing the programming, rather than professional coders. In particular, a
-scientific analysis might end up in a script attached to a paper, or a Jupyter
-notebook, rather than another library on PyPI. We hope that this book will
-encourage more scientists to write great code that others can reuse, and put it
-on PyPI!
-
-<!-- solution end -->
-
-<!-- exercise end -->
-
-Before we move on, we'll note that there's another way to compute pagerank,
-often preferred to the above. It's called the *power method*, and stems from
-the [Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
+Before we move on though, we'll note that pagerank can be computed several
+different ways. One way, complementary to what we did above, is called the
+*power method*, and it's pretty, well, powerful! It stems from the
+[Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
 which states, among other things, that a stochastic matrix has 1 as an
 eigenvalue, and that this is its *largest* eigenvalue. (The corresponding
 eigenvector is the pagerank vector.) What this means is that, whenever we
 multiply *any* vector by $M$, its component pointing towards this major
 eigenvector stays the same, while *all other components shrink* by a
-multiplicative factor. The consequence is that if we multiply some random
+multiplicative factor! The consequence is that if we multiply some random
 starting vector by $M$ repeatedly, we should eventually get the pagerank
 vector.
 
 SciPy makes this very efficient with its sparse matrix module:
 
 ```python
-def power(trans, damping=0.85, max_iter=int(1e5)):
-    n = trans.shape[0]
+def power(Trans, damping=0.85, max_iter=int(1e5)):
+    n = Trans.shape[0]
     r0 = np.full(n, 1/n)
     r = r0
-    for _ in range(max_iter):
-        rnext = damping * trans @ r + (1 - damping) / n
+    for _iter_num in range(max_iter):
+        rnext = damping * Trans @ r + (1 - damping) / n
         if np.allclose(rnext, r):
             print('converged')
             break
@@ -827,7 +779,7 @@ def power(trans, damping=0.85, max_iter=int(1e5)):
 
 <!-- exercise begin -->
 
-**Exercise:** In the above iteration, note that `trans` is *not*
+**Exercise:** In the above iteration, note that `Trans` is *not*
 column-stochastic, so the vector gets shrunk at each iteration. In order to
 make the matrix stochastic, we have to replace every zero-column by a column of
 all $1/n$. This is too expensive, but computing the iteration is cheaper. How
@@ -850,15 +802,15 @@ vector containing $1/n$ for positions corresponding to dangling nodes, and zero
 elswhere, with the vector $r$ for the current iteration.
 
 ```python
-def power2(trans, damping=0.85, max_iter=int(1e5)):
-    n = trans.shape[0]
-    is_dangling = np.ravel(trans.sum(axis=0) == 0)
+def power2(Trans, damping=0.85, max_iter=int(1e5)):
+    n = Trans.shape[0]
+    is_dangling = np.ravel(Trans.sum(axis=0) == 0)
     dangling = np.zeros(n)
     dangling[is_dangling] = 1 / n
     r0 = np.ones(n) / n
     r = r0
     for _ in range(max_iter):
-        rnext = (damping * (trans @ r + dangling @ r) +
+        rnext = (damping * (Trans @ r + dangling @ r) +
                  (1 - damping) / n)
         if np.allclose(rnext, r):
             return rnext
@@ -870,8 +822,8 @@ def power2(trans, damping=0.85, max_iter=int(1e5)):
 Try this out manually for a few iterations. Notice that if you start with a
 stochastic vector (a vector whose elements all sum to 1), the next vector will
 still be a stochastic vector. Thus, the output pagerank from this function will
-be a true probability vector, and the values will represent the actual
-probability that Debbie ends up at the Python package in question.
+be a true probability vector, and the values will represent the probability
+that we end up at a particular species when following links in the food chain.
 
 <!-- solution end -->
 
@@ -892,8 +844,8 @@ coefficient of 1 is sufficient to show that the above methods produce the same
 ranking.
 
 ```python
-pagerank_power = power(transition_matrix)
-pagerank_power2 = power2(transition_matrix)
+pagerank_power = power(Trans)
+pagerank_power2 = power2(Trans)
 np.corrcoef([pagerank, pagerank_power, pagerank_power2])
 ```
 
