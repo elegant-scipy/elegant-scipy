@@ -853,12 +853,137 @@ np.corrcoef([pagerank, pagerank_power, pagerank_power2])
 
 <!-- exercise end -->
 
-### ... back to graph layout and community detection
+<!-- exercise begin -->
+
+**Exercise:** While we were writing this chapter, we started out by computing
+pagerank on the graph of Python dependencies. We eventually found that we could
+not get nice results with this graph. The correlation between in-degree and
+pagerank was much higher than in other datasets, and the few outliers didn't
+make much sense to us.
+
+Can you think of three reasons why pagerank might not be the best
+measure of importance for the Python dependency graph?
+
+<!-- solution begin -->
+
+**Solution:**
+
+Here's our theories. Yours might be different!
+
+First, the graph of dependencies is fundamentally different to the web. In the
+web, important pages reinforce each other: the Wikipedia pages for Newton's
+theory of gravitation and Einstein's theory of general relativity link to each
+other. Thus, our hypothetical Webster has some probability of bouncing between
+them. In contrast, Python dependencies form a directed acyclic graph (DAG).
+Whenever Debbie (our hypothetical dependency browser) arrives at a foundational
+package such as NumPy, she is instantly transported to a random package,
+instead of staying in the field of similar packages.
+
+Second, the DAG of dependencies is shallow: libraries will depend on, for
+example, scikit-learn, which depends on scipy, which depends on numpy, and
+that's it. Therefore, there is not much room for important packages to link to
+other important packages. The hierarchy is flat, and the importance is captured
+by the direct dependencies.
+
+Third, scientific programming itself is particularly prone to that flat
+hierarchy problem, more so than e.g. web frameworks, because scientists are
+doing the programming, rather than professional coders. In particular, a
+scientific analysis might end up in a script attached to a paper, or a Jupyter
+notebook, rather than another library on PyPI. We hope that this book will
+encourage more scientists to write great code that others can reuse, and put it
+on PyPI!
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+## Community detection
+
+We saw a hint in the introduction to this chapter that the Fiedler vector could
+be used to detect "communities" in networks, groups of nodes that are tightly
+connected to each other but not so much to nodes in other groups.
+Mark Newman published a
+[seminal paper](http://www.pnas.org/content/103/23/8577.short)
+on the topic in 2006, and
+[refined it further](http://arxiv.org/abs/1307.7729) in 2013. We'll apply it
+to the Python library dependency graph, which will tell us whether Python users
+fall into two or more somewhat independent groups.
+
+We've downloaded and preprocessed the data ahead of time, available as the file
+`pypi-dependencies.txt` in the `data/` folder. The data consists of a list of
+library-dependency pairs, one per line. The networkx library that we started
+using in Chapter 3 makes it easy to build a graph from these data. We will use
+a directed graph since the relationship is asymmetrical: one library depends
+on the other, not vice-versa.
+
+```python
+import networkx as nx
+
+dependencies = nx.DiGraph()
+
+with open('data/pypi-deps.txt') as lines:
+    lib_dep_pairs = (str.split(line) for line in lines)
+    dependencies.add_edges_from(lib_dep_pairs)
+```
+
+We can then get some statistics about this (incomplete) dataset by using
+networkx's built-in functions:
+
+```python
+print('number of packages: ', dependencies.number_of_nodes())
+print('number of dependencies: ', dependencies.number_of_edges())
+```
+
+What is the single most used Python package?
+
+```python
+print(max(dependencies.in_degree_iter(),
+          key=lambda x: x[1]))
+```
+
+We're not going to cover it in this book, but `setuptools` is not a surprising
+winner
+here. In fact, until we wrote this chapter, we had thought it was part of the
+Python standard library, in the same category as `os`, `sys`, and others!
+
+Since using setuptools is almost a requirement for being listed in PyPI, we are
+actually going to remove it from the dataset, because it has too much influence
+on the shape of the graph.
+
+```python
+dependencies.remove_node('setuptools')
+```
+
+What's the next most depended-upon package?
+
+```python
+print(max(dependencies.in_degree_iter(),
+          key=lambda x: x[1]))
+```
+
+The requests library is the foundation of a very large fraction of the web
+frameworks and web processing libraries.
+
+We can similarly find out the top-40 most depended-upon packages:
+
+```python
+packages_by_in = sorted(dependencies.in_degree_iter(),
+                        key=lambda x: x[1], reverse=True)
+for i, p in enumerate(packages_by_in, start=1):
+    print(i, '. ', p[0], p[1])
+    if i > 40:
+        break
+```
+
+By this ranking, NumPy ranks 4 and SciPy 27 out of all of PyPI. Not bad!
+Overall, though, one gets the impression that the web community dominates
+PyPI. As we saw in the preface, this is expected, since the scientific Python
+community is still growing!
+
+Let's see whether we can find that community.
 
 Because it's unwieldy to draw 90,000 nodes, we are only going to draw a
-fraction of PyPI, following the same ideas we used for the worm brain. Because
-3000 is still significantly bigger than 300, we will use a sparse matrix to do
-the graph layout computation.
+fraction of PyPI, following the same ideas we used for the worm brain.
 
 We will need to graph subsets of rows and columns, for which we will write a
 function. NumPy (and SciPy) indexing by default considers the *exact* data
@@ -891,45 +1016,59 @@ def sub(mat, idxs):
     return mat[idxs, :][:, idxs]
 ```
 
-Let's use this to look at the top 3,000 packages in PyPI:
+Let's use this to look at the top 10,000 packages in PyPI, according to number
+of dependencies.
 
 ```python
-n = 3000
-top3k = top[:n]
-names = package_names[top3k]
-Adj = sub(adjacency_matrix, top3k)
+n = 10000
+top_names = [p[0] for p in packages_by_in[:n]]
+top_subgraph = nx.subgraph(dependencies, top_package_names)
+Dep = nx.to_scipy_sparse_matrix(top_subgraph, nodelist=top_names)
 ```
 
 As above, we need the connectivity matrix, the symmetric version of the
 adjacency matrix:
 
 ```python
-Conn = (Adj + Adj.T) / 2
+Conn = (Dep + Dep.T) / 2
 ```
 
 And the diagonal matrix of its degrees, as well as its inverse-square-root:
 
 ```python
 degrees = np.ravel(Conn.sum(axis=0))
-Deg = sparse.spdiags(degrees, 0, n, n).tocsr()
-Dinv2 = sparse.spdiags(degrees ** (-.5), 0, n, n).tocsr()
+Deg = sparse.diags(degrees).tocsr()
+Dinv2 = sparse.diags(degrees ** (-.5)).tocsr()
 ```
 
 From this we can generate the Laplacian of the dependency graph:
 
 ```python
-lap = Deg - Conn
+Lap = Deg - Conn
 ```
 
-From this, we can generate an affinity view of these nodes, as shown above for
+We can then generate an affinity view of these nodes, as shown above for
 the worm brain graph. We just need the second and third smallest eigenvectors
 of the *affinity matrix*, the degree-normalized version of the Laplacian. We
-can use `sparse.linalg.eigsh` to obtain these:
+can use `sparse.linalg.eigsh` to obtain these.
+
+There is a small kink though: because the graph is disconnected, the resulting
+eigenvalue problem is ill-defined, and we have to add a bit of the identity
+matrix to our affinity matrix.
 
 ```python
-Affn = Dinv2 @ lap @ Dinv2
-eigvals, vec = sparse.linalg.eigsh(Affn, k=3, which='SM')
-_, x, y = (Dinv2 @ vec).T
+I = sparse.eye(Lap.shape[0], format='csr')
+sigma = 0.5
+
+Affn = Dinv2 @ Lap @ Dinv2
+
+eigvals, vec = sparse.linalg.eigsh(Affn + sigma*I, k=3, which='SM')
+
+sorted_indices = np.argsort(eigvals)
+eigvals = eigvals[sorted_indices]
+vec = vec[:, sorted_indices]
+
+_ignored, x, y = (Dinv2 @ vec).T
 ```
 
 That should give us a nice layout for our Python packages!
