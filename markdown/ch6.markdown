@@ -984,40 +984,8 @@ Let's see whether we can find that community.
 
 Because it's unwieldy to draw 90,000 nodes, we are only going to draw a
 fraction of PyPI, following the same ideas we used for the worm brain.
-
-We will need to graph subsets of rows and columns, for which we will write a
-function. NumPy (and SciPy) indexing by default considers the *exact* data
-points indicated by a list of rows/columns:
-
-```python
-arr = np.array([[0, 1, 2],
-                [3, 4, 5],
-                [6, 7, 8]])
-submatrix = [0, 2]
-arr[submatrix, submatrix]
-```
-
-You might have expected the result to be [[0, 2], [6, 8]], but in fact NumPy
-and SciPy interpret these coordinates as (row, column) pairs, so that we only
-get two values back: `arr[0, 0]` (0) and `arr[2, 2]` (8).
-
-To get slices of rows and columns, we need to slice first along one dimension,
-then across the other:
-
-```python
-arr[submatrix, :][:, submatrix]
-```
-
-Since this is a bit cumbersome when we only want a square submatrix of a square
-matrix, we write a function:
-
-```python
-def sub(mat, idxs):
-    return mat[idxs, :][:, idxs]
-```
-
-Let's use this to look at the top 10,000 packages in PyPI, according to number
-of dependencies.
+Let's look at the top 10,000 packages in PyPI, according to number
+of dependencies:
 
 ```python
 n = 10000
