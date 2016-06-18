@@ -420,7 +420,7 @@ plot_connectome(x, y, C, neuron_ids, neuron_types)
 
 <!-- exercise begin -->
 
-### challenge: linear algebra with sparse matrices
+### Challenge: linear algebra with sparse matrices
 
 The above code uses numpy arrays to hold the matrix and perform
 the necessary computations. Because we are using a small graph of fewer than 300
@@ -460,7 +460,7 @@ chapter), but we highly recommend that you try it out on your own.
 
 <!-- solution begin -->
 
-### challenge accepted
+### Challenge accepted
 
 For the purposes of this challenge, we are going to use the small connectome
 above, because it's easier to visualise what is going on. In later parts of the
@@ -603,7 +603,7 @@ importance.
 
 Could pagerank be a better measure of importance for an ecosystem?
 
-Now-Professor Allesina kindly provided us with a few food webs to play around
+Professor Allesina kindly provided us with a few food webs to play around
 with. We've saved one of these, from the St Marks National Wildlife Refuge in
 Florida, in the Graph Markup Language format. The web was
 [described](http://www.sciencedirect.com/science/article/pii/S0304380099000228)
@@ -1063,4 +1063,3 @@ Aim: graph of top Python packages:
 - sized by dependencies
 - alpha-d by pagerank
 - laid out by spectral affinity
-
