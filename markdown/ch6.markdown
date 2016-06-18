@@ -992,7 +992,7 @@ of dependencies:
 ```python
 n = 10000
 top_names = [p[0] for p in packages_by_in[:n]]
-top_subgraph = nx.subgraph(dependencies, top_package_names)
+top_subgraph = nx.subgraph(dependencies, top_names)
 Dep = nx.to_scipy_sparse_matrix(top_subgraph, nodelist=top_names)
 ```
 
