@@ -729,6 +729,8 @@ def pagerank_plot(names, in_degrees, pageranks,
             labels.append(text)
     ax.set_ylim(0, np.max(pageranks) * 1.1)
     ax.set_xlim(-1, np.max(in_degrees) * 1.1)
+    ax.set_ylabel('PageRank')
+    ax.set_xlabel('In-degree')
 
 interesting = ['detritus', 'phytoplankton', 'benthic algae', 'micro-epiphytes',
                'microfauna', 'zooplankton', 'predatory shrimps', 'meiofauna', 'gulls']
