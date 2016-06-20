@@ -278,13 +278,13 @@ This takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
 (And these are not cheap operations.)
 
 There is another way.
-[REF: original k-mer/de-Bruijn Graph implementation] realized that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
+[Pavel Pevzner and others](http://www.pnas.org/content/98/17/9748.full) realized that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
 This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of k-mers, which can only be as large as the genome itself — usually 1-2 orders of magnitude smaller than the reads.
 
 If we choose a value for k that is large enough to ensure any k-mer appears only once in the genome, the number of times a k-mer appears is exactly the number of reads that originate from that part of the genome.
 This is called the *coverage* of that region.
 
-If a read has an error in it, there is a high probability that the k-mers overlapping the error will be unique or close to unique in the genome [REF].
+If a read has an error in it, there is a high probability that the k-mers overlapping the error will be unique or close to unique in the genome.
 Think of the equivalent in English: if you were to take reads from Shakespeare, and one read was "to be or nob to be", the 6-mer "nob to" will appear rarely or not at all, whereas "not to" will be very frequent.
 
 This is the basis for k-mer error correction: split the reads into k-mers, count the occurrence of each k-mer, and use some logic to replace rare k-mers in reads with similar common ones.
