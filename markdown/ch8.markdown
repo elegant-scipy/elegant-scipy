@@ -519,41 +519,29 @@ The original is already gone.
 >  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
 Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
 
-## Markov model from a full genome
+<!-- exercise begin -->
 
-- Intro to Markov models
+The scikit-learn library has an IncrementalPCA class, which allows you to run
+principal components analysis on a dataset without loading the full dataset
+into memory.
+But you need to chunk your data yourself, which makes the code a bit awkward to
+use.
+Make a function that can take a stream of data samples and perform PCA.
+Then, use the function to compute the PCA of the `iris` machine learning
+dataset, which is in `data/iris.csv`. (You can also access it from the
+`datasets` module of scikit-learn.)
 
-In general, a Markov model assumes that the probability of the system moving to a given state, is only dependent on the state that it was in just previously.
-For example if it is sunny right now, there is a high probability that it will be sunny tomorrow.
-The fact that it was raining yesterday is irrelevant.
-In this theory, all the information required to predict the future is encoded in the current state of things.
-The past is irrelevant.
-This assumption is useful for simplifying otherwise intractable problems.
+**Hint:** The `IncrementalPCA` class is in `sklearn.decomposition`, and
+requires a *batch size* greater than 1 to train the model. Look at the
+`toolz.curried.partition` function for how to create a stream of batches from a
+stream of data points.
 
-- You can download the *Drosophila melanogaster* (fruit-fly) genome file dm6.fa.gz from
-http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/.
-You will need to unzip it using: `gzip -d dm6.fa.gz`
+<!-- solution begin -->
 
-- Matt's post and how to use it
-
-## Image processing with streaming functions
-
-[Image stream montage](https://github.com/microscopium/microscopium/blob/master/microscopium/preprocess.py#L848)
-
-[Streaming illumination correction](https://github.com/microscopium/microscopium/blob/master/microscopium/preprocess.py#L587)
-
-[Reservoir sampling](https://github.com/microscopium/microscopium/blob/master/microscopium/preprocess.py#L639)
-
-If you take 1s/image, for 1M images you take about 12h.
-Totally doable.
-No need for cloud/compute clusters.
-
-## Streaming PCA
-
-sklearn has IncrementalPCA class.
-But you need to chunk your data yourself.
-Let’s make a function that can take a stream of data samples and perform PCA.
-Be sure to look at the documentation for the class to understand some of the code below.
+First, we write the function to train the model. The function should take in a
+stream of samples and output a PCA model, which can *transform* new samples by
+projecting them from the original n-dimensional space to the principal
+component space.
 
 ```python
 import toolz as tz
@@ -573,6 +561,8 @@ def streaming_pca(samples, n_components=2, batch_size=100):
     return ipca
 ```
 
+Now, we can use this function to *train* (or *fit*) a PCA model:
+
 ```python
 reshape = tz.curry(np.reshape)
 
@@ -581,18 +571,45 @@ def array_from_txt(line, sep=',', dtype=np.float):
 
 with open('data/iris.csv') as fin:
     pca_obj = tz.pipe(fin, c.map(array_from_txt), streaming_pca)
+```
 
+Finally, we can stream our original samples through the `transform` function of
+our model. We stack them together to obtain a `n_samples` by `n_components`
+matrix of data:
+
+```python
 with open('data/iris.csv') as fin:
-    components = np.squeeze(list(tz.pipe(fin,
-                                         c.map(array_from_txt),
-                                         c.map(reshape(newshape=(1, -1))),
-                                         c.map(pca_obj.transform))))
+    components = tz.pipe(fin,
+                         c.map(array_from_txt),
+                         c.map(reshape(newshape=(1, -1))),
+                         c.map(pca_obj.transform),
+                         np.vstack)
 
+print(components.shape)
+```
+
+We can now plot the components:
+
+```python
 from matplotlib import pyplot as plt
 plt.scatter(*components.T)
 ```
 
-# Getting the Markov model
+You can verify that this gives (approximately) the same result as a standard
+PCA:
+
+```python
+iris = np.loadtxt('data/iris.csv', delimiter=',')
+components2 = decomposition.PCA(n_components=2).fit_transform(iris)
+plt.scatter(*components2.T)
+```
+
+The difference, of course, is that streaming PCA can scale to extremely large
+datasets!
+
+<!-- solution end -->
+
+<!-- exercise end -->
 
 ```python
 from glob import glob
