@@ -764,14 +764,20 @@ to open tar files (even compressed ones) as if they were normal files.
 
 # Conclusions
 
-- streaming in Python is easy when you use a few abstractions
-- streaming can make you more productive:
-	- big data takes linearly longer than small data (no nasty memory swapping)
-    - don’t need a bigger machine
-    - if your tests pass on small data, they’ll pass on big data
-- streaming code is concise and readable using toolz (cytoolz for speed)
-- Time to reiterate my take-home: think about whether you can stream over a dataset, and if you can, do it.
-Your future self will thank you.
-Doing it later is harder:
+We hope to have shown you at least a hint that streaming in Python can be easy when you use a few abstractions, like the ones Toolz provides.
 
-![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg).
+Streaming can make you more productive, because big data takes linearly longer
+than small data. In batch analysis, big data can take forever to run, because
+the operating system has to keep transferring data from RAM to the hard disk
+and back. Or, Python might refuse altogether and simply show a `MemoryError`!
+This means that, for many analyses, you don’t need a bigger machine to analyse
+bigger datasets. And, if your tests pass on small data, they’ll pass on big
+data, too!
+
+Our take home message from this chapter is this: when writing an algorithm, or
+analysis, think about whether you can do it streaming. If you can, just do it
+from the beginning. Your future self will thank you.
+Doing it later is harder, and results in things like this:
+
+![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg)
+(Comic by Manu Cornet, used with permission.)
