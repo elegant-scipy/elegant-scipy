@@ -210,7 +210,9 @@ indeed multiply the vector by 3:
 
 ```python
 v2 = Eigvecs[:, 2]
-(L @ v2) / v2
+
+print(v2)
+print(L @ v2)
 ```
 
 As mentioned above, the Fiedler vector is the vector corresponding to the
@@ -220,21 +222,21 @@ is the second-smallest:
 ```python
 from matplotlib import pyplot as plt
 print(eigvals)
-plt.plot(eigvals)
+plt.plot(eigvals, '-o')
 ```
 
 It's the second eigenvalue. The Fiedler vector is thus the second eigenvector.
 
 ```python
 f = Eigvecs[:, 1]
-plt.plot(f)
+plt.plot(f, '-o')
 ```
 
 It's pretty remarkable: by looking at the *sign* of the Fiedler vector, we can
 separate the nodes into the two groups we identified in the drawing!
 
 ```python
-colors = np.array(['orange', 'gray'])[(f > 0).astype(int)]
+colors = ['orange' if eigval > 0 else 'gray' for eigval in f]
 nx.draw_spring(g, with_labels=True, node_color=colors)
 ```
 
@@ -262,11 +264,11 @@ First, let's load the data. There are four components:
   neurons),
 - the neuron IDs (names), and
 - the three neuron types:
-  - sensory neurons, those that detect signals coming from the outside world,
+  - *sensory neurons*, those that detect signals coming from the outside world,
     encoded as 0;
-  - motor neurons, those that activate muscles, enabling the worm to move,
+  - *motor neurons*, those that activate muscles, enabling the worm to move,
     encoded as 2; and
-  - interneurons, the neurons in between, which enable complex signal processing
+  - *interneurons*, the neurons in between, which enable complex signal processing
     to occur between sensory neurons and motor neurons, encoded as 1.
 
 ```python
@@ -695,10 +697,18 @@ $$
 (\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{n} \boldsymbol{1}
 $$
 
-We can solve this equation using `scipy.sparse`'s *biconjugate gradient* solver:
+We can solve this equation using `scipy.sparse`'s iterative
+*biconjugate gradient (bicg)* solver^[bicgstab].  (Note that, if you
+had a symmetric matrix, you would use Conjugate Gradients,
+``scipy.sparse.linalg.solve.cg``, instead.)
+
+[^bicgstab]: The default formulation for bicg iteration is numerically
+    unstable, so we use the stabilized variation, which replaces every
+    second iteration with a *generalized minimal residual method*
+    (GMRES) iteration.
 
 ```python
-from scipy.sparse.linalg.isolve import bicg
+from scipy.sparse.linalg.isolve import bicgstab as bicg
 
 damping = 0.99
 
@@ -913,12 +923,13 @@ on the topic in 2006, and
 to the Python library dependency graph, which will tell us whether Python users
 fall into two or more somewhat independent groups.
 
-We've downloaded and preprocessed the data ahead of time, available as the file
-`pypi-dependencies.txt` in the `data/` folder. The data consists of a list of
-library-dependency pairs, one per line. The networkx library that we started
-using in Chapter 3 makes it easy to build a graph from these data. We will use
-a directed graph since the relationship is asymmetrical: one library depends
-on the other, not vice-versa.
+We've downloaded and preprocessed dependency data from PyPI ahead of
+time, available as the file `pypi-dependencies.txt` in the `data/`
+folder. The data file consists of a list of library-dependency pairs,
+one per line, e.g. ``scipy numpy``. The networkx library that we
+started using in Chapter 3 makes it easy to build a graph from these
+data. We will use a directed graph since the relationship is
+asymmetrical: one library depends on the other, not vice-versa.
 
 ```python
 import networkx as nx
@@ -934,8 +945,8 @@ We can then get some statistics about this (incomplete) dataset by using
 networkx's built-in functions:
 
 ```python
-print('number of packages: ', dependencies.number_of_nodes())
-print('number of dependencies: ', dependencies.number_of_edges())
+print('Number of packages: ', dependencies.number_of_nodes())
+print('Total number of dependencies: ', dependencies.number_of_edges())
 ```
 
 What is the single most used Python package?
@@ -945,13 +956,12 @@ print(max(dependencies.in_degree_iter(),
           key=lambda x: x[1]))
 ```
 
-We're not going to cover it in this book, but `setuptools` is not a surprising
-winner
-here. In fact, until we wrote this chapter, we had thought it was part of the
-Python standard library, in the same category as `os`, `sys`, and others!
+We're not going to cover it in this book, but `setuptools` is not a
+surprising winner here. It probably belongs in the Python standard
+library, in the same category as `os`, `sys`, and others!
 
-Since using setuptools is almost a requirement for being listed in PyPI, we are
-actually going to remove it from the dataset, because it has too much influence
+Since using setuptools is almost a requirement for being listed in PyPI, we
+will remove it from the dataset, given its undue influence
 on the shape of the graph.
 
 ```python
@@ -968,7 +978,7 @@ print(max(dependencies.in_degree_iter(),
 The requests library is the foundation of a very large fraction of the web
 frameworks and web processing libraries.
 
-We can similarly find out the top-40 most depended-upon packages:
+We can similarly find the top-40 most depended-upon packages:
 
 ```python
 packages_by_in = sorted(dependencies.in_degree_iter(),
@@ -979,12 +989,13 @@ for i, p in enumerate(packages_by_in, start=1):
         break
 ```
 
-By this ranking, NumPy ranks 4 and SciPy 27 out of all of PyPI. Not bad!
-Overall, though, one gets the impression that the web community dominates
-PyPI. As we saw in the preface, this is expected, since the scientific Python
-community is still growing!
+By this ranking, NumPy ranks 4 and SciPy 27 out of all of PyPI. Not
+bad!  Overall, though, one gets the impression that the web community
+dominates PyPI. As also mentioned in the preface, this is not
+altogether surprising: the scientific Python community is still young
+and growing, and web tools are arguably of more generic application.
 
-Let's see whether we can find that community.
+Let's see whether we can isolate the scientific community.
 
 Because it's unwieldy to draw 90,000 nodes, we are only going to draw a
 fraction of PyPI, following the same ideas we used for the worm brain.
@@ -1024,17 +1035,19 @@ the worm brain graph. We just need the second and third smallest eigenvectors
 of the *affinity matrix*, the degree-normalized version of the Laplacian. We
 can use `sparse.linalg.eigsh` to obtain these.
 
-There is a small kink though: because the graph is disconnected, the resulting
-eigenvalue problem is ill-defined, and we have to add a bit of the identity
-matrix to our affinity matrix.
+Note that eigenvectors here are calculated through an iterative
+method, for which the convergence may depend on the starting vector
+``v0``.  By default, this vector is chosen at random, but we set it
+explicitly to all ones to ensure *reliable* convergence.
 
 ```python
 I = sparse.eye(Lap.shape[0], format='csr')
 sigma = 0.5
 
 Affn = Dinv2 @ Lap @ Dinv2
+v0 = np.ones(Lap.shape[0])
 
-eigvals, vec = sparse.linalg.eigsh(Affn + sigma*I, k=3, which='SM')
+eigvals, vec = sparse.linalg.eigsh(Affn + sigma*I, k=3, which='SM', v0=v0)
 
 sorted_indices = np.argsort(eigvals)
 eigvals = eigvals[sorted_indices]
