@@ -521,6 +521,8 @@ Take a small stream and add functions to your pipe one by one from the first/lef
 
 <!-- exercise begin -->
 
+
+**Exercise:**
 The scikit-learn library has an IncrementalPCA class, which allows you to run
 principal components analysis on a dataset without loading the full dataset
 into memory.
