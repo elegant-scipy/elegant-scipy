@@ -57,7 +57,7 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	jupyter nbconvert --to html $< --stdout > $@
 
 $(BUILD_MD)/%.markdown: $(BUILD_NB)/%.ipynb
-	jupyter nbconvert --to markdown $< --stdout > $@
+	jupyter nbconvert --to=markdown --output="$(notdir $@)" --output-dir=$(BUILD_MD) $<
 
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
