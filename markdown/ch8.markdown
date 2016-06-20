@@ -224,7 +224,9 @@ in the fruit-fly genome:
 ```python
 %%timeit -r 1 -n 1
 dm = 'data/dm6.fa'
-model = tz.pipe(dm, genome, markov)
+model = tz.pipe(dm, genome, c.take(1000000), markov)
+# we use `take` to just run on the first 1000000 bases, to speed things up.
+# the take step can just be removed if you have ~5-10 mins to wait.
 ```
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
