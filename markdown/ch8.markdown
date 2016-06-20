@@ -58,38 +58,36 @@ As I mentioned above, trying to think too hard about the flow of control in this
 An awesome feature of Python is that it abstracts this complexity away, allowing you to focus on the analysis functionality.
 Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream.
 
-Here's an example where we add 1 to each element in a list, using a standard data-copying method and a streaming method:
+Here's an example where we take the log of each element in a list, using either a standard data-copying method or a streaming method:
 
 ```python
-def add1(elem):
-    return elem + 1
-
-def add1_all_standard(input):
+def log_all_standard(input):
     output = []
     for elem in input:
-        output.append(add1(elem))
+        output.append(np.log(elem))
     return output
 
-def add1_all_streaming(input_stream):
+def log_all_streaming(input_stream):
     for elem in input_stream:
-        yield add1(elem)
+        yield np.log(elem)
 ```
 
 ```python
-# Set seed so we will get consistent results
+# We set the random seed so we will get consistent results
 np.random.seed(seed=7)
 # Set print options to show only 3 significant digits
 np.set_printoptions(precision=3, suppress=True)
 ```
 
 ```python
-%%timeit
-result = add1_all_standard(np.random.normal(0, 1, 1000))
+arr = np.random.rand(1000) + 0.5
+result_batch = sum(log_all_standard(arr))
+print(result_batch)
 ```
 
 ```python
-%%timeit
-result = add1_all_streaming(np.random.normal(0, 1, 1000))
+result_stream = sum(log_all_streaming(arr))
+print(result_stream)
 ```
 
 The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
