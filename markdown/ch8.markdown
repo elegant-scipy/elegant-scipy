@@ -509,15 +509,13 @@ counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
 
-
-
 > ## tips {.callout}
 >  - (list of list -> list) with tz.concat
 >  - don’t get caught out:
 >     * iterators get consumed.
 So if you make a generator object and do some processing on it, and then a later step fails, you need to re-create the generator.
 The original is already gone.
->     * iterators are lazy; need to force evaluation sometimes.
+>     * iterators are lazy. You need to force evaluation sometimes.
 >  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
 Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
 
