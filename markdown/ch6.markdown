@@ -142,7 +142,7 @@ R rotates both the x and y axes, but not the z-axis.
 
 <!-- exercise end -->
 
-The eigenvectors have numerous useful--sometimes almost magical!--properties.
+The eigenvectors have numerous useful--sometimes seemingly magical!--properties.
 
 Let's use a minimal network to illustrate this. We start by creating the
 adjacency matrix:
