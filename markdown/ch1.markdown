@@ -74,14 +74,12 @@ Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
 ![Central Dogma of Molecular Biology](../figures/central_dogma.png)
-**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of that DNA into RNA.
 Similarly, as we shall see in this chapter, differential expression can distinguish different kinds of cancer.
 
 ![Gene expression](../figures/differential_gene_expression.png)
-**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
 RNA is extracted from a tissue, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
@@ -90,7 +88,6 @@ We measure millions of reads and then based on their sequence we count how many 
 For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
 
 ![RNAseq](../figures/RNAseq.png)
-**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 Here's an example of what this gene expression data looks like.
 
@@ -166,7 +163,6 @@ print(two_d_array.shape)
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
 
 ![multi-dimensional array diagram](../figures/NumPy_ndarrays.png)
-**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 Arrays have other attributes, such as `ndim`, the number of dimensions:
 
@@ -610,7 +606,6 @@ The counts are the number of reads from that gene in a given sample.
 So if a gene is twice as long, we are twice as likely to sample it.
 
 ![Relationship between counts and gene length](../figures/gene_length_counts.png)
-**[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 Let's see if the relationship between gene length and counts plays out in our data set.
 
