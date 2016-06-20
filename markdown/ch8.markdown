@@ -195,11 +195,16 @@ def increment_model(model, index):
 def genome(file_pattern):
     """Stream a genome, letter by letter, from a list of FASTA filenames."""
     return tz.pipe(file_pattern, glob, sorted,  # Filenames
-                   c.map(open),                 # lines
-                   tz.concat,                   # concatenate lines from all files
-                   c.filter(is_sequence),       # drop header from each sequence
-                   tz.concat,                   # concatenate chars from all lines
-                   c.filter(is_nucleotide))     # discard newlines and 'N'
+                   c.map(open),  # lines
+                   # concatenate lines from all files:
+                   tz.concat,
+                   # drop header from each sequence
+                   c.filter(is_sequence),
+                   # concatenate characters from all lines
+                   tz.concat,
+                   # discard newlines and 'N'
+                   c.filter(is_nucleotide))
+
 
 def markov(seq):
     """Get a 1st-order Markov model from a sequence of nucleotides."""
@@ -490,11 +495,15 @@ Take another look at our function for reading in the genome to see how this work
 def genome(file_pattern):
     """Stream a genome, letter by letter, from a list of FASTA filenames."""
     return tz.pipe(file_pattern, glob, sorted,  # Filenames
-                   c.map(open),                 # lines
-                   tz.concat,                   # concatenate lines from all files
-                   c.filter(is_sequence),       # drop header from each sequence
-                   tz.concat,                   # concatenate chars from all lines
-                   c.filter(is_nucleotide))     # discard newlines and 'N'
+                   c.map(open),  # lines
+                   # concatenate lines from all files:
+                   tz.concat,
+                   # drop header from each sequence
+                   c.filter(is_sequence),
+                   # concatenate characters from all lines
+                   tz.concat,
+                   # discard newlines and 'N'
+                   c.filter(is_nucleotide))
 ```
 
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
@@ -592,7 +601,24 @@ plt.scatter(*components.T)
 
 # Getting the Markov model
 
-Let's go back to the example and get that Markov model.
+```python
+from glob import glob
+
+def genome(file_pattern):
+    """Stream a genome, letter by letter, from a list of FASTA filenames."""
+    return tz.pipe(file_pattern, glob, sorted,  # Filenames
+                   c.map(open),  # lines
+                   # concatenate lines from all files:
+                   tz.concat,
+                   # drop header from each sequence
+                   c.filter(is_sequence),
+                   # concatenate characters from all lines
+                   tz.concat,
+                   # discard newlines and 'N'
+                   c.filter(is_nucleotide))
+```
+
+Let's try it out on the Drosophila (fruit fly) genome:
 
 ```python
 # dm6.fa.gz can be downloaded from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
