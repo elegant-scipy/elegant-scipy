@@ -611,6 +611,99 @@ datasets!
 
 <!-- exercise end -->
 
+## Markov model from a full genome
+
+Back to our original code example.
+What is a Markov model, and why is it useful?
+
+In general, a Markov model assumes that the probability of the system moving to a given state, is only dependent on the state that it was in just previously.
+For example if it is sunny right now, there is a high probability that it will be sunny tomorrow.
+The fact that it was raining yesterday is irrelevant.
+In this theory, all the information required to predict the future is encoded in the current state of things.
+The past is irrelevant.
+This assumption is useful for simplifying otherwise intractable problems, and
+often gives good results.
+Markov models are behind much of the signal processing in mobile phone and
+satellite communications, for example.
+
+In the context of genomics, as we will see, different functional regions of a
+genome have different *transition probabilities* between similar states.
+Observing these in a new genome, we can predict something about the function of
+those regions. Going back to the weather analogy, the probability of going from
+a sunny day to a rainy day is very different depending on whether you are in
+Los Angeles or London. Therefore, if I give you a string of (sunny, sunny,
+sunny, rainy, sunny, ...) days, you can predict whether it came from Los
+Angeles or London, assuming you have a previously trained model.
+
+In this chapter, we'll cover just the model building, for now.
+
+- You can download the *Drosophila melanogaster* (fruit fly) genome file dm6.fa.gz from
+http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/.
+You will need to unzip it using: `gzip -d dm6.fa.gz`
+
+In the genome data, genetic sequence, which consists of the letters A, C, G,
+and T, is encoded as belonging to *repetitive elements*, a specific class of
+DNA, by whether it is in lower case (repetitive) or upper case
+(non-repetitive). We can use this information when we build the Markov model.
+
+We want to encode the Markov model as a NumPy array, so we will make
+dictionaries to index from letters to indices in [0, 7] (`LDICT` for "letters
+dictionary"), and from pairs of letters to 2D indices in ([0, 7], [0, 7])
+(`PDICT` or "pairs dictionary"):
+
+```python
+import itertools as it
+
+LDICT = dict(zip('ACGTacgt', range(8)))
+PDICT = {(a, b): (LDICT[a], LDICT[b])
+         for a, b in it.product(LDICT, LDICT)}
+```
+
+We also want to filter out non-sequence data: the sequence names, which are in
+lines starting with `>`, and unknown sequence, which is labeled as `N`, so we
+will make functions to filter on:
+
+```python
+def is_sequence(line):
+    return not line.startswith('>')
+
+def is_nucleotide(letter):
+    return letter in LDICT  # ignore 'N'
+```
+
+Finally, whenever we get a new nucleotide pair, say, ('A', 'T'), we want to
+increment our Markov model (our NumPy matrix) at the corresponding position. We
+make a curried function to do so:
+
+```python
+import toolz as tz
+
+@tz.curry
+def increment_model(model, index):
+    model[index] += 1
+```
+
+We can now combine these elements to stream a genome into our NumPy matrix.
+Note that, if `seq` below is a stream, we never need to store the whole genome,
+or even a big chunk of the genome, in memory!
+
+```python
+from toolz import curried as c
+
+def markov(seq):
+    """Get a 1st-order Markov model from a sequence of nucleotides."""
+    model = np.zeros((8, 8))
+    tz.last(tz.pipe(seq,
+                    c.sliding_window(2),        # each successive tuple
+                    c.map(PDICT.__getitem__),   # location in matrix of tuple
+                    c.map(increment_model(model))))  # increment matrix
+    # convert counts to transition probability matrix
+    model /= np.sum(model, axis=1)[:, np.newaxis]
+    return model
+```
+
+Now we simply need to produce that genome stream, and make our Markov model:
+
 ```python
 from glob import glob
 
@@ -635,17 +728,20 @@ Let's try it out on the Drosophila (fruit fly) genome:
 # Unzip before using: gzip -d dm6.fa.gz
 dm = 'data/dm6.fa'
 model = tz.pipe(dm, genome, c.take(1000000), markov)
-# used take to just run on the first 1000000 bases, to speed things up.
+# we use `take` to just run on the first 1000000 bases, to speed things up.
 # the take step can just be removed if you have ~5-10 mins to wait.
+```
 
-# Let's look at the resulting matrix
+Let's look at the resulting matrix:
+
+```python
 print('    ', '      '.join('ACGTacgt'), '\n')
 print(model)
 ```
 
-We can also look at the result as an image:
+It's probably clearer to look at the result as an image:
 
-```
+```python
 plt.imshow(model, cmap='gist_heat', interpolation='nearest');
 plt.colorbar();
 ax = plt.gca()
@@ -653,7 +749,7 @@ ax.set_xticklabels(' ACGTacgt');
 ax.set_yticklabels(' ACGTacgt');
 ```
 
-Note how the G-A and G-C transitions are different between the repeat and
+Notice how the G-A and G-C transitions are different between the repeat and
 non-repeat parts of the genome. This information can be used to classify
 previously unseen DNA sequence.
 
