@@ -1035,9 +1035,10 @@ the worm brain graph. We just need the second and third smallest eigenvectors
 of the *affinity matrix*, the degree-normalized version of the Laplacian. We
 can use `sparse.linalg.eigsh` to obtain these.
 
-There is a small kink though: because the graph is disconnected, the resulting
-eigenvalue problem is ill-defined, and we have to add a bit of the identity
-matrix to our affinity matrix.
+Note that eigenvectors here are calculated through an iterative
+method, for which the convergence may depend on the starting vector
+``v0``.  By default, this vector is chosen at random, but we set it
+explicitly to all ones to ensure *reliable* convergence.
 
 ```python
 I = sparse.eye(Lap.shape[0], format='csr')
