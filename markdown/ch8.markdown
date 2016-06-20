@@ -58,38 +58,36 @@ As I mentioned above, trying to think too hard about the flow of control in this
 An awesome feature of Python is that it abstracts this complexity away, allowing you to focus on the analysis functionality.
 Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream.
 
-Here's an example where we add 1 to each element in a list, using a standard data-copying method and a streaming method:
+Here's an example where we take the log of each element in a list, using either a standard data-copying method or a streaming method:
 
 ```python
-def add1(elem):
-    return elem + 1
-
-def add1_all_standard(input):
+def log_all_standard(input):
     output = []
     for elem in input:
-        output.append(add1(elem))
+        output.append(np.log(elem))
     return output
 
-def add1_all_streaming(input_stream):
+def log_all_streaming(input_stream):
     for elem in input_stream:
-        yield add1(elem)
+        yield np.log(elem)
 ```
 
 ```python
-# Set seed so we will get consistent results
+# We set the random seed so we will get consistent results
 np.random.seed(seed=7)
 # Set print options to show only 3 significant digits
 np.set_printoptions(precision=3, suppress=True)
 ```
 
 ```python
-%%timeit
-result = add1_all_standard(np.random.normal(0, 1, 1000))
+arr = np.random.rand(1000) + 0.5
+result_batch = sum(log_all_standard(arr))
+print(result_batch)
 ```
 
 ```python
-%%timeit
-result = add1_all_streaming(np.random.normal(0, 1, 1000))
+result_stream = sum(log_all_streaming(arr))
+print(result_stream)
 ```
 
 The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
@@ -197,11 +195,16 @@ def increment_model(model, index):
 def genome(file_pattern):
     """Stream a genome, letter by letter, from a list of FASTA filenames."""
     return tz.pipe(file_pattern, glob, sorted,  # Filenames
-                   c.map(open),                 # lines
-                   tz.concat,                   # concatenate lines from all files
-                   c.filter(is_sequence),       # drop header from each sequence
-                   tz.concat,                   # concatenate chars from all lines
-                   c.filter(is_nucleotide))     # discard newlines and 'N'
+                   c.map(open),  # lines
+                   # concatenate lines from all files:
+                   tz.concat,
+                   # drop header from each sequence
+                   c.filter(is_sequence),
+                   # concatenate characters from all lines
+                   tz.concat,
+                   # discard newlines and 'N'
+                   c.filter(is_nucleotide))
+
 
 def markov(seq):
     """Get a 1st-order Markov model from a sequence of nucleotides."""
@@ -222,7 +225,8 @@ in the fruit-fly genome:
 %%timeit -r 1 -n 1
 dm = 'data/dm6.fa'
 model = tz.pipe(dm, genome, c.take(1000000), markov)
-#XXX the take step can just be removed once we have solved the nbconvert timeout issue
+# we use `take` to just run on the first 1000000 bases, to speed things up.
+# the take step can just be removed if you have ~5-10 mins to wait.
 ```
 
 There's a *lot* going on in that example, so we are going to unpack it little by little.
@@ -274,13 +278,13 @@ This takes $N^2$ operations, or $9 \times 10^14$ for a 30 million read dataset!
 (And these are not cheap operations.)
 
 There is another way.
-[REF: original k-mer/de-Bruijn Graph implementation] realized that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
+[Pavel Pevzner and others](http://www.pnas.org/content/98/17/9748.full) realized that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
 This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of k-mers, which can only be as large as the genome itself — usually 1-2 orders of magnitude smaller than the reads.
 
 If we choose a value for k that is large enough to ensure any k-mer appears only once in the genome, the number of times a k-mer appears is exactly the number of reads that originate from that part of the genome.
 This is called the *coverage* of that region.
 
-If a read has an error in it, there is a high probability that the k-mers overlapping the error will be unique or close to unique in the genome [REF].
+If a read has an error in it, there is a high probability that the k-mers overlapping the error will be unique or close to unique in the genome.
 Think of the equivalent in English: if you were to take reads from Shakespeare, and one read was "to be or nob to be", the 6-mer "nob to" will appear rarely or not at all, whereas "not to" will be very frequent.
 
 This is the basis for k-mer error correction: split the reads into k-mers, count the occurrence of each k-mer, and use some logic to replace rare k-mers in reads with similar common ones.
@@ -384,92 +388,85 @@ counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
 
 We neglected to discuss the *curried* part of this approach.
 
-What does it mean to curry a function?
+"Currying" means *partially* evaluating a function and returning another, "smaller" function.
 Normally in Python if you don't give a function all of its required arguments then it will throw a fit.
 In contrast, a curried function can just take *some* of those arguments.
 If the curried function doesn't get enough arguments, it returns a new function that takes the leftover arguments.
 Once that second function is called with the remaining arguments it can perform the original task.
 Another word for currying is partial evaluation.
-We are evaluating part of the function.
 In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
 
 Currying is not named after the spice blend (though it does spice up your code).
 It is named for Haskell Curry, the mathematician who invented the concept.
 Haskell Curry is also the namesake of the Haskell programming language, which has functions curried by default!
 
-Why curry?
-Well, it turns out that having a function that already knows about some of the arguments is perfect for streaming!
-We will see how we can combine currying and pipes to do streaming later in this chapter.
+It turns out that having a function that already knows about some of the arguments is perfect for streaming!
+We've seen a hint of how powerful currying and pipes can be together in the
+above code snippet, but we will elaborate further in what follows.
 
 Currying can be a bit of a mind-bend when you first start, so let's make our own curried function to see how it works.
+Let's start by writing a simple, non-curried function:
 
 ```python
-# First, let's write a simple function to curry
-def my_sum(a, b):
+def add(a, b):
     return a + b
 
-my_sum(2, 5)
+add(2, 5)
 ```
 
+Now we write a similar function which we curry manually:
+
 ```python
-# Now we write a curried version of my_sum
-def my_sum_curried(a, b=None):
-
-    def my_sum(a, b): # Here's our original function that needs to be curried
-        return a + b
-
-    if b is None:  # The second value is not given, so we will need to return a function
-
-        def my_sum_partial(b):  # we're defining a function that takes a variable b,
-            return my_sum(a, b)        # and uses the a variable that we already know about
-
-        return my_sum_partial
-
-    else:  # Both values were given, so we can just return a value
-        return my_sum(a, b)
+def add_curried(a, b=None):
+    if b is None:
+        # second argument not given, so make a function and return it
+        def add_partial(b):
+            return add(a, b)
+        return add_partial
+    else:
+        # Both values were given, so we can just return a value
+        return add(a, b)
 ```
 
 Now let's try out a curried function to make sure it does what we expect.
 
 ```python
-my_sum_curried(2, 5)
+add_curried(2, 5)
 ```
 Okay, it acts like a normal function when given both variables.
 Now let's leave out the second variable.
 
 ```python
-my_sum_curried(2)
+add_curried(2)
 ```
 
 It returned a function. Yay!
 Now let's see if we can use that returned function as expected.
 
 ```python
-partial_sum = my_sum_curried(2)
+partial_sum = add_curried(2)
 partial_sum(5)
 ```
 
-Now that worked, but my_sum_curried was a reasonable hard function to read.
+Now that worked, but add_curried was a reasonably hard function to read.
 Future me will probably have trouble remembering how I wrote that code.
 Luckily, Toolz has some syntactic sugar to help us out.
 
 ```python
 import toolz as tz
 
-@tz.curry          # Use curry as a decorator
-def curried_sum(x, y):
+@tz.curry  # Use curry as a decorator
+def add(x, y):
     return x + y
 
-curried_sum_partial = curried_sum(2)    # curried_sum didn't receive enough arguments to evaluate
-                                        # so it holds onto the 2 and waits, returning a
-                                        # partially evaluated function
-curried_sum_partial(5)
+add_partial = add(2)
+add_partial(5)
 ```
 
-To summarize what we did, curried_sum is a curried function, so it can take one of the arguments and returns another function curried_sum_partial which “remembers” that argument.
+To summarize what we did, `add` is now a curried function, so it can take one of the arguments and returns another function, `add_partial`, which “remembers” that argument.
 
 In fact, all of the Toolz functions are also available as curried functions in the toolz.curried namespace.
-Toolz also includes curried version of some handy higher order python functions like `map`, `filter` and `reduce`.
+Toolz also includes curried version of some handy higher order Python functions like `map`, `filter` and `reduce`.
 We will import the `curried` namespace as `c` so our code doesn't get too cluttered.
 So for example the curried version of `map` will be `c.map`.
 Note, that the curried functions (e.g. `c.map`) are different from the `@curry` decorator, which is used to create a curried function.
@@ -493,11 +490,15 @@ Take another look at our function for reading in the genome to see how this work
 def genome(file_pattern):
     """Stream a genome, letter by letter, from a list of FASTA filenames."""
     return tz.pipe(file_pattern, glob, sorted,  # Filenames
-                   c.map(open),                 # lines
-                   tz.concat,                   # concatenate lines from all files
-                   c.filter(is_sequence),       # drop header from each sequence
-                   tz.concat,                   # concatenate chars from all lines
-                   c.filter(is_nucleotide))     # discard newlines and 'N'
+                   c.map(open),  # lines
+                   # concatenate lines from all files:
+                   tz.concat,
+                   # drop header from each sequence
+                   c.filter(is_sequence),
+                   # concatenate characters from all lines
+                   tz.concat,
+                   # discard newlines and 'N'
+                   c.filter(is_nucleotide))
 ```
 
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
@@ -508,53 +509,41 @@ counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
 
-
-
 > ## tips {.callout}
 >  - (list of list -> list) with tz.concat
 >  - don’t get caught out:
 >     * iterators get consumed.
 So if you make a generator object and do some processing on it, and then a later step fails, you need to re-create the generator.
 The original is already gone.
->     * iterators are lazy; need to force evaluation sometimes.
+>     * iterators are lazy. You need to force evaluation sometimes.
 >  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
 Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
 
-## Markov model from a full genome
+<!-- exercise begin -->
 
-- Intro to Markov models
 
-In general, a Markov model assumes that the probability of the system moving to a given state, is only dependent on the state that it was in just previously.
-For example if it is sunny right now, there is a high probability that it will be sunny tomorrow.
-The fact that it was raining yesterday is irrelevant.
-In this theory, all the information required to predict the future is encoded in the current state of things.
-The past is irrelevant.
-This assumption is useful for simplifying otherwise intractable problems.
+**Exercise:**
+The scikit-learn library has an IncrementalPCA class, which allows you to run
+principal components analysis on a dataset without loading the full dataset
+into memory.
+But you need to chunk your data yourself, which makes the code a bit awkward to
+use.
+Make a function that can take a stream of data samples and perform PCA.
+Then, use the function to compute the PCA of the `iris` machine learning
+dataset, which is in `data/iris.csv`. (You can also access it from the
+`datasets` module of scikit-learn.)
 
-- You can download the *Drosophila melanogaster* (fruit-fly) genome file dm6.fa.gz from
-http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/.
-You will need to unzip it using: `gzip -d dm6.fa.gz`
+**Hint:** The `IncrementalPCA` class is in `sklearn.decomposition`, and
+requires a *batch size* greater than 1 to train the model. Look at the
+`toolz.curried.partition` function for how to create a stream of batches from a
+stream of data points.
 
-- Matt's post and how to use it
+<!-- solution begin -->
 
-## Image processing with streaming functions
-
-[Image stream montage](https://github.com/microscopium/microscopium/blob/master/microscopium/preprocess.py#L848)
-
-[Streaming illumination correction](https://github.com/microscopium/microscopium/blob/master/microscopium/preprocess.py#L587)
-
-[Reservoir sampling](https://github.com/microscopium/microscopium/blob/master/microscopium/preprocess.py#L639)
-
-If you take 1s/image, for 1M images you take about 12h.
-Totally doable.
-No need for cloud/compute clusters.
-
-## Streaming PCA
-
-sklearn has IncrementalPCA class.
-But you need to chunk your data yourself.
-Let’s make a function that can take a stream of data samples and perform PCA.
-Be sure to look at the documentation for the class to understand some of the code below.
+First, we write the function to train the model. The function should take in a
+stream of samples and output a PCA model, which can *transform* new samples by
+projecting them from the original n-dimensional space to the principal
+component space.
 
 ```python
 import toolz as tz
@@ -574,6 +563,8 @@ def streaming_pca(samples, n_components=2, batch_size=100):
     return ipca
 ```
 
+Now, we can use this function to *train* (or *fit*) a PCA model:
+
 ```python
 reshape = tz.curry(np.reshape)
 
@@ -582,37 +573,177 @@ def array_from_txt(line, sep=',', dtype=np.float):
 
 with open('data/iris.csv') as fin:
     pca_obj = tz.pipe(fin, c.map(array_from_txt), streaming_pca)
+```
 
+Finally, we can stream our original samples through the `transform` function of
+our model. We stack them together to obtain a `n_samples` by `n_components`
+matrix of data:
+
+```python
 with open('data/iris.csv') as fin:
-    components = np.squeeze(list(tz.pipe(fin,
-                                         c.map(array_from_txt),
-                                         c.map(reshape(newshape=(1, -1))),
-                                         c.map(pca_obj.transform))))
+    components = tz.pipe(fin,
+                         c.map(array_from_txt),
+                         c.map(reshape(newshape=(1, -1))),
+                         c.map(pca_obj.transform),
+                         np.vstack)
 
+print(components.shape)
+```
+
+We can now plot the components:
+
+```python
 from matplotlib import pyplot as plt
 plt.scatter(*components.T)
 ```
 
-# Getting the Markov model
+You can verify that this gives (approximately) the same result as a standard
+PCA:
 
-Let's go back to the example and get that Markov model.
+```python
+iris = np.loadtxt('data/iris.csv', delimiter=',')
+components2 = decomposition.PCA(n_components=2).fit_transform(iris)
+plt.scatter(*components2.T)
+```
+
+The difference, of course, is that streaming PCA can scale to extremely large
+datasets!
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+## Markov model from a full genome
+
+Back to our original code example.
+What is a Markov model, and why is it useful?
+
+In general, a Markov model assumes that the probability of the system moving to a given state, is only dependent on the state that it was in just previously.
+For example if it is sunny right now, there is a high probability that it will be sunny tomorrow.
+The fact that it was raining yesterday is irrelevant.
+In this theory, all the information required to predict the future is encoded in the current state of things.
+The past is irrelevant.
+This assumption is useful for simplifying otherwise intractable problems, and
+often gives good results.
+Markov models are behind much of the signal processing in mobile phone and
+satellite communications, for example.
+
+In the context of genomics, as we will see, different functional regions of a
+genome have different *transition probabilities* between similar states.
+Observing these in a new genome, we can predict something about the function of
+those regions. Going back to the weather analogy, the probability of going from
+a sunny day to a rainy day is very different depending on whether you are in
+Los Angeles or London. Therefore, if I give you a string of (sunny, sunny,
+sunny, rainy, sunny, ...) days, you can predict whether it came from Los
+Angeles or London, assuming you have a previously trained model.
+
+In this chapter, we'll cover just the model building, for now.
+
+- You can download the *Drosophila melanogaster* (fruit fly) genome file dm6.fa.gz from
+http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/.
+You will need to unzip it using: `gzip -d dm6.fa.gz`
+
+In the genome data, genetic sequence, which consists of the letters A, C, G,
+and T, is encoded as belonging to *repetitive elements*, a specific class of
+DNA, by whether it is in lower case (repetitive) or upper case
+(non-repetitive). We can use this information when we build the Markov model.
+
+We want to encode the Markov model as a NumPy array, so we will make
+dictionaries to index from letters to indices in [0, 7] (`LDICT` for "letters
+dictionary"), and from pairs of letters to 2D indices in ([0, 7], [0, 7])
+(`PDICT` or "pairs dictionary"):
+
+```python
+import itertools as it
+
+LDICT = dict(zip('ACGTacgt', range(8)))
+PDICT = {(a, b): (LDICT[a], LDICT[b])
+         for a, b in it.product(LDICT, LDICT)}
+```
+
+We also want to filter out non-sequence data: the sequence names, which are in
+lines starting with `>`, and unknown sequence, which is labeled as `N`, so we
+will make functions to filter on:
+
+```python
+def is_sequence(line):
+    return not line.startswith('>')
+
+def is_nucleotide(letter):
+    return letter in LDICT  # ignore 'N'
+```
+
+Finally, whenever we get a new nucleotide pair, say, ('A', 'T'), we want to
+increment our Markov model (our NumPy matrix) at the corresponding position. We
+make a curried function to do so:
+
+```python
+import toolz as tz
+
+@tz.curry
+def increment_model(model, index):
+    model[index] += 1
+```
+
+We can now combine these elements to stream a genome into our NumPy matrix.
+Note that, if `seq` below is a stream, we never need to store the whole genome,
+or even a big chunk of the genome, in memory!
+
+```python
+from toolz import curried as c
+
+def markov(seq):
+    """Get a 1st-order Markov model from a sequence of nucleotides."""
+    model = np.zeros((8, 8))
+    tz.last(tz.pipe(seq,
+                    c.sliding_window(2),        # each successive tuple
+                    c.map(PDICT.__getitem__),   # location in matrix of tuple
+                    c.map(increment_model(model))))  # increment matrix
+    # convert counts to transition probability matrix
+    model /= np.sum(model, axis=1)[:, np.newaxis]
+    return model
+```
+
+Now we simply need to produce that genome stream, and make our Markov model:
+
+```python
+from glob import glob
+
+def genome(file_pattern):
+    """Stream a genome, letter by letter, from a list of FASTA filenames."""
+    return tz.pipe(file_pattern, glob, sorted,  # Filenames
+                   c.map(open),  # lines
+                   # concatenate lines from all files:
+                   tz.concat,
+                   # drop header from each sequence
+                   c.filter(is_sequence),
+                   # concatenate characters from all lines
+                   tz.concat,
+                   # discard newlines and 'N'
+                   c.filter(is_nucleotide))
+```
+
+Let's try it out on the Drosophila (fruit fly) genome:
 
 ```python
 # dm6.fa.gz can be downloaded from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
 # Unzip before using: gzip -d dm6.fa.gz
 dm = 'data/dm6.fa'
 model = tz.pipe(dm, genome, c.take(1000000), markov)
-# used take to just run on the first 1000000 bases, to speed things up.
+# we use `take` to just run on the first 1000000 bases, to speed things up.
 # the take step can just be removed if you have ~5-10 mins to wait.
+```
 
-# Let's look at the resulting matrix
+Let's look at the resulting matrix:
+
+```python
 print('    ', '      '.join('ACGTacgt'), '\n')
 print(model)
 ```
 
-We can also look at the result as an image:
+It's probably clearer to look at the result as an image:
 
-```
+```python
 plt.imshow(model, cmap='gist_heat', interpolation='nearest');
 plt.colorbar();
 ax = plt.gca()
@@ -620,22 +751,35 @@ ax.set_xticklabels(' ACGTacgt');
 ax.set_yticklabels(' ACGTacgt');
 ```
 
-Note how the G-A and G-C transitions are different between the repeat and
+Notice how the G-A and G-C transitions are different between the repeat and
 non-repeat parts of the genome. This information can be used to classify
 previously unseen DNA sequence.
 
-Challenge: add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive. Yes, unzip can be streamed, too!
+<!-- exercise begin -->
+
+**Challenge:** add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive. Yes, unzip can be streamed, too!
+
+**Hint:** The `tarfile` package, part of Python's standard library, allows you
+to open tar files (even compressed ones) as if they were normal files.
+
+<!-- exercise end -->
 
 # Conclusions
 
-- streaming in Python is easy when you use a few abstractions
-- streaming can make you more productive:
-	- big data takes linearly longer than small data (no nasty memory swapping)
-    - don’t need a bigger machine
-    - if your tests pass on small data, they’ll pass on big data
-- streaming code is concise and readable using toolz (cytoolz for speed)
-- Time to reiterate my take-home: think about whether you can stream over a dataset, and if you can, do it.
-Your future self will thank you.
-Doing it later is harder:
+We hope to have shown you at least a hint that streaming in Python can be easy when you use a few abstractions, like the ones Toolz provides.
 
-![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg).
+Streaming can make you more productive, because big data takes linearly longer
+than small data. In batch analysis, big data can take forever to run, because
+the operating system has to keep transferring data from RAM to the hard disk
+and back. Or, Python might refuse altogether and simply show a `MemoryError`!
+This means that, for many analyses, you don’t need a bigger machine to analyse
+bigger datasets. And, if your tests pass on small data, they’ll pass on big
+data, too!
+
+Our take home message from this chapter is this: when writing an algorithm, or
+analysis, think about whether you can do it streaming. If you can, just do it
+from the beginning. Your future self will thank you.
+Doing it later is harder, and results in things like this:
+
+![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg)
+(Comic by Manu Cornet, used with permission.)
