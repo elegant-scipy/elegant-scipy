@@ -388,92 +388,85 @@ counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
 
 We neglected to discuss the *curried* part of this approach.
 
-What does it mean to curry a function?
+"Currying" means *partially* evaluating a function and returning another, "smaller" function.
 Normally in Python if you don't give a function all of its required arguments then it will throw a fit.
 In contrast, a curried function can just take *some* of those arguments.
 If the curried function doesn't get enough arguments, it returns a new function that takes the leftover arguments.
 Once that second function is called with the remaining arguments it can perform the original task.
 Another word for currying is partial evaluation.
-We are evaluating part of the function.
 In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
 
 Currying is not named after the spice blend (though it does spice up your code).
 It is named for Haskell Curry, the mathematician who invented the concept.
 Haskell Curry is also the namesake of the Haskell programming language, which has functions curried by default!
 
-Why curry?
-Well, it turns out that having a function that already knows about some of the arguments is perfect for streaming!
-We will see how we can combine currying and pipes to do streaming later in this chapter.
+It turns out that having a function that already knows about some of the arguments is perfect for streaming!
+We've seen a hint of how powerful currying and pipes can be together in the
+above code snippet, but we will elaborate further in what follows.
 
 Currying can be a bit of a mind-bend when you first start, so let's make our own curried function to see how it works.
+Let's start by writing a simple, non-curried function:
 
 ```python
-# First, let's write a simple function to curry
-def my_sum(a, b):
+def add(a, b):
     return a + b
 
-my_sum(2, 5)
+add(2, 5)
 ```
 
+Now we write a similar function which we curry manually:
+
 ```python
-# Now we write a curried version of my_sum
-def my_sum_curried(a, b=None):
-
-    def my_sum(a, b): # Here's our original function that needs to be curried
-        return a + b
-
-    if b is None:  # The second value is not given, so we will need to return a function
-
-        def my_sum_partial(b):  # we're defining a function that takes a variable b,
-            return my_sum(a, b)        # and uses the a variable that we already know about
-
-        return my_sum_partial
-
-    else:  # Both values were given, so we can just return a value
-        return my_sum(a, b)
+def add_curried(a, b=None):
+    if b is None:
+        # second argument not given, so make a function and return it
+        def add_partial(b):
+            return add(a, b)
+        return add_partial
+    else:
+        # Both values were given, so we can just return a value
+        return add(a, b)
 ```
 
 Now let's try out a curried function to make sure it does what we expect.
 
 ```python
-my_sum_curried(2, 5)
+add_curried(2, 5)
 ```
 Okay, it acts like a normal function when given both variables.
 Now let's leave out the second variable.
 
 ```python
-my_sum_curried(2)
+add_curried(2)
 ```
 
 It returned a function. Yay!
 Now let's see if we can use that returned function as expected.
 
 ```python
-partial_sum = my_sum_curried(2)
+partial_sum = add_curried(2)
 partial_sum(5)
 ```
 
-Now that worked, but my_sum_curried was a reasonable hard function to read.
+Now that worked, but add_curried was a reasonably hard function to read.
 Future me will probably have trouble remembering how I wrote that code.
 Luckily, Toolz has some syntactic sugar to help us out.
 
 ```python
 import toolz as tz
 
-@tz.curry          # Use curry as a decorator
-def curried_sum(x, y):
+@tz.curry  # Use curry as a decorator
+def add(x, y):
     return x + y
 
-curried_sum_partial = curried_sum(2)    # curried_sum didn't receive enough arguments to evaluate
-                                        # so it holds onto the 2 and waits, returning a
-                                        # partially evaluated function
-curried_sum_partial(5)
+add_partial = add(2)
+add_partial(5)
 ```
 
-To summarize what we did, curried_sum is a curried function, so it can take one of the arguments and returns another function curried_sum_partial which “remembers” that argument.
+To summarize what we did, `add` is now a curried function, so it can take one of the arguments and returns another function, `add_partial`, which “remembers” that argument.
 
 In fact, all of the Toolz functions are also available as curried functions in the toolz.curried namespace.
-Toolz also includes curried version of some handy higher order python functions like `map`, `filter` and `reduce`.
+Toolz also includes curried version of some handy higher order Python functions like `map`, `filter` and `reduce`.
 We will import the `curried` namespace as `c` so our code doesn't get too cluttered.
 So for example the curried version of `map` will be `c.map`.
 Note, that the curried functions (e.g. `c.map`) are different from the `@curry` decorator, which is used to create a curried function.
