@@ -102,6 +102,8 @@ zip: all
 	mkdir $$TMP_DIR ; \
 	ln -s $$ES_DIR/index.html $$TMP_DIR ; \
 	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
+	ln -s $$ES_DIR/figures $$TMP_DIR/ ; \
+	ln -s $$ES_DIR/images $$TMP_DIR/ ; \
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
 # clean: remove intermediate products (IPython notebooks)
