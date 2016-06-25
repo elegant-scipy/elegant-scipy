@@ -402,17 +402,18 @@ Our first step when we get stuck is to Google the task that we are trying to ach
 or the error message that we got.
 This generally leads us to [Stack Overflow](http://stackoverflow.com/),
 an excellent question and answer site for programming.
-If you don't find what you're looking for immediately try generalizing your search terms to find someone who is having a similar problem.
-Sometimes, you realize that you might be the first person to have this specific question (this is particularly likely when you are using a brand new package), but not all is lost!
+If you don't find what you're looking for immediately, try generalizing your search terms to find someone who is having a similar problem.
+
+Sometimes, you might actually be the first person to have this specific question (this is particularly likely when you are using a brand new package), but not all is lost!
 As mentioned above, the SciPy community is a friendly bunch, and can be found scattered around various parts of the interwebs.
 Your next point of call is to Google "`<library name> mailing list`", and find
 an email list to ask for help.
 Library authors and power users read these regularly, and are very welcoming to newcomers.
 Note that it is common etiquette to *subscribe* to the list before posting.
 If you don't, it usually means someone will have to manually check that your email isn't spam before allowing it to be posted to the list.
-It may seem annoying to join yet another mailing list, but we highly recommend it: it is a great place to learn a lot, bit by bit!
+It may seem annoying to join yet another mailing list, but we highly recommend it: it is a great place to learn!
 
-### Accessing the book materials e.g. code
+### Accessing the book materials
 
 All of the code from this book is available on our GitHub repository [link]().
 
@@ -424,7 +425,7 @@ This book is also a glimpse into a welcoming scientific coding community that wa
 
 Welcome to Elegant SciPy.
 
-Now, let's go write some code!
+Now, let's write some code!
 
 
 [^py3]: http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html
