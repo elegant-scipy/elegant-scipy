@@ -309,10 +309,10 @@ These licenses also prescribe that derived code must also be distributed under a
 In this way, copy-left licenses restrict what users can do with the code.
 
 The most popular copy-left license is the Gnu Public License, or GPL.
-The main disadvantage to using a copy-left license is that you are effectively putting your code off-limits to any potential users or contributors from the private sector.
+The main disadvantage to using a copy-left license is that you are often putting your code off-limits to any potential users or contributors from the private sector.
 And this could include your future self!
 This can substantially reduce your user base and thus the success of your software.
-In science, this probably means fewer citations.
+In science, this could mean fewer citations.
 
 For more help choosing a license, you might like to check out the Choose a License website http://choosealicense.com/.
 For licensing in a scientific context, we recommend this blog post by Jake VanderPlas, Director of Research in the Physical Sciences at the University of Washington, and all around SciPy superstar:
