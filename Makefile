@@ -84,6 +84,8 @@ $(BUILD_NB):
 	 mkdir -p $(BUILD_NB)
 $(FIGURES):
 	 mkdir -p $(FIGURES)
+$(BUILD_MD):
+	 mkdir -p $(BUILD_MD)
 
 exercises:
 	./tools/split_exercise.py html/ch?.html
