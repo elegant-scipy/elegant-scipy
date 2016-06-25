@@ -338,7 +338,7 @@ for example, has adopted the GPL license.
 
 We've talked a little about releasing your source code under an open source license.
 This will hopefully result in huge numbers of people downloading your code, using it, fixing bugs and adding new features.
-Where will you host your code so people can find it?
+Where will you put your code so people can find it?
 How will those bug fixes and features get back into your code? How will you keep track of all the issues and changes?
 You can imagine how this could get out of control quite quickly.
 
@@ -350,9 +350,9 @@ We will help you get started in GitHub land, but there are some great resources 
 **[ED NOTE, reference GitHub book http://shop.oreilly.com/product/0636920033059.do]**
 
 GitHub has had a massive effect on open source contributions, particularly in Python.
-GitHub allows users to publish code publicly.
-Anyone can come along and create a copy (fork) of the code and edit it to their heart's content.
-They can eventually contribute those changes back into the original by creating a pull request.
+GitHub allows users to publish code.
+Anyone can come along and create a copy (called a *fork*) of the code and edit it to their heart's content.
+They can eventually contribute those changes back into the original by creating a *pull request*.
 There are some nice features like managing issues and change requests, as well as who can directly edit your code.
 You can even keep track of edits, contributors and other fun stats.
 There are a whole bunch of other great GitHub features, but we will leave many them for you to discover and some for you to read in later chapters.
@@ -361,7 +361,7 @@ In essence, GitHub has democratized software development. It has substantially r
 ![The impact of GitHub](https://jakevdp.github.io/figures/author_count.png)
 **[ED NOTE, this is a nice plot showing how Python development takes off after introduction of GitHub, but we need to email Jake VanderPlas to ask if we can use it. http://jakevdp.github.io/blog/2012/09/20/why-python-is-the-last/]**
 
-### Making your Mark on the SciPy Ecosystem
+### Make your Mark on the SciPy Ecosystem
 
 Once you have become more comfortable with SciPy and started using it for your research, you may find that a particular package is lacking a feature you need, or you think that you can do something more efficiently, or perhaps you've found a bug.
 When you reach this point, it's time to start contributing to the SciPy Ecosystem.
@@ -370,9 +370,9 @@ We strongly encourage you to try doing this.
 The community lives because people are willing to share their code and improve existing code.
 Beyond any altruistic reasons for contributing, there are some very practical personal benefits.
 By engaging with the community you will become a better coder.
-Any code you contribute will generally be reviewed by others and you will receive feedback.
+Any code you contribute will be reviewed by others and you will receive feedback.
 As a side effect, you will learn how to use Git and GitHub, which are very useful tools for maintaining and sharing your own code.
-You may even find interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
+You may even find that interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
 
 Later in Elegant SciPy we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem.
 In the meantime we want you to start thinking about being more than just a SciPy user.
