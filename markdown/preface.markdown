@@ -33,10 +33,11 @@ Elegant code should be clear and easy to understand.
 It may take a minute to grok, but it should provide a crisp moment of understanding.
 This can be done through clear variable and function names, and carefully crafted comments, explaining not what is being done (the code does this), but *why* it is being done.
 
-To achieve simplicity, efficiency and clarity you will often need to use cleverness and creativity.
-For example, you might use a particularly efficient data structure in a new context to which it has not yet been applied.
-In many cases elegant code intrigues us, because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity.
+Writing this simple, efficient, clear code requires significant creativity.
+In the New York Times, software engineer J. Bradford Hipps [recently argued](http://www.nytimes.com/2016/05/22/opinion/sunday/to-write-software-read-novels.html) that "to write better code, [one should] read Virginia Woolf."
+You might use a particularly efficient data structure in a new, unexpected context.
 
+In many cases elegant code intrigues us because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity.
 It is the culmination of these elements of elegant code that make your code "beautiful", a pleasure to write, read and to use.
 This is elegant code.
 
