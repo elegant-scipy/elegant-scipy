@@ -27,7 +27,7 @@ Elegant code is a pleasure to read, use and understand because it is:
 * Clear
 * Creative
 
-By simple, I mean that elegant code achieves much in a few lines, through abstraction and functions, *not* through just packing in a bunch of nested function calls!
+Elegant code achieves much in a few lines, through abstraction and functions, *not* through just packing in a bunch of nested function calls!
 Elegant code is often efficient, not only in number of keystrokes but also in time and memory.
 Elegant code should be clear and easy to understand.
 It may take a minute to grok, but it should provide a crisp moment of understanding.
