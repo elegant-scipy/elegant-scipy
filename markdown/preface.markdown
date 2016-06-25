@@ -159,7 +159,7 @@ In your Python travels, you may have already heard a few rumblings about which v
 You may wonder why it's not just the latest version.
 
 At the end of 2008, the Python core developers released a major update to Python, Python 3.0, a backwards-incompatible release.
-In many (most?) cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least minor modification.
+In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least minor modification.
 Python 2.7 was the last version of Python 2 to be released, and all development continues on the Python 3 branch (except for critical security updates).
 To quote a certain genius, "this has made a lot of people very angry and been widely regarded as a bad move."
 
@@ -228,7 +228,7 @@ For new learners, the right thing to do is to use Python 3.
 It is the future of the language, and there is no sense in adding to the dead weight of Python 2 code littering the interwebs (including much from your authors!).
 In Elegant SciPy, we're going to use Python 3.5.
 
-However, if you *must* use Python 2, you can make a fair bit of the code in this book compatible with Python 2, assuming you have the following imports at the start of your code:
+However, if you *must* use Python 2, you can make most of the code in this book compatible with Python 2, assuming you have the following imports at the start of your code:
 
 ```
 from __future__ import division, print_function
@@ -264,7 +264,7 @@ So, why open?
 If you want others to use your code, one of the best ways to achieve this is to make it free.
 If you use closed source software, but it doesn't do exactly what you want to achieve, you're out of luck.
 You can email the developer and ask them to add a new feature (this often doesn't work!), or write new software yourself.
-If the code is open source, (using the skills you learn from this book) you can easily add or modify its functionality.
+If the code is open source, you can easily add or modify its functionality using the skills you learn from this book.
 
 Similarly, if you find a bug in a piece of software, having access to the source code can make things a lot easier for both the user and the developer.
 Even if you don't quite understand the code, you can usually get a lot further along in diagnosing the problem, and help the developer with fixing it.
@@ -277,7 +277,7 @@ And, because of the pace of scientific publishing and progress, much code is not
 
 In science, another great reason for making code open source is to promote reproducible research.
 Many of us have had the experience of reading a really cool paper, and then downloading the code to try it out on our own data.
-Only we find, that the executable isn't compiled for our system. Or we can't work out how to run it.
+Only we find that the executable isn't compiled for our system. Or we can't work out how to run it.
 Or it has bugs, missing features, or produces unexpected results.
 By making scientific software open source, we not only increase the quality of that software, but we make it possible to see exactly how the science was done.
 What assumptions were made, and even hard-coded?
@@ -288,7 +288,7 @@ It also enables other scientists to build on the code of their peers, fostering 
 
 If you want others to be able to use your code, then you *must* license it.
 If you don't license your code, it is closed by default.
-Even if you publish your code (for example by placing it in a publish GitHub repository), without a software license, no one is allowed to use, edit or redistribute your code.
+Even if you publish your code (for example by placing it in a public GitHub repository), without a software license, no one is allowed to use, edit or redistribute your code.
 
 When choosing which of the many license options, you should first decide what you want people to be able to do with your code.
 Do you want people to be able to sell your code for profit (or sell other code that uses your code), or do you want to restrict your code to be used only in free software?
