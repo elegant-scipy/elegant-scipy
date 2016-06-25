@@ -330,6 +330,10 @@ In fact we quote Jake here, to drive home the key points of software licensing.
 All the code in this book written by us is available under a BSD license.
 Where we have sourced code snippets from other people, the code will generally be under an open license of some variety (although not necessarily BSD).
 
+For your own code, we recommend that you follow the practices of your
+community. In Scientific Python, this means 3-clause BSD, while the R language,
+for example, has adopted the GPL license.
+
 ### GitHub: Taking Coding Social
 
 We've talked a little about releasing your source code under an open source license.
