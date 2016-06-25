@@ -88,7 +88,7 @@ This is a book that you will read once, but may return to for inspiration (and m
 The NumPy and SciPy libraries make up the core of the Scientific Python ecosystem.
 The SciPy software library implements a set of functions for processing scientific data, such as statistics, signal processing, image processing, and function optimization.
 SciPy is built on top of the Python numerical array computation library NumPy.
-Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years [plot?], spanning disciplines as broad as astronomy, biology, meteorology and climate science, and materials science.
+Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years, spanning disciplines as broad as astronomy, biology, meteorology and climate science, and materials science.
 
 This growth shows no sign of abating.
 For example, the Software Carpentry organization (http://software-carpentry.org/), which teaches Python to scientists, currently cannot keep up with demand, and is running "teacher training" every quarter, with a long waitlist.
