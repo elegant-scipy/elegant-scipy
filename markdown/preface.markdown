@@ -391,7 +391,7 @@ Sux syntax makes it less frustrating to use Python 2-only packages after you've 
 
 ```
 import sux
-sux.to_use('my_py2_package')
+p = sux.to_use('my_py2_package')
 ```
 
 In general, Python library names can be a riot, and we hope you'll enjoy your time coming up with some!
