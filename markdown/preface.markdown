@@ -13,8 +13,7 @@ More than just teaching you how to write code that works, we will inspire you to
 In The Rosie Effect (hilarious book; go read its prequel [The Rosie Project](https://en.wikipedia.org/wiki/The_Rosie_Project) when you’re done with Elegant SciPy), Graeme Simsion twists the conventions of the word "elegant" around.
 Most would use it to describe the visual simplicity of something or someone stylish or graceful.
 Say, the first iPhone.
-Instead, just such an object (the wedding dress) is compared to delightfully concise code.
-The kind of code that you rarely encounter, yet know immediately when you do.
+Instead, our hero, Don Tillman, uses a computer algorithm to *define* elegance.
 We hope that you will know exactly what he means after reading this book.
 That you will read or write a piece of elegant code, and feel calmed in the glow of its beauty and grace.
 (Note: the authors may be prone to hyperbole.)
