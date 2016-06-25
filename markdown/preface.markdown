@@ -127,6 +127,8 @@ http://jupyter.org
 provides fast, easy-to-use data structures, particularly to work with labelled data sets such as tables or relational databases, and manage time series.
 It also has some handy data analysis tools such as for data parsing and cleaning, sliding windows, aggregation and plotting.
 http://pandas.pydata.org/
+* **scikit-learn**
+provides a unified interface to machine learning algorithms.
 * **scikit-image**
 provides image analysis tools that integrate cleanly with the rest of SciPy.
 
