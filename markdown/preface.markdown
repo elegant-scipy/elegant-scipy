@@ -122,7 +122,7 @@ is an interactive interface for Python, so you can quickly interact with your da
 The Jupyter notebook runs in your browser and allows you to write code in line with text and mathematical expressions, displaying the results of computation within the text.
 This entire book has been written with Jupyter.
 Jupyter started out as an IPython extension, but now supports multiple languages, including Cython, Julia, R, Octave, Bash, Perl and Ruby.
-http://ipython.org/
+http://jupyter.org
 * **pandas**
 provides fast, easy-to-use data structures, particularly to work with labelled data sets such as tables or relational databases, and manage time series.
 It also has some handy data analysis tools such as for data parsing and cleaning, sliding windows, aggregation and plotting.
