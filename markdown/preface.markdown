@@ -13,8 +13,7 @@ More than just teaching you how to write code that works, we will inspire you to
 In The Rosie Effect (hilarious book; go read its prequel [The Rosie Project](https://en.wikipedia.org/wiki/The_Rosie_Project) when you’re done with Elegant SciPy), Graeme Simsion twists the conventions of the word "elegant" around.
 Most would use it to describe the visual simplicity of something or someone stylish or graceful.
 Say, the first iPhone.
-Instead, just such an object (the wedding dress) is compared to delightfully concise code.
-The kind of code that you rarely encounter, yet know immediately when you do.
+Instead, our hero, Don Tillman, uses a computer algorithm to *define* elegance.
 We hope that you will know exactly what he means after reading this book.
 That you will read or write a piece of elegant code, and feel calmed in the glow of its beauty and grace.
 (Note: the authors may be prone to hyperbole.)
@@ -28,16 +27,17 @@ Elegant code is a pleasure to read, use and understand because it is:
 * Clear
 * Creative
 
-By simple, I mean that elegant code achieves much in a few lines, through abstraction and functions, *not* through just packing in a bunch of nested function calls!
+Elegant code achieves much in a few lines, through abstraction and functions, *not* through just packing in a bunch of nested function calls!
 Elegant code is often efficient, not only in number of keystrokes but also in time and memory.
 Elegant code should be clear and easy to understand.
 It may take a minute to grok, but it should provide a crisp moment of understanding.
 This can be done through clear variable and function names, and carefully crafted comments, explaining not what is being done (the code does this), but *why* it is being done.
 
-To achieve simplicity, efficiency and clarity you will often need to use cleverness and creativity.
-For example, you might use a particularly efficient data structure in a new context to which it has not yet been applied.
-In many cases elegant code intrigues us, because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity.
+Writing this simple, efficient, clear code requires significant creativity.
+In the New York Times, software engineer J. Bradford Hipps [recently argued](http://www.nytimes.com/2016/05/22/opinion/sunday/to-write-software-read-novels.html) that "to write better code, [one should] read Virginia Woolf."
+You might use a particularly efficient data structure in a new, unexpected context.
 
+In many cases elegant code intrigues us because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity.
 It is the culmination of these elements of elegant code that make your code "beautiful", a pleasure to write, read and to use.
 This is elegant code.
 
@@ -88,7 +88,7 @@ This is a book that you will read once, but may return to for inspiration (and m
 The NumPy and SciPy libraries make up the core of the Scientific Python ecosystem.
 The SciPy software library implements a set of functions for processing scientific data, such as statistics, signal processing, image processing, and function optimization.
 SciPy is built on top of the Python numerical array computation library NumPy.
-Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years [plot?], spanning disciplines as broad as astronomy, biology, meteorology and climate science, and materials science.
+Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years, spanning disciplines as broad as astronomy, biology, meteorology and climate science, and materials science.
 
 This growth shows no sign of abating.
 For example, the Software Carpentry organization (http://software-carpentry.org/), which teaches Python to scientists, currently cannot keep up with demand, and is running "teacher training" every quarter, with a long waitlist.
@@ -122,11 +122,13 @@ is an interactive interface for Python, so you can quickly interact with your da
 The Jupyter notebook runs in your browser and allows you to write code in line with text and mathematical expressions, displaying the results of computation within the text.
 This entire book has been written with Jupyter.
 Jupyter started out as an IPython extension, but now supports multiple languages, including Cython, Julia, R, Octave, Bash, Perl and Ruby.
-http://ipython.org/
+http://jupyter.org
 * **pandas**
 provides fast, easy-to-use data structures, particularly to work with labelled data sets such as tables or relational databases, and manage time series.
 It also has some handy data analysis tools such as for data parsing and cleaning, sliding windows, aggregation and plotting.
 http://pandas.pydata.org/
+* **scikit-learn**
+provides a unified interface to machine learning algorithms.
 * **scikit-image**
 provides image analysis tools that integrate cleanly with the rest of SciPy.
 
@@ -157,7 +159,7 @@ In your Python travels, you may have already heard a few rumblings about which v
 You may wonder why it's not just the latest version.
 
 At the end of 2008, the Python core developers released a major update to Python, Python 3.0, a backwards-incompatible release.
-In many (most?) cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least minor modification.
+In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least minor modification.
 Python 2.7 was the last version of Python 2 to be released, and all development continues on the Python 3 branch (except for critical security updates).
 To quote a certain genius, "this has made a lot of people very angry and been widely regarded as a bad move."
 
@@ -226,7 +228,7 @@ For new learners, the right thing to do is to use Python 3.
 It is the future of the language, and there is no sense in adding to the dead weight of Python 2 code littering the interwebs (including much from your authors!).
 In Elegant SciPy, we're going to use Python 3.5.
 
-However, if you *must* use Python 2, you can make a fair bit of the code in this book compatible with Python 2, assuming you have the following imports at the start of your code:
+However, if you *must* use Python 2, you can make most of the code in this book compatible with Python 2, assuming you have the following imports at the start of your code:
 
 ```
 from __future__ import division, print_function
@@ -262,7 +264,7 @@ So, why open?
 If you want others to use your code, one of the best ways to achieve this is to make it free.
 If you use closed source software, but it doesn't do exactly what you want to achieve, you're out of luck.
 You can email the developer and ask them to add a new feature (this often doesn't work!), or write new software yourself.
-If the code is open source, (using the skills you learn from this book) you can easily add or modify its functionality.
+If the code is open source, you can easily add or modify its functionality using the skills you learn from this book.
 
 Similarly, if you find a bug in a piece of software, having access to the source code can make things a lot easier for both the user and the developer.
 Even if you don't quite understand the code, you can usually get a lot further along in diagnosing the problem, and help the developer with fixing it.
@@ -275,7 +277,7 @@ And, because of the pace of scientific publishing and progress, much code is not
 
 In science, another great reason for making code open source is to promote reproducible research.
 Many of us have had the experience of reading a really cool paper, and then downloading the code to try it out on our own data.
-Only we find, that the executable isn't compiled for our system. Or we can't work out how to run it.
+Only we find that the executable isn't compiled for our system. Or we can't work out how to run it.
 Or it has bugs, missing features, or produces unexpected results.
 By making scientific software open source, we not only increase the quality of that software, but we make it possible to see exactly how the science was done.
 What assumptions were made, and even hard-coded?
@@ -286,7 +288,7 @@ It also enables other scientists to build on the code of their peers, fostering 
 
 If you want others to be able to use your code, then you *must* license it.
 If you don't license your code, it is closed by default.
-Even if you publish your code (for example by placing it in a publish GitHub repository), without a software license, no one is allowed to use, edit or redistribute your code.
+Even if you publish your code (for example by placing it in a public GitHub repository), without a software license, no one is allowed to use, edit or redistribute your code.
 
 When choosing which of the many license options, you should first decide what you want people to be able to do with your code.
 Do you want people to be able to sell your code for profit (or sell other code that uses your code), or do you want to restrict your code to be used only in free software?
@@ -307,10 +309,10 @@ These licenses also prescribe that derived code must also be distributed under a
 In this way, copy-left licenses restrict what users can do with the code.
 
 The most popular copy-left license is the Gnu Public License, or GPL.
-The main disadvantage to using a copy-left license is that you are effectively putting your code off-limits to any potential users or contributors from the private sector.
+The main disadvantage to using a copy-left license is that you are often putting your code off-limits to any potential users or contributors from the private sector.
 And this could include your future self!
 This can substantially reduce your user base and thus the success of your software.
-In science, this probably means fewer citations.
+In science, this could mean fewer citations.
 
 For more help choosing a license, you might like to check out the Choose a License website http://choosealicense.com/.
 For licensing in a scientific context, we recommend this blog post by Jake VanderPlas, Director of Research in the Physical Sciences at the University of Washington, and all around SciPy superstar:
@@ -328,11 +330,15 @@ In fact we quote Jake here, to drive home the key points of software licensing.
 All the code in this book written by us is available under a BSD license.
 Where we have sourced code snippets from other people, the code will generally be under an open license of some variety (although not necessarily BSD).
 
+For your own code, we recommend that you follow the practices of your
+community. In Scientific Python, this means 3-clause BSD, while the R language,
+for example, has adopted the GPL license.
+
 ### GitHub: Taking Coding Social
 
 We've talked a little about releasing your source code under an open source license.
 This will hopefully result in huge numbers of people downloading your code, using it, fixing bugs and adding new features.
-Where will you host your code so people can find it?
+Where will you put your code so people can find it?
 How will those bug fixes and features get back into your code? How will you keep track of all the issues and changes?
 You can imagine how this could get out of control quite quickly.
 
@@ -344,9 +350,9 @@ We will help you get started in GitHub land, but there are some great resources 
 **[ED NOTE, reference GitHub book http://shop.oreilly.com/product/0636920033059.do]**
 
 GitHub has had a massive effect on open source contributions, particularly in Python.
-GitHub allows users to publish code publicly.
-Anyone can come along and create a copy (fork) of the code and edit it to their heart's content.
-They can eventually contribute those changes back into the original by creating a pull request.
+GitHub allows users to publish code.
+Anyone can come along and create a copy (called a *fork*) of the code and edit it to their heart's content.
+They can eventually contribute those changes back into the original by creating a *pull request*.
 There are some nice features like managing issues and change requests, as well as who can directly edit your code.
 You can even keep track of edits, contributors and other fun stats.
 There are a whole bunch of other great GitHub features, but we will leave many them for you to discover and some for you to read in later chapters.
@@ -355,7 +361,7 @@ In essence, GitHub has democratized software development. It has substantially r
 ![The impact of GitHub](https://jakevdp.github.io/figures/author_count.png)
 **[ED NOTE, this is a nice plot showing how Python development takes off after introduction of GitHub, but we need to email Jake VanderPlas to ask if we can use it. http://jakevdp.github.io/blog/2012/09/20/why-python-is-the-last/]**
 
-### Making your Mark on the SciPy Ecosystem
+### Make your Mark on the SciPy Ecosystem
 
 Once you have become more comfortable with SciPy and started using it for your research, you may find that a particular package is lacking a feature you need, or you think that you can do something more efficiently, or perhaps you've found a bug.
 When you reach this point, it's time to start contributing to the SciPy Ecosystem.
@@ -364,9 +370,9 @@ We strongly encourage you to try doing this.
 The community lives because people are willing to share their code and improve existing code.
 Beyond any altruistic reasons for contributing, there are some very practical personal benefits.
 By engaging with the community you will become a better coder.
-Any code you contribute will generally be reviewed by others and you will receive feedback.
+Any code you contribute will be reviewed by others and you will receive feedback.
 As a side effect, you will learn how to use Git and GitHub, which are very useful tools for maintaining and sharing your own code.
-You may even find interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
+You may even find that interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
 
 Later in Elegant SciPy we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem.
 In the meantime we want you to start thinking about being more than just a SciPy user.
@@ -385,28 +391,29 @@ Sux syntax makes it less frustrating to use Python 2-only packages after you've 
 
 ```
 import sux
-sux.to_use('my_py2_package')
+p = sux.to_use('my_py2_package')
 ```
 
 In general, Python library names can be a riot, and we hope you'll enjoy your time coming up with some!
 
 ## Getting Help
 
-My first step when I get stuck is to Google the task that I am trying to achieve,
-or the error message that I got.
-This generally leads me to [Stack Overflow](http://stackoverflow.com/),
+Our first step when we get stuck is to Google the task that we are trying to achieve,
+or the error message that we got.
+This generally leads us to [Stack Overflow](http://stackoverflow.com/),
 an excellent question and answer site for programming.
-If you don't find what you're looking for immediately try generalizing your search terms to find someone who is having a similar problem.
-Sometimes, you realize that you might be the first person to have this specific question (this is particularly likely when you are using a brand new package), but not all is lost!
+If you don't find what you're looking for immediately, try generalizing your search terms to find someone who is having a similar problem.
+
+Sometimes, you might actually be the first person to have this specific question (this is particularly likely when you are using a brand new package), but not all is lost!
 As mentioned above, the SciPy community is a friendly bunch, and can be found scattered around various parts of the interwebs.
 Your next point of call is to Google "`<library name> mailing list`", and find
 an email list to ask for help.
 Library authors and power users read these regularly, and are very welcoming to newcomers.
 Note that it is common etiquette to *subscribe* to the list before posting.
 If you don't, it usually means someone will have to manually check that your email isn't spam before allowing it to be posted to the list.
-It may seem annoying to join yet another mailing list, but we highly recommend it: it is a great place to learn a lot, bit by bit!
+It may seem annoying to join yet another mailing list, but we highly recommend it: it is a great place to learn!
 
-### Accessing the book materials e.g. code
+### Accessing the book materials
 
 All of the code from this book is available on our GitHub repository [link]().
 
@@ -418,7 +425,7 @@ This book is also a glimpse into a welcoming scientific coding community that wa
 
 Welcome to Elegant SciPy.
 
-Now, let's go write some code!
+Now, let's write some code!
 
 
 [^py3]: http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html
