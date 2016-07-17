@@ -1345,7 +1345,16 @@ apparent spots of strong reflections. This specific radar moves its
 antenna in order to scan small regions consisting of $20^\circ$
 azimuth and $30^\circ$ elevation bins scanned in steps of $0.5^\circ$.
 
-Finally, lets draw some contour plots of the resulting radar data.
+We will now draw some contour plots of the resulting radar data.
+Please refer to the diagram below to see how the different slices are
+taken.  A first slice at fixed range shows the strength of echoes
+against elevation and azimuth.  Another two slices at fixed elevation
+and azimuth respectively shows the slope.  The stepped construction of
+the high wall in an opencast mine is visible in the azimuth plane.
+
+<img src="../figures/axes_slices.png"
+     alt="Diagram showing azimuth, elevation and range slices through data volume"/>
+
 
 ```python
 data = np.load('data/radar_scan_1.npz')
@@ -1383,14 +1392,67 @@ plt.show()
 
 ```
 
-![Diagram showing azimuth, elevation and range slices through
-data volume](../figures/axes_slices.png)
+#### 3D visualization
 
-Please refer to the diagram above to see how the different slices are
-taken.  A first slice at fixed range shows the strength of echoes
-against elevation and azimuth.  Another two slices at fixed elevation
-and azimuth respectively shows the slope.  The stepped construction of
-the high wall in an opencast mine is visible in the azimuth plane.
+We can also visualize the volume in three dimensions.
+
+We first compute the argmax (the index of the maximum value) in the
+range direction.  This should give an indication of the range at which
+the radar beam hit the rock slope.  Each argmax index is converted to
+a three-dimensional (elevation-azimuth-range) coordinate:
+
+```python
+r = np.argmax(V, axis=2)
+
+el, az = np.meshgrid(*[np.arange(s) for s in r.shape], indexing='ij')
+
+axis_labels = ['Elevation', 'Azimuth', 'Range']
+coords = np.column_stack((el.flat, az.flat, r.flat))
+```
+
+Taking these coordinates, we project them onto the plane (by dropping
+the range coordinate), and perform a Delaunay tesslation.  The
+tesselation returns a set of indices into our coordinates that define
+triangles (or simplices).  While the triangles are strictly speaking
+defined on the projected coordinates, we use our original coordinates
+for the reconstruction, thereby adding back the range component:
+
+```python
+from scipy import spatial
+
+d = spatial.Delaunay(coords[:, :2])
+simplexes = coords[d.vertices]
+```
+
+For display purposes, we swap the range axis to be the first:
+
+```python
+coords = np.roll(coords, shift=-1, axis=1)
+axis_labels = np.roll(axis_labels, shift=-1)
+```
+
+Now, Matplotlib's `trisurf` can be used to visualize the result:
+
+```python
+# This import initializes Matplotlib's 3D machinery
+from mpl_toolkits.mplot3d import Axes3D
+
+# Set up the 3D axis
+f, ax = plt.subplots(1, 1,
+                     figsize=(10, 10),
+                     subplot_kw=dict(projection='3d'))
+
+ax.plot_trisurf(*coords.T, triangles=d.vertices, cmap='magma_r')
+
+ax.set_xlabel(axis_labels[0])
+ax.set_ylabel(axis_labels[1])
+ax.set_zlabel(axis_labels[2])
+
+# Adjust the camera position to match our diagram above
+ax.view_init(azim=-45)
+
+plt.show()
+```
 
 ### Further applications of the FFT
 
