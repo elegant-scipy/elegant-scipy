@@ -1,5 +1,18 @@
 # Elegant SciPy
 
+## Using This Book
+
+This book is here to help you get your job done.
+
+You can find the text of this book on the authors’ GitHub repository at [https://github.com/elegant-scipy/elegant-scipy/]. In that repository, the text of the book is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Public License.
+
+The code examples are licensed under a BSD license; the full text of this license is available at the link above. If you use this code in your programs and documentation, you do not need to contact us for permission.
+
+The authors also encourage educators to use this book in their own classrooms for noncommercial instructional uses (i.e. for slide presentations in a university lecture), provided that there is proper attribution to the O’Reilly edition in each instance.
+
+If you are unsure whether your use falls outside fair use or the permissions given above, feel free to contact us at permissions@oreilly.com.
+
+
 ## Installing dependencies
 
 First, we build an isolated environment as not to interrupt any
