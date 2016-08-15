@@ -58,11 +58,11 @@ existing setup you may have.  This can be done using, e.g., Conda:
 
 1. Install [conda](http://conda.pydata.org/miniconda.html) or Anaconda
 
-2. Build an isolated environment called "elegant_scipy" and install the
+2. Build an isolated environment called "elegant-scipy" and install the
    necessary dependencies:
 
 ```console
-conda env create --name elegant_scipy -f path/to/environment.yml
+conda env create --name elegant-scipy -f path/to/environment.yml
 ```
 
 ### Windows users
