@@ -65,19 +65,23 @@ existing setup you may have.  This can be done using, e.g., Conda:
 conda env create --name elegant-scipy -f path/to/environment.yml
 ```
 
-### Windows users
+### Windows
 
-If you're using Windows, this is going to be a bit harder to get
-going.  You need to make sure you have at least:
+To build the full book on Windows, you will at a minimum need the following
+additional software:
 
-- [GitBash](https://git-scm.com/downloads) for unix utilities such as "make"
+- [GitBash](https://git-scm.com/downloads) for Unix utilities such as "make"
 - [wget](https://sourceforge.net/projects/gnuwin32/files/wget/)
 
-Even with these utilities installed, the build process is likely to
-fail in unpredictable ways.  We suggest running virtual machine or
-docker instance to build the book (see "Building with Docker" below).
+Building the book on Windows is likely to be challenging because we developed
+the build process on Mac and Linux. However, you should still be able to create
+conda environments (see "Installing dependencies", above), and run notedown,
+to make the Jupyter notebooks (see "Building the IPython notebooks", above).
 
-## Building chapters
+If you encounter any problems, please
+[raise an issue!](https://github.com/elegant-scipy/elegant-scipy/issues/new)
+
+## Building the completed book
 
 We are using `notedown` to convert a markdown file to an IPython
 notebook, run it, and then convert to html. For ease of use, this is
