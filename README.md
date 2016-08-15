@@ -3,10 +3,12 @@
 This is the online repository for the book
 [Elegant SciPy](http://shop.oreilly.com/product/0636920038481.do),
 written by Juan Nunez-Iglesias (@jni), Harriet Dashnow (@hdashnow), and Stéfan
-van der Walt (@stefanv), and published by O'Reilly Media.
+van der Walt (@stefanv), and published by O'Reilly Media:
 
+<a href="http://shop.oreilly.com/product/0636920038481.do">
 <img src="https://github.com/elegant-scipy/elegant-scipy/blob/master/_images/cover.jpg?raw=true"
  alt="Elegant SciPy Cover" height=256>
+</a>
 
 ## Using this book.
 
@@ -81,7 +83,7 @@ to make the Jupyter notebooks (see "Building the IPython notebooks", above).
 If you encounter any problems, please
 [raise an issue!](https://github.com/elegant-scipy/elegant-scipy/issues/new)
 
-## Building the completed book
+## Building the complete book
 
 We are using `notedown` to convert a markdown file to an IPython
 notebook, run it, and then convert to html. For ease of use, this is
