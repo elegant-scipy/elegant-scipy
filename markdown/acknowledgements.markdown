@@ -20,6 +20,10 @@ sleuthing. We thank Lav Varshney for the original Matlab code for spectral
 graph layout for the worm brain (chapters 3 and 6), and Stefano Allesina for
 the St. Marks food web data (chapter 6).
 
+We are indebted to everyone who made corrections and suggestions while the book
+was in pre-release, including Bill Katz, Matthias Bussonnier, and
+Mark Hyun-ki Kim.
+
 Although we will continue to improve the book based on comments from you, our
 readers, we owe a great deal to our friends and family who proofread much
 earlier versions and provided valuable feedback, suggestions, and
