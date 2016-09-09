@@ -167,13 +167,12 @@ That environment.yml can be passed to conda to install the right versions of eve
 In your Python travels, you may have already heard a few rumblings about which version of Python is better.
 You may wonder why it's not just the latest version.
 
-At the end of 2008, the Python core developers released a major update to Python, Python 3.0, a backwards-incompatible release.
-In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least minor modification.
-Python 2.7 was the last version of Python 2 to be released, and all development continues on the Python 3 branch (except for critical security updates).
-To quote a certain genius, "this has made a lot of people very angry and been widely regarded as a bad move."
+At the end of 2008, the Python core developers released Python 3.0, a major update to Python with better Unicode (international) text handling, type consistency, and streaming data handling, among other improvements.
+To quote Douglas Adams in The Hitchhiker's Guide to the Galaxy, "this has made
+a lot of people very angry and been widely regarded as a bad move."
 
+In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least minor modification.
 There will always be a tension between the march of progress and backwards compatibility.
-There's as many opinions on the best way to move forward as there are developers in the world.
 In this case, the Python core team decided that a clean break was needed to eliminate some inconsistencies in Python, and move it forward into the twenty-first century.
 (Python 1.0 appeared in 1994, more than 20 years ago; a lifetime in the tech world.)
 
@@ -233,11 +232,15 @@ That's certainly not motivating for someone who has to put work in to make their
 
 Given the divided state of the community, many developers now write code that is compatible with both Python 2 and 3.
 
-For new learners, the right thing to do is to use Python 3.
+New learners should use Python 3.
 It is the future of the language, and there is no sense in adding to the dead weight of Python 2 code littering the interwebs (including much from your authors!).
 In Elegant SciPy, we're going to use Python 3.5.
 
-However, if you *must* use Python 2, you can make most of the code in this book compatible with Python 2, assuming you have the following imports at the start of your code:
+However, if you *must* use Python 2, you can make most of the code in this book
+compatible with Python 2 by using a built-in compatibility module called
+`__future__`, as well as a third-party compatibility library called `six`
+(because 2 times 3 equals six! Get it? Yeah, okay, neither do we).
+You can use them by placing the following imports at the start of the code:
 
 ```
 from __future__ import division, print_function
@@ -249,7 +252,8 @@ Trying to use `@` in earlier version of Python will give you a nasty syntax erro
 To make the code in these chapters work with Python 2.7 you will have to use the `.dot` method of NumPy arrays and SciPy matrices, which is decidedly inelegant.
 More on how to do this in chapter 5.
 
-For more reading, you might like to check out Ed Schofield's python-future.org, and Nick Coghlan's book-length guide on the transition [^py3].
+For more reading, check out Ed Schofield's resource, python-future.org,
+and Nick Coghlan's [book-length guide](http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html) on the transition.
 
 ## SciPy Ecosystem and Community
 
@@ -295,11 +299,11 @@ It also enables other scientists to build on the code of their peers, fostering 
 
 #### Open Source Licenses
 
-If you want others to be able to use your code, then you *must* license it.
+If you want others to use your code, then you *must* license it.
 If you don't license your code, it is closed by default.
 Even if you publish your code (for example by placing it in a public GitHub repository), without a software license, no one is allowed to use, edit or redistribute your code.
 
-When choosing which of the many license options, you should first decide what you want people to be able to do with your code.
+When choosing among the many license options, you should first decide what you want to allow people to do with your code.
 Do you want people to be able to sell your code for profit (or sell other code that uses your code), or do you want to restrict your code to be used only in free software?
 
 There are two broad categories of FOSS license:
@@ -323,7 +327,7 @@ And this could include your future self!
 This can substantially reduce your user base and thus the success of your software.
 In science, this could mean fewer citations.
 
-For more help choosing a license, you might like to check out the Choose a License website http://choosealicense.com/.
+For more help choosing a license, see the [Choose a License website](http://choosealicense.com/).
 For licensing in a scientific context, we recommend this blog post by Jake VanderPlas, Director of Research in the Physical Sciences at the University of Washington, and all around SciPy superstar:
 http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/.
 In fact we quote Jake here, to drive home the key points of software licensing.
@@ -355,11 +359,11 @@ Enter GitHub.
 
 GitHub (https://github.com/) is a website for hosting, sharing and developing code.
 It is based on Git version control software (http://git-scm.com/).
-We will help you get started in GitHub land, but there are some great resources for a more in-depth experience, e.g
-**[ED NOTE, reference GitHub book http://shop.oreilly.com/product/0636920033059.do]**
+We will help you get started in GitHub land, but there are some great resources
+for a more in-depth experience, such as [Introducing GitHub](http://shop.oreilly.com/product/0636920033059.do) by Peter Bell and Brent Beer.
 
-GitHub has had a massive effect on open source contributions, particularly in Python.
-GitHub allows users to publish code.
+GitHub has had a massive effect on open source contributions.
+GitHub allows users to publish code and collaborate for free.
 Anyone can come along and create a copy (called a *fork*) of the code and edit it to their heart's content.
 They can eventually contribute those changes back into the original by creating a *pull request*.
 There are some nice features like managing issues and change requests, as well as who can directly edit your code.
@@ -384,8 +388,8 @@ As a side effect, you will learn how to use Git and GitHub, which are very usefu
 You may even find that interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
 
 Later in Elegant SciPy we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem.
-In the meantime we want you to start thinking about being more than just a SciPy user.
-You are joining a community and we hope you will keep making it a better place for all scientific coders.
+In the meantime we want you to think about being more than just a SciPy user.
+You are joining a community, and we hope you will make it a better place for all scientific coders.
 
 ### A Touch of Whimsy with your Py
 
@@ -437,4 +441,4 @@ Welcome to Elegant SciPy.
 Now, let's write some code!
 
 
-[^py3]: http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html
+
