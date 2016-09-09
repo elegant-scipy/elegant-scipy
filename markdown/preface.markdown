@@ -22,28 +22,38 @@ Perhaps you too will compliment your significant other on how their outfit remin
 So, what makes code elegant?
 Elegant code is a pleasure to read, use and understand because it is:
 
-* Simple
+* Concise
 * Efficient
 * Clear
 * Creative
 
-Elegant code achieves much in a few lines, through abstraction and functions, *not* through just packing in a bunch of nested function calls!
-Elegant code is often efficient, not only in number of keystrokes but also in time and memory.
-Elegant code should be clear and easy to understand.
-It may take a minute to grok, but it should provide a crisp moment of understanding.
-This can be done through clear variable and function names, and carefully crafted comments, explaining not what is being done (the code does this), but *why* it is being done.
+The conciseness of elegant code comes through abstraction and functions, *not* through just packing in a bunch of nested function calls!
+It may take a minute or two to grok, but it should ultimately provide a crisp, "ah-ha!" moment of understanding.
+Once you know the various components of the code, its correctness should be
+obvious!
+This can be aided by clear variable and function names, and carefully crafted comments, explaining not what is being done (the code does this), but *why* it is being done.
 
-Writing this simple, efficient, clear code requires significant creativity.
-In the New York Times, software engineer J. Bradford Hipps [recently argued](http://www.nytimes.com/2016/05/22/opinion/sunday/to-write-software-read-novels.html) that "to write better code, [one should] read Virginia Woolf."
-You might use a particularly efficient data structure in a new, unexpected context.
+Creativity should support the first three goals.
+Creativity for its own sake can lead to obtuse code that is hard to understand.
+Make sure you are not too clever for your readers' sake!
+In the New York Times, software engineer J. Bradford Hipps [recently
+argued](http://www.nytimes.com/2016/05/22/opinion/sunday/to-write-software-read-novels.html)
+that "to write better code, [one should] read Virginia Woolf":
 
-In many cases elegant code intrigues us because it does something clever, approaching a problem in a new way, or just in a way that in retrospect is obvious in its simplicity.
-It is the culmination of these elements of elegant code that make your code "beautiful", a pleasure to write, read and to use.
-This is elegant code.
+> As a practice, software development is far more creative than algorithmic.
+> 
+> The developer stands before her source code editor in the same way the author
+> confronts the blank page. [...] They may also share a healthy impatience for
+> the ways things “have always been done” and a generative desire to break
+> conventions. When the module is finished or the pages complete, their quality
+> is judged against many of the same standards: elegance, concision, cohesion;
+> the discovery of symmetries where none were seen to exist. Yes, even beauty.
 
-Now that we’ve dealt with the elegant part of the title, let’s bring back the SciPy.
+This is the position we take in this book.
 
-SciPy is a library, an ecosystem, and a community.  Part of what makes
+Now that we’ve dealt with the "elegant" part of the title, let’s come back to the SciPy.
+
+Depending on context, "SciPy" can mean a software library, an ecosystem, or a community.  Part of what makes
 these great is that they have excellent online documentation and
 tutorials (see, e.g., https://docs.scipy.org and
 http://www.scipy-lectures.org/), rendering Just Another Reference book
@@ -54,26 +64,23 @@ The code we have chosen highlights clever, elegant uses of advanced features of 
 The beginning reader will learn to apply these libraries to real world problems using beautiful code.
 And we use real scientific data to motivate our examples.
 
-When we started writing Elegant SciPy, we put out a call to the community, asking Pythonistas to nominate the most elegant code they have seen.
 Like SciPy itself, we wanted Elegant SciPy to be driven by the community.
-The code herein is the best code the community has offered up for your pleasure.
+We've taken many of our examples from working code found in the wider
+scientific Python ecosystem, selecting them for their illustration of the
+principles of elegant code we outlined above.
 
 ## Who is this book for?
 
 Elegant SciPy is intended to inspire you to take your Python to the next level.
 You will learn SciPy by example, from the very best code.
 
-We have pitched this book towards people who have a decent beginner grounding in Python, and are now looking to do some more serious programming for their research.
-If you are not yet familiar with Python basics, work through a beginner tutorial before tackling this book.
-There are some great resources to get to get you started with Python, such as Software Carpentry (http://software-carpentry.org/).
+Before starting, you should at least have seen Python, and know about variables, functions,
+loops, and maybe a bit of NumPy. You might have even honed your
+Python skills with advanced material, such as [Fluent Python](http://shop.oreilly.com/product/0636920032519.do).
+If this doesn't describe you, you should go through some beginner Python
+tutorials, such as [Software Carpentry](http://software-carpentry.org/).
 
-We expect that you will be familiar with the Python programming
-language.  You have seen Python, and know about variables, functions,
-loops, and maybe a bit of NumPy.  Perhaps you've even honed your
-Python skills with some more advanced material, such as Fluent Python
-(http://shop.oreilly.com/product/0636920032519.do).
-
-But you don't know whether the "SciPy stack" is a library or a menu item from International House of Pancakes, and you aren't sure about best practices.
+But perhaps you don't know whether the "SciPy stack" is a library or a menu item from International House of Pancakes, and you aren't sure about best practices.
 Perhaps you are a scientist who has read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of their own lab, and have fiddled with them.
 And you might think that you are more or less alone when you learn to code SciPy.
 You are not.
@@ -88,10 +95,16 @@ This is a book that you will read once, but may return to for inspiration (and m
 The NumPy and SciPy libraries make up the core of the Scientific Python ecosystem.
 The SciPy software library implements a set of functions for processing scientific data, such as statistics, signal processing, image processing, and function optimization.
 SciPy is built on top of the Python numerical array computation library NumPy.
-Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years, spanning disciplines as broad as astronomy, biology, meteorology and climate science, and materials science.
+Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years, spanning a broad spectrum of disciplines that includes astronomy, biology, meteorology and climate science, and materials science, among others.
 
 This growth shows no sign of abating.
 For example, the Software Carpentry organization (http://software-carpentry.org/), which teaches Python to scientists, currently cannot keep up with demand, and is running "teacher training" every quarter, with a long waitlist.
+As another example, Thomas Robitaille and Chris Beaumont
+[documented](https://nbviewer.jupyter.org/github/ChrisBeaumont/adass_proceedings/blob/master/Mining%20acknowledgments%20in%20ADS.ipynb) in 2014
+Python's growing use in astronomy. Here's what we found when we [updated](https://gist.github.com/jni/3339985a016572f178d3c2f18e27ec0d) their
+plot in the second half of 2016:
+
+![Python in astronomy](../images/python-in-astronomy.png)
 
 In short, SciPy and related libraries will be driving much of scientific data analysis for years to come.
 
@@ -137,10 +150,6 @@ The takeaway here is that, although we will focus on NumPy and SciPy,
 it is the many surrounding packages that make Python a powerhouse for
 scientific computing.
 
-[^learn]: You can learn more about many of the tools mentioned here at
-http://www.scipy-lectures.org/, or through field-specific guides such
-as Effective Computation in Physics (http://physics.codes/).
-
 
 ## Installing Python - Anaconda
 
@@ -149,8 +158,8 @@ We will list all of the requirements and the versions we used in the environment
 The easiest way to get all of these components is to install the Anaconda Python distribution.
 You can download Anaconda here: http://continuum.io/downloads. You will also find detailed installation instructions.
 
-If you find that you need to keep track of multiple versions of Python or different sets of packages, try Conda
-(if you've just downloaded the Anaconda Python distribution then you already have it!).
+If you find that you need to keep track of multiple versions of Python or different sets of packages, try conda.
+If you've downloaded the Anaconda Python distribution then you already have it!
 That environment.yml can be passed to conda to install the right versions of everything in one go.
 
 ## The Great Cataclysm: Python 2 vs. Python 3
