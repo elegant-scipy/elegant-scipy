@@ -26,7 +26,7 @@ Elegant code is a pleasure to read, use and understand because it is:
 * Clear
 * Creative
 
-The conciseness of elegant code comes through abstraction and functions, *not* through just packing in a bunch of nested function calls!
+The conciseness of elegant code comes through abstraction and functions, *not* just through packing in a bunch of nested function calls!
 It may take a minute or two to grok, but it should ultimately provide a crisp, "ah-ha!" moment of understanding.
 Once you know the various components of the code, its correctness should be
 obvious!
@@ -137,7 +137,7 @@ This entire book has been written with Jupyter.
 Jupyter started out as an IPython extension, but now supports multiple languages, including Cython, Julia, R, Octave, Bash, Perl and Ruby.
 http://jupyter.org
 * **pandas**
-provides fast data structures in an easy-to-use package, particularly to work with labelled data sets such as tables or relational databases, and manage time series.
+provides fast, columnar data structures in an easy-to-use package, particularly to work with labelled data sets such as tables or relational databases, and manage time series.
 It also has some handy data analysis tools such as for data parsing and cleaning, sliding windows, aggregation and plotting.
 http://pandas.pydata.org/
 * **scikit-learn**
@@ -153,8 +153,8 @@ scientific computing.
 
 ## Installing Python - Anaconda
 
-Throughout this book we’re going to assume that you have Python 3.5 (or a later version) and have all the major SciPy packages installed.
-We will list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
+Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the major SciPy packages installed.
+We list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
 The easiest way to get all of these components is to install the Anaconda Python distribution.
 You can download Anaconda here: http://continuum.io/downloads. You will also find detailed installation instructions.
 
@@ -262,7 +262,7 @@ SciPy is a major library with a lot of functionality.
 Together with NumPy, it is one of Python's killer apps.
 It has launched a vast number of related libraries that build on this functionality, many of which you'll encounter throughout this book.
 
-The creators of these libraries, and many of their users gather at many events and conferences around the world.
+The creators of these libraries, and many of their users, gather at many events and conferences around the world.
 These include the yearly SciPy conference in Austin, EuroSciPy, SciPy India, PyData and others.
 We highly recommend attending one of these, and meeting the authors of the best scientific software in the Python world.
 If you can't get there, or simply want a taste of these conferences, many [publish their talks online](https://www.youtube.com/user/EnthoughtMedia/playlists).
@@ -320,7 +320,7 @@ The SciPy community has adopted the New BSD License (also called "Modified BSD" 
 Using such a license means receiving many code contributions from a wide array of people, including many in industry and start-ups.
 
 Copy-left licenses also allow others use, edit and redistribute your code.
-These licenses, however, also prescribe that derived code must also be distributed under a copy-left license.
+These licenses, however, also prescribe that derived code must be distributed under a copy-left license.
 In this way, copy-left licenses restrict what users can do with the code.
 
 The most popular copy-left license is the GNU Public License, or GPL.
@@ -383,6 +383,7 @@ When you reach this point, it's time to start contributing to the SciPy Ecosyste
 
 We strongly encourage you to try doing this.
 The community lives because people are willing to share their code and improve existing code.
+And, if we each contribute a little bit, together we built a lot.
 But, beyond any altruistic reasons for contributing, there are some very practical personal benefits.
 By engaging with the community you will become a better coder.
 Any code you contribute will be reviewed by others and you will receive feedback.
