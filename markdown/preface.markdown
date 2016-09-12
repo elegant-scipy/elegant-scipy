@@ -34,7 +34,8 @@ This can be aided by clear variable and function names, and carefully crafted co
 
 Creativity should support the first three goals.
 Creativity for its own sake can lead to obtuse code that is hard to understand.
-Make sure you are not too clever for your readers' sake!
+Make sure you are not showing off your cleverness, at the expense of your
+reader!
 In the New York Times, software engineer J. Bradford Hipps [recently
 argued](http://www.nytimes.com/2016/05/22/opinion/sunday/to-write-software-read-novels.html)
 that "to write better code, [one should] read Virginia Woolf":
@@ -98,8 +99,7 @@ SciPy is built on top of NumPy, the Python numerical array computation library.
 Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years, spanning a broad spectrum of disciplines that includes astronomy, biology, meteorology and climate science, and materials science, among others.
 
 This growth shows no sign of abating.
-For example, the Software Carpentry organization (http://software-carpentry.org/), which teaches Python to scientists, currently cannot keep up with demand, and is running "teacher training" every quarter — with a long waitlist.
-As another example, Thomas Robitaille and Chris Beaumont
+Thomas Robitaille and Chris Beaumont
 [documented](https://nbviewer.jupyter.org/github/ChrisBeaumont/adass_proceedings/blob/master/Mining%20acknowledgments%20in%20ADS.ipynb) in 2014
 Python's growing use in astronomy. Here's what we found when we [updated](https://gist.github.com/jni/3339985a016572f178d3c2f18e27ec0d) their
 plot in the second half of 2016:
@@ -107,6 +107,11 @@ plot in the second half of 2016:
 ![Python in astronomy](../images/python-in-astronomy.png)
 
 It is clear that SciPy and related libraries will be driving much of scientific data analysis for years to come.
+
+As another example, the
+[Software Carpentry organization](http://software-carpentry.org/), which
+teaches computational skills to scientists, most often using Python, currently
+cannot keep up with demand.
 
 ### What is the SciPy Ecosystem?
 
@@ -392,7 +397,7 @@ You may even find that interacting with the SciPy community provides you with a 
 
 Later in Elegant SciPy we will show you how to use your new skills to contribute to the GitHub-hosted projects that comprise most of the scientific Python ecosystem.
 In the meantime, we want you to think about being more than just a SciPy user.
-You are joining a community, and we hope you will make it a better place for all scientific coders.
+You are joining a community, and your work will make it a better place for all scientific coders.
 
 ### A Touch of Whimsy with your Py
 
