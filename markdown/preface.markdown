@@ -99,8 +99,8 @@ SciPy is built on top of NumPy, the Python numerical array computation library.
 Building on NumPy and SciPy, an entire ecosystem of apps and libraries has grown dramatically over the past few years, spanning a broad spectrum of disciplines that includes astronomy, biology, meteorology and climate science, and materials science, among others.
 
 This growth shows no sign of abating.
-Thomas Robitaille and Chris Beaumont
-[documented](https://nbviewer.jupyter.org/github/ChrisBeaumont/adass_proceedings/blob/master/Mining%20acknowledgments%20in%20ADS.ipynb) in 2014
+In 2014, Thomas Robitaille and Chris Beaumont
+[documented](https://nbviewer.jupyter.org/github/ChrisBeaumont/adass_proceedings/blob/master/Mining%20acknowledgments%20in%20ADS.ipynb)
 Python's growing use in astronomy. Here's what we found when we [updated](https://gist.github.com/jni/3339985a016572f178d3c2f18e27ec0d) their
 plot in the second half of 2016:
 
