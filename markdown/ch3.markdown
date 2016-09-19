@@ -203,7 +203,7 @@ def overlay_grid(image, spacing=128):
     image_gridded[:, spacing:-1:spacing] = [0, 0, 255]
     return image_gridded
 
-plt.imshow(overlay_grid(astro, 128)
+plt.imshow(overlay_grid(astro, 128))
 ```
 
 Note that we used `-1` to mean the last value of the axis, as is standard in
