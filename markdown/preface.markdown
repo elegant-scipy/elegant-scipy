@@ -144,8 +144,8 @@ Jupyter started out as an IPython extension, but now supports multiple languages
 http://jupyter.org
 * **pandas**
 provides fast, columnar data structures in an easy-to-use package.
-It is particularly suited to working with labelled data sets such as tables or relational databases, and for managing time series data.
-Pandas also has some handy data analysis tools for data parsing and cleaning, aggregation, analysis using sliding windows, and plotting.
+It is particularly suited to working with labelled data sets such as tables or relational databases, and for managing time series data and sliding windows.
+Pandas also has some handy data analysis tools for data parsing and cleaning, aggregation, and plotting.
 http://pandas.pydata.org/
 * **scikit-learn**
 provides a unified interface to machine learning algorithms.
@@ -225,7 +225,7 @@ print(2 * β)
 
 The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
 This is especially true now, when most new coders are from non-English-speaking countries.
-In most cases we wouldn't recommend using Unicode variable names as this may go badly in some text editors and will make the job of people translating your code to Python 2 even harder.
+For the sake of interoperability, we still recommend using English characters in most code, but this capability can come in handy, for example, in math-heavy Jupyter notebooks.
 
 Nevertheless, the Python 3 update broke a lot existing code.
 Adding insult to injury, to date, much Python 3 code runs slower than the equivalent Python 2 program — even when many already complained that Python was too slow.
@@ -433,12 +433,12 @@ It may seem annoying to join yet another mailing list, but we highly recommend i
 
 Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the major SciPy packages installed.
 We list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
-The easiest way to get all of these components is to install the Anaconda Python distribution.
+The easiest way to get all of these components is to install the Anaconda Python distribution, which includes all the requirements as well as many more scientific Python packages.
 You can download Anaconda here: http://continuum.io/downloads. You will also find detailed installation instructions.
-
-If you find that you need to keep track of multiple versions of Python or different sets of packages, try conda.
-If you've downloaded the Anaconda Python distribution then you already have it!
-That environment.yml can be passed to conda to install the right versions of everything in one go.
+Anaconda also includes conda, a tool for managing python environments.
+This can also be installed separately here: http://conda.pydata.org/miniconda.html.
+If you prefer to just install the minimum required packages, that environment.yml can be passed to conda to install the right versions of everything in one go.
+The the book [GitHub repository](https://github.com/elegant-scipy/elegant-scipy) for more details.
 
 ### Accessing the book materials
 
