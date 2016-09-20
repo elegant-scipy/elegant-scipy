@@ -51,7 +51,7 @@ that "to write better code, [one should] read Virginia Woolf":
 
 This is the position we take in this book.
 
-Now that we’ve dealt with the "elegant" part of the title, let’s come back to the SciPy.
+Now that we’ve dealt with the "elegant" part of the title, let’s come back to the "SciPy".
 
 Depending on context, "SciPy" can mean a software library, an ecosystem, or a community.  Part of what makes
 SciPy great is that it has excellent online documentation and
