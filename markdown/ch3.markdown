@@ -1,7 +1,7 @@
 # Networks of Image Regions with ndimage
 
 This chapter gets a special mention because it inspired the whole book.
-Vighnesh Birodkar wrote this as an undergraduate while participating in
+Vighnesh Birodkar wrote this code as an undergraduate while participating in
 Google Summer of Code (GSoC) 2014.
 When I saw this bit of code, it blew me away, and over a year later, I still
 haven't seen anything like it.
@@ -87,8 +87,8 @@ random_image = np.random.rand(500, 500)
 plt.imshow(random_image);
 ```
 
-This displays a numpy array as an image. The converse is also true: an image
-can be considered "as" a numpy array. For this example we use the scikit-image
+This `imshow` function displays a numpy array as an image. The converse is also true: an image
+can be considered as a numpy array. For this example we use the scikit-image
 library, a collection of image processing tools built on top of NumPy and SciPy.
 
 Here is PNG image from the scikit-image repository. It is a black and white
@@ -115,7 +115,7 @@ just a numpy array**.
 Color images are a *3-dimensional* array, where the first two dimensions
 represent the spatial positions of the image, while the final dimension represents
 color channels, typically the three primary additive colors of red, green, and blue.
-To show what we can do with these dimensions, let's play with this photo of an astronaut:
+To show what we can do with these dimensions, let's play with this photo of astronaut Eileen Collins:
 
 ```python
 url_astronaut = 'https://raw.githubusercontent.com/scikit-image/scikit-image/master/skimage/data/astronaut.png'
@@ -177,6 +177,44 @@ def overlay_grid(image, spacing=128):
 # plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line to test your function
 ```
 
+<!-- solution begin -->
+
+**Solution:** We can use numpy slicing to select the rows of the grid, set them
+to blue, and then select the columns, and set them to blue as well:
+
+```python
+def overlay_grid(image, spacing=128):
+    """Return an image with a grid overlay, using the provided spacing.
+
+    Parameters
+    ----------
+    image : array, shape (M, N, 3)
+        The input image.
+    spacing : int
+        The spacing between the grid lines.
+
+    Returns
+    -------
+    image_gridded : array, shape (M, N, 3)
+        The original image with a blue grid superimposed.
+    """
+    image_gridded = image.copy()
+    image_gridded[spacing:-1:spacing, :] = [0, 0, 255]
+    image_gridded[:, spacing:-1:spacing] = [0, 0, 255]
+    return image_gridded
+
+plt.imshow(overlay_grid(astro, 128))
+```
+
+Note that we used `-1` to mean the last value of the axis, as is standard in
+Python indexing. You can omit this value, but the meaning is slightly
+different. Without it (i.e. `spacing::spacing`), you go all the way to the end
+of the array, including the final row/column. When you use it as the stop 
+index, you prevent the final row from being selected. In the case of a grid
+overlay, this is probably the desired behavior.
+
+<!-- solution end -->
+
 <!-- exercise end -->
 
 # Filters in signal processing
@@ -211,8 +249,13 @@ only interested in pinpointing the time when the light was turned on, we can
 sigdelta = sig[1:]  # sigdelta[0] equals sig[1], and so on
 sigdiff = sigdelta - sig[:-1]
 sigon = np.clip(sigdiff, 0, np.inf)
-print(1 + np.flatnonzero(sigon)[0], 'ms')
+plt.plot(sigon)
+plt.ylim(-0.1, 1.1)
+print('Signal on at:', 1 + np.flatnonzero(sigon)[0], 'ms')
 ```
+
+(Here we have used NumPy's `flatnonzero` function to get the first index where
+the `sigon` array is not equal to 0.)
 
 It turns out that this can be accomplished by an signal processing operation
 called *convolution*. At every point of the signal, we compute the dot-product
