@@ -429,7 +429,7 @@ Note that it is common etiquette to *subscribe* to the list before posting.
 If you don't, it usually means someone will have to manually check that your email isn't spam before allowing it to be posted to the list.
 It may seem annoying to join yet another mailing list, but we highly recommend it: it is a great place to learn!
 
-## Installing Python - Anaconda
+## Installing Python
 
 Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the required SciPy packages installed.
 We list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
@@ -438,6 +438,7 @@ You can then pass that environment.yml to conda to install the right versions of
 
 ```
 conda env create --name elegant-scipy -f path/to/environment.yml
+source activate elegant-scipy
 ```
 
 See the the book [GitHub repository](https://github.com/elegant-scipy/elegant-scipy) for more details.
