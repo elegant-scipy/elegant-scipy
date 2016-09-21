@@ -431,14 +431,16 @@ It may seem annoying to join yet another mailing list, but we highly recommend i
 
 ## Installing Python - Anaconda
 
-Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the major SciPy packages installed.
+Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the required SciPy packages installed.
 We list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
-The easiest way to get all of these components is to install the Anaconda Python distribution, which includes all the requirements as well as many more scientific Python packages.
-You can download Anaconda here: http://continuum.io/downloads. You will also find detailed installation instructions.
-Anaconda also includes conda, a tool for managing python environments.
-This can also be installed separately here: http://conda.pydata.org/miniconda.html.
-If you prefer to just install the minimum required packages, that environment.yml can be passed to conda to install the right versions of everything in one go.
-The the book [GitHub repository](https://github.com/elegant-scipy/elegant-scipy) for more details.
+The easiest way to get all of these components is to install conda, a tool for managing python environments (http://conda.pydata.org/miniconda.html).
+You can then pass that environment.yml to conda to install the right versions of everything in one go.
+
+```
+conda env create --name elegant-scipy -f path/to/environment.yml
+```
+
+See the the book [GitHub repository](https://github.com/elegant-scipy/elegant-scipy) for more details.
 
 ### Accessing the book materials
 
