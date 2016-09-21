@@ -1,7 +1,10 @@
 # Networks of Image Regions with ndimage
 
+**Code by Vighnesh Birodkar.**  
+**Nominated by Juan Nunez-Iglesias.**
+
 This chapter gets a special mention because it inspired the whole book.
-Vighnesh Birodkar wrote this code as an undergraduate while participating in
+Vighnesh Birodkar wrote this code snippet as an undergraduate while participating in
 Google Summer of Code (GSoC) 2014.
 When I saw this bit of code, it blew me away, and over a year later, I still
 haven't seen anything like it.
@@ -209,7 +212,7 @@ plt.imshow(overlay_grid(astro, 128))
 Note that we used `-1` to mean the last value of the axis, as is standard in
 Python indexing. You can omit this value, but the meaning is slightly
 different. Without it (i.e. `spacing::spacing`), you go all the way to the end
-of the array, including the final row/column. When you use it as the stop 
+of the array, including the final row/column. When you use it as the stop
 index, you prevent the final row from being selected. In the case of a grid
 overlay, this is probably the desired behavior.
 
