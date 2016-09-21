@@ -41,7 +41,7 @@ argued](http://www.nytimes.com/2016/05/22/opinion/sunday/to-write-software-read-
 that "to write better code, [one should] read Virginia Woolf":
 
 > As a practice, software development is far more creative than algorithmic.
-> 
+>
 > The developer stands before her source code editor in the same way the author
 > confronts the blank page. [...] They may also share a healthy impatience for
 > the ways things “have always been done” and a generative desire to break
@@ -82,7 +82,7 @@ tutorials, such as [Software Carpentry](http://software-carpentry.org/),
 before continuing with this book.
 
 But perhaps you don't know whether the "SciPy stack" is a library or a menu item from International House of Pancakes, and you aren't sure about best practices.
-Perhaps you are a scientist who has read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of their own lab, and have fiddled with them.
+Perhaps you are a scientist who has read some Python tutorials online, and have downloaded some analysis scripts from another lab or a previous member of your own lab, and have fiddled with them.
 And you might think that you are more or less alone when you learn to code SciPy.
 You are not.
 
@@ -136,36 +136,29 @@ is a powerful package for plotting in two dimensions (and basic 3D). It draws it
 http://matplotlib.org/
 * **IPython**
 is an interactive interface for Python, which allows you to quickly interact with your data and test ideas.
+https://ipython.org/
 * The **Jupyter**
 notebook runs in your browser and allows you to write code in line with text and mathematical expressions, displaying the results of computation within the text.
 This entire book has been written with Jupyter.
 Jupyter started out as an IPython extension, but now supports multiple languages, including Cython, Julia, R, Octave, Bash, Perl and Ruby.
 http://jupyter.org
 * **pandas**
-provides fast, columnar data structures in an easy-to-use package, particularly to work with labelled data sets such as tables or relational databases, and manage time series.
-It also has some handy data analysis tools such as for data parsing and cleaning, sliding windows, aggregation and plotting.
+provides fast, columnar data structures in an easy-to-use package.
+It is particularly suited to working with labelled data sets such as tables or relational databases, and for managing time series data and sliding windows.
+Pandas also has some handy data analysis tools for data parsing and cleaning, aggregation, and plotting.
 http://pandas.pydata.org/
 * **scikit-learn**
 provides a unified interface to machine learning algorithms.
+http://scikit-learn.org/
 * **scikit-image**
-provides image analysis tools that integrate cleanly with the rest of SciPy.
+provides image analysis tools that integrate cleanly with the rest of the SciPy ecosystem.
+http://scikit-image.org/
 
-There are others, and we will see some of them too.
+There are many other Python packages that form part of the SciPy ecosystem, and we will see some of them too.
 Although this book will focus on NumPy and SciPy,
 it is the many surrounding packages that make Python a powerhouse for
 scientific computing.
 
-
-## Installing Python - Anaconda
-
-Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the major SciPy packages installed.
-We list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
-The easiest way to get all of these components is to install the Anaconda Python distribution.
-You can download Anaconda here: http://continuum.io/downloads. You will also find detailed installation instructions.
-
-If you find that you need to keep track of multiple versions of Python or different sets of packages, try conda.
-If you've downloaded the Anaconda Python distribution then you already have it!
-That environment.yml can be passed to conda to install the right versions of everything in one go.
 
 ## The Great Cataclysm: Python 2 vs. Python 3
 
@@ -176,7 +169,7 @@ At the end of 2008, the Python core developers released Python 3.0, a major upda
 To quote Douglas Adams in The Hitchhiker's Guide to the Galaxy, "this has made
 a lot of people very angry and been widely regarded as a bad move."
 
-In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least minor modification.
+In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least some modification.
 There will always be a tension between the march of progress and backwards compatibility.
 In this case, the Python core team decided that a clean break was needed to eliminate some inconsistencies in Python, and move it forward into the twenty-first century.
 (Python 1.0 appeared in 1994, more than 20 years ago; a lifetime in the tech world.)
@@ -202,6 +195,7 @@ What the hell is going on in that Python 2 statement?
 The authors don't rightly know.
 
 Another change is the way Python 3 treats integer division, which is the way most humans treat division.
+(Note `>>>` indicates we are typing at the Python interactive shell.)
 
 ```
 # Python 2
@@ -231,6 +225,7 @@ print(2 * β)
 
 The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
 This is especially true now, when most new coders are from non-English-speaking countries.
+For the sake of interoperability, we still recommend using English characters in most code, but this capability can come in handy, for example, in math-heavy Jupyter notebooks.
 
 Nevertheless, the Python 3 update broke a lot existing code.
 Adding insult to injury, to date, much Python 3 code runs slower than the equivalent Python 2 program — even when many already complained that Python was too slow.
@@ -268,7 +263,7 @@ Together with NumPy, it is one of Python's killer apps.
 It has launched a vast number of related libraries that build on this functionality, many of which you'll encounter throughout this book.
 
 The creators of these libraries, and many of their users, gather at many events and conferences around the world.
-These include the yearly SciPy conference in Austin, EuroSciPy, SciPy India, PyData and others.
+These include the yearly SciPy conference in Austin (USA), EuroSciPy, SciPy India, PyData and others.
 We highly recommend attending one of these, and meeting the authors of the best scientific software in the Python world.
 If you can't get there, or simply want a taste of these conferences, many [publish their talks online](https://www.youtube.com/user/EnthoughtMedia/playlists).
 
@@ -306,7 +301,7 @@ It also enables other scientists to build on the code of their peers, fostering 
 
 If you want others to use your code, then you *must* license it.
 If you don't license your code, it is closed by default.
-Even if you publish your code (for example by placing it in a public GitHub repository), without a software license, no one is allowed to use, edit or redistribute your code.
+Even if you publish your code (for example by placing it in a public GitHub repository), without a software license, no one is allowed to use, edit, or redistribute your code.
 
 When choosing among the many license options, you must first decide what you want to allow people to do with your code.
 Do you want people to be able to sell your code for profit?
@@ -318,13 +313,13 @@ There are two broad categories of FOSS license:
 * Permissive
 * Copy-left
 
-A permissive license means that you are giving anyone the write to use, edit and redistribute your code in any way that they like.
+A permissive license means that you are giving anyone the write to use, edit, and redistribute your code in any way that they like.
 This includes using your code as part of commercial software.
 Some popular choices in this category include the MIT and BSD licenses.
 The SciPy community has adopted the New BSD License (also called "Modified BSD" or "3-clause BSD").
 Using such a license means receiving many code contributions from a wide array of people, including many in industry and start-ups.
 
-Copy-left licenses also allow others use, edit and redistribute your code.
+Copy-left licenses also allow others use, edit, and redistribute your code.
 These licenses, however, also prescribe that derived code must be distributed under a copy-left license.
 In this way, copy-left licenses restrict what users can do with the code.
 
@@ -401,7 +396,7 @@ You are joining a community, and your work will make it a better place for all s
 
 ### A Touch of Whimsy with your Py
 
-In case you were worried that the SciPy community might be an imposing place to the newcomer, remember that it is made of people like you, scientists, usually with a great sense of humor.
+In case you were worried that the SciPy community might be an imposing place for the newcomer, remember that it is made of people like you, scientists, usually with a great sense of humor.
 
 In the land of Python, it is inevitable that you find some Monty Python references.
 The package Airspeed Velocity (http://spacetelescope.github.io/asv/using.html) measures your software's speed (more on this later), and references the line, "what is the airspeed velocity of an unladen swallow?" from *Monty Python and the Holy Grail*.
@@ -434,9 +429,23 @@ Note that it is common etiquette to *subscribe* to the list before posting.
 If you don't, it usually means someone will have to manually check that your email isn't spam before allowing it to be posted to the list.
 It may seem annoying to join yet another mailing list, but we highly recommend it: it is a great place to learn!
 
+## Installing Python
+
+Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the required SciPy packages installed.
+We list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
+The easiest way to get all of these components is to install conda, a tool for managing python environments (http://conda.pydata.org/miniconda.html).
+You can then pass that environment.yml to conda to install the right versions of everything in one go.
+
+```
+conda env create --name elegant-scipy -f path/to/environment.yml
+source activate elegant-scipy
+```
+
+See the the book [GitHub repository](https://github.com/elegant-scipy/elegant-scipy) for more details.
+
 ### Accessing the book materials
 
-All of the code from this book is available on our GitHub repository [link]().
+All of the code from this book is available on our [GitHub repository](https://github.com/elegant-scipy/elegant-scipy).
 
 ## Diving in
 
@@ -447,6 +456,3 @@ This book is also a glimpse into a welcoming scientific coding community that wa
 Welcome to Elegant SciPy.
 
 Now, let's write some code!
-
-
-
