@@ -74,35 +74,19 @@ We definitely can't fit all of the linear algebra theory needed to understand
 the properties of this matrix, but suffice it to say: it has some *great*
 properties. We will exploit a couple in the following paragraphs.
 
-For example, a common problem in network analysis is visualization. How do you
-draw nodes and links in such a way that you don't get a complete mess such as
-this one?
-
-![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
-**Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
-**[Ed note: my reading is that we can use this figure as long as we include the
-copyright notice and don't put DRM on the books, which O'Reilly doesn't do
-anyway.]**
-
-One way is to put nodes that share many links close together, and it turns out
-that this can be done by using the second-smallest eigenvalue of the Laplacian
-matrix, and its corresponding eigenvector, which is so important it has its
-own name: the
-[Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector).
-
-As a quick aside, an eigenvector $v$ of a matrix $M$ is a vector that
+First, we will look at the *eigenvectors* of $L$.
+An eigenvector $v$ of a matrix $M$ is a vector that
 satisfies the property $Mv = \lambda v$ for some number $\lambda$,
 known as the eigenvalue.  In other words, $v$ is a special vector in
-relation to $M$ because $Mv$ simply scales the vector, without
-changing its direction.[^eigv_example]
+relation to $M$ because $Mv$ simply changes the size of the vector, without
+changing its direction. As we will soon see, eigenvectors have many useful
+properties — sometimes seeming even magical!
 
-[^eigv_example]: As an example, consider a 3x3 rotation matrix $R$
-                 that, when multiplied by any 3-dimensional vector
-                 $p$, rotates it $30^\circ$ degrees around the z-axis.
-                 $R$ will rotate all vectors except for those that lie
-                 *on* the z-axis.  For those, we'll see no effect, or
-                 $Rp = p$, i.e. $Rp = \lambda p$ with eigenvalue
-                 $\lambda = 1$.
+As an example, a 3x3 rotation matrix $R$, when multiplied by any
+3-dimensional vector $p$, rotates it $30^\circ$ degrees around the z-axis.  $R$
+will rotate all vectors except for those that lie *on* the z-axis.  For those,
+we'll see no effect, or $Rp = p$, i.e. $Rp = \lambda p$ with eigenvalue
+$\lambda = 1$.
 
 <!-- exercise begin -->
 
@@ -126,6 +110,7 @@ by $\theta$ degrees around the z-axis.
 2. Now, verify that multiplying by $R$ leaves the vector
    $\left[ 0\, 0\, 1\right]^T$ unchanged.  In other words, $R p = 1
    p$, which means $p$ is an eigenvector of R with eigenvalue 1.
+   Remember that matrix multiplication in Python is denoted with `@`.
 
 <!-- solution begin -->
 
@@ -137,7 +122,7 @@ import numpy as np
 theta = np.deg2rad(45)
 R = np.array([[np.cos(theta), -np.sin(theta), 0],
               [np.sin(theta),  np.cos(theta), 0],
-              [0,              0,             1]])
+              [            0,              0, 1]])
 
 print("R @ x-axis:", R @ [1, 0, 0])
 print("R @ y-axis:", R @ [0, 1, 0])
@@ -153,7 +138,18 @@ R rotates both the x and y axes, but not the z-axis.
 
 <!-- exercise end -->
 
-The eigenvectors have numerous useful--sometimes seemingly magical!--properties.
+Back to the Laplacian. A common problem in network analysis is visualization.
+How do you draw nodes and links in such a way that you don't get a complete
+mess such as this one?
+
+![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
+**Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
+
+One way is to put nodes that share many links close together, and it turns out
+that this can be done by using the second-smallest eigenvalue of the Laplacian
+matrix, and its corresponding eigenvector, which is so important it has its
+own name: the
+[Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector).
 
 Let's use a minimal network to illustrate this. We start by creating the
 adjacency matrix:
@@ -173,7 +169,9 @@ We can use NetworkX to draw this network:
 ```python
 import networkx as nx
 g = nx.from_numpy_matrix(A)
-nx.draw_spring(g, with_labels=True, node_color='white')
+layout = nx.spring_layout(g, pos=nx.circular_layout(g))
+nx.draw(g, pos=layout,
+        with_labels=True, node_color='white')
 ```
 
 You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
@@ -187,11 +185,10 @@ print(d)
 ```
 
 We then put those degrees into a diagonal matrix of the same shape
-as A, the *degree matrix*. We can use `scipy.sparse.diags` to do this:
+as A, the *degree matrix*. We can use the `np.diag` function to do this:
 
 ```python
-from scipy import sparse
-D = sparse.diags(d).toarray()
+D = np.diag(d)
 print(D)
 ```
 
@@ -239,7 +236,7 @@ plt.plot(eigvals, '-o')
 It's the second eigenvalue. The Fiedler vector is thus the second eigenvector.
 
 ```python
-f = Eigvecs[:, 1]
+f = Eigvecs[:, np.argsort(eigvals)[1]]
 plt.plot(f, '-o')
 ```
 
@@ -248,10 +245,12 @@ separate the nodes into the two groups we identified in the drawing!
 
 ```python
 colors = ['orange' if eigval > 0 else 'gray' for eigval in f]
-nx.draw_spring(g, with_labels=True, node_color=colors)
+nx.draw(g, pos=layout, with_labels=True, node_color=colors)
 ```
 
-Let's demonstrate this in a real-world example by laying out the brain cells in a worm, as shown in
+## Laplacians with brain data
+
+Let's demonstrate this process in a real-world example by laying out the brain cells in a worm, as shown in
 [Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
 from the
 [Varshney *et al* paper](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
@@ -284,8 +283,8 @@ First, let's load the data. There are four components:
 
 ```python
 import numpy as np
-chem = np.load('data/chem-network.npy')
-gap = np.load('data/gap-network.npy')
+Chem = np.load('data/chem-network.npy')
+Gap = np.load('data/gap-network.npy')
 neuron_ids = np.load('data/neurons.npy')
 neuron_types = np.load('data/neuron-types.npy')
 ```
@@ -299,7 +298,7 @@ We are going to call the resulting matrix the *connectivity* matrix, $C$, which
 is just a different kind of adjacency matrix.
 
 ```python
-A = chem + gap
+A = Chem + Gap
 C = (A + A.T) / 2
 ```
 
@@ -307,10 +306,13 @@ To get the Laplacian matrix $L$, we need the degree matrix $D$, which contains
 the degree of node i at position [i, i], and zeros everywhere else.
 
 ```python
-n = C.shape[0]
-D = np.zeros((n, n), dtype=np.float)
-diag = (np.arange(n), np.arange(n))
-D[diag] = np.sum(C, axis=0)
+degrees = np.sum(C, axis=0)
+D = np.diag(degrees)
+```
+
+Now, we can get the Laplacian just like before:
+
+```python
 L = D - C
 ```
 
