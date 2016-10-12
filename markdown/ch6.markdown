@@ -710,7 +710,7 @@ had a symmetric matrix, you would use Conjugate Gradients,
 ```python
 from scipy.sparse.linalg.isolve import bicgstab as bicg
 
-damping = 0.99
+damping = 0.85
 
 I = sparse.eye(n, format='csc')  # Same sparse format as Trans
 
