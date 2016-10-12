@@ -15,15 +15,16 @@ At a minimum, you should know that linear algebra involves vectors (ordered
 collections of numbers) and their transformations by multiplying them with
 matrices (collections of vectors). If all of this sounded like gibberish to
 you, you should probably pick up an introductory linear algebra textbook before
-reading this. Introductory is all you need though — we hope to convey the power
+reading this. We highly recommend Gil Strang's *Linear Algebra and its
+Applications*. Introductory is all you need though — we hope to convey the power
 of linear algebra while keeping the operations relatively simple!
 
 As an aside, we will break Python notation convention in order to match linear
 algebra conventions: in Python, variables names should usually begin with a
-lower case letter. However, in linear algebra, matrices are usually denoted by
+lower case letter. However, in linear algebra, matrices are denoted by
 a capital letter, while vectors and scalar values are lowercase. Since we're
-going to be dealing with quite a few matrices and vectors, it helps to keep
-them straight to follow the linear algebra convention. Therefore, variables
+going to be dealing with quite a few matrices and vectors, following the
+linear algbrea converton helps to keep them straight. Therefore, variables
 that represent matrices will start with a capital letter, while vectors and
 numbers will start with lowercase.
 
@@ -33,22 +34,32 @@ We discussed graphs in chapter 3, where we represented image regions as
 nodes, connected by edges between them. But we used a rather simple method of
 analysis: we *thresholded* the graph, removing all edges above some value.
 Thresholding works in simple cases, but can easily fail, because all you need
-is one noisy edge to fall on the wrong side of the threshold for the approach
+is one value to fall on the wrong side of the threshold for the approach
 to fail.
 
-In this chapter, we will explore some alternative approaches to graph analysis,
-based on linear algebra. It turns out that we can think of a graph G as an
-*adjacency matrix*, in which we number the nodes of the graph from $0$ to
-$n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there
-is an edge from node $i$ to node $j$. In other words, if we call the adjacency
-matrix $A$, then $A_{i, j} = 1$ if and only if the link
-(i, j) is in G. We can then use linear algebra techniques to study this matrix,
-with often striking results.
+As an example, suppose you want to cut your army off from the enemy's, on the
+other side of the river, and intelligence suggests that you need $t$ kilograms
+of TNT to blow each bridge crossing the river, but the bridges in your own
+territory can withstand $t+1$ kg. You might, having just read chapter 3 of
+*Elegant SciPy*, order your commandos to detonate $t$ kg of TNT on every bridge
+in the region. But, if intelligence was wrong about just *one* bridge crossing
+the river, and it remains standing, the enemy's army can come marching through!
+Disaster!
 
-The degree of a node is the number of edges touching it. For example, if a node
-is connected to five other nodes in a graph, its degree is 5. (Later, we
-will differentiate between out-degree and in-degree, when edges have a "from"
-and "to".)
+So, in this chapter, we will explore some alternative approaches to graph
+analysis, based on linear algebra. It turns out that we can think of a graph G
+as an *adjacency matrix*, in which we number the nodes of the graph from $0$ to
+$n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there is an
+edge from node $i$ to node $j$. In other words, if we call the adjacency matrix
+$A$, then $A_{i, j} = 1$ if and only if the link (i, j) is in G. We can then
+use linear algebra techniques to study this matrix, with often striking
+results.
+
+The degree of a node is defined as the number of edges touching it.  For
+example, if a node is connected to five other nodes in a graph, its degree is
+5. (Later, we will differentiate between out-degree and in-degree, when edges
+have a "from" and "to".) In matrix terms, the degree corresponds to the
+*sum* of the values in a row or column.
 
 The *Laplacian* matrix of a graph (just "the Laplacian" for short) is defined
 as the *degree matrix*, $D$, which
