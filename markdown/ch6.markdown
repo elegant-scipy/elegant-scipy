@@ -484,10 +484,15 @@ Figure 2B from the paper?
 
 <!-- solution begin -->
 **Solution:** In the affinity view, instead of using the processing depth on the y-axis,
-we use the normalized third eigenvector of Q, just like we did with x:
+we use the normalized third eigenvector of Q, just like we did with x. (And we
+invert it if necessary, just like we did with x!)
 
 ```python
 y = Dinv2 @ eigvecs[:, 2]
+asjl_index = np.flatnonzero(neuron_ids == 'ASJL')[0]
+if y[asjl_index] < 0:
+    y = -y
+
 plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
@@ -617,10 +622,15 @@ sorted_indices = np.argsort(eigvals)
 eigvecs = eigvecs[:, sorted_indices]
 ```
 
-Finally, we normalize the eigenvectors to get the x and y coordinates:
+Finally, we normalize the eigenvectors to get the x and y coordinates
+(and flip these if necessary):
 
 ```python
 _dsinv, x, y = (Dsinv2 @ eigvecs).T
+if x[vc2_index] < 0:
+    x = -x
+if y[asjl_index] < 0:
+    y = -y
 ```
 
 (Note that the eigenvector corresponding to the smallest eigenvalue is always a
