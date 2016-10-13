@@ -649,10 +649,6 @@ plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
                 figsize=(16, 9))
 ```
 
-Note that eigenvectors are defined only up to a (possibly negative)
-multiplicative constant, so the plots may have ended up reversed! (That is,
-left is right, or up is down, or both!)
-
 <!-- solution end -->
 
 <!-- exercise end -->
