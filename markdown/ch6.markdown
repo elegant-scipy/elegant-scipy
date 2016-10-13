@@ -338,8 +338,7 @@ In order to obtain the degree-normalized Laplacian, Q, we need the inverse
 square root of the D matrix:
 
 ```python
-Dinv2 = np.zeros((n, n))
-Dinv2[diag] = D[diag] ** (-.5)
+Dinv2 = np.diag(degrees ** (-.5))
 Q = Dinv2 @ L @ Dinv2
 ```
 
