@@ -374,6 +374,25 @@ x = Dinv2 @ eigvecs[:, 1]
 the paper's supplementary material, linked above. The short version is that
 choosing this vector minimizes the total length of the links between neurons.)
 
+There is one small kink that we must address before proceeding: eigenvectors
+are only defined up to a multiplicative constant. This follows simply from the
+definition of an eigenvector: suppose $v$ is an eigenvector of the matrix $M$,
+with corresponding eigenvalue $\lambda$. Then $\alpha v$ is also an eigenvector
+of $M$ for any scalar number $\alpha$, because
+$M(\alpha v) = \alpha Mv = \alpha \lambda v = \lambda (\alpha v)$. So, it is
+arbitrary whether a software package returns $v$ or $-v$ when asked for the
+eigenvectors of $M$. In order to make sure we reproduce the layout from the
+Varshney et al paper, we must make sure that the vector is pointing in the same
+direction, rather than the opposite direction. We do this by choosing an
+arbitrary neuron from their Figure 2, and checking the sign of `x` at that
+position.
+
+```python
+vc2_index = np.flatnonzero(neuron_ids == 'VC02')[0]
+if x[vc2_index] < 0:
+    x = -x
+```
+
 Now it's just a matter of drawing the nodes and the links. We color them
 according to the type stored in `neuron_types`:
 
