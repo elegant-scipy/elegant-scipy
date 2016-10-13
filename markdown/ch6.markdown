@@ -822,32 +822,38 @@ So how does a species' foodrank compare to the number of other species eating
 it?
 
 ```python
-def pagerank_plot(names, in_degrees, pageranks,
-                  annotations=[]):
-    fig, ax = plt.subplots(figsize=(9, 5))
+def pagerank_plot(in_degrees, pageranks, names, *,
+                  annotations=[], **figkwargs):
+    """Plot node pagerank against in-degree, with hand-picked node names."""
+
+    fig, ax = plt.subplots(**figkwargs)
     ax.scatter(in_degrees, pageranks, c=[0.835, 0.369, 0], lw=0)
-    labels = []
     for name, indeg, pr in zip(names, in_degrees, pageranks):
         if name in annotations:
             text = ax.text(indeg + 0.1, pr, name)
-            labels.append(text)
+
     ax.set_ylim(0, np.max(pageranks) * 1.1)
     ax.set_xlim(-1, np.max(in_degrees) * 1.1)
     ax.set_ylabel('PageRank')
     ax.set_xlabel('In-degree')
+```
 
+We now draw the plot. Having explored the dataset before writing this, we have
+pre-labeled some interesting nodes in the plot:
+
+```python
 interesting = ['detritus', 'phytoplankton', 'benthic algae', 'micro-epiphytes',
-               'microfauna', 'zooplankton', 'predatory shrimps', 'meiofauna', 'gulls']
+               'microfauna', 'zooplankton', 'predatory shrimps', 'meiofauna',
+               'gulls']
 in_degrees = np.ravel(Adj.sum(axis=0))
 pagerank_plot(species, in_degrees, pagerank, annotations=interesting)
 ```
 
-Having explored the dataset ahead of time, we have pre-labeled some interesting
-nodes in the plot. Sea sludge is the most important element both by number of
+Sea sludge is the most important element both by number of
 species feeding on it (15) and by pagerank (>0.003). But the second most
 important element is *not* benthic algae, which feeds 13 other species, but
 rather phytoplankton, which feeds just 7! That's because other *important*
-species feed on it! On the bottom left, we've got sea gulls, who, we can now
+species feed on it. On the bottom left, we've got sea gulls, who, we can now
 confirm, do bugger-all for the ecosystem. Those vicious *predatory shrimps*
 (we're not making this up) support the same number of species as phytoplankton,
 but they are less essential species, so they end up with a lower foodrank.
