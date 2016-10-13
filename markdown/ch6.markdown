@@ -1011,7 +1011,10 @@ on PyPI!
 
 <!-- exercise end -->
 
-## Community detection
+## Linear algebra for community detection
+
+Moving on from PageRank, we will now demonstrate another use of the
+eigendecomposition available in SciPy.
 
 We saw a hint in the introduction to this chapter that the Fiedler vector could
 be used to detect "communities" in networks, groups of nodes that are tightly
@@ -1023,8 +1026,8 @@ on the topic in 2006, and
 to the Python library dependency graph, which will tell us whether Python users
 fall into two or more somewhat independent groups.
 
-We've downloaded and preprocessed dependency data from PyPI ahead of
-time, available as the file `pypi-dependencies.txt` in the `data/`
+We've downloaded and preprocessed dependency data from PyPI,
+available as the file `pypi-dependencies.txt` in the `data/`
 folder. The data file consists of a list of library-dependency pairs,
 one per line, e.g. ``scipy numpy``. The networkx library that we
 started using in Chapter 3 makes it easy to build a graph from these
@@ -1041,7 +1044,7 @@ with open('data/pypi-deps.txt') as lines:
     dependencies.add_edges_from(lib_dep_pairs)
 ```
 
-We can then get some statistics about this (incomplete) dataset by using
+We can then get some statistics about this dataset by using
 networkx's built-in functions:
 
 ```python
