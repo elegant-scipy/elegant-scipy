@@ -371,7 +371,8 @@ x = Dinv2 @ eigvecs[:, 1]
 ```
 
 (The reasons for using this vector are too long to explain here, but appear in
-the paper's supplementary material, linked above.)
+the paper's supplementary material, linked above. The short version is that
+choosing this vector minimizes the total length of the links between neurons.)
 
 Now it's just a matter of drawing the nodes and the links. We color them
 according to the type stored in `neuron_types`:
