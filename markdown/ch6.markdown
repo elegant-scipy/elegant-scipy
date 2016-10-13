@@ -659,20 +659,34 @@ Another application of linear algebra and eigenvectors is Google's Pagerank
 algorithm, which is punnily named both for webpages and for one of its
 co-founders, Larry Page.
 
-If you're trying to rank webpages by importance, one thing you might look at
-is how many other webpages link to it. After all, if everyone is linking to a
-particular page, it must be good, right? But the problem is that this metric is
-easily gamed: to make your own webpage rise in the rankings, you just have to
+To rank webpages by importance, you might count
+how many other webpages link to it. After all, if everyone is linking to a
+particular page, it must be good, right? But this metric is
+easily gamed: to make your own webpage rise in the rankings, just
 create as many other webpages as you can and have them all link to your
 original page.
 
 The key insight that drove Google's early success was that important webpages
-are not just linked to by many webpages, but also by *other*, *important*
+are not linked to by just many webpages, but by *important*
 webpages. And how do we know that those other pages are important? Because
 they themselves are linked to by important pages. And so on.
-As we will see, this recursive definition implies that page
-importance can be measured by the eigenvector corresponding to the largest
-eigenvalue of the so-called *transition matrix*. This matrix imagines a web
+
+This recursive definition implies that page
+importance can be measured by an eigenvector
+of the so-called *transition matrix*, which contains the links
+between webpages. Suppose you have your vector of importance $\boldsymbol{r}$,
+and your matrix of links $M$. You don't know $\boldsymbol{r}$ yet, but you
+do know that the importance of a page is proportional to the sum of
+importances of the pages that link to it:
+$\boldsymbol{r} = \alpha M \boldsymbol{r}$, or
+$M \boldsymbol{r} = \lambda \boldsymbol{r}$, for $\lambda = 1/\alpha$. That's
+just the definition of an eigenvalue!
+
+By ensuring some special properties are satisfied by the transition matrix, we
+can further determine that the required eigenvalue is 1, and that it is the
+largest eigenvalue of $M$.
+
+The transition matrix imagines a web
 surfer, often named Webster, randomly clicking a link from each webpage he
 visits, and then asks, what's the probability that he ends up at any given
 page? This probability is called the pagerank.
