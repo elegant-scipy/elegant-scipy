@@ -782,7 +782,7 @@ algorithm follows a link at random, but for the other 15%, it randomly jumps to
 any arbitrary page. It's as if every page had a low probability link to every
 other page. Or, in our case, it's as if shrimp, on rare occasions, ate sharks.
 It might seem non-sensical but bear with us! It is, in fact, the mathematical
-representation of the Circle of Life. We'll set it to 0.99, but actually it
+representation of the Circle of Life. We'll set it to 0.85, but actually it
 doesn't really matter for this analysis: the results are similar for a large
 range of possible damping factors.
 
@@ -864,7 +864,7 @@ predicts ecological importance better than in-degree.
 
 Before we move on though, we'll note that pagerank can be computed several
 different ways. One way, complementary to what we did above, is called the
-*power method*, and it's pretty, well, powerful! It stems from the
+*power method*, and it's quite, well, powerful! It stems from the
 [Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
 which states, among other things, that a stochastic matrix has 1 as an
 eigenvalue, and that this is its *largest* eigenvalue. (The corresponding
@@ -921,7 +921,7 @@ def power2(Trans, damping=0.85, max_iter=int(1e5)):
     is_dangling = np.ravel(Trans.sum(axis=0) == 0)
     dangling = np.zeros(n)
     dangling[is_dangling] = 1 / n
-    r0 = np.ones(n) / n
+    r0 = np.full(n, 1 / n)
     r = r0
     for _ in range(max_iter):
         rnext = (damping * (Trans @ r + dangling @ r) +
@@ -975,7 +975,7 @@ not get nice results with this graph. The correlation between in-degree and
 pagerank was much higher than in other datasets, and the few outliers didn't
 make much sense to us.
 
-Can you think of three reasons why pagerank might not be the best
+Can you think of some reasons why pagerank might not be the best
 measure of importance for the Python dependency graph?
 
 <!-- solution begin -->
