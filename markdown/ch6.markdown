@@ -798,32 +798,25 @@ $$
 (\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{n} \boldsymbol{1}
 $$
 
-We can solve this equation using `scipy.sparse`'s iterative
-*biconjugate gradient (bicg)* solver^[bicgstab].  (Note that, if you
-had a symmetric matrix, you would use Conjugate Gradients,
-``scipy.sparse.linalg.solve.cg``, instead.)
-
-[^bicgstab]: The default formulation for bicg iteration is numerically
-    unstable, so we use the stabilized variation, which replaces every
-    second iteration with a *generalized minimal residual method*
-    (GMRES) iteration.
+We can solve this equation using `scipy.sparse.linalg`'s direct
+solver, `spsolve`. Depending on the structure and size of a linear algebra
+problem, though, it might be more efficient to use an iterative solver. See
+the [`scipy.sparse.linalg` documentation](http://docs.scipy.org/doc/scipy/reference/sparse.linalg.html#solving-linear-problems)
+for more information on this.
 
 ```python
-from scipy.sparse.linalg.isolve import bicgstab as bicg
+from scipy.sparse.linalg import spsolve
 
 damping = 0.85
+beta = 1 - damping
 
 I = sparse.eye(n, format='csc')  # Same sparse format as Trans
 
-pagerank, error = bicg(I - damping * Trans,
-                       (1-damping) / n * np.ones(n),
-                       maxiter=int(1e4))
-print('error code: ', error)
+pagerank = spsolve(I - damping * Trans,
+                   np.full(n, beta / n))
 ```
 
-As can be seen in the documentation for the `bicg` solver, an error code of 0
-indicates that a solution was found! We now have the "foodrank" of the
-St. Marks food web!
+We now have the "foodrank" of the St. Marks food web!
 
 So how does a species' foodrank compare to the number of other species eating
 it?
