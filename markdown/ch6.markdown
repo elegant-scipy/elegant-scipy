@@ -394,38 +394,81 @@ if x[vc2_index] < 0:
 ```
 
 Now it's just a matter of drawing the nodes and the links. We color them
-according to the type stored in `neuron_types`:
+according to the type stored in `neuron_types`, using the appealing and
+functional "colorblind"
+[colorbrewer palette](http://chrisalbon.com/python/seaborn_color_palettes.html):
 
 ```python
 from matplotlib import pyplot as plt
 from matplotlib import colors
 
-def plot_connectome(neuron_x, neuron_y, links, labels, types):
-    colormap = colors.ListedColormap([[ 0.   ,  0.447,  0.698],
-                                      [ 0.   ,  0.62 ,  0.451],
-                                      [ 0.835,  0.369,  0.   ]])
+import seaborn as sns  # for beautiful color palettes
+
+
+def plot_connectome(x_coords, y_coords, conn_matrix, *,
+                    labels=(), types=None, type_names=('',),
+                    **figkwargs):
+    """Plot neurons as points connected by lines.
+
+    Neurons can have different types (up to 6 distinct colors).
+
+    Parameters
+    ----------
+    x_coords, y_coords : array of float, shape (N,)
+        The x-coordinates and y-coordinates of the neurons.
+    conn_matrix : array or sparse matrix of float, shape (N, N)
+        The connectivity matrix, with non-zero entry (i, j) if and only
+        if node i and node j are connected.
+    labels : array-like of string, shape (N,), optional
+        The names of the nodes.
+    types : array of int, shape (N,), optional
+        The type (e.g. sensory neuron, interneuron) of each node.
+    type_names : array-like of string, optional
+        The name of each value of `types`. For example, if a 0 in
+        `types` means "sensory neuron", then `type_names[0]` should
+        be "sensory neuron".
+    **figkwargs :
+        Additional keyword arguments are passed to `plt.subplots` to
+        create the figure.
+    """
+    if types is None:
+        types = np.zeros(x_coords.shape, dtype=int)
+    ntypes = len(np.unique(types))
+    cmap = colors.ListedColormap(sns.color_palette('colorblind', ntypes))
+
+    fig, ax = plt.subplots(1, 1, **figkwargs)
+
     # plot neuron locations:
-    points = plt.scatter(neuron_x, neuron_y, c=types, cmap=colormap,
-                         edgecolors='face', zorder=1)
+    for neuron_type in range(ntypes):
+        plotting = (types == neuron_type)
+        pts = ax.scatter(x_coords[plotting], y_coords[plotting],
+                         c=cmap(neuron_type), edgecolors='face', zorder=1)
+        pts.set_label(type_names[neuron_type])
 
     # add text labels:
-    for x, y, label in zip(neuron_x, neuron_y, labels):
-        plt.text(x, y, '  ' + label,
-                 horizontalalignment='left', verticalalignment='center',
-                 fontsize=5, zorder=2)
+    for x, y, label in zip(x_coords, y_coords, labels):
+        ax.text(x, y, '   ' + label,
+                horizontalalignment='left', verticalalignment='center',
+                fontsize=6, zorder=2)
 
     # plot links
-    pre, post = np.nonzero(links)
+    pre, post = np.nonzero(conn_matrix)
     for src, dst in zip(pre, post):
-        plt.plot(neuron_x[[src, dst]], neuron_y[[src, dst]],
-                 c=(0.85, 0.85, 0.85), lw=0.2, alpha=0.5, zorder=0)
+        ax.plot(x_coords[[src, dst]], y_coords[[src, dst]],
+                c=(0.85, 0.85, 0.85), lw=0.2, alpha=0.5, zorder=0)
 
+    ax.legend(scatterpoints=3)
     plt.show()
 ```
 
+Now, let's use that function to plot the neurons:
+
+
 ```python
-plt.figure(figsize=(16, 9))
-plot_connectome(x, z, C, neuron_ids, neuron_types)
+plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
+                type_names=['sensory neurons', 'interneurons',
+                            'motor neurons'],
+                figsize=(16, 9))
 ```
 
 There you are: a worm brain!
@@ -445,8 +488,10 @@ we use the normalized third eigenvector of Q, just like we did with x:
 
 ```python
 y = Dinv2 @ eigvecs[:, 2]
-plt.figure(figsize=(16, 9))
-plot_connectome(x, y, C, neuron_ids, neuron_types)
+plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
+                type_names=['sensory neurons', 'interneurons',
+                            'motor neurons'],
+                figsize=(16, 9))
 ```
 <!-- solution end -->
 
@@ -583,11 +628,15 @@ vector of all ones, which we're not interested in.)
 We can now reproduce the above plots!
 
 ```python
-plt.figure(figsize=(16, 9))
-plot_connectome(x, z, C, neuron_ids, neuron_types)
+plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
+                type_names=['sensory neurons', 'interneurons',
+                            'motor neurons'],
+                figsize=(16, 9))
 
-plt.figure(figsize=(16, 9))
-plot_connectome(x, y, C, neuron_ids, neuron_types)
+plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
+                type_names=['sensory neurons', 'interneurons',
+                            'motor neurons'],
+                figsize=(16, 9))
 ```
 
 Note that eigenvectors are defined only up to a (possibly negative)
