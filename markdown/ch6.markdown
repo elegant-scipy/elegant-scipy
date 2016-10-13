@@ -436,7 +436,7 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
     ntypes = len(np.unique(types))
     cmap = colors.ListedColormap(sns.color_palette('colorblind', ntypes))
 
-    fig, ax = plt.subplots(1, 1, **figkwargs)
+    fig, ax = plt.subplots(**figkwargs)
 
     # plot neuron locations:
     for neuron_type in range(ntypes):
