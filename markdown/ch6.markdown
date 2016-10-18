@@ -37,9 +37,10 @@ Thresholding works in simple cases, but can easily fail, because all you need
 is one value to fall on the wrong side of the threshold for the approach
 to fail.
 
-As an example, suppose you want to cut your army off from the enemy's, on the
-other side of the river, and intelligence suggests that you need $t$ kilograms
-of TNT to blow each bridge crossing the river, but the bridges in your own
+As an example, suppose you are at war, and your enemy is camped just across the
+river from your forces. You want to cut them off, so you decide to blow up all
+the bridges between you. Intelligence suggests that you need $t$ kilograms of
+TNT to blow each bridge crossing the river, but the bridges in your own
 territory can withstand $t+1$ kg. You might, having just read chapter 3 of
 *Elegant SciPy*, order your commandos to detonate $t$ kg of TNT on every bridge
 in the region. But, if intelligence was wrong about just *one* bridge crossing
@@ -47,19 +48,19 @@ the river, and it remains standing, the enemy's army can come marching through!
 Disaster!
 
 So, in this chapter, we will explore some alternative approaches to graph
-analysis, based on linear algebra. It turns out that we can think of a graph G
-as an *adjacency matrix*, in which we number the nodes of the graph from $0$ to
-$n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there is an
-edge from node $i$ to node $j$. In other words, if we call the adjacency matrix
-$A$, then $A_{i, j} = 1$ if and only if the link (i, j) is in G. We can then
-use linear algebra techniques to study this matrix, with often striking
+analysis, based on linear algebra. It turns out that we can think of a graph,
+G, as an *adjacency matrix*, in which we number the nodes of the graph from $0$
+to $n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there is
+an edge from node $i$ to node $j$. In other words, if we call the adjacency
+matrix $A$, then $A_{i, j} = 1$ if and only if the link (i, j) is in G. We can
+then use linear algebra techniques to study this matrix, with often striking
 results.
 
 The degree of a node is defined as the number of edges touching it.  For
-example, if a node is connected to five other nodes in a graph, its degree is
-5. (Later, we will differentiate between out-degree and in-degree, when edges
-have a "from" and "to".) In matrix terms, the degree corresponds to the
-*sum* of the values in a row or column.
+example, if a node is connected to five other nodes in a graph, its degree
+is 5. (Later, we will differentiate between out-degree and in-degree, when edges
+have a "from" and "to".) In matrix terms, the degree corresponds to the *sum*
+of the values in a row or column.
 
 The *Laplacian* matrix of a graph (just "the Laplacian" for short) is defined
 as the *degree matrix*, $D$, which
@@ -145,7 +146,7 @@ mess such as this one?
 ![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
 **Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
 
-One way is to put nodes that share many links close together, and it turns out
+One way is to put nodes that share many links close together. It turns out
 that this can be done by using the second-smallest eigenvalue of the Laplacian
 matrix, and its corresponding eigenvector, which is so important it has its
 own name: the
@@ -385,7 +386,8 @@ eigenvectors of $M$. In order to make sure we reproduce the layout from the
 Varshney et al paper, we must make sure that the vector is pointing in the same
 direction, rather than the opposite direction. We do this by choosing an
 arbitrary neuron from their Figure 2, and checking the sign of `x` at that
-position.
+position. We then reverse it if it doesn't match its sign in Figure 2 of the
+paper.
 
 ```python
 vc2_index = np.flatnonzero(neuron_ids == 'VC02')[0]
@@ -846,10 +848,10 @@ interesting = ['detritus', 'phytoplankton', 'benthic algae', 'micro-epiphytes',
                'microfauna', 'zooplankton', 'predatory shrimps', 'meiofauna',
                'gulls']
 in_degrees = np.ravel(Adj.sum(axis=0))
-pagerank_plot(species, in_degrees, pagerank, annotations=interesting)
+pagerank_plot(in_degrees, pagerank, species, annotations=interesting)
 ```
 
-Sea sludge is the most important element both by number of
+Sea sludge ("detritus") is the most important element both by number of
 species feeding on it (15) and by pagerank (>0.003). But the second most
 important element is *not* benthic algae, which feeds 13 other species, but
 rather phytoplankton, which feeds just 7! That's because other *important*
