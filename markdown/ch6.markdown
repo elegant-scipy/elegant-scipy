@@ -53,7 +53,7 @@ G, as an *adjacency matrix*, in which we number the nodes of the graph from $0$
 to $n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there is
 an edge from node $i$ to node $j$. In other words, if we call the adjacency
 matrix $A$, then $A_{i, j} = 1$ if and only if the link (i, j) is in G. We can
-then use linear algebra techniques to study this matrix, with often striking
+then use linear algebra techniques to study this matrix, often with striking
 results.
 
 The degree of a node is defined as the number of edges touching it.  For
