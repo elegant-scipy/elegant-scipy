@@ -380,7 +380,7 @@ are only defined up to a multiplicative constant. This follows simply from the
 definition of an eigenvector: suppose $v$ is an eigenvector of the matrix $M$,
 with corresponding eigenvalue $\lambda$. Then $\alpha v$ is also an eigenvector
 of $M$ for any scalar number $\alpha$, because
-$M(\alpha v) = \alpha Mv = \alpha \lambda v = \lambda (\alpha v)$. So, it is
+$Mv = \lambda v$ implies $M(\alpha v) = \lambda (\alpha v)$. So, it is
 arbitrary whether a software package returns $v$ or $-v$ when asked for the
 eigenvectors of $M$. In order to make sure we reproduce the layout from the
 Varshney et al. paper, we must make sure that the vector is pointing in the
