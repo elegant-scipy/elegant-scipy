@@ -15,15 +15,16 @@ At a minimum, you should know that linear algebra involves vectors (ordered
 collections of numbers) and their transformations by multiplying them with
 matrices (collections of vectors). If all of this sounded like gibberish to
 you, you should probably pick up an introductory linear algebra textbook before
-reading this. Introductory is all you need though — we hope to convey the power
+reading this. We highly recommend Gil Strang's *Linear Algebra and its
+Applications*. Introductory is all you need though — we hope to convey the power
 of linear algebra while keeping the operations relatively simple!
 
 As an aside, we will break Python notation convention in order to match linear
 algebra conventions: in Python, variables names should usually begin with a
-lower case letter. However, in linear algebra, matrices are usually denoted by
+lower case letter. However, in linear algebra, matrices are denoted by
 a capital letter, while vectors and scalar values are lowercase. Since we're
-going to be dealing with quite a few matrices and vectors, it helps to keep
-them straight to follow the linear algebra convention. Therefore, variables
+going to be dealing with quite a few matrices and vectors, following the
+linear algbrea converton helps to keep them straight. Therefore, variables
 that represent matrices will start with a capital letter, while vectors and
 numbers will start with lowercase.
 
@@ -33,22 +34,33 @@ We discussed graphs in chapter 3, where we represented image regions as
 nodes, connected by edges between them. But we used a rather simple method of
 analysis: we *thresholded* the graph, removing all edges above some value.
 Thresholding works in simple cases, but can easily fail, because all you need
-is one noisy edge to fall on the wrong side of the threshold for the approach
+is one value to fall on the wrong side of the threshold for the approach
 to fail.
 
-In this chapter, we will explore some alternative approaches to graph analysis,
-based on linear algebra. It turns out that we can think of a graph G as an
-*adjacency matrix*, in which we number the nodes of the graph from $0$ to
-$n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there
-is an edge from node $i$ to node $j$. In other words, if we call the adjacency
-matrix $A$, then $A_{i, j} = 1$ if and only if the link
-(i, j) is in G. We can then use linear algebra techniques to study this matrix,
-with often striking results.
+As an example, suppose you are at war, and your enemy is camped just across the
+river from your forces. You want to cut them off, so you decide to blow up all
+the bridges between you. Intelligence suggests that you need $t$ kilograms of
+TNT to blow each bridge crossing the river, but the bridges in your own
+territory can withstand $t+1$ kg. You might, having just read chapter 3 of
+*Elegant SciPy*, order your commandos to detonate $t$ kg of TNT on every bridge
+in the region. But, if intelligence was wrong about just *one* bridge crossing
+the river, and it remains standing, the enemy's army can come marching through!
+Disaster!
 
-The degree of a node is the number of edges touching it. For example, if a node
-is connected to five other nodes in a graph, its degree is 5. (Later, we
-will differentiate between out-degree and in-degree, when edges have a "from"
-and "to".)
+So, in this chapter, we will explore some alternative approaches to graph
+analysis, based on linear algebra. It turns out that we can think of a graph,
+G, as an *adjacency matrix*, in which we number the nodes of the graph from $0$
+to $n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there is
+an edge from node $i$ to node $j$. In other words, if we call the adjacency
+matrix $A$, then $A_{i, j} = 1$ if and only if the link (i, j) is in G. We can
+then use linear algebra techniques to study this matrix, often with striking
+results.
+
+The degree of a node is defined as the number of edges touching it.  For
+example, if a node is connected to five other nodes in a graph, its degree
+is 5. (Later, we will differentiate between out-degree and in-degree, when edges
+have a "from" and "to".) In matrix terms, the degree corresponds to the *sum*
+of the values in a row or column.
 
 The *Laplacian* matrix of a graph (just "the Laplacian" for short) is defined
 as the *degree matrix*, $D$, which
@@ -63,35 +75,19 @@ We definitely can't fit all of the linear algebra theory needed to understand
 the properties of this matrix, but suffice it to say: it has some *great*
 properties. We will exploit a couple in the following paragraphs.
 
-For example, a common problem in network analysis is visualization. How do you
-draw nodes and links in such a way that you don't get a complete mess such as
-this one?
-
-![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
-**Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
-**[Ed note: my reading is that we can use this figure as long as we include the
-copyright notice and don't put DRM on the books, which O'Reilly doesn't do
-anyway.]**
-
-One way is to put nodes that share many links close together, and it turns out
-that this can be done by using the second-smallest eigenvalue of the Laplacian
-matrix, and its corresponding eigenvector, which is so important it has its
-own name: the
-[Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector).
-
-As a quick aside, an eigenvector $v$ of a matrix $M$ is a vector that
+First, we will look at the *eigenvectors* of $L$.
+An eigenvector $v$ of a matrix $M$ is a vector that
 satisfies the property $Mv = \lambda v$ for some number $\lambda$,
 known as the eigenvalue.  In other words, $v$ is a special vector in
-relation to $M$ because $Mv$ simply scales the vector, without
-changing its direction.[^eigv_example]
+relation to $M$ because $Mv$ simply changes the size of the vector, without
+changing its direction. As we will soon see, eigenvectors have many useful
+properties — sometimes seeming even magical!
 
-[^eigv_example]: As an example, consider a 3x3 rotation matrix $R$
-                 that, when multiplied by any 3-dimensional vector
-                 $p$, rotates it $30^\circ$ degrees around the z-axis.
-                 $R$ will rotate all vectors except for those that lie
-                 *on* the z-axis.  For those, we'll see no effect, or
-                 $Rp = p$, i.e. $Rp = \lambda p$ with eigenvalue
-                 $\lambda = 1$.
+As an example, a 3x3 rotation matrix $R$, when multiplied by any
+3-dimensional vector $p$, rotates it $30^\circ$ degrees around the z-axis.  $R$
+will rotate all vectors except for those that lie *on* the z-axis.  For those,
+we'll see no effect, or $Rp = p$, i.e. $Rp = \lambda p$ with eigenvalue
+$\lambda = 1$.
 
 <!-- exercise begin -->
 
@@ -115,6 +111,7 @@ by $\theta$ degrees around the z-axis.
 2. Now, verify that multiplying by $R$ leaves the vector
    $\left[ 0\, 0\, 1\right]^T$ unchanged.  In other words, $R p = 1
    p$, which means $p$ is an eigenvector of R with eigenvalue 1.
+   Remember that matrix multiplication in Python is denoted with `@`.
 
 <!-- solution begin -->
 
@@ -126,7 +123,7 @@ import numpy as np
 theta = np.deg2rad(45)
 R = np.array([[np.cos(theta), -np.sin(theta), 0],
               [np.sin(theta),  np.cos(theta), 0],
-              [0,              0,             1]])
+              [            0,              0, 1]])
 
 print("R @ x-axis:", R @ [1, 0, 0])
 print("R @ y-axis:", R @ [0, 1, 0])
@@ -142,7 +139,18 @@ R rotates both the x and y axes, but not the z-axis.
 
 <!-- exercise end -->
 
-The eigenvectors have numerous useful--sometimes seemingly magical!--properties.
+Back to the Laplacian. A common problem in network analysis is visualization.
+How do you draw nodes and links in such a way that you don't get a complete
+mess such as this one?
+
+![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
+**Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
+
+One way is to put nodes that share many links close together. It turns out
+that this can be done by using the second-smallest eigenvalue of the Laplacian
+matrix, and its corresponding eigenvector, which is so important it has its
+own name: the
+[Fiedler vector](https://en.wikipedia.org/wiki/Algebraic_connectivity#The_Fiedler_vector).
 
 Let's use a minimal network to illustrate this. We start by creating the
 adjacency matrix:
@@ -162,7 +170,9 @@ We can use NetworkX to draw this network:
 ```python
 import networkx as nx
 g = nx.from_numpy_matrix(A)
-nx.draw_spring(g, with_labels=True, node_color='white')
+layout = nx.spring_layout(g, pos=nx.circular_layout(g))
+nx.draw(g, pos=layout,
+        with_labels=True, node_color='white')
 ```
 
 You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
@@ -176,11 +186,10 @@ print(d)
 ```
 
 We then put those degrees into a diagonal matrix of the same shape
-as A, the *degree matrix*. We can use `scipy.sparse.diags` to do this:
+as A, the *degree matrix*. We can use the `np.diag` function to do this:
 
 ```python
-from scipy import sparse
-D = sparse.diags(d).toarray()
+D = np.diag(d)
 print(D)
 ```
 
@@ -228,7 +237,7 @@ plt.plot(eigvals, '-o')
 It's the second eigenvalue. The Fiedler vector is thus the second eigenvector.
 
 ```python
-f = Eigvecs[:, 1]
+f = Eigvecs[:, np.argsort(eigvals)[1]]
 plt.plot(f, '-o')
 ```
 
@@ -237,10 +246,12 @@ separate the nodes into the two groups we identified in the drawing!
 
 ```python
 colors = ['orange' if eigval > 0 else 'gray' for eigval in f]
-nx.draw_spring(g, with_labels=True, node_color=colors)
+nx.draw(g, pos=layout, with_labels=True, node_color=colors)
 ```
 
-Let's demonstrate this in a real-world example by laying out the brain cells in a worm, as shown in
+## Laplacians with brain data
+
+Let's demonstrate this process in a real-world example by laying out the brain cells in a worm, as shown in
 [Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
 from the
 [Varshney *et al* paper](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
@@ -273,8 +284,8 @@ First, let's load the data. There are four components:
 
 ```python
 import numpy as np
-chem = np.load('data/chem-network.npy')
-gap = np.load('data/gap-network.npy')
+Chem = np.load('data/chem-network.npy')
+Gap = np.load('data/gap-network.npy')
 neuron_ids = np.load('data/neurons.npy')
 neuron_types = np.load('data/neuron-types.npy')
 ```
@@ -288,7 +299,7 @@ We are going to call the resulting matrix the *connectivity* matrix, $C$, which
 is just a different kind of adjacency matrix.
 
 ```python
-A = chem + gap
+A = Chem + Gap
 C = (A + A.T) / 2
 ```
 
@@ -296,10 +307,13 @@ To get the Laplacian matrix $L$, we need the degree matrix $D$, which contains
 the degree of node i at position [i, i], and zeros everywhere else.
 
 ```python
-n = C.shape[0]
-D = np.zeros((n, n), dtype=np.float)
-diag = (np.arange(n), np.arange(n))
-D[diag] = np.sum(C, axis=0)
+degrees = np.sum(C, axis=0)
+D = np.diag(degrees)
+```
+
+Now, we can get the Laplacian just like before:
+
+```python
 L = D - C
 ```
 
@@ -325,8 +339,7 @@ In order to obtain the degree-normalized Laplacian, Q, we need the inverse
 square root of the D matrix:
 
 ```python
-Dinv2 = np.zeros((n, n))
-Dinv2[diag] = D[diag] ** (-.5)
+Dinv2 = np.diag(degrees ** (-.5))
 Q = Dinv2 @ L @ Dinv2
 ```
 
@@ -359,41 +372,105 @@ x = Dinv2 @ eigvecs[:, 1]
 ```
 
 (The reasons for using this vector are too long to explain here, but appear in
-the paper's supplementary material, linked above.)
+the paper's supplementary material, linked above. The short version is that
+choosing this vector minimizes the total length of the links between neurons.)
+
+There is one small kink that we must address before proceeding: eigenvectors
+are only defined up to a multiplicative constant. This follows simply from the
+definition of an eigenvector: suppose $v$ is an eigenvector of the matrix $M$,
+with corresponding eigenvalue $\lambda$. Then $\alpha v$ is also an eigenvector
+of $M$ for any scalar number $\alpha$, because
+$Mv = \lambda v$ implies $M(\alpha v) = \lambda (\alpha v)$. So, it is
+arbitrary whether a software package returns $v$ or $-v$ when asked for the
+eigenvectors of $M$. In order to make sure we reproduce the layout from the
+Varshney et al. paper, we must make sure that the vector is pointing in the
+same direction as theirs, rather than the opposite direction. We do this by
+choosing an arbitrary neuron from their Figure 2, and checking the sign of `x`
+at that position. We then reverse it if it doesn't match its sign in Figure 2
+of the paper.
+
+```python
+vc2_index = np.flatnonzero(neuron_ids == 'VC02')[0]
+if x[vc2_index] < 0:
+    x = -x
+```
 
 Now it's just a matter of drawing the nodes and the links. We color them
-according to the type stored in `neuron_types`:
+according to the type stored in `neuron_types`, using the appealing and
+functional "colorblind"
+[colorbrewer palette](http://chrisalbon.com/python/seaborn_color_palettes.html):
 
 ```python
 from matplotlib import pyplot as plt
 from matplotlib import colors
 
-def plot_connectome(neuron_x, neuron_y, links, labels, types):
-    colormap = colors.ListedColormap([[ 0.   ,  0.447,  0.698],
-                                      [ 0.   ,  0.62 ,  0.451],
-                                      [ 0.835,  0.369,  0.   ]])
+import seaborn as sns  # for beautiful color palettes
+
+
+def plot_connectome(x_coords, y_coords, conn_matrix, *,
+                    labels=(), types=None, type_names=('',),
+                    **figkwargs):
+    """Plot neurons as points connected by lines.
+
+    Neurons can have different types (up to 6 distinct colors).
+
+    Parameters
+    ----------
+    x_coords, y_coords : array of float, shape (N,)
+        The x-coordinates and y-coordinates of the neurons.
+    conn_matrix : array or sparse matrix of float, shape (N, N)
+        The connectivity matrix, with non-zero entry (i, j) if and only
+        if node i and node j are connected.
+    labels : array-like of string, shape (N,), optional
+        The names of the nodes.
+    types : array of int, shape (N,), optional
+        The type (e.g. sensory neuron, interneuron) of each node.
+    type_names : array-like of string, optional
+        The name of each value of `types`. For example, if a 0 in
+        `types` means "sensory neuron", then `type_names[0]` should
+        be "sensory neuron".
+    **figkwargs :
+        Additional keyword arguments are passed to `plt.subplots` to
+        create the figure.
+    """
+    if types is None:
+        types = np.zeros(x_coords.shape, dtype=int)
+    ntypes = len(np.unique(types))
+    cmap = colors.ListedColormap(sns.color_palette('colorblind', ntypes))
+
+    fig, ax = plt.subplots(**figkwargs)
+
     # plot neuron locations:
-    points = plt.scatter(neuron_x, neuron_y, c=types, cmap=colormap,
-                         edgecolors='face', zorder=1)
+    for neuron_type in range(ntypes):
+        plotting = (types == neuron_type)
+        pts = ax.scatter(x_coords[plotting], y_coords[plotting],
+                         c=cmap(neuron_type), edgecolors='face', zorder=1)
+        pts.set_label(type_names[neuron_type])
 
     # add text labels:
-    for x, y, label in zip(neuron_x, neuron_y, labels):
-        plt.text(x, y, '  ' + label,
-                 horizontalalignment='left', verticalalignment='center',
-                 fontsize=5, zorder=2)
+    for x, y, label in zip(x_coords, y_coords, labels):
+        ax.text(x, y, '   ' + label,
+                horizontalalignment='left', verticalalignment='center',
+                fontsize=6, zorder=2)
 
     # plot links
-    pre, post = np.nonzero(links)
+    pre, post = np.nonzero(conn_matrix)
     for src, dst in zip(pre, post):
-        plt.plot(neuron_x[[src, dst]], neuron_y[[src, dst]],
-                 c=(0.85, 0.85, 0.85), lw=0.2, alpha=0.5, zorder=0)
+        ax.plot(x_coords[[src, dst]], y_coords[[src, dst]],
+                c=(0.85, 0.85, 0.85), lw=0.2, alpha=0.5, zorder=0)
 
+    ax.legend(scatterpoints=3)
     plt.show()
 ```
 
+Now, let's use that function to plot the neurons:
+
+
 ```python
-plt.figure(figsize=(16, 9))
-plot_connectome(x, z, C, neuron_ids, neuron_types)
+plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
+                type_names=['sensory neurons', 'interneurons',
+                            'motor neurons'],
+                figsize=(16, 9))
 ```
 
 There you are: a worm brain!
@@ -409,12 +486,19 @@ Figure 2B from the paper?
 
 <!-- solution begin -->
 **Solution:** In the affinity view, instead of using the processing depth on the y-axis,
-we use the normalized third eigenvector of Q, just like we did with x:
+we use the normalized third eigenvector of Q, just like we did with x. (And we
+invert it if necessary, just like we did with x!)
 
 ```python
 y = Dinv2 @ eigvecs[:, 2]
-plt.figure(figsize=(16, 9))
-plot_connectome(x, y, C, neuron_ids, neuron_types)
+asjl_index = np.flatnonzero(neuron_ids == 'ASJL')[0]
+if y[asjl_index] < 0:
+    y = -y
+
+plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
+                type_names=['sensory neurons', 'interneurons',
+                            'motor neurons'],
+                figsize=(16, 9))
 ```
 <!-- solution end -->
 
@@ -540,10 +624,15 @@ sorted_indices = np.argsort(eigvals)
 eigvecs = eigvecs[:, sorted_indices]
 ```
 
-Finally, we normalize the eigenvectors to get the x and y coordinates:
+Finally, we normalize the eigenvectors to get the x and y coordinates
+(and flip these if necessary):
 
 ```python
 _dsinv, x, y = (Dsinv2 @ eigvecs).T
+if x[vc2_index] < 0:
+    x = -x
+if y[asjl_index] < 0:
+    y = -y
 ```
 
 (Note that the eigenvector corresponding to the smallest eigenvalue is always a
@@ -551,16 +640,16 @@ vector of all ones, which we're not interested in.)
 We can now reproduce the above plots!
 
 ```python
-plt.figure(figsize=(16, 9))
-plot_connectome(x, z, C, neuron_ids, neuron_types)
+plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
+                type_names=['sensory neurons', 'interneurons',
+                            'motor neurons'],
+                figsize=(16, 9))
 
-plt.figure(figsize=(16, 9))
-plot_connectome(x, y, C, neuron_ids, neuron_types)
+plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
+                type_names=['sensory neurons', 'interneurons',
+                            'motor neurons'],
+                figsize=(16, 9))
 ```
-
-Note that eigenvectors are defined only up to a (possibly negative)
-multiplicative constant, so the plots may have ended up reversed! (That is,
-left is right, or up is down, or both!)
 
 <!-- solution end -->
 
@@ -572,20 +661,34 @@ Another application of linear algebra and eigenvectors is Google's Pagerank
 algorithm, which is punnily named both for webpages and for one of its
 co-founders, Larry Page.
 
-If you're trying to rank webpages by importance, one thing you might look at
-is how many other webpages link to it. After all, if everyone is linking to a
-particular page, it must be good, right? But the problem is that this metric is
-easily gamed: to make your own webpage rise in the rankings, you just have to
+To rank webpages by importance, you might count
+how many other webpages link to it. After all, if everyone is linking to a
+particular page, it must be good, right? But this metric is
+easily gamed: to make your own webpage rise in the rankings, just
 create as many other webpages as you can and have them all link to your
 original page.
 
 The key insight that drove Google's early success was that important webpages
-are not just linked to by many webpages, but also by *other*, *important*
+are not linked to by just many webpages, but by *important*
 webpages. And how do we know that those other pages are important? Because
 they themselves are linked to by important pages. And so on.
-As we will see, this recursive definition implies that page
-importance can be measured by the eigenvector corresponding to the largest
-eigenvalue of the so-called *transition matrix*. This matrix imagines a web
+
+This recursive definition implies that page
+importance can be measured by an eigenvector
+of the so-called *transition matrix*, which contains the links
+between webpages. Suppose you have your vector of importance $\boldsymbol{r}$,
+and your matrix of links $M$. You don't know $\boldsymbol{r}$ yet, but you
+do know that the importance of a page is proportional to the sum of
+importances of the pages that link to it:
+$\boldsymbol{r} = \alpha M \boldsymbol{r}$, or
+$M \boldsymbol{r} = \lambda \boldsymbol{r}$, for $\lambda = 1/\alpha$. That's
+just the definition of an eigenvalue!
+
+By ensuring some special properties are satisfied by the transition matrix, we
+can further determine that the required eigenvalue is 1, and that it is the
+largest eigenvalue of $M$.
+
+The transition matrix imagines a web
 surfer, often named Webster, randomly clicking a link from each webpage he
 visits, and then asks, what's the probability that he ends up at any given
 page? This probability is called the pagerank.
@@ -681,7 +784,7 @@ algorithm follows a link at random, but for the other 15%, it randomly jumps to
 any arbitrary page. It's as if every page had a low probability link to every
 other page. Or, in our case, it's as if shrimp, on rare occasions, ate sharks.
 It might seem non-sensical but bear with us! It is, in fact, the mathematical
-representation of the Circle of Life. We'll set it to 0.99, but actually it
+representation of the Circle of Life. We'll set it to 0.85, but actually it
 doesn't really matter for this analysis: the results are similar for a large
 range of possible damping factors.
 
@@ -697,63 +800,62 @@ $$
 (\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{n} \boldsymbol{1}
 $$
 
-We can solve this equation using `scipy.sparse`'s iterative
-*biconjugate gradient (bicg)* solver^[bicgstab].  (Note that, if you
-had a symmetric matrix, you would use Conjugate Gradients,
-``scipy.sparse.linalg.solve.cg``, instead.)
-
-[^bicgstab]: The default formulation for bicg iteration is numerically
-    unstable, so we use the stabilized variation, which replaces every
-    second iteration with a *generalized minimal residual method*
-    (GMRES) iteration.
+We can solve this equation using `scipy.sparse.linalg`'s direct
+solver, `spsolve`. Depending on the structure and size of a linear algebra
+problem, though, it might be more efficient to use an iterative solver. See
+the [`scipy.sparse.linalg` documentation](http://docs.scipy.org/doc/scipy/reference/sparse.linalg.html#solving-linear-problems)
+for more information on this.
 
 ```python
-from scipy.sparse.linalg.isolve import bicgstab as bicg
+from scipy.sparse.linalg import spsolve
 
-damping = 0.99
+damping = 0.85
+beta = 1 - damping
 
 I = sparse.eye(n, format='csc')  # Same sparse format as Trans
 
-pagerank, error = bicg(I - damping * Trans,
-                       (1-damping) / n * np.ones(n),
-                       maxiter=int(1e4))
-print('error code: ', error)
+pagerank = spsolve(I - damping * Trans,
+                   np.full(n, beta / n))
 ```
 
-As can be seen in the documentation for the `bicg` solver, an error code of 0
-indicates that a solution was found! We now have the "foodrank" of the
-St. Marks food web!
+We now have the "foodrank" of the St. Marks food web!
 
 So how does a species' foodrank compare to the number of other species eating
 it?
 
 ```python
-def pagerank_plot(names, in_degrees, pageranks,
-                  annotations=[]):
-    fig, ax = plt.subplots(figsize=(9, 5))
+def pagerank_plot(in_degrees, pageranks, names, *,
+                  annotations=[], **figkwargs):
+    """Plot node pagerank against in-degree, with hand-picked node names."""
+
+    fig, ax = plt.subplots(**figkwargs)
     ax.scatter(in_degrees, pageranks, c=[0.835, 0.369, 0], lw=0)
-    labels = []
     for name, indeg, pr in zip(names, in_degrees, pageranks):
         if name in annotations:
             text = ax.text(indeg + 0.1, pr, name)
-            labels.append(text)
+
     ax.set_ylim(0, np.max(pageranks) * 1.1)
     ax.set_xlim(-1, np.max(in_degrees) * 1.1)
     ax.set_ylabel('PageRank')
     ax.set_xlabel('In-degree')
-
-interesting = ['detritus', 'phytoplankton', 'benthic algae', 'micro-epiphytes',
-               'microfauna', 'zooplankton', 'predatory shrimps', 'meiofauna', 'gulls']
-in_degrees = np.ravel(Adj.sum(axis=0))
-pagerank_plot(species, in_degrees, pagerank, annotations=interesting)
 ```
 
-Having explored the dataset ahead of time, we have pre-labeled some interesting
-nodes in the plot. Sea sludge is the most important element both by number of
+We now draw the plot. Having explored the dataset before writing this, we have
+pre-labeled some interesting nodes in the plot:
+
+```python
+interesting = ['detritus', 'phytoplankton', 'benthic algae', 'micro-epiphytes',
+               'microfauna', 'zooplankton', 'predatory shrimps', 'meiofauna',
+               'gulls']
+in_degrees = np.ravel(Adj.sum(axis=0))
+pagerank_plot(in_degrees, pagerank, species, annotations=interesting)
+```
+
+Sea sludge ("detritus") is the most important element both by number of
 species feeding on it (15) and by pagerank (>0.003). But the second most
 important element is *not* benthic algae, which feeds 13 other species, but
 rather phytoplankton, which feeds just 7! That's because other *important*
-species feed on it! On the bottom left, we've got sea gulls, who, we can now
+species feed on it. On the bottom left, we've got sea gulls, who, we can now
 confirm, do bugger-all for the ecosystem. Those vicious *predatory shrimps*
 (we're not making this up) support the same number of species as phytoplankton,
 but they are less essential species, so they end up with a lower foodrank.
@@ -764,7 +866,7 @@ predicts ecological importance better than in-degree.
 
 Before we move on though, we'll note that pagerank can be computed several
 different ways. One way, complementary to what we did above, is called the
-*power method*, and it's pretty, well, powerful! It stems from the
+*power method*, and it's quite, well, powerful! It stems from the
 [Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
 which states, among other things, that a stochastic matrix has 1 as an
 eigenvalue, and that this is its *largest* eigenvalue. (The corresponding
@@ -821,7 +923,7 @@ def power2(Trans, damping=0.85, max_iter=int(1e5)):
     is_dangling = np.ravel(Trans.sum(axis=0) == 0)
     dangling = np.zeros(n)
     dangling[is_dangling] = 1 / n
-    r0 = np.ones(n) / n
+    r0 = np.full(n, 1 / n)
     r = r0
     for _ in range(max_iter):
         rnext = (damping * (Trans @ r + dangling @ r) +
@@ -875,7 +977,7 @@ not get nice results with this graph. The correlation between in-degree and
 pagerank was much higher than in other datasets, and the few outliers didn't
 make much sense to us.
 
-Can you think of three reasons why pagerank might not be the best
+Can you think of some reasons why pagerank might not be the best
 measure of importance for the Python dependency graph?
 
 <!-- solution begin -->
@@ -911,7 +1013,10 @@ on PyPI!
 
 <!-- exercise end -->
 
-## Community detection
+## Linear algebra for community detection
+
+Moving on from PageRank, we will now demonstrate another use of the
+eigendecomposition available in SciPy.
 
 We saw a hint in the introduction to this chapter that the Fiedler vector could
 be used to detect "communities" in networks, groups of nodes that are tightly
@@ -923,8 +1028,8 @@ on the topic in 2006, and
 to the Python library dependency graph, which will tell us whether Python users
 fall into two or more somewhat independent groups.
 
-We've downloaded and preprocessed dependency data from PyPI ahead of
-time, available as the file `pypi-dependencies.txt` in the `data/`
+We've downloaded and preprocessed dependency data from PyPI,
+available as the file `pypi-dependencies.txt` in the `data/`
 folder. The data file consists of a list of library-dependency pairs,
 one per line, e.g. ``scipy numpy``. The networkx library that we
 started using in Chapter 3 makes it easy to build a graph from these
@@ -941,7 +1046,7 @@ with open('data/pypi-deps.txt') as lines:
     dependencies.add_edges_from(lib_dep_pairs)
 ```
 
-We can then get some statistics about this (incomplete) dataset by using
+We can then get some statistics about this dataset by using
 networkx's built-in functions:
 
 ```python
