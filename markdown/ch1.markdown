@@ -517,7 +517,7 @@ fig, ax = plt.subplots(figsize=(16,5))
 ax.boxplot(np.log(counts_subset + 1), sym=".")
 ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
-ax.set_ylabel("Gene expression counts")
+ax.set_ylabel("log gene expression counts")
 
 plt.show()
 ```
@@ -537,7 +537,7 @@ fig, ax = plt.subplots(figsize=(16,5))
 ax.boxplot(np.log(counts_subset_lib_norm + 1), sym=".")
 ax.set_title("Gene expression counts normalized by library size")
 ax.set_xlabel("Individuals")
-ax.set_ylabel("Gene expression counts")
+ax.set_ylabel("log gene expression counts")
 
 plt.show()
 ```
