@@ -1,0 +1,15 @@
+# Elegant SciPy Matplotlib Style
+# Author: Juan Nunez-Iglesias
+
+lines.linewidth: 2
+
+# Use the Seaborn Colorblind palette for color cycles
+axes.prop_cycle: cycler('color', ['#0072b2', '#009e73', '#d55e00', '#cc79a7', '#f0e442', '#56b4e9', '#0072b2'])
+
+# Remove the right and top axis spines
+axes.spine.left: true
+axes.spine.bottom: true
+axes.spine.top: false
+axes.spine.right: false
+
+
