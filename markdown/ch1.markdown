@@ -201,8 +201,8 @@ Behind the scenes, the highly-optimized NumPy library is doing the iteration as 
 import numpy as np
 
 # Create an ndarray of integers in the range
-# 0 up to (but not including) 10,000,000
-nd_array = np.arange(1e7)
+# 0 up to (but not including) 1,000,000
+nd_array = np.arange(1e6)
 
 # Convert it to a list
 list_array = nd_array.tolist()
@@ -488,7 +488,7 @@ plt.show()
 print('Count statistics:\n  min:  {0}\n  mean: {1}\n  max: {2}'
       .format(np.min(total_counts),
               np.mean(total_counts),
-              np.max(total_counts))
+              np.max(total_counts)))
 ```
 
 We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
@@ -594,9 +594,12 @@ def class_boxplot(data, classes, colors=None, **kwargs):
     class2color = dict(zip(all_classes, it.cycle(colors)))
 
     # map classes to data vectors
+    # other classes get an empty list at that position for offset
     class2data = {cls: [] for cls in all_classes}
     for distrib, cls in zip(data, classes):
-        class2data[cls].append(distrib)
+        for c in all_classes:
+            class2data[c].append([])
+        class2data[cls][-1] = distrib
 
     # then, do each boxplot in turn with the appropriate color
     fig, ax = plt.subplots()
