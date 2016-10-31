@@ -83,8 +83,10 @@ As you will see below, it often doesn't matter, because we are using mRNA levels
 ![Central Dogma of Molecular Biology](../figures/central_dogma.png)
 
 It's important to note that the DNA in every cell of your body is identical.
-Thus, the differences between cells arise from *differential expression* of that DNA into RNA.
-Similarly, as we shall see in this chapter, differential expression can distinguish different kinds of cancer.
+Thus, the differences between cells arise from *differential expression* of
+that DNA into RNA: in different cells, different parts of the DNA are processed
+into downstream molecules. Similarly, as we shall see in this chapter and the
+next, differential expression can distinguish different kinds of cancer.
 
 ![Gene expression](../figures/differential_gene_expression.png)
 
@@ -92,7 +94,7 @@ The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
 RNA is extracted from a tissue sample, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
-For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
+For this chapter we’ll be starting directly from this count data.
 
 ![RNAseq](../figures/RNAseq.png)
 
@@ -128,7 +130,7 @@ expression_data[2][0]
 It turns out that, because of the way the Python interpreter works, this is a very inefficient way to store these data points.
 First, Python lists are always lists of *objects*, so that the above list `gene2` is not a list of integers, but a list of *pointers* to integers, which is unnecessary overhead.
 Additionally, this means that each of these lists and each of these integers end up in a completely different, random part of your computer's RAM.
-However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is very bad.
+However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is inefficient.
 
 This is precisely the problem solved by the *NumPy array*.
 
@@ -200,22 +202,25 @@ import numpy as np
 
 # Create an ndarray of integers in the range
 # 0 up to (but not including) 10,000,000
-nd_array = np.arange(1e6)
-# Convert arr to a list
+nd_array = np.arange(1e7)
+
+# Convert it to a list
 list_array = nd_array.tolist()
 ```
 
+Let's compare how long it takes to multiply all the values in the array by 5,
+using the IPython `timeit` magic function. First, when the data is in a list:
+
 ```python
 %%timeit -n10
-# Time how long it takes to multiply each element in the list by 5
 for i, val in enumerate(list_array):
     list_array[i] = val * 5
 ```
 
+Now, using NumPy's built-in *vectorized* operations:
+
 ```python
 %%timeit -n10
-# Use the IPython "magic" command timeit to time how
-# long it takes to multiply each element in the ndarray by 5
 x = nd_array * 5
 ```
 
@@ -308,7 +313,7 @@ y = np.reshape(y, (1, len(y)))
 print(y)
 ```
 
-In order to do broadcasting, the two arrays have to have the same number of dimensions and the sizes of the dimensions need to match (or be equal to 1).
+In order to do broadcasting, the two arrays have to have the same number of dimensions and the sizes of the dimensions need to match or be equal to 1.
 Let's check the shapes of these two arrays.
 
 ```python
@@ -353,7 +358,10 @@ Pandas is a Python library for data manipulation and analysis,
 with particular emphasis on tabular and time series data.
 Here, we will use it here to read in tabular data of mixed type.
 It uses the DataFrame type, which is a flexible tabular format based on the data frame object in R.
-For example the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so it doesn't make sense to read this data in directly as an ndarray.
+For example the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so reading it into a homogeneous array of numbers would be the wrong approach.
+Although NumPy has some support for mixed data types, it is not designed for
+this use case, and makes subsequent operations harder.
+
 By reading the data in as a Pandas DataFrame we can let Pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
 Here we are just using Pandas briefly to import data.
 In later chapters we will give you some more insight into the world of Pandas.
@@ -407,7 +415,7 @@ We can get the intersection of the gene names from our our two sources of data
 and use these to index both data sets, ensuring they have the same genes in the same order.
 
 ```python
-#Subset gene info to match the count data
+# Subset gene info to match the count data
 matched_index = pd.Index.intersection(data_table.index, gene_info.index)
 ```
 
@@ -899,15 +907,20 @@ def rpkm(counts, lengths):
 counts_rpkm = rpkm(counts, gene_lengths)
 ```
 
+Let's see the normalization's effect in action. First, as a reminder, here's
+the distribution of mean log counts as a function of gene length:
+
 ```python
-# Repeat binned boxplot with raw values
 log_counts = np.log(counts + 1)
 mean_log_counts = np.mean(log_counts, axis=1)
 log_gene_lengths = np.log(gene_lengths)
 
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+```
 
-# Repeat binned boxplot with RPKM values
+Now, the same plot with the RPKM-normalized values:
+
+```python
 log_counts = np.log(counts_rpkm + 1)
 mean_log_counts = np.mean(log_counts, axis=1)
 log_gene_lengths = np.log(gene_lengths)
@@ -915,14 +928,16 @@ log_gene_lengths = np.log(gene_lengths)
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
-RPKM normalization can be particularly useful comparing the expression profile of two different genes.
+You can see that the mean expression counts have flattened quite a bit,
+especially for genes larger than about 3,000 base pairs.
+(Smaller genes still appear to have low expression — these may be too small for
+the statistical power of the RPKM method.)
+
+RPKM normalization can be useful to compare the expression profile of different genes.
 We've already seen that longer genes have higher counts, but this doesn't mean their expression level is actually higher.
 Let's choose a short gene and a long gene and compare their counts before and after RPKM normalization to see what we mean.
 
 ```python
-# Boxplot of expression from a short gene vs. a long gene
-# showing how normalization can influence interpretation
-
 genes2_idx = [80, 186]
 genes2_lengths = gene_lengths[genes2_idx]
 genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]), 'Gene B, {}bp'.format(genes2_lengths[1])]
@@ -936,7 +951,13 @@ ax = class_boxplot(log_counts_2,
 ax.set_xlabel('Genes')
 ax.set_ylabel('log gene expression counts over all samples')
 plt.show()
+```
 
+If we look just at the raw counts, it looks like the longer Gene B is expressed
+slightly more than Gene A.
+But, after RPKM normalization, a different picture emerges:
+
+```python
 ax = class_boxplot(log_ncounts_2,
                    ['RPKM normalized'] * 3,
                    labels=genes2_labels)
@@ -945,10 +966,8 @@ ax.set_ylabel('log RPKM gene expression counts over all samples')
 plt.show()
 ```
 
-Just looking at the raw counts, it looks like the longer gene B is expressed slightly more than gene A.
-Yet once we normalize to RPKM values, the story changes substantially.
 Now it looks like gene A is actually expressed at a much higher level than gene B.
-This is because RPKM includes normalization for gene length, so we can now directly compare between genes of dramatically different lengths.
+This is because RPKM includes normalization for gene length, so we can now directly compare between genes of different lengths.
 
 ## Taking stock
 
