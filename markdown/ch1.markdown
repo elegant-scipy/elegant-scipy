@@ -620,6 +620,10 @@ def binned_boxplot(x, y,
                    ylabel='average log counts'):
     """Plot the distribution of `y` dependent on `x` using many boxplots.
 
+    Note: all inputs are expected to be log-scaled.
+
+    Parameters
+    ----------
     x: 1D array of float
         Independent variable values.
     y: 1D array of float
@@ -638,31 +642,34 @@ def binned_boxplot(x, y,
     # expected by `plt.boxplot`
     binned_y = [y[x_bin_idxs == i]
                 for i in range(np.max(x_bin_idxs))]
-    plt.figure(figsize=(16,3))
+    fig, ax = plt.subplots(figsize=(16,3))
 
     # Make the x-axis labels using the bin centers
     x_bin_centers = (x_bins[1:] + x_bins[:-1]) / 2
-    x_labels = np.round(np.exp(x_bin_centers)).astype(int)
+    x_ticklabels = np.round(np.exp(x_bin_centers)).astype(int)
 
-    # use only every 5th label to prevent crowding on x-axis ticks
-    labels = []
-    for i, lab in enumerate(x_labels):
-        if i % 5 == 0:
-            labels.append(str(lab))
-        else:
-            labels.append('')
     # make the boxplot
-    plt.boxplot(binned_y, labels=labels, sym=".")
+    ax.boxplot(binned_y, labels=x_ticklabels, sym=".")
+
+    # show only every 5th label to prevent crowding on x-axis
+    plt.setp(ax.xaxis.get_ticklabels(), visible=False)
+    for label in ax.xaxis.get_ticklabels()[::5]:
+        label.set_visible(True)
 
     # Adjust the axis names
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+
     plt.show()
+```
 
+```python
 log_counts = np.log(counts_lib_norm + 1)
-mean_log_counts = np.mean(log_counts, axis=1)
+mean_log_counts = np.mean(log_counts, axis=1)  # across samples
 log_gene_lengths = np.log(gene_lengths)
+```
 
+```python
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
