@@ -602,6 +602,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         box = ax.boxplot(class2data[cls], **kwargs)
         lines.append(box['caps'][0])
     ax.legend(lines, all_classes)
+    return ax
 ```
 
 Now we can plot a colored boxplot according to normalized vs unnormalized samples.
@@ -610,11 +611,12 @@ We show only three samples from each class for illustration:
 ```python
 log_counts_3 = list(np.log(counts.T[:3] + 1))
 log_ncounts_3 = list(np.log(counts_lib_norm.T[:3] + 1))
-class_boxplot(log_counts_3 + log_ncounts_3,
-              ['raw counts'] * 3 + ['normalized by library size'] * 3,
-              labels=[1, 2, 3, 1, 2, 3])
-plt.xlabel('sample number')
-plt.ylabel('log gene expression counts')
+ax = class_boxplot(log_counts_3 + log_ncounts_3,
+                   ['raw counts'] * 3 + ['normalized by library size'] * 3,
+                   labels=[1, 2, 3, 1, 2, 3])
+ax.set_xlabel('sample number')
+ax.set_ylabel('log gene expression counts')
+
 plt.show()
 ```
 
@@ -925,18 +927,18 @@ genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]), 'Gene B, {}bp'.format
 log_counts_2 = list(np.log(counts[genes2_idx] + 1))
 log_ncounts_2 = list(np.log(counts_rpkm[genes2_idx] + 1))
 
-class_boxplot(log_counts_2,
-              ['raw counts'] * 3,
-              labels=genes2_labels)
-plt.xlabel('Genes')
-plt.ylabel('log gene expression counts over all samples')
+ax = class_boxplot(log_counts_2,
+                   ['raw counts'] * 3,
+                   labels=genes2_labels)
+ax.set_xlabel('Genes')
+ax.set_ylabel('log gene expression counts over all samples')
 plt.show()
 
-class_boxplot(log_ncounts_2,
-              ['RPKM normalized'] * 3,
-              labels=genes2_labels)
-plt.xlabel('Genes')
-plt.ylabel('log RPKM gene expression counts over all samples')
+ax = class_boxplot(log_ncounts_2,
+                   ['RPKM normalized'] * 3,
+                   labels=genes2_labels)
+ax.set_xlabel('Genes')
+ax.set_ylabel('log RPKM gene expression counts over all samples')
 plt.show()
 ```
 
