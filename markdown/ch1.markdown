@@ -574,24 +574,24 @@ def class_boxplot(data, classes, colors=None, **kwargs):
     kwargs : dict
         Keyword arguments to pass on to `plt.boxplot`.
     """
-    # default color palette
+    # default boxplot parameters; only updated if not specified
+    kwargs.setdefault('sym', '.')
+    kwargs.setdefault('whiskerprops', {'linestyle': '-'})
+
+    # Set default color palette and map classes to colors
     if colors is None:
         colors = sns.xkcd_palette(["windows blue", "amber", "greyish",
                                    "faded green", "dusty purple"])
-    # default boxplot parameters; only updated if not specified
-    kwargs['sym'] = kwargs.get('sym', '.')
-    kwargs['whiskerprops'] = kwargs.get('whiskerprops', {'linestyle': '-'})
-
     all_classes = sorted(set(classes))
     class2color = dict(zip(all_classes, it.cycle(colors)))
-    # create a dictionary containing data of same length but only data
-    # from that class
-    class2data = {}
-    for i, (distrib, cls) in enumerate(zip(data, classes)):
-        for c in all_classes:
-            class2data.setdefault(c, []).append([])  # empty dataset at first
-        class2data[cls][-1] = distrib
+
+    # map classes to data vectors
+    class2data = {cls: [] for cls in all_classes}
+    for distrib, cls in zip(data, classes):
+        class2data[cls].append(distrib)
+
     # then, do each boxplot in turn with the appropriate color
+    fig, ax = plt.subplots()
     lines = []
     for cls in all_classes:
         # set color for all elements of the boxplot
@@ -599,9 +599,9 @@ def class_boxplot(data, classes, colors=None, **kwargs):
                     'medianprops', 'flierprops']:
             kwargs.setdefault(key, {}).update(color=class2color[cls])
         # draw the boxplot
-        box = plt.boxplot(class2data[cls], **kwargs)
+        box = ax.boxplot(class2data[cls], **kwargs)
         lines.append(box['caps'][0])
-    plt.legend(lines, all_classes)
+    ax.legend(lines, all_classes)
 ```
 
 Now we can plot a colored boxplot according to normalized vs unnormalized samples.
