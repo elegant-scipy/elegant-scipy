@@ -615,7 +615,9 @@ So if a gene is twice as long, we are twice as likely to sample it.
 Let's see if the relationship between gene length and counts plays out in our data set.
 
 ```python
-def binned_boxplot(x, y):
+def binned_boxplot(x, y,
+                   xlabel='gene length (log scale)',
+                   ylabel='average log counts'):
     """Plot the distribution of `y` dependent on `x` using many boxplots.
 
     x: 1D array of float
@@ -631,7 +633,7 @@ def binned_boxplot(x, y):
     # of `digitize`. The max observation correctly goes into the last bin.
     x_bin_idxs = np.digitize(x, x_bins[:-1])
 
-    # Use those indices to create a list of arrays, each containing the `y` 
+    # Use those indices to create a list of arrays, each containing the `y`
     # values corresponding to `x`s in that bin. This is the input format
     # expected by `plt.boxplot`
     binned_y = [y[x_bin_idxs == i]
@@ -653,8 +655,8 @@ def binned_boxplot(x, y):
     plt.boxplot(binned_y, labels=labels, sym=".")
 
     # Adjust the axis names
-    plt.xlabel('gene length (log scale)')
-    plt.ylabel('average log-counts')
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.show()
 
 log_counts = np.log(counts_lib_norm + 1)
