@@ -673,7 +673,9 @@ log_gene_lengths = np.log(gene_lengths)
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
-We can see a positive relationship between the length of a gene and the counts!
+We can see that the longer a gene is, the higher its measure counts! As
+explained above, this is an artifact of the technique, not a biological signal!
+How do we account for this?
 
 ### Normalizing over samples and genes: RPKM
 
