@@ -4,7 +4,7 @@ This chapter touches on some statistical functions in SciPy, but more than that,
 We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
 
 Our use case is using gene expression data from The Cancer Genome Atlas (TCGA) project to predict mortality in skin cancer patients.
-We will working towards this goal throughout Chapters 1 and 2, learning about some key SciPy concepts along the way.
+We will be working towards this goal throughout Chapters 1 and 2, learning about some key SciPy concepts along the way.
 Before we can predict mortality, we will need to normalize the expression data using a method called RPKM normalization.
 This allows the comparison of measurements between different samples and genes.
 (We will unpack what "gene expression" means in just a moment.)
@@ -84,7 +84,7 @@ Similarly, as we shall see in this chapter, differential expression can distingu
 **[ED NOTE doodle by Juan Nunez-Iglesias]**
 
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
-RNA is extracted from a tissue, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
+RNA is extracted from a tissue sample, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
 For this chapter we’ll be starting directly from this count data, but in [ch7?] we will talk more about how this type of data can be determined.
@@ -216,7 +216,7 @@ for i, val in enumerate(list_array):
 x = nd_array * 5
 ```
 
-More than 100 times faster, and more concise, too!
+Close to 100 times faster, and more concise, too!
 
 Arrays are also size efficient.
 In Python, each element in a list is an object and is given a healthy memory allocation (or is that unhealthy?).
