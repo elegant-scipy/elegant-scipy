@@ -620,9 +620,8 @@ def binned_boxplot(x, y):
     x: x axis, values to be binned. Should be a 1D ndarray.
     y: y axis. Should be a 1D ndarray.
     """
-    # get the "optimal" bin size using astropy's histogram function
-    from astropy.stats import histogram
-    gene_len_hist, gene_len_bins = histogram(log_gene_lengths, bins='knuth')
+    gene_len_hist, gene_len_bins = np.histogram(log_gene_lengths, bins='auto')
+
     # np.digitize tells you which bin an observation belongs to.
     # we don't use the last bin edge because it breaks the right-open assumption
     # of digitize. The max observation correctly goes into the last bin.
