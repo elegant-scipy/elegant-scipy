@@ -462,14 +462,25 @@ plt.style.use('ggplot') # Use ggplot style graphs for something a little prettie
 total_counts = counts.sum(axis=0) # sum each column (axis=1 would sum rows)
 
 from scipy import stats
-density = stats.kde.gaussian_kde(total_counts) # Use gaussian smoothing to estimate the density
-x = np.arange(min(total_counts), max(total_counts), 10000) # create ndarray of integers from min to max in steps of 10,000
-plt.plot(x, density(x))
-plt.xlabel("Total counts per individual")
-plt.ylabel("Density")
+
+# Use Gaussian smoothing to estimate the density
+density = stats.kde.gaussian_kde(total_counts)
+
+# Make values for which to estimate the density, for plotting
+x = np.arange(min(total_counts), max(total_counts), 10000)
+
+# Make the density plot
+fig, ax = plt.subplots()
+ax.plot(x, density(x))
+ax.set_xlabel("Total counts per individual")
+ax.set_ylabel("Density")
+
 plt.show()
 
-print("Min counts: {0}, Mean counts: {1}, Max counts: {2}".format(total_counts.min(), total_counts.mean(), total_counts.max()))
+print('Count statistics:\n  min:  {0}\n  mean: {1}\n  max: {2}'
+      .format(np.min(total_counts),
+              np.mean(total_counts),
+              np.max(total_counts))
 ```
 
 We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
@@ -485,11 +496,13 @@ counts_subset = counts[:,samples_index]
 
 ```python
 # Bar plot of expression counts by individual
-plt.figure(figsize=(16,5))
-plt.boxplot(counts_subset, sym=".")
-plt.title("Gene expression counts raw")
-plt.xlabel("Individuals")
-plt.ylabel("Gene expression counts")
+fig, ax = plt.subplots(figsize=(16,5))
+
+ax.boxplot(counts_subset, sym=".")
+ax.set_title("Gene expression counts raw")
+ax.set_xlabel("Individuals")
+ax.set_ylabel("Gene expression counts")
+
 plt.show()
 ```
 
@@ -499,11 +512,13 @@ Both the log function and the n + 1 step can be done using broadcasting to simpl
 
 ```python
 # Bar plot of expression counts by individual
-plt.figure(figsize=(16,5))
-plt.boxplot(np.log(counts_subset + 1), sym=".")
-plt.title("Gene expression counts raw")
-plt.xlabel("Individuals")
-plt.ylabel("Gene expression counts")
+fig, ax = plt.subplots(figsize=(16,5))
+
+ax.boxplot(np.log(counts_subset + 1), sym=".")
+ax.set_title("Gene expression counts raw")
+ax.set_xlabel("Individuals")
+ax.set_ylabel("Gene expression counts")
+
 plt.show()
 ```
 
@@ -517,11 +532,13 @@ counts_lib_norm = counts / total_counts * 1000000 # Multiply by 1 million to get
 counts_subset_lib_norm = counts_lib_norm[:,samples_index]
 
 # Bar plot of expression counts by individual
-plt.figure(figsize=(16,5))
-plt.boxplot(np.log(counts_subset_lib_norm + 1), sym=".")
-plt.title("Gene expression counts normalized by library size")
-plt.xlabel("Individuals")
-plt.ylabel("Gene expression counts")
+fig, ax = plt.subplots(figsize=(16,5))
+
+ax.boxplot(np.log(counts_subset_lib_norm + 1), sym=".")
+ax.set_title("Gene expression counts normalized by library size")
+ax.set_xlabel("Individuals")
+ax.set_ylabel("Gene expression counts")
+
 plt.show()
 ```
 
