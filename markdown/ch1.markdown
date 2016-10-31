@@ -616,34 +616,42 @@ Let's see if the relationship between gene length and counts plays out in our da
 
 ```python
 def binned_boxplot(x, y):
-    """
-    x: x axis, values to be binned. Should be a 1D ndarray.
-    y: y axis. Should be a 1D ndarray.
-    """
-    gene_len_hist, gene_len_bins = np.histogram(log_gene_lengths, bins='auto')
+    """Plot the distribution of `y` dependent on `x` using many boxplots.
 
-    # np.digitize tells you which bin an observation belongs to.
-    # we don't use the last bin edge because it breaks the right-open assumption
-    # of digitize. The max observation correctly goes into the last bin.
-    gene_len_idxs = np.digitize(log_gene_lengths, gene_len_bins[:-1])
-    # Use those indices to create a list of arrays, each containing the log
-    # counts corresponding to genes of that length. This is the input expected
-    # by plt.boxplot
-    binned_counts = [mean_log_counts[gene_len_idxs == i]
-                     for i in range(np.max(gene_len_idxs))]
+    x: 1D array of float
+        Independent variable values.
+    y: 1D array of float
+        Dependent variable values.
+    """
+    # Define bins of `x` depending on density of observations
+    x_hist, x_bins = np.histogram(x, bins='auto')
+
+    # Use `np.digitize` to number the bins
+    # Discard the last bin edge because it breaks the right-open assumption
+    # of `digitize`. The max observation correctly goes into the last bin.
+    x_bin_idxs = np.digitize(x, x_bins[:-1])
+
+    # Use those indices to create a list of arrays, each containing the `y` 
+    # values corresponding to `x`s in that bin. This is the input format
+    # expected by `plt.boxplot`
+    binned_y = [y[x_bin_idxs == i]
+                for i in range(np.max(x_bin_idxs))]
     plt.figure(figsize=(16,3))
-    # Make the x-axis labels using real gene length
-    gene_len_bin_centres = (gene_len_bins[1:] + gene_len_bins[:-1]) / 2
-    gene_len_labels = np.round(np.exp(gene_len_bin_centres)).astype(int)
+
+    # Make the x-axis labels using the bin centers
+    x_bin_centers = (x_bins[1:] + x_bins[:-1]) / 2
+    x_labels = np.round(np.exp(x_bin_centers)).astype(int)
+
     # use only every 5th label to prevent crowding on x-axis ticks
     labels = []
-    for i, lab in enumerate(gene_len_labels):
+    for i, lab in enumerate(x_labels):
         if i % 5 == 0:
             labels.append(str(lab))
         else:
             labels.append('')
     # make the boxplot
-    plt.boxplot(binned_counts, labels=labels, sym=".")
+    plt.boxplot(binned_y, labels=labels, sym=".")
+
     # Adjust the axis names
     plt.xlabel('gene length (log scale)')
     plt.ylabel('average log-counts')
