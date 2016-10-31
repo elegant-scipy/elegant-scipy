@@ -775,21 +775,21 @@ broadcasting can only occur if the sizes of the dimensions match,
 or one of them is equal to 1.
 
 For example, let's say we have two ndarrays, A and B:  
-A.shape = (1, 2)  
-B.shape = (2,)
+`A.shape = (1, 2)`  
+`B.shape = (2,)`
 
 If we performed the operation `A * B` then broadcasting would occur.
 B has fewer dimension than A, so during the calculation
 a new dimension is prepended to B with value 1.  
-B.shape = (1, 2)  
+`B.shape = (1, 2)`  
 Now A and B have the same number of dimensions, so broadcasting can proceed.
 
 Now let's say we have another array, C:  
-C.shape = (2, 1)  
-B.shape = (2,)  
+`C.shape = (2, 1)`  
+`B.shape = (2,)`  
 Now, if we were to do the operation `C * B`,
 a new dimension needs to be prepended to B.  
-B.shape = (1, 2)  
+`B.shape = (1, 2)`  
 However, the dimensions of the two ndarrays do not match,
 so broadcasting will fail.
 
@@ -843,7 +843,7 @@ print('N.shape', N.shape)
 ```
 
 Once we trigger broadcasting, an additional dimension will be prepended to N:  
-N.shape (1, 375)  
+`N.shape (1, 375)`  
 The dimensions will match so we don't have to do anything.
 However, for readability, it can be useful to add the extra dimension to N anyway.
 
