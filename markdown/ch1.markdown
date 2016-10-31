@@ -898,7 +898,7 @@ log_gene_lengths = np.log(gene_lengths)
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
-RPMK normalization can be particularly useful comparing the expression profile of two different genes.
+RPKM normalization can be particularly useful comparing the expression profile of two different genes.
 We've already seen that longer genes have higher counts, but this doesn't mean their expression level is actually higher.
 Let's choose a short gene and a long gene and compare their counts before and after RPKM normalization to see what we mean.
 
