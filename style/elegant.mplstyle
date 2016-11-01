@@ -7,9 +7,8 @@ lines.linewidth: 2
 axes.prop_cycle: cycler('color', ['0072b2', '009e73', 'd55e00', 'cc79a7', 'f0e442', '56b4e9', '0072b2'])
 
 # Remove the right and top axis spines
-axes.spine.left: true
-axes.spine.bottom: true
-axes.spine.top: false
-axes.spine.right: false
-
+axes.spines.left: true
+axes.spines.bottom: true
+axes.spines.top: false
+axes.spines.right: false
 
