@@ -12,3 +12,30 @@ axes.spines.bottom: true
 axes.spines.top: false
 axes.spines.right: false
 
+# Use thicker axes
+axes.linewidth: 1.5
+
+# Remove ticks
+xtick.major.size: 0
+xtick.minor.size: 0
+xtick.labelsize: large
+ytick.major.size: 0
+ytick.minor.size: 0
+ytick.labelsize: large
+
+# Remove grids
+grid.linewidth: 0
+
+# Remove box around legend
+# Use 3 scatter points in points legend
+# Use large font in legend
+legend.frameon: false
+legend.scatterpoints: 3
+legend.fontsize: large
+
+figure.dpi: 300
+figure.facecolor: 1.0
+figure.autolayout: true
+
+image.interpolation: nearest
+image.cmap: gray
