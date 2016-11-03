@@ -464,11 +464,11 @@ To visualize the distribution of total counts, we will use a kernel density esti
 KDE is commonly used to smooth out histograms, which gives a clearer picture of the underlying distribution.
 
 ```python
-%matplotlib inline
 # Make all plots appear inline in the Jupyter notebook from now onwards
-
+%matplotlib inline
 import matplotlib.pyplot as plt
-plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
+# Use our own style file for the plots
+plt.style.use('style/elegant.mplstyle')
 ```
 
 ```python
@@ -511,7 +511,7 @@ counts_subset = counts[:,samples_index]
 # Bar plot of expression counts by individual
 fig, ax = plt.subplots(figsize=(16,5))
 
-ax.boxplot(counts_subset, sym=".")
+ax.boxplot(counts_subset)
 ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("Gene expression counts")
@@ -527,7 +527,7 @@ Both the log function and the n + 1 step can be done using broadcasting to simpl
 # Bar plot of expression counts by individual
 fig, ax = plt.subplots(figsize=(16,5))
 
-ax.boxplot(np.log(counts_subset + 1), sym=".")
+ax.boxplot(np.log(counts_subset + 1))
 ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("log gene expression counts")
@@ -547,7 +547,7 @@ counts_subset_lib_norm = counts_lib_norm[:,samples_index]
 # Bar plot of expression counts by individual
 fig, ax = plt.subplots(figsize=(16,5))
 
-ax.boxplot(np.log(counts_subset_lib_norm + 1), sym=".")
+ax.boxplot(np.log(counts_subset_lib_norm + 1))
 ax.set_title("Gene expression counts normalized by library size")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("log gene expression counts")
@@ -582,22 +582,16 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         The color corresponding to each class. These will be cycled in
         the order in which the classes appear in `classes`. (So it is
         ideal to provide as many colors as there are classes! The
-        default palette contains five colors.)
+        default palette contains six colors.)
 
     Other parameters
     ----------------
     kwargs : dict
         Keyword arguments to pass on to `plt.boxplot`.
     """
-    # default boxplot parameters; only updated if not specified
-    kwargs.setdefault('sym', '.')
-    kwargs.setdefault('whiskerprops', {'linestyle': '-'})
-
-    # Set default color palette and map classes to colors
-    if colors is None:
-        colors = sns.xkcd_palette(["windows blue", "amber", "greyish",
-                                   "faded green", "dusty purple"])
     all_classes = sorted(set(classes))
+    if colors is None:
+        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
     class2color = dict(zip(all_classes, it.cycle(colors)))
 
     # map classes to data vectors
@@ -691,7 +685,7 @@ def binned_boxplot(x, y,
     x_ticklabels = np.round(np.exp(x_bin_centers)).astype(int)
 
     # make the boxplot
-    ax.boxplot(binned_y, labels=x_ticklabels, sym=".")
+    ax.boxplot(binned_y, labels=x_ticklabels)
 
     # show only every 5th label to prevent crowding on x-axis
     plt.setp(ax.xaxis.get_ticklabels(), visible=False)
