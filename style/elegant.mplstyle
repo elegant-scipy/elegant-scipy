@@ -39,3 +39,8 @@ figure.autolayout: true
 
 image.interpolation: nearest
 image.cmap: gray
+
+# Box plots
+boxplot.whiskerprops.linestyle: -
+boxplot.whiskerprops.linewidth: 2
+boxplot.flierprops.marker: .
