@@ -978,7 +978,7 @@ This is because RPKM includes normalization for gene length, so we can now direc
 
 So far we have:
 - imported data using Pandas;
-- gotten to know the key NumPy data type: the ndarray; and
+- gotten to know the key NumPy object class: the ndarray; and
 - used the power of broadcasting to make our calculations more elegant.
 
 In Chapter 2 we will continue working with the same data set, implementing a
