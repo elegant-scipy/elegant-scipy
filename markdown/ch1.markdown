@@ -94,7 +94,7 @@ The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
 RNA is extracted from a tissue sample, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
-For this chapter we’ll be starting directly from this count data.
+We’ll be starting directly from this count data.
 
 ![RNAseq](../figures/RNAseq.png)
 
