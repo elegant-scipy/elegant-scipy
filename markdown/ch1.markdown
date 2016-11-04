@@ -212,19 +212,16 @@ Let's compare how long it takes to multiply all the values in the array by 5,
 using the IPython `timeit` magic function. First, when the data is in a list:
 
 ```python
-%%timeit -n10
-for i, val in enumerate(list_array):
-    list_array[i] = val * 5
+%timeit -n10 y = [val * 5 for val in list_array]
 ```
 
 Now, using NumPy's built-in *vectorized* operations:
 
 ```python
-%%timeit -n10
-x = nd_array * 5
+%timeit -n10 x = nd_array * 5
 ```
 
-Close to 100 times faster, and more concise, too!
+Close to 50 times faster, and more concise, too!
 
 Arrays are also size efficient.
 In Python, each element in a list is an object and is given a healthy memory allocation (or is that unhealthy?).
