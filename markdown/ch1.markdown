@@ -560,6 +560,8 @@ Once to divide all the gene expression counts by the total for that column, and 
 import matplotlib.pyplot as plt
 import seaborn as sns
 import itertools as it
+from collections import defaultdict
+
 
 def class_boxplot(data, classes, colors=None, **kwargs):
     """Make a boxplot with boxes colored according to the class they belong to.
@@ -595,7 +597,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
 
     # map classes to data vectors
     # other classes get an empty list at that position for offset
-    class2data = {cls: [] for cls in all_classes}
+    class2data = defaultdict(list)
     for distrib, cls in zip(data, classes):
         for c in all_classes:
             class2data[c].append([])
