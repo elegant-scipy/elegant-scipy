@@ -820,13 +820,13 @@ in the remaining segments.
 
 A region adjacency graph (RAG) is a graph in which every node represents one
 of the above regions, and an edge connects two nodes when they touch. For a
-taste of what it looks like before we build one, we'll use the `draw_rag` function
+taste of what it looks like before we build one, we'll use the `show_rag` function
 from scikit-image — indeed, the library that contains this chapter's code snippet!
 
 ```python
 from skimage.future import graph
 g = graph.rag_mean_color(tiger, seg)
-graph.draw_rag(seg, g, tiger)
+graph.show_rag(seg, g, tiger)
 ```
 
 Here, you can see the nodes corresponding to each segment, and the edges
