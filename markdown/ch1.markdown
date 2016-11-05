@@ -310,7 +310,15 @@ y = np.reshape(y, (1, len(y)))
 print(y)
 ```
 
-In order to do broadcasting, the two arrays have to have the same number of dimensions and the sizes of the dimensions need to match or be equal to 1.
+Two shapes are compatible when, for each dimension, either is equal to
+1 (one) or they match one another.
+
+[^more_dimensions]: We always start by comparing the last dimensions,
+                    and work our way forward, ignoring excess
+                    dimensions in the case of one array having more
+                    than the other.  E.g., `(3, 5, 1)` and `(5, 8)`
+                    would match.
+
 Let's check the shapes of these two arrays.
 
 ```python
@@ -356,8 +364,8 @@ with particular emphasis on tabular and time series data.
 Here, we will use it here to read in tabular data of mixed type.
 It uses the DataFrame type, which is a flexible tabular format based on the data frame object in R.
 For example the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so reading it into a homogeneous array of numbers would be the wrong approach.
-Although NumPy has some support for mixed data types, it is not designed for
-this use case, and makes subsequent operations harder.
+Although NumPy has some support for mixed data types (called "structured arrays"), it is not primarily designed for
+this use case, which makes subsequent operations harder than they need to be.
 
 By reading the data in as a Pandas DataFrame we can let Pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
 Here we are just using Pandas briefly to import data.
@@ -774,8 +782,7 @@ But what happens when we need to divide a 2D array by a 1D array?
 
 #### Broadcasting rules
 
-Broadcasting allows calculations between ndarrays that have a different
-number of dimensions.
+Broadcasting allows calculations between ndarrays that have differing shapes.
 
 If the input arrays do not have the same number of dimensions,
 then then an additional dimension is added to the start of the first array,
