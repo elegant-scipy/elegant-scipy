@@ -644,7 +644,7 @@ from sensory neurons to motor neurons. But all of the motor neurons do essential
 the same thing, as hinted at by their generic names, VA 1-12. If we were to collapse
 them into one, the high centrality of the "command" neurons AVA R and L, and
 PVC R and L, might vanish. Returning to the rail lines example, suppose trains
-between Grand Central Station in New York City and Washington DC's Union
+between Penn Station in New York City and Washington DC's Union
 Station could end up at one of 12 different platforms, *and we counted each of
 those as a separate train line*. The betweenness centrality of Grand Central
 would be inflated because from it you could get to Union Station platform 1,
