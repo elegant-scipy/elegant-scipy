@@ -17,7 +17,7 @@ processing.
 You probably know that digital images are made up of *pixels*. These are
 the light signal *sampled on a regular grid*. When computing
 on images, we often deal with objects much larger than individual pixels.
-In a landscape, the sky, earth, trees, rocks each span many
+In a landscape, the sky, earth, trees, and rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
 or RAG. Its *nodes* hold properties of each region in the image, and its
 *links* hold the spatial relationships between the regions. Two nodes are
@@ -94,7 +94,7 @@ This `imshow` function displays a numpy array as an image. The converse is also 
 can be considered as a numpy array. For this example we use the scikit-image
 library, a collection of image processing tools built on top of NumPy and SciPy.
 
-Here is PNG image from the scikit-image repository. It is a black and white
+Here is a PNG image from the scikit-image repository. It is a black and white
 (sometimes called "grayscale") picture of some ancient Roman coins from
 Pompeii, obtained from the Brooklyn Museum [^coins-source]:
 
@@ -150,7 +150,7 @@ plt.imshow(astro_sq);
 
 <!-- exercise begin -->
 
-**Exercise:** We just saw how to select a square and paint it red. Can you
+**Exercise:** We just saw how to select a square and paint it green. Can you
 extend that to other shapes and colors? Create a function to draw a blue grid
 onto a color image, and apply it to the `astronaut` image of Eileen Collins
 (above). Your function should take
@@ -240,7 +240,7 @@ plt.ylim(-0.1, 1.1);
 ```
 
 To find *when* the light is turned on, you can *delay* it by 1ms, then
-*subtract* the original from delayed signal. This way, when the signal is
+*subtract* the original from the delayed signal. This way, when the signal is
 unchanged from one millisecond to the next, the subtraction will give zero,
 but when the signal *increases*, you will get a positive signal.
 
@@ -510,7 +510,7 @@ does this in a single pass using `ndi.generic_filter`?
 # Graphs and the NetworkX library
 
 To introduce you to graphs, we will reproduce some results from the paper
-["Structural properties of the *Caenorhabditis elegans* neuronal networks"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Varshney *et al*, 2011.
+["Structural properties of the *Caenorhabditis elegans* neuronal network"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Varshney *et al*, 2011.
 Note that in this context the term "graph" is synonymous with "network", but not with "plot".
 Mathematicians and computer scientists invented slightly different words to discuss these:
 graph = network, vertex = node, and edge = link.
@@ -608,14 +608,14 @@ wormbrain.add_edges_from(conn_edges)
 We can now examine some of the properties of this network. One of the
 first things researchers ask about directed networks is which nodes are
 the most critical to information flow within it. Nodes with high
-*betweenness centrality* are those that belong the shortest path between
+*betweenness centrality* are those that belong to the shortest path between
 many different pairs of nodes. Think of a rail network: certain stations will
 connect to many lines, so that you will be forced to change lines there
 for many different trips. They are the ones with high betweenness
 centrality.
 
-With networkx, we can find similarly important neurons with ease. In the
-networkx API documentation [^nxdoc], under "centrality", the docstring
+With NetworkX, we can find similarly important neurons with ease. In the
+NetworkX API documentation [^nxdoc], under "centrality", the docstring
 for `betweenness_centrality` [^bwcdoc] specifies a function that takes a
 graph as input and returns a dictionary mapping node IDs to betweenness
 centrality values (floating point values).
@@ -644,7 +644,7 @@ from sensory neurons to motor neurons. But all of the motor neurons do essential
 the same thing, as hinted at by their generic names, VA 1-12. If we were to collapse
 them into one, the high centrality of the "command" neurons AVA R and L, and
 PVC R and L, might vanish. Returning to the rail lines example, suppose trains
-between Grand Central Station in New York City and Washington DC's Union
+between Penn Station in New York City and Washington DC's Union
 Station could end up at one of 12 different platforms, *and we counted each of
 those as a separate train line*. The betweenness centrality of Grand Central
 would be inflated because from it you could get to Union Station platform 1,
