@@ -42,6 +42,7 @@ savefig.dpi: 300
 
 image.interpolation: nearest
 image.cmap: gray
+image.resample: false
 
 # Box plots
 boxplot.whiskerprops.linestyle: -
