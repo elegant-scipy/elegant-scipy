@@ -74,13 +74,7 @@ import numpy as np
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 from matplotlib import cm  # colormap module
-```
-
-Next, we set the default matplotlib colormap and interpolation method:
-
-```python
-mpl.rcParams['image.cmap'] = 'gray'
-mpl.rcParams['image.interpolation'] = None
+plt.style.use('style/elegant.mplstyle')
 ```
 
 Finally, "make some noise" and display it as an image:
@@ -235,8 +229,9 @@ array of length 100. Suppose that after 30ms the light signal is turned on, and
 ```python
 sig = np.zeros(100, np.float) #
 sig[30:60] = 1  # signal = 1 during the period 30-60ms because light is observed
-plt.plot(sig);
-plt.ylim(-0.1, 1.1);
+fig, ax = plt.subplots()
+ax.plot(sig);
+ax.set_ylim(-0.1, 1.1);
 ```
 
 To find *when* the light is turned on, you can *delay* it by 1ms, then
@@ -252,8 +247,9 @@ only interested in pinpointing the time when the light was turned on, we can
 sigdelta = sig[1:]  # sigdelta[0] equals sig[1], and so on
 sigdiff = sigdelta - sig[:-1]
 sigon = np.clip(sigdiff, 0, np.inf)
-plt.plot(sigon)
-plt.ylim(-0.1, 1.1)
+fig, ax = plt.subplots()
+ax.plot(sigon)
+ax.set_ylim(-0.1, 1.1)
 print('Signal on at:', 1 + np.flatnonzero(sigon)[0], 'ms')
 ```
 
@@ -677,8 +673,7 @@ connected component from our `wormbrain` network:
 
 ```python
 sccs = nx.strongly_connected_component_subgraphs(wormbrain)
-sccs = sorted(sccs, key=len, reverse=True)
-giantscc = sccs[0]
+giantscc = max(sccs, key=len)
 print('The largest strongly connected component has %i nodes,' %
       giantscc.number_of_nodes(), 'out of %i total.' %
       wormbrain.number_of_nodes())
@@ -702,11 +697,11 @@ survival = 1 - cumfreq
 Then, plot using Matplotlib:
 
 ```python
-plt.loglog(np.arange(1, len(survival) + 1), survival, c='b', lw=2)
+plt.loglog(np.arange(1, len(survival) + 1), survival)
 plt.xlabel('in-degree distribution')
 plt.ylabel('fraction of neurons with higher in-degree distribution')
 plt.scatter(avg_in_degree, 0.0022, marker='v')
-plt.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree, )
+plt.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
 plt.ylim(0.002, 1.0)
 plt.show()
 ```
