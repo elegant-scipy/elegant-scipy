@@ -469,6 +469,9 @@ KDE is commonly used to smooth out histograms, which gives a clearer picture of 
 import matplotlib.pyplot as plt
 # Use our own style file for the plots
 plt.style.use('style/elegant.mplstyle')
+# ignore MPL layout warnings
+import warnings
+warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
 
 ```python
