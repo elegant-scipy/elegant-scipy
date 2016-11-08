@@ -12,6 +12,9 @@ axes.spines.bottom: true
 axes.spines.top: false
 axes.spines.right: false
 
+# Use large font for axis labels
+axes.labelsize: large
+
 # Use thicker axes
 axes.linewidth: 1.5
 
@@ -33,9 +36,9 @@ legend.frameon: false
 legend.scatterpoints: 3
 legend.fontsize: large
 
-figure.dpi: 300
 figure.facecolor: 1.0
-figure.autolayout: true
+figure.autolayout: false
+savefig.dpi: 300
 
 image.interpolation: nearest
 image.cmap: gray
