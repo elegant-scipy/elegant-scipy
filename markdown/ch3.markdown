@@ -441,7 +441,7 @@ selling a house in an expensive neighborhood costs more.) With
 ```python
 from skimage import morphology
 def tax(prices):
-    return 10 + 0.05 * np.percentile(prices, 90)
+    return 10000 + 0.05 * np.percentile(prices, 90)
 house_price_map = (0.5 + np.random.rand(100, 100)) * 1e6
 footprint = morphology.disk(radius=10)
 tax_rate_map = ndi.generic_filter(house_price_map, tax, footprint=footprint)
