@@ -67,7 +67,7 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 %matplotlib inline
 
 import matplotlib.pyplot as plt
-plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
+plt.style.use('style/elegant.mplstyle')
 ```
 
 ### Get the data
