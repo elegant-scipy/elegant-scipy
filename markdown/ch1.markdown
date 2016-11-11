@@ -486,7 +486,7 @@ density = stats.kde.gaussian_kde(total_counts)
 x = np.arange(min(total_counts), max(total_counts), 10000)
 
 # Make the density plot
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8, 5))
 ax.plot(x, density(x))
 ax.set_xlabel("Total counts per individual")
 ax.set_ylabel("Density")
@@ -566,7 +566,6 @@ Once to divide all the gene expression counts by the total for that column, and 
 
 ```python
 import matplotlib.pyplot as plt
-import seaborn as sns
 import itertools as it
 from collections import defaultdict
 
@@ -606,7 +605,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         class2data[cls][-1] = distrib
 
     # then, do each boxplot in turn with the appropriate color
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(2 * len(data), 5))
     lines = []
     for cls in all_classes:
         # set color for all elements of the boxplot
