@@ -657,8 +657,8 @@ through all the links. The connectome is a *directed* graph, meaning the
 edges *point* from one node to the other, rather than merely connecting
 them. In this case, a strongly connected component is one where all nodes
 are reachable from each other by traversing links *in the correct direction*.
-So A -> B -> C is not strongly connected, because there is no way to get to
-A from B or C. but A -> B -> C -> A *is* strongly connected.
+So A $\rightarrow$ B $\rightarrow$ C is not strongly connected, because there is no way to get to
+A from B or C. However, A $\rightarrow$ B $\rightarrow$ C $\rightarrow$ A *is* strongly connected.
 
 In a neuronal circuit, you can think of the strongly connected component
 as the "brain" of the circuit, where the processing happens, while nodes
