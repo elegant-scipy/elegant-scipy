@@ -449,6 +449,8 @@ plt.imshow(tax_rate_map)
 plt.colorbar()
 ```
 
+Now lets step back for a moment and put what we've learnt so far together to tackle a few exercises.
+
 <!-- exercise begin -->
 
 **Exercise:** Conway's Game of Life.
