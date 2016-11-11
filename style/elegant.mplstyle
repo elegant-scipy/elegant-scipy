@@ -45,6 +45,14 @@ image.cmap: gray
 image.resample: false
 
 # Box plots
-boxplot.whiskerprops.linestyle: -
-boxplot.whiskerprops.linewidth: 2
 boxplot.flierprops.marker: .
+boxplot.flierprops.markerfacecolor: 0072b2
+boxplot.flierprops.markeredgecolor: 0072b2
+boxplot.boxprops.color: 0072b2
+boxplot.boxprops.linewidth: 2
+boxplot.whiskerprops.linestyle: -
+boxplot.whiskerprops.color: 0072b2
+boxplot.whiskerprops.linewidth: 2
+boxplot.capprops.linewidth: 0
+boxplot.medianprops.linewidth: 2
+boxplot.medianprops.color: d55e00
