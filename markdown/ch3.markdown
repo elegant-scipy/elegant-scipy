@@ -523,7 +523,7 @@ You might be slightly more familiar with the network terminology: a network cons
 
 Graphs are a natural representation for a bewildering variety of data. Pages on the world
 wide web, for example, can comprise nodes, while links between those pages can be,
-well, links. Or, in so-called *transcriptional networks*, nodes represent genes and edges
+well, links. Or, in so-called *transcription networks*, nodes represent genes and edges
 connect genes that have a direct influence on each other's expression.
 
 In our example, we will represent neurons in the nematode worm's nervous system as
