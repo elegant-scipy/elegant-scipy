@@ -646,7 +646,7 @@ them into one, the high centrality of the "command" neurons AVA R and L, and
 PVC R and L, might vanish. Returning to the rail lines example, suppose trains
 between Penn Station in New York City and Washington DC's Union
 Station could end up at one of 12 different platforms, *and we counted each of
-those as a separate train line*. The betweenness centrality of Grand Central
+those as a separate train line*. The betweenness centrality of Penn Station
 would be inflated because from it you could get to Union Station platform 1,
 platform 2, etc. That's not necessarily very interesting.
 
