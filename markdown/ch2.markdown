@@ -115,11 +115,10 @@ def plot_col_density(data, xlabel=None):
     density_per_col = [stats.kde.gaussian_kde(col) for col in data.T] # Use gaussian smoothing to estimate the density
     x = np.linspace(np.min(data), np.max(data), 100)
 
-    plt.figure()
+    fig, ax = plt.subplots()
     for density in density_per_col:
-        plt.plot(x, density(x))
-    plt.xlabel(xlabel)
-    plt.show()
+        ax.plot(x, density(x))
+    ax.set_xlabel(xlabel)
 
 # Before normalization
 log_counts = np.log(counts + 1)
@@ -269,7 +268,6 @@ Whew! So that's a lot of information, but let's dive right in and hopefully you'
 First, we define a function, `bicluster`, that clusters both the rows *and* the columns of a matrix:
 
 ```python
-import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import linkage
 
 
@@ -312,6 +310,8 @@ This is difficult to avoid for plotting, where design is often a matter of eyeba
 
 ```python
 from scipy.cluster.hierarchy import dendrogram, leaves_list
+
+
 def plot_bicluster(data, row_linkage, col_linkage,
                    row_nclusters=10, col_nclusters=3):
     """Perform a biclustering, plot a heatmap with dendrograms on each axis.
@@ -372,8 +372,8 @@ def plot_bicluster(data, row_linkage, col_linkage,
     ax.set_yticks([])
 
     # Axis labels
-    plt.xlabel('Samples')
-    plt.ylabel('Genes', labelpad=125)
+    ax.set_xlabel('Samples')
+    ax.set_ylabel('Genes', labelpad=125)
 
     # Plot legend
     axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.6])
@@ -492,7 +492,7 @@ def plot_cluster_survival_curves(clusters, sample_names, patients,
         If `True`, use `patients['melanoma-dead']` to right-censor the
         survival data.
     """
-    plt.figure()
+    fig, ax = plt.subplots()
     if type(clusters) == np.ndarray:
         cluster_ids = np.unique(clusters)
         cluster_names = ['cluster {}'.format(i) for i in cluster_ids]
@@ -513,11 +513,11 @@ def plot_cluster_survival_curves(clusters, sample_names, patients,
             censored = None
         stimes, sfracs = survival_distribution_function(survival_times,
                                                         censored)
-        plt.plot(stimes / 365, sfracs)
+        ax.plot(stimes / 365, sfracs)
 
-    plt.xlabel('survival time (years)')
-    plt.ylabel('fraction alive')
-    plt.legend(cluster_names)
+    ax.set_xlabel('survival time (years)')
+    ax.set_ylabel('fraction alive')
+    ax.legend(cluster_names)
 ```
 
 Now we can use the `fcluster` function to obtain cluster identities for the samples (columns of the counts data), and plot each survival curve separately.
