@@ -402,7 +402,7 @@ functional "colorblind"
 [colorbrewer palette](http://chrisalbon.com/python/seaborn_color_palettes.html):
 
 ```python
-from matplotlib import colors
+from matplotlib.colors import ListedColormap
 
 
 def plot_connectome(x_coords, y_coords, conn_matrix, *,
@@ -435,7 +435,7 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
         types = np.zeros(x_coords.shape, dtype=int)
     ntypes = len(np.unique(types))
     colors = plt.rcParams['axes.prop_cycle'][:ntypes].by_key()['color']
-    cmap = colors.ListedColormap(colors)
+    cmap = ListedColormap(colors)
 
     fig, ax = plt.subplots(**figkwargs)
 
