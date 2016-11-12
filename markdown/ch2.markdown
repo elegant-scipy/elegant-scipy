@@ -312,6 +312,13 @@ This is difficult to avoid for plotting, where design is often a matter of eyeba
 from scipy.cluster.hierarchy import dendrogram, leaves_list
 
 
+def clear_spines(axes):
+    for loc in ['left', 'right', 'top', 'bottom']:
+        axes.spines[loc].set_visible(False)
+    axes.set_xticks([])
+    axes.set_yticks([])
+
+
 def plot_bicluster(data, row_linkage, col_linkage,
                    row_nclusters=10, col_nclusters=3):
     """Perform a biclustering, plot a heatmap with dendrograms on each axis.
@@ -344,6 +351,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
     threshold_r = (row_linkage[-row_nclusters, 2] +
                    row_linkage[-row_nclusters+1, 2]) / 2
     dendrogram(row_linkage, orientation='left', color_threshold=threshold_r)
+    clear_spines(ax1)
 
     # Compute and plot column-wise dendrogram
     # See notes above for explanation of parameters to `add_axes`
@@ -351,12 +359,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
     threshold_c = (col_linkage[-col_nclusters, 2] +
                    col_linkage[-col_nclusters+1, 2]) / 2
     dendrogram(col_linkage, color_threshold=threshold_c)
-
-    # Hide axes labels
-    ax1.set_xticks([])
-    ax1.set_yticks([])
-    ax2.set_xticks([])
-    ax2.set_yticks([])
+    clear_spines(ax2)
 
     # Plot data heatmap
     ax = fig.add_axes([0.3, 0.1, 0.6, 0.6])
@@ -368,8 +371,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
     data = data[:, idx_cols]
 
     im = ax.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
-    ax.set_xticks([])
-    ax.set_yticks([])
+    clear_spines(ax)
 
     # Axis labels
     ax.set_xlabel('Samples')
