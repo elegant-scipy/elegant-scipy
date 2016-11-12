@@ -303,7 +303,7 @@ Simple: we just call `linkage` for the input matrix and also for the transpose o
 Next, we define a function to visualize the output of that clustering.
 We are going to rearrange the rows and columns of the input data so that similar rows are together and similar columns are together.
 And we are additionally going to show the merge tree for both rows and columns, displaying which observations belong together for each.
-The merge trees are presented as dendograms, with the branch-lengths indicating how similar the obvservations are to each other (shorter = more similar).
+The merge trees are presented as dendrograms, with the branch-lengths indicating how similar the obvservations are to each other (shorter = more similar).
 
 As a word of warning, there is a fair bit of hard-coding of parameters going on here.
 This is difficult to avoid for plotting, where design is often a matter of eyeballing to find the correct proportions.
@@ -345,7 +345,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
                    row_linkage[-row_nclusters+1, 2]) / 2
     dendrogram(row_linkage, orientation='left', color_threshold=threshold_r)
 
-    # Compute and plot column-wise dendogram
+    # Compute and plot column-wise dendrogram
     # See notes above for explanation of parameters to `add_axes`
     ax2 = fig.add_axes([0.3, 0.71, 0.6, 0.2])
     threshold_c = (col_linkage[-col_nclusters, 2] +
@@ -361,7 +361,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
     # Plot data heatmap
     ax = fig.add_axes([0.3, 0.1, 0.6, 0.6])
 
-    # Sort data by the dendogram leaves
+    # Sort data by the dendrogram leaves
     idx_rows = leaves_list(row_linkage)
     data = data[idx_rows, :]
     idx_cols = leaves_list(col_linkage)
