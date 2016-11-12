@@ -441,13 +441,15 @@ selling a house in an expensive neighborhood costs more.) With
 ```python
 from skimage import morphology
 def tax(prices):
-    return 10 + 0.05 * np.percentile(prices, 90)
+    return 10000 + 0.05 * np.percentile(prices, 90)
 house_price_map = (0.5 + np.random.rand(100, 100)) * 1e6
 footprint = morphology.disk(radius=10)
 tax_rate_map = ndi.generic_filter(house_price_map, tax, footprint=footprint)
 plt.imshow(tax_rate_map)
 plt.colorbar()
 ```
+
+Now lets step back for a moment and put what we've learnt so far together to tackle a few exercises.
 
 <!-- exercise begin -->
 
@@ -523,7 +525,7 @@ You might be slightly more familiar with the network terminology: a network cons
 
 Graphs are a natural representation for a bewildering variety of data. Pages on the world
 wide web, for example, can comprise nodes, while links between those pages can be,
-well, links. Or, in so-called *transcriptional networks*, nodes represent genes and edges
+well, links. Or, in so-called *transcription networks*, nodes represent genes and edges
 connect genes that have a direct influence on each other's expression.
 
 In our example, we will represent neurons in the nematode worm's nervous system as
@@ -646,7 +648,7 @@ them into one, the high centrality of the "command" neurons AVA R and L, and
 PVC R and L, might vanish. Returning to the rail lines example, suppose trains
 between Penn Station in New York City and Washington DC's Union
 Station could end up at one of 12 different platforms, *and we counted each of
-those as a separate train line*. The betweenness centrality of Grand Central
+those as a separate train line*. The betweenness centrality of Penn Station
 would be inflated because from it you could get to Union Station platform 1,
 platform 2, etc. That's not necessarily very interesting.
 
@@ -657,8 +659,8 @@ through all the links. The connectome is a *directed* graph, meaning the
 edges *point* from one node to the other, rather than merely connecting
 them. In this case, a strongly connected component is one where all nodes
 are reachable from each other by traversing links *in the correct direction*.
-So A -> B -> C is not strongly connected, because there is no way to get to
-A from B or C. but A -> B -> C -> A *is* strongly connected.
+So A $\rightarrow$ B $\rightarrow$ C is not strongly connected, because there is no way to get to
+A from B or C. However, A $\rightarrow$ B $\rightarrow$ C $\rightarrow$ A *is* strongly connected.
 
 In a neuronal circuit, you can think of the strongly connected component
 as the "brain" of the circuit, where the processing happens, while nodes
