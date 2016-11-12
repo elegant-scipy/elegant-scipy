@@ -464,11 +464,14 @@ To visualize the distribution of total counts, we will use a kernel density esti
 KDE is commonly used to smooth out histograms, which gives a clearer picture of the underlying distribution.
 
 ```python
-%matplotlib inline
 # Make all plots appear inline in the Jupyter notebook from now onwards
-
+%matplotlib inline
 import matplotlib.pyplot as plt
-plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
+# Use our own style file for the plots
+plt.style.use('style/elegant.mplstyle')
+# ignore MPL layout warnings
+import warnings
+warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
 
 ```python
@@ -483,7 +486,7 @@ density = stats.kde.gaussian_kde(total_counts)
 x = np.arange(min(total_counts), max(total_counts), 10000)
 
 # Make the density plot
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(8, 5))
 ax.plot(x, density(x))
 ax.set_xlabel("Total counts per individual")
 ax.set_ylabel("Density")
@@ -508,13 +511,31 @@ counts_subset = counts[:,samples_index]
 ```
 
 ```python
+# Some custom x-axis labelling to make our plots easier to read
+def reduce_xaxis_labels(ax, factor):
+    """Show only every ith label to prevent crowding on x-axis
+        e.g. factor = 2 would plot every second x-axis label,
+        starting at the first.
+
+    Parameters
+    ----------
+    ax : matplotlib plot axis to be adjusted
+    factor : int, factor to reduce the number of x-axis labels by
+    """
+    plt.setp(ax.xaxis.get_ticklabels(), visible=False)
+    for label in ax.xaxis.get_ticklabels()[::factor]:
+        label.set_visible(True)
+```
+
+```python
 # Bar plot of expression counts by individual
 fig, ax = plt.subplots(figsize=(16,5))
 
-ax.boxplot(counts_subset, sym=".")
+ax.boxplot(counts_subset)
 ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("Gene expression counts")
+reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
@@ -527,10 +548,11 @@ Both the log function and the n + 1 step can be done using broadcasting to simpl
 # Bar plot of expression counts by individual
 fig, ax = plt.subplots(figsize=(16,5))
 
-ax.boxplot(np.log(counts_subset + 1), sym=".")
+ax.boxplot(np.log(counts_subset + 1))
 ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("log gene expression counts")
+reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
@@ -547,10 +569,11 @@ counts_subset_lib_norm = counts_lib_norm[:,samples_index]
 # Bar plot of expression counts by individual
 fig, ax = plt.subplots(figsize=(16,5))
 
-ax.boxplot(np.log(counts_subset_lib_norm + 1), sym=".")
+ax.boxplot(np.log(counts_subset_lib_norm + 1))
 ax.set_title("Gene expression counts normalized by library size")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("log gene expression counts")
+reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
@@ -563,7 +586,6 @@ Once to divide all the gene expression counts by the total for that column, and 
 
 ```python
 import matplotlib.pyplot as plt
-import seaborn as sns
 import itertools as it
 from collections import defaultdict
 
@@ -582,22 +604,16 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         The color corresponding to each class. These will be cycled in
         the order in which the classes appear in `classes`. (So it is
         ideal to provide as many colors as there are classes! The
-        default palette contains five colors.)
+        default palette contains six colors.)
 
     Other parameters
     ----------------
     kwargs : dict
         Keyword arguments to pass on to `plt.boxplot`.
     """
-    # default boxplot parameters; only updated if not specified
-    kwargs.setdefault('sym', '.')
-    kwargs.setdefault('whiskerprops', {'linestyle': '-'})
-
-    # Set default color palette and map classes to colors
-    if colors is None:
-        colors = sns.xkcd_palette(["windows blue", "amber", "greyish",
-                                   "faded green", "dusty purple"])
     all_classes = sorted(set(classes))
+    if colors is None:
+        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
     class2color = dict(zip(all_classes, it.cycle(colors)))
 
     # map classes to data vectors
@@ -609,7 +625,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         class2data[cls][-1] = distrib
 
     # then, do each boxplot in turn with the appropriate color
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(2 * len(data), 5))
     lines = []
     for cls in all_classes:
         # set color for all elements of the boxplot
@@ -618,7 +634,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
             kwargs.setdefault(key, {}).update(color=class2color[cls])
         # draw the boxplot
         box = ax.boxplot(class2data[cls], **kwargs)
-        lines.append(box['caps'][0])
+        lines.append(box['whiskers'][0])
     ax.legend(lines, all_classes)
     return ax
 ```
@@ -691,12 +707,10 @@ def binned_boxplot(x, y,
     x_ticklabels = np.round(np.exp(x_bin_centers)).astype(int)
 
     # make the boxplot
-    ax.boxplot(binned_y, labels=x_ticklabels, sym=".")
+    ax.boxplot(binned_y, labels=x_ticklabels)
 
-    # show only every 5th label to prevent crowding on x-axis
-    plt.setp(ax.xaxis.get_ticklabels(), visible=False)
-    for label in ax.xaxis.get_ticklabels()[::5]:
-        label.set_visible(True)
+    # show only every 10th label to prevent crowding on x-axis
+    reduce_xaxis_labels(ax, 10)
 
     # Adjust the axis names
     ax.set_xlabel(xlabel)

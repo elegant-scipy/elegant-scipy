@@ -2,6 +2,8 @@
 
 ```python
 %matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
 ```
 
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
@@ -229,7 +231,6 @@ second-smallest eigenvalue of $L$. Plotting the eigenvalues tells us which one
 is the second-smallest:
 
 ```python
-from matplotlib import pyplot as plt
 print(eigvals)
 plt.plot(eigvals, '-o')
 ```
@@ -401,10 +402,7 @@ functional "colorblind"
 [colorbrewer palette](http://chrisalbon.com/python/seaborn_color_palettes.html):
 
 ```python
-from matplotlib import pyplot as plt
-from matplotlib import colors
-
-import seaborn as sns  # for beautiful color palettes
+from matplotlib.colors import ListedColormap
 
 
 def plot_connectome(x_coords, y_coords, conn_matrix, *,
@@ -436,7 +434,8 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
     if types is None:
         types = np.zeros(x_coords.shape, dtype=int)
     ntypes = len(np.unique(types))
-    cmap = colors.ListedColormap(sns.color_palette('colorblind', ntypes))
+    colors = plt.rcParams['axes.prop_cycle'][:ntypes].by_key()['color']
+    cmap = ListedColormap(colors)
 
     fig, ax = plt.subplots(**figkwargs)
 

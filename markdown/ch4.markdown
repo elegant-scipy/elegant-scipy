@@ -47,11 +47,8 @@ suspects:
 ```python
 %matplotlib inline
 
-import seaborn as sns
-sns.set_style('white')
-sns.despine()
-
 import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
 import numpy as np
 ```
 
@@ -490,7 +487,7 @@ image = io.imread('images/moonlanding.png')
 M, N = image.shape
 
 f, ax = plt.subplots(figsize=(10, 10))
-ax.imshow(image, cmap='gray')
+ax.imshow(image)
 
 print((M, N), image.dtype)
 ```
@@ -519,7 +516,7 @@ values, before displaying:
 f, ax = plt.subplots(figsize=(10, 10))
 
 ax.imshow(np.log(1 + F_magnitude),
-          cmap='viridis', interpolation='nearest',
+          cmap='viridis',
           extent=(-N // 2, N // 2, -M // 2, M // 2))
 ax.set_title('Spectrum magnitude')
 plt.show()
@@ -560,15 +557,14 @@ F_dim = F_dim * peaks.astype(int)
 image_filtered = np.real(fftpack.ifft2(F_dim))
 
 # And add a slight bit of blurring to soften the result
-from scipy import ndimage
-image_filtered = ndimage.gaussian_filter(image_filtered, sigma=1)
+from scipy import ndimage as ndi
+image_filtered = ndi.gaussian_filter(image_filtered, sigma=1)
 
 f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
-ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='gray', interpolation='nearest')
+ax0.imshow(np.log10(1 + np.abs(F_dim)))
 ax0.set_title('Spectrum after suppression')
 
-ax1.imshow(ndimage.gaussian_filter(image_filtered, sigma=1), cmap='gray',
-interpolation='nearest')
+ax1.imshow(ndi.gaussian_filter(image_filtered, sigma=1))
 ax1.set_title('Reconstructed image')
 
 plt.show()

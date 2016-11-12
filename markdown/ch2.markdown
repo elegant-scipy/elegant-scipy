@@ -67,7 +67,7 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 %matplotlib inline
 
 import matplotlib.pyplot as plt
-plt.style.use('ggplot') # Use ggplot style graphs for something a little prettier
+plt.style.use('style/elegant.mplstyle')
 ```
 
 ### Get the data
@@ -115,11 +115,10 @@ def plot_col_density(data, xlabel=None):
     density_per_col = [stats.kde.gaussian_kde(col) for col in data.T] # Use gaussian smoothing to estimate the density
     x = np.linspace(np.min(data), np.max(data), 100)
 
-    plt.figure()
+    fig, ax = plt.subplots()
     for density in density_per_col:
-        plt.plot(x, density(x))
-    plt.xlabel(xlabel)
-    plt.show()
+        ax.plot(x, density(x))
+    ax.set_xlabel(xlabel)
 
 # Before normalization
 log_counts = np.log(counts + 1)
@@ -269,7 +268,6 @@ Whew! So that's a lot of information, but let's dive right in and hopefully you'
 First, we define a function, `bicluster`, that clusters both the rows *and* the columns of a matrix:
 
 ```python
-import matplotlib.pyplot as plt
 from scipy.cluster.hierarchy import linkage
 
 
@@ -305,13 +303,22 @@ Simple: we just call `linkage` for the input matrix and also for the transpose o
 Next, we define a function to visualize the output of that clustering.
 We are going to rearrange the rows and columns of the input data so that similar rows are together and similar columns are together.
 And we are additionally going to show the merge tree for both rows and columns, displaying which observations belong together for each.
-The merge trees are presented as dendograms, with the branch-lengths indicating how similar the obvservations are to each other (shorter = more similar).
+The merge trees are presented as dendrograms, with the branch-lengths indicating how similar the obvservations are to each other (shorter = more similar).
 
 As a word of warning, there is a fair bit of hard-coding of parameters going on here.
 This is difficult to avoid for plotting, where design is often a matter of eyeballing to find the correct proportions.
 
 ```python
 from scipy.cluster.hierarchy import dendrogram, leaves_list
+
+
+def clear_spines(axes):
+    for loc in ['left', 'right', 'top', 'bottom']:
+        axes.spines[loc].set_visible(False)
+    axes.set_xticks([])
+    axes.set_yticks([])
+
+
 def plot_bicluster(data, row_linkage, col_linkage,
                    row_nclusters=10, col_nclusters=3):
     """Perform a biclustering, plot a heatmap with dendrograms on each axis.
@@ -343,37 +350,35 @@ def plot_bicluster(data, row_linkage, col_linkage,
     # matrix.
     threshold_r = (row_linkage[-row_nclusters, 2] +
                    row_linkage[-row_nclusters+1, 2]) / 2
-    dendrogram(row_linkage, orientation='left', color_threshold=threshold_r)
+    with plt.rc_context({'lines.linewidth': 0.75}):
+        dendrogram(row_linkage, orientation='left',
+                   color_threshold=threshold_r, ax=ax1)
+    clear_spines(ax1)
 
-    # Compute and plot column-wise dendogram
+    # Compute and plot column-wise dendrogram
     # See notes above for explanation of parameters to `add_axes`
     ax2 = fig.add_axes([0.3, 0.71, 0.6, 0.2])
     threshold_c = (col_linkage[-col_nclusters, 2] +
                    col_linkage[-col_nclusters+1, 2]) / 2
-    dendrogram(col_linkage, color_threshold=threshold_c)
-
-    # Hide axes labels
-    ax1.set_xticks([])
-    ax1.set_yticks([])
-    ax2.set_xticks([])
-    ax2.set_yticks([])
+    with plt.rc_context({'lines.linewidth': 0.75}):
+        dendrogram(col_linkage, color_threshold=threshold_c, ax=ax2)
+    clear_spines(ax2)
 
     # Plot data heatmap
     ax = fig.add_axes([0.3, 0.1, 0.6, 0.6])
 
-    # Sort data by the dendogram leaves
+    # Sort data by the dendrogram leaves
     idx_rows = leaves_list(row_linkage)
     data = data[idx_rows, :]
     idx_cols = leaves_list(col_linkage)
     data = data[:, idx_cols]
 
     im = ax.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
-    ax.set_xticks([])
-    ax.set_yticks([])
+    clear_spines(ax)
 
     # Axis labels
-    plt.xlabel('Samples')
-    plt.ylabel('Genes', labelpad=125)
+    ax.set_xlabel('Samples')
+    ax.set_ylabel('Genes', labelpad=125)
 
     # Plot legend
     axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.6])
@@ -492,7 +497,7 @@ def plot_cluster_survival_curves(clusters, sample_names, patients,
         If `True`, use `patients['melanoma-dead']` to right-censor the
         survival data.
     """
-    plt.figure()
+    fig, ax = plt.subplots()
     if type(clusters) == np.ndarray:
         cluster_ids = np.unique(clusters)
         cluster_names = ['cluster {}'.format(i) for i in cluster_ids]
@@ -513,11 +518,11 @@ def plot_cluster_survival_curves(clusters, sample_names, patients,
             censored = None
         stimes, sfracs = survival_distribution_function(survival_times,
                                                         censored)
-        plt.plot(stimes / 365, sfracs)
+        ax.plot(stimes / 365, sfracs)
 
-    plt.xlabel('survival time (years)')
-    plt.ylabel('fraction alive')
-    plt.legend(cluster_names)
+    ax.set_xlabel('survival time (years)')
+    ax.set_ylabel('fraction alive')
+    ax.legend(cluster_names)
 ```
 
 Now we can use the `fcluster` function to obtain cluster identities for the samples (columns of the counts data), and plot each survival curve separately.
