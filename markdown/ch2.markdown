@@ -350,7 +350,9 @@ def plot_bicluster(data, row_linkage, col_linkage,
     # matrix.
     threshold_r = (row_linkage[-row_nclusters, 2] +
                    row_linkage[-row_nclusters+1, 2]) / 2
-    dendrogram(row_linkage, orientation='left', color_threshold=threshold_r)
+    with plt.rc_context({'lines.linewidth': 0.75}):
+        dendrogram(row_linkage, orientation='left',
+                   color_threshold=threshold_r, ax=ax1)
     clear_spines(ax1)
 
     # Compute and plot column-wise dendrogram
@@ -358,7 +360,8 @@ def plot_bicluster(data, row_linkage, col_linkage,
     ax2 = fig.add_axes([0.3, 0.71, 0.6, 0.2])
     threshold_c = (col_linkage[-col_nclusters, 2] +
                    col_linkage[-col_nclusters+1, 2]) / 2
-    dendrogram(col_linkage, color_threshold=threshold_c)
+    with plt.rc_context({'lines.linewidth': 0.75}):
+        dendrogram(col_linkage, color_threshold=threshold_c, ax=ax2)
     clear_spines(ax2)
 
     # Plot data heatmap
