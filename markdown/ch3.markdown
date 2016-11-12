@@ -404,12 +404,32 @@ vsobel = hsobel.T
 We can then find the horizontal and vertical edges in the coins image:
 
 ```python
+# Some custom x-axis labelling to make our plots easier to read
+def reduce_xaxis_labels(ax, factor):
+    """Show only every ith label to prevent crowding on x-axis
+        e.g. factor = 2 would plot every second x-axis label,
+        starting at the first.
+
+    Parameters
+    ----------
+    ax : matplotlib plot axis to be adjusted
+    factor : int, factor to reduce the number of x-axis labels by
+    """
+    plt.setp(ax.xaxis.get_ticklabels(), visible=False)
+    for label in ax.xaxis.get_ticklabels()[::factor]:
+        label.set_visible(True)
+```
+
+```python
 coins_h = ndi.convolve(coins, hsobel)
 coins_v = ndi.convolve(coins, vsobel)
 
 fig, axes = plt.subplots(nrows=1, ncols=2)
 axes[0].imshow(coins_h, cmap=plt.cm.RdBu)
 axes[1].imshow(coins_v, cmap=plt.cm.RdBu)
+for ax in axes:
+    reduce_xaxis_labels(ax, 2)
+
 ```
 
 And finally, just like the Pythagorean theorem, you can argue that the edge
