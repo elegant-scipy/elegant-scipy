@@ -1,5 +1,7 @@
 ```python
 %matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
 ```
 # Big Data in Little Laptop with Toolz
 
@@ -345,21 +347,20 @@ This totally works and is streaming, so reads are loaded from disk one at a time
 We can then plot a histogram of the counts, and confirm that there are indeed two well-separated populations of correct and erroneous k-mers:
 
 ```python
-from matplotlib import pyplot as plt
-
 def integer_histogram(counts, normed=True, xlim=[], ylim=[],
                       *args, **kwargs):
     hist = np.bincount(counts)
     if normed:
         hist = hist / np.sum(hist)
-    plt.plot(np.arange(hist.size), hist, *args, **kwargs)
-    plt.xlabel('counts')
-    plt.ylabel('frequency')
-    plt.xlim(*xlim)
-    plt.ylim(*ylim)
+    fig, ax = plt.subplots()
+    ax.plot(np.arange(hist.size), hist, *args, **kwargs)
+    ax.set_xlabel('counts')
+    ax.set_ylabel('frequency')
+    ax.set_xlim(*xlim)
+    ax.set_ylim(*ylim)
 
 counts_arr = np.fromiter(counts.values(), dtype=int, count=len(counts))
-integer_histogram(counts_arr, xlim=(-1, 250), lw=2)
+integer_histogram(counts_arr, xlim=(-1, 250))
 ```
 
 Notice the nice distribution of k-mer frequencies, along with a big bump of k-mers (at the left of the plot) that appear only once.
@@ -596,7 +597,6 @@ print(components.shape)
 We can now plot the components:
 
 ```python
-from matplotlib import pyplot as plt
 plt.scatter(*components.T)
 ```
 
@@ -747,9 +747,11 @@ print(model)
 It's probably clearer to look at the result as an image:
 
 ```python
-plt.imshow(model, cmap='gist_heat', interpolation='nearest');
-plt.colorbar();
-ax = plt.gca()
+fig = plt.figure()
+ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+im = ax.imshow(model, cmap='magma');
+axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.8])
+plt.colorbar(im, cax=axcolor)
 ax.set_xticklabels(' ACGTacgt');
 ax.set_yticklabels(' ACGTacgt');
 ```
