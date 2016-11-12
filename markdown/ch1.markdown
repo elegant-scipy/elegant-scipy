@@ -614,7 +614,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
             kwargs.setdefault(key, {}).update(color=class2color[cls])
         # draw the boxplot
         box = ax.boxplot(class2data[cls], **kwargs)
-        lines.append(box['caps'][0])
+        lines.append(box['whiskers'][0])
     ax.legend(lines, all_classes)
     return ax
 ```
