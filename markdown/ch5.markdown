@@ -573,9 +573,9 @@ matrices.
 We'll use the following image as a test:
 
 ```python
-from skimage import data, io
+from skimage import data
 image = data.camera()
-io.imshow(image);
+plt.imshow(image);
 ```
 
 As a test operation, we'll be rotating the image by 30 degrees. We begin
@@ -729,7 +729,7 @@ Let's try it out!
 ```python
 tf = homography(H, image.shape)
 out = apply_transform(image, tf)
-io.imshow(out);
+plt.imshow(out);
 ```
 
 There's that rotation!
@@ -791,7 +791,7 @@ We can test that this works:
 
 ```python
 tf = transform_rotate_about_center(image.shape, 30)
-io.imshow(apply_transform(image, tf))
+plt.imshow(apply_transform(image, tf))
 ```
 
 <!-- solution end -->
@@ -1413,7 +1413,7 @@ from skimage import io
 url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
 tiger = io.imread(url)
 
-io.imshow(tiger);
+plt.imshow(tiger);
 ```
 
 In order to check our image segmentation, we're going to need a ground truth.
@@ -1431,7 +1431,7 @@ from skimage import color
 
 human_seg_url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
 boundaries = io.imread(human_seg_url)
-io.imshow(boundaries);
+plt.imshow(boundaries);
 ```
 
 Overlaying the tiger image with the human segmentation, we can see that (unsurprisingly) this person does a pretty good job of finding the tiger.
@@ -1439,8 +1439,8 @@ They have also segmented out the river bank, and a tuft of reeds.
 Nice job, human #1122!
 
 ```python
-human_seg = nd.label(boundaries > 100)[0]
-io.imshow(color.label2rgb(human_seg, tiger));
+human_seg = ndi.label(boundaries > 100)[0]
+plt.imshow(color.label2rgb(human_seg, tiger));
 ```
 
 Now, let's grab our image segmentation code from chapter 3, and see how well a Python does a recognizing a tiger!
@@ -1460,11 +1460,11 @@ def add_edge_filter(values, graph):
 
 def build_rag(labels, image):
     g = nx.Graph()
-    footprint = nd.generate_binary_structure(labels.ndim, connectivity=1)
+    footprint = ndi.generate_binary_structure(labels.ndim, connectivity=1)
     for j in range(labels.ndim):
         fp = np.swapaxes(footprint, j, 0)
         fp[0, ...] = 0  # zero out top of footprint on each axis
-    _ = nd.generic_filter(labels, add_edge_filter, footprint=footprint,
+    _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
                           mode='nearest', extra_arguments=(g,))
     for n in g:
         g.node[n]['total color'] = np.zeros(3, np.double)
@@ -1486,7 +1486,7 @@ def threshold_graph(g, t):
 from skimage import segmentation
 seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
                         enforce_connectivity=True, sigma=3)
-io.imshow(color.label2rgb(seg, tiger));
+plt.imshow(color.label2rgb(seg, tiger));
 ```
 
 In chapter 3, we set the graph threshold at 80 and sort of hand-waved over the whole thing.
