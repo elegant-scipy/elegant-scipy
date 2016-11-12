@@ -1,7 +1,8 @@
 ```python
+# Set up plotting
 %matplotlib inline
 import matplotlib.pyplot as plt
-# Set up plotting
+plt.style.use('style/elegant.mplstyle')
 ```
 
 # Contingency tables using sparse coordinate matrices
@@ -572,9 +573,9 @@ matrices.
 We'll use the following image as a test:
 
 ```python
-from skimage import data
+from skimage import data, io
 image = data.camera()
-plt.imshow(image, cmap='gray');
+io.imshow(image);
 ```
 
 As a test operation, we'll be rotating the image by 30 degrees. We begin
@@ -728,7 +729,7 @@ Let's try it out!
 ```python
 tf = homography(H, image.shape)
 out = apply_transform(image, tf)
-plt.imshow(out, cmap='gray');
+io.imshow(out);
 ```
 
 There's that rotation!
@@ -790,7 +791,7 @@ We can test that this works:
 
 ```python
 tf = transform_rotate_about_center(image.shape, 30)
-plt.imshow(apply_transform(image, tf), cmap='gray')
+io.imshow(apply_transform(image, tf))
 ```
 
 <!-- solution end -->
@@ -1408,12 +1409,11 @@ example
 
 ```python
 from skimage import io
-from matplotlib import pyplot as plt
 
 url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
 tiger = io.imread(url)
 
-plt.imshow(tiger);
+io.imshow(tiger);
 ```
 
 In order to check our image segmentation, we're going to need a ground truth.
@@ -1426,7 +1426,7 @@ We have chosen a segmentation that we like (one with pedantic-reed-tracing, beca
 But to be clear, we really have no single ground truth!
 
 ```python
-from scipy import ndimage as nd
+from scipy import ndimage as ndi
 from skimage import color
 
 human_seg_url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
@@ -1449,7 +1449,6 @@ Now, let's grab our image segmentation code from chapter 3, and see how well a P
 # Draw a region adjacency graph (RAG) - all code from Ch3
 import networkx as nx
 import numpy as np
-from scipy import ndimage as nd
 from skimage.future import graph
 
 def add_edge_filter(values, graph):
