@@ -203,13 +203,22 @@ ax2.set_title('Registered image')
 
 print('Calculating cost function profile...')
 f, ax0 = plt.subplots()
+pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
+pyr1 = transform.pyramid_gaussian(img1, downscale=2, max_layer=5)
+image_pairs = list(zip(pyr0, pyr1))
+n_levels = len(image_pairs)
 angles = np.linspace(-theta - 180, -theta + 180, 201)
-costs = [-normalized_mutual_information(img0, transform.rotate(img1, angle))
-         for angle in angles]
-ax0.plot(angles, costs)
+for n, (X, Y) in zip(range(n_levels, 0, -1),
+                     reversed(list(image_pairs))):
+    costs = np.array([-normalized_mutual_information(X,
+                                                     transform.rotate(Y, angle))
+                      for angle in angles])
+    costs = (costs - np.min(costs)) / (np.max(costs) - np.min(costs))
+    ax0.plot(angles, costs, label='level %i' % n)
 ax0.set_title('Cost function around angle of interest')
 ax0.set_xlabel('Angle')
 ax0.set_ylabel('Cost')
+ax0.legend(loc='lower right')
 
 plt.show()
 ```
@@ -307,12 +316,21 @@ ax2.set_title('Registered image')
 
 print('Calculating cost function profile...')
 f, ax0 = plt.subplots()
+pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
+pyr1 = transform.pyramid_gaussian(img1, downscale=2, max_layer=5)
+image_pairs = list(zip(pyr0, pyr1))
+n_levels = len(image_pairs)
 angles = np.linspace(-theta - 180, -theta + 180, 201)
-costs = [-1 * alignment(img0, transform.rotate(img1, angle)) for angle in angles]
-ax0.plot(angles, costs)
+for n, (X, Y) in zip(range(n_levels, 0, -1),
+                     reversed(list(image_pairs))):
+    costs = np.array([-alignment(X, transform.rotate(Y, angle))
+                      for angle in angles])
+    costs = (costs - np.min(costs)) / (np.max(costs) - np.min(costs))
+    ax0.plot(angles, costs, label='level %i' % n)
 ax0.set_title('Cost function around angle of interest')
 ax0.set_xlabel('Angle')
 ax0.set_ylabel('Cost')
+ax0.legend(loc='lower right')
 
 plt.show()
 ```
