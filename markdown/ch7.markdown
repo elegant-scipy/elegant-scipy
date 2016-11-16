@@ -180,7 +180,6 @@ def align(A, B, cost=cost_nmi):
     return build_tf(p)
 ```
 
-
 ```python
 from skimage import data, transform, color
 
@@ -200,8 +199,13 @@ ax1.imshow(img1, cmap='gray')
 ax1.set_title('Transformed image + noise')
 ax2.imshow(corrected, cmap='gray')
 ax2.set_title('Registered image')
+```
 
-print('Calculating cost function profile...')
+Oops! That didn't work at all! Since this is a toy example, we can actually
+look at the cost function for *all* possible angles at each level of the
+pyramid:
+
+```python
 f, ax0 = plt.subplots()
 pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
 pyr1 = transform.pyramid_gaussian(img1, downscale=2, max_layer=5)
@@ -223,9 +227,15 @@ ax0.legend(loc='lower right')
 plt.show()
 ```
 
-In their 2000 paper, Pluim *et al.* showed that you can further improve the
-accuracy of the alignment by adding *gradient* information to the NMI metric.
-Let's try it here to see if we can improve our alignment further.
+Thus we can see that the mutual information fails dramatically at the higher
+pyramid levels, while it is virtually flat at the lower levels, except for a
+narrow region around the true transformation angle! If you start with a
+relatively faraway angle, you have no hope of recovering the true
+transformation.
+
+In their 2000 paper, Pluim *et al.* showed that you can improve the properties
+of the objective function by adding *gradient* information to the NMI metric.
+Let's try it here to see if we can improve our alignment:
 
 ```python
 def gradient(image, sigma=1):
@@ -268,6 +278,8 @@ def gradient_similarity(A, B, sigma=1, scale=True):
     alpha = np.arccos(np.sum(g_A * g_B, axis=-1) /
                         (mag_g_A * mag_g_B))
 
+    # Transform the alpha so that gradients that point in opposite directions
+    # count as the same angle
     w = (np.cos(2 * alpha) + 1) / 2
 
     w[np.isclose(mag_g_A, 0)] = 0
@@ -285,7 +297,7 @@ def alignment(A, B, sigma=1.5):
 
 ```
 
-Next, we use those functions to align two parts of an image:
+Next, we use those functions to align the same image:
 
 ```python
 from skimage import data, transform, color
@@ -313,7 +325,11 @@ ax1.imshow(img1, cmap='gray')
 ax1.set_title('Transformed image + noise')
 ax2.imshow(corrected, cmap='gray')
 ax2.set_title('Registered image')
+```
 
+Success! Let's look at the objective function profile:
+
+```python
 print('Calculating cost function profile...')
 f, ax0 = plt.subplots()
 pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
@@ -334,3 +350,7 @@ ax0.legend(loc='lower right')
 
 plt.show()
 ```
+
+As you can see, it's much more funnel-shaped than the NMI. It's easy to see why
+progressive optimization of Pluim's function at decreasing levels of the
+pyramid would result in the correct alignment.
