@@ -12,13 +12,30 @@ and
 * Pluim et al., Mutual-Information-Based Registration of Medical
   Images: A Survey, IEEE Transactions on Medical Imaging, 22(8) 2003
 
+We start, of course, by setting up our plotting environment:
+
 ```python
 %matplotlib inline
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-First, we define some helper functions:
+Correlation-based image alignment depends on detecting the similarity between
+two images at various levels of alignment. We can then "jiggle" the images, and
+see whether jiggling them in one direction or another improves the similarity.
+By doing this repeatedly, we can try to find the correct alignment.
+
+There are a few problems with the approach as we've just described it, but
+we'll deal with the first one: how do you define "image similarity"? One metric
+is the *normalized mutual information*, or NMI, which measures how easy it
+would be to predict a pixel value of one image given the value of the
+corresponding pixel in the other. See chapter 5 for some more information on
+this, as well as the original reference:
+
+* Studholme, C., Hill, D.L.G., Hawkes, D.J.: An Overlap Invariant Entropy Measure
+  of 3D Medical Image Alignment. Patt. Rec. 32, 71–86 (1999)
+
+Let's start with the definition of the mutual information:
 
 ```python
 import numpy as np
@@ -31,7 +48,7 @@ from skimage import transform
 from skimage.util import random_noise
 
 
-def mutual_information(A, B, normalized=True):
+def normalized_mutual_information(A, B):
     """Compute the normalized mutual information.
 
     The normalized mutual information is given by:
@@ -46,23 +63,61 @@ def mutual_information(A, B, normalized=True):
     ----------
     A, B : ndarray
         Images to be registered.
-    normalized : bool
-        Whether or not to normalize the mutual information.
+
+    Returns
+    -------
+    nmi : float
+        The normalized mutual information between the two arrays, computed at a
+        granularity of 100 bins per axis (10,000 bins total).
     """
-    # TODO: Check if bin edges need to be specified
-    H, bin_edges = np.histogramdd([np.ravel(A), np.ravel(B)], bins=100)
-    H /= np.sum(H)
+    hist, bin_edges = np.histogramdd([np.ravel(A), np.ravel(B)], bins=100)
+    hist /= np.sum(hist)
 
-    H_A = entropy(np.sum(H, axis=0))
-    H_B = entropy(np.sum(H, axis=1))
-    H_AB = entropy(np.ravel(H))
+    H_A = entropy(np.sum(hist, axis=0))
+    H_B = entropy(np.sum(hist, axis=1))
+    H_AB = entropy(np.ravel(hist))
 
-    if normalized:
-        return (H_A + H_B) / H_AB
-    else:
-        return H_A + H_B - H_AB
+    return (H_A + H_B) / H_AB
+```
 
+With this, we can already check whether two images are aligned:
 
+```python
+# TODO: show NMI values for images perfectly aligned, slightly off, and very
+# off alignment
+```
+
+This is the crux of optimization: define a function to optimize (in this case,
+the NMI of two images for a given offset value), optimize it, and apply the
+resulting parameter set (in this case, align the images with the found offset):
+
+```python
+# TODO: start with a ludicrously close offset, so that there's no local minima,
+# then apply scipy.optimize to find the correct offset (0)
+```
+
+Unfortunately, this brings us to the principal difficulty of this kind of
+alignment: sometimes, the NMI has to get worse before it gets better. Have a
+look at the NMI value as we slide the same image past itself. The perfect
+alignment, of course, is an offset of 0:
+
+```python
+# TODO: plot NMI for many offset values along the column axis.
+```
+
+As you can see, if you start out with an offset value of , when you jiggle the
+offset, the NMI will always get worse. You might then erroneously conclude that
+you are done with the alignment, when in fact you are quite a ways off.
+
+The common solution to this problem is to smooth or downscale the images, which
+has the dual result of smoothing the objective function. Have a look at the
+same plot, after having smoothed the images with a Gaussian filter:
+
+```python
+# TODO: smooth image and repeat above plot
+```
+
+```python
 def gradient(image, sigma=1):
     gaussian_filtered = ndi.gaussian_filter(image, sigma=sigma,
                                             mode='constant', cval=0)
