@@ -117,6 +117,107 @@ same plot, after having smoothed the images with a Gaussian filter:
 # TODO: smooth image and repeat above plot
 ```
 
+Therefore, modern alignment software uses what's called a *Gaussian pyramid*,
+which is a list of progressively lower resolution versions of the same image.
+We can the align the lower resolution (blurrier) images first, to get an
+approximate alignment, and then progressively refine the alignment with sharper
+images.
+
+```python
+# TODO: ab initio implementation of Gaussian pyramid
+```
+
+Let's see how the 1D alignment looks along that pyramid:
+
+```python
+# TODO: plot NMI for many offset values for each level of the pyramid
+```
+
+Now that we have that working, let's try a real alignment, with three
+parameters: rotation, translation in the row dimension, and translation in the
+column dimension:
+
+```python
+from skimage import transform
+
+def build_tf(param):
+    r, tx, ty = param
+    return transform.SimilarityTransform(rotation=r,
+                                         translation=(tx, ty))
+
+
+def cost_nmi(param, X, Y):
+    transformation = build_tf(param)
+    Y_prime = transform.warp(Y, transformation, order=3)
+    return -normalized_mutual_information(X, Y_prime)
+
+
+# TODO: Generalize this for N-d
+def align(A, B, cost=cost_nmi):
+    pyramid_A = transform.pyramid_gaussian(A, downscale=2, max_layer=7)
+    pyramid_B = transform.pyramid_gaussian(B, downscale=2, max_layer=7)
+    image_pairs = list(zip(pyramid_A, pyramid_B))
+    n_levels = len(image_pairs)
+
+    p = np.zeros(3)
+
+    for n, (X, Y) in zip(range(n_levels, 0, -1),
+                         reversed(list(image_pairs))):
+        p[1:] *= 2
+
+        res = optimize.minimize(cost,
+                                p,
+                                args=(X, Y),
+                                method='Powell')
+        p = res.x
+
+        print('Pyramid level %i' % n)
+        print('Angle:', np.rad2deg(res.x[0]))
+        print('Offset:', res.x[1:] * 2 ** n)
+        print('Cost function:', res.fun)
+        print('')
+
+    return build_tf(p)
+```
+
+
+```python
+from skimage import data, transform, color
+
+img0 = color.rgb2gray(data.astronaut())
+theta = 40
+img1 = transform.rotate(img0, theta)
+img1 = random_noise(img1, mode='gaussian', seed=0, mean=0, var=1e-3)
+
+tf = align(img0, img1)
+corrected = transform.warp(img1, tf, order=3)
+
+
+f, (ax0, ax1, ax2) = plt.subplots(1, 3)
+ax0.imshow(img0, cmap='gray')
+ax0.set_title('Input image')
+ax1.imshow(img1, cmap='gray')
+ax1.set_title('Transformed image + noise')
+ax2.imshow(corrected, cmap='gray')
+ax2.set_title('Registered image')
+
+print('Calculating cost function profile...')
+f, ax0 = plt.subplots()
+angles = np.linspace(-theta - 180, -theta + 180, 201)
+costs = [-normalized_mutual_information(img0, transform.rotate(img1, angle))
+         for angle in angles]
+ax0.plot(angles, costs)
+ax0.set_title('Cost function around angle of interest')
+ax0.set_xlabel('Angle')
+ax0.set_ylabel('Cost')
+
+plt.show()
+```
+
+In their 2000 paper, Pluim *et al.* showed that you can further improve the
+accuracy of the alignment by adding *gradient* information to the NMI metric.
+Let's try it here to see if we can improve our alignment further.
+
 ```python
 def gradient(image, sigma=1):
     gaussian_filtered = ndi.gaussian_filter(image, sigma=sigma,
@@ -166,58 +267,13 @@ def gradient_similarity(A, B, sigma=1, scale=True):
     return w * np.minimum(mag_g_A, mag_g_B)
 
 
-def alignment(A, B, sigma=1.5, normalized=True):
-    I = mutual_information(A, B, normalized=normalized)
+def alignment(A, B, sigma=1.5):
+    I = normalized_mutual_information(A, B)
     G = np.sum(gradient_similarity(A, B, sigma=sigma))
 
     return I * G
 
 
-def build_tf(p):
-    r, tx, ty = p
-    return transform.SimilarityTransform(rotation=r,
-                                         translation=(tx, ty))
-
-
-def cost(p, X, Y):
-    tf = build_tf(p)
-    Y_prime = transform.warp(Y, tf, order=3)
-
-    return -1 * alignment(X, Y_prime)
-
-
-# Generalize this for N-d
-def register(A, B):
-    pyramid_A = tuple(transform.pyramid_gaussian(A, downscale=2))
-    pyramid_B = tuple(transform.pyramid_gaussian(B, downscale=2))
-    N = range(len(pyramid_A))
-    image_pairs = zip(N, pyramid_A, pyramid_B)
-
-    p = np.array([0, 0, 0])
-
-    for (n, X, Y) in reversed(list(image_pairs)):
-        if X.shape[0] < 5:
-            continue
-
-        print('   .  ')
-        print('  / \ Pyramid scaled down by 2x {}'.format(n))
-        print(' /   \ ')
-        print('.-----.')
-
-        p[1:] *= 2
-
-        res = optimize.minimize(cost,
-                                p,
-                                args=(X, Y),
-                                method='Powell')
-        p = res.x
-
-        print('Angle:', np.rad2deg(res.x[0]))
-        print('Offset:', res.x[1:] * 2 ** n)
-        print('Cost function:', res.fun)
-        print('')
-
-    return build_tf(p)
 ```
 
 Next, we use those functions to align two parts of an image:
@@ -231,7 +287,13 @@ theta = 40
 img1 = transform.rotate(img0, theta)
 img1 = random_noise(img1, mode='gaussian', seed=0, mean=0, var=1e-3)
 
-tf = register(img0, img1)
+def cost_alignment(param, X, Y):
+    transformation = build_tf(param)
+    Y_prime = transform.warp(Y, transformation, order=3)
+    return -alignment(X, Y_prime)
+
+
+tf = align(img0, img1, cost=cost_alignment)
 corrected = transform.warp(img1, tf, order=3)
 
 
@@ -245,7 +307,7 @@ ax2.set_title('Registered image')
 
 print('Calculating cost function profile...')
 f, ax0 = plt.subplots()
-angles = np.linspace(-theta - 20, -theta + 20, 51)
+angles = np.linspace(-theta - 180, -theta + 180, 201)
 costs = [-1 * alignment(img0, transform.rotate(img1, angle)) for angle in angles]
 ax0.plot(angles, costs)
 ax0.set_title('Cost function around angle of interest')
