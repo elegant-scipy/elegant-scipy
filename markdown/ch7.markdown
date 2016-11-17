@@ -281,10 +281,7 @@ def align(A, B, cost=cost_nmi):
                          reversed(list(image_pairs))):
         p[1:] *= 2
 
-        res = optimize.minimize(cost,
-                                p,
-                                args=(X, Y),
-                                method='Powell')
+        res = optimize.minimize(cost, p, args=(X, Y))
         p = res.x
 
         print('Pyramid level %i' % n)
