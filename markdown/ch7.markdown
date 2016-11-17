@@ -1,5 +1,36 @@
 # Function optimization in SciPy
 
+## Introduction
+
+> Life is like a landscape. You live in the midst of it but can
+> describe it only from the vantage point of distance. --- Charles
+> Lindbergh
+
+Hanging a picture on the wall, it is sometimes hard to get it
+straight.  You make an adjustment, step back, evaluate the picture's
+horizontality, and repeat.  This is a process of optimization: we're
+changing the angle of the portrait until it satisfies our
+demand---that it should be straight.
+
+In mathematics, our demand is called a "cost function", and the angle
+of the portrait the "parameter".  In a typical optimization problem,
+we vary the parameters until the cost function is maximized.  Often,
+we do *minimization* instead of *optimization*, i.e., try and make the
+cost function as small as possible.
+
+Consider, e.g., the shifted parabola, $f(x) = (x - 3)**2$.  We know
+that this function has a minimum at 3, because we can calculate the
+derivative, set it to zero, and see that $2 (x - 3) = 0$, i.e.  $x =
+3$.
+
+But, if this function were much more complicated (e.g., was an
+expression with many terms, contained non-linearities, or was
+dependent on more variables), using this procedure by hand would
+become much harder.
+
+... TBC
+
+
 We are going to use SciPy's `optimize` module to align two images, using the
 method described in the papers:
 
