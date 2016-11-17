@@ -228,7 +228,7 @@ for n, (X, Y) in zip(range(n_levels, 0, -1),
 ax0.set_title('Cost function around angle of interest')
 ax0.set_xlabel('Angle')
 ax0.set_ylabel('Cost')
-ax0.legend(loc='lower right')
+ax0.legend(loc='lower right', frameon=True, framealpha=0.9)
 
 plt.show()
 ```
