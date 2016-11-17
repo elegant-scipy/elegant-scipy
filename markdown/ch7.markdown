@@ -16,7 +16,7 @@ In mathematics, our demand is called a "cost function", and the angle
 of the portrait the "parameter".  In a typical optimization problem,
 we vary the parameters until the cost function is minimized.
 
-Consider, e.g., the shifted parabola, $f(x) = (x - 3)**2$.  We know
+Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.  We know
 that this function has a minimum at 3, because we can calculate the
 derivative, set it to zero, and see that $2 (x - 3) = 0$, i.e.  $x =
 3$.
