@@ -150,8 +150,19 @@ def normalized_mutual_information(A, B):
 With this, we can already check whether two images are aligned:
 
 ```python
-# TODO: show NMI values for images perfectly aligned, slightly off, and very
-# off alignment
+from scipy import ndimage as ndi
+from skimage import data, color
+astronaut = color.rgb2gray(data.astronaut())
+
+ncol = astronaut.shape[1]
+nmis = []
+shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
+for shift in shifts:
+    shifted = ndi.shift(astronaut, (0, shift))
+    nmis.append(normalized_mutual_information(astronaut, shifted))
+
+fig, ax = plt.subplots()
+ax.plot(shifts, nmis)
 ```
 
 This is the crux of optimization: define a function to optimize (in this case,
@@ -159,33 +170,71 @@ the NMI of two images for a given offset value), optimize it, and apply the
 resulting parameter set (in this case, align the images with the found offset):
 
 ```python
-# TODO: start with a ludicrously close offset, so that there's no local minima,
-# then apply scipy.optimize to find the correct offset (0)
+from scipy import optimize
+
+shifted = ndi.shift(astronaut, (0, 50))
+
+
+def error_function(shift):
+    corrected = ndi.shift(shifted, (0, shift))
+    return -normalized_mutual_information(astronaut, corrected)
+    
+
+res = optimize.minimize(error_function, 0, method='Powell')
+
+print('The optimal shift for correction is: %f' % res.x)
 ```
 
+Brilliant! Thanks to our NMI measure, SciPy's `optimize.minimize` function has
+recovered the correct amount to shift our distorted image to get it back to its
+original state.
 Unfortunately, this brings us to the principal difficulty of this kind of
 alignment: sometimes, the NMI has to get worse before it gets better. Have a
-look at the NMI value as we slide the same image past itself. The perfect
-alignment, of course, is an offset of 0:
+look at the NMI value as the shift gets larger and larger: at around 200
+pixels of shift, it starts to get higher again! Only slightly higher, but
+higher nonetheless. Because optimization methods only have access to "nearby"
+values of the cost function, if the function improves by moving in the "wrong"
+direction, the `minimize` process will move that way regardless. So, if we
+start by an image shifted by 200 pixels:
 
 ```python
-# TODO: plot NMI for many offset values along the column axis.
+shifted = ndi.shift(astronaut, (0, 200))
 ```
 
-As you can see, if you start out with an offset value of , when you jiggle the
-offset, the NMI will always get worse. You might then erroneously conclude that
-you are done with the alignment, when in fact you are quite a ways off.
+`minimize` will shift it by a further 90 pixels or so, instead of recovering
+the original image:
+
+```python
+res = optimize.minimize(error_function, 0, method='Powell')
+
+print('The optimal shift for correction is %f' % res.x)
+```
 
 The common solution to this problem is to smooth or downscale the images, which
 has the dual result of smoothing the objective function. Have a look at the
 same plot, after having smoothed the images with a Gaussian filter:
 
 ```python
-# TODO: smooth image and repeat above plot
+from skimage import filters
+
+astronaut_smooth = filters.gaussian(astronaut, sigma=20)
+
+nmis_smooth = []
+shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
+for shift in shifts:
+    shifted = ndi.shift(astronaut_smooth, (0, shift))
+    nmis_smooth.append(normalized_mutual_information(astronaut_smooth, shifted))
+
+fig, ax = plt.subplots()
+ax.plot(shifts, nmis, label='original')
+ax.plot(shifts, nmis_smooth, label='smoothed')
+ax.legend()
 ```
 
+As you can see, with some rather extreme smoothing, the "funnel" of the error
+function becomes wider.
 Therefore, modern alignment software uses what's called a *Gaussian pyramid*,
-which is a list of progressively lower resolution versions of the same image.
+which is a set of progressively lower resolution versions of the same image.
 We can the align the lower resolution (blurrier) images first, to get an
 approximate alignment, and then progressively refine the alignment with sharper
 images.
