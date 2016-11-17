@@ -14,9 +14,7 @@ demand---that it should be straight.
 
 In mathematics, our demand is called a "cost function", and the angle
 of the portrait the "parameter".  In a typical optimization problem,
-we vary the parameters until the cost function is maximized.  Often,
-we do *minimization* instead of *optimization*, i.e., try and make the
-cost function as small as possible.
+we vary the parameters until the cost function is minimized.
 
 Consider, e.g., the shifted parabola, $f(x) = (x - 3)**2$.  We know
 that this function has a minimum at 3, because we can calculate the
@@ -24,15 +22,42 @@ derivative, set it to zero, and see that $2 (x - 3) = 0$, i.e.  $x =
 3$.
 
 But, if this function were much more complicated (e.g., was an
-expression with many terms, contained non-linearities, or was
-dependent on more variables), using this procedure by hand would
-become much harder.
+expression with many terms, had multiple points of zero derivative,
+contained non-linearities, or was dependent on more variables), using
+a hand calculation would become arduous.
 
-... TBC
+You can think of the cost function as representing a landscape, where we
+are trying to find the lowest point.  That analogy immediately
+highlights one of the hard parts of this problem: if you are standing
+in any valley, with mountains surrounding you, how do you know whether
+you are in the lowest valley, or whether the valley is perhaps
+surrounded by *even taller* mountains?  In optimization parlance: how
+do you know whether you are trapped in a *local
+minimum*?  Most of the optimization algorithms available make some
+attempt to address the issue[^line_search].
+
+[^line_search]: Optimization algorithms handle this issue in various
+                ways, but two common approaches are line searches and
+                trust regions.  With a *line search*, you try to find
+                the cost function minimum along a specific dimension,
+                and then successively attempt the same along the
+                others.  With *trust regions*, we move our guess for
+                the minimum in the direction we expect it to be; if we
+                are indeed approaching the minimum as expected, we
+                repeat the procedure with increased confidence.  If
+                not, we lower our confidence and search a wider area.
 
 
-We are going to use SciPy's `optimize` module to align two images, using the
-method described in the papers:
+There are many different optimization algorithms to choose from.  You
+get to choose whether your cost function takes a scalar or a vector as
+input (i.e., do you have one or multiple parameters to optimize?).
+There are those that require the cost function gradient to be given
+and those that automatically estimate it.  Some only search for
+parameters in a given area (*constrained optimization*), and others
+examine the entire parameter space.
+
+In the rest of this chapter, we are going to use SciPy's `optimize`
+module to align two images, using the method described in the papers:
 
 * Pluim et al., Image registration by maximization of combined mutual
   information and gradient information, IEEE Transactions on Medical
@@ -43,7 +68,12 @@ and
 * Pluim et al., Mutual-Information-Based Registration of Medical
   Images: A Survey, IEEE Transactions on Medical Imaging, 22(8) 2003
 
-We start, of course, by setting up our plotting environment:
+Applications of image alignment or *registration* include panorama
+stitching, combination of multi-modal brain scans, super-resolution
+imaging, and, in astronomy, object denoising through the combination
+of multiple exposures.
+
+We start, now, by setting up our plotting environment:
 
 ```python
 %matplotlib inline
@@ -264,11 +294,11 @@ ax0.legend(loc='lower right', frameon=True, framealpha=0.9)
 plt.show()
 ```
 
-Thus we can see that the mutual information fails dramatically at the higher
-pyramid levels, while it is virtually flat at the lower levels, except for a
-narrow region around the true transformation angle! If you start with a
-relatively faraway angle, you have no hope of recovering the true
-transformation.
+Thus we can see that the mutual information fails dramatically at the
+higher (low-resolution) pyramid levels, while it is virtually flat
+at the lower (high-resolution) levels, except for a narrow region around the true
+transformation angle! If you start with a relatively faraway angle,
+you have no hope of recovering the true transformation.
 
 In their 2000 paper, Pluim *et al.* showed that you can improve the properties
 of the objective function by adding *gradient* information to the NMI metric.
