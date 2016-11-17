@@ -29,13 +29,19 @@ There are a few problems with the approach as we've just described it, but
 we'll deal with the first one: how do you define "image similarity"? One metric
 is the *normalized mutual information*, or NMI, which measures how easy it
 would be to predict a pixel value of one image given the value of the
-corresponding pixel in the other. See chapter 5 for some more information on
-this, as well as the original reference:
+corresponding pixel in the other. This measure was defined in the paper:
 
-* Studholme, C., Hill, D.L.G., Hawkes, D.J.: An Overlap Invariant Entropy Measure
-  of 3D Medical Image Alignment. Patt. Rec. 32, 71–86 (1999)
+* Studholme, C., Hill, D.L.G., Hawkes, D.J.: An Overlap Invariant Entropy
+  Measure of 3D Medical Image Alignment. Patt. Rec. 32, 71–86 (1999)
 
-Let's start with the definition of the mutual information:
+Let's start with the definition of NMI:
+
+$$
+I(X, Y) = \frac{H(X) + H(Y)}{H(X, Y)},
+$$
+
+where $H(X)$ is the *entropy* of $X$, and $H(X, Y)$ is the joint entropy of $X$
+and $Y$. (See Chapter 5 for a more in-depth discussion of entropy.)
 
 ```python
 import numpy as np
