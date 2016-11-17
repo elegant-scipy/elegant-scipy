@@ -1,7 +1,5 @@
 # Function optimization in SciPy
 
-## Introduction
-
 > Life is like a landscape. You live in the midst of it but can
 > describe it only from the vantage point of distance. --- Charles
 > Lindbergh
