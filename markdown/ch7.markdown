@@ -6,18 +6,19 @@
 
 Hanging a picture on the wall, it is sometimes hard to get it
 straight.  You make an adjustment, step back, evaluate the picture's
-horizontality, and repeat.  This is a process of optimization: we're
-changing the angle of the portrait until it satisfies our
-demand---that it should be straight.
+horizontality, and repeat.  This is a process of *optimization*: we're
+changing the orientation of the portrait until it satisfies our
+demand---that it makes a zero angle with the horizon.
 
-In mathematics, our demand is called a "cost function", and the angle
-of the portrait the "parameter".  In a typical optimization problem,
-we vary the parameters until the cost function is minimized.
+In mathematics, our demand is called a "cost function", and the
+orientation of the portrait the "parameter".  In a typical
+optimization problem, we vary the parameters until the cost function
+is minimized.
 
-Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.  We know
-that this function has a minimum at 3, because we can calculate the
-derivative, set it to zero, and see that $2 (x - 3) = 0$, i.e.  $x =
-3$.
+Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.  We
+know that this function, with parameter $x$, has a minimum at 3,
+because we can calculate the derivative, set it to zero, and see that
+$2 (x - 3) = 0$, i.e. $x = 3$.
 
 But, if this function were much more complicated (e.g., was an
 expression with many terms, had multiple points of zero derivative,
@@ -38,13 +39,13 @@ attempt to address the issue[^line_search].
                 ways, but two common approaches are line searches and
                 trust regions.  With a *line search*, you try to find
                 the cost function minimum along a specific dimension,
-                and then successively attempt the same along the
-                others.  With *trust regions*, we move our guess for
-                the minimum in the direction we expect it to be; if we
-                are indeed approaching the minimum as expected, we
-                repeat the procedure with increased confidence.  If
-                not, we lower our confidence and search a wider area.
-
+                and then successively attempt the same along the other
+                dimensions.  With *trust regions*, we move our guess
+                for the minimum in the direction we expect it to be;
+                if we see that we are indeed approaching the minimum
+                as expected, we repeat the procedure with increased
+                confidence.  If not, we lower our confidence and
+                search a wider area.
 
 There are many different optimization algorithms to choose from.  You
 get to choose whether your cost function takes a scalar or a vector as
@@ -79,13 +80,27 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-Correlation-based image alignment depends on detecting the similarity between
-two images at various levels of alignment. We can then "jiggle" the images, and
-see whether jiggling them in one direction or another improves the similarity.
-By doing this repeatedly, we can try to find the correct alignment.
+Let's start with the simplest version of the problem: we have two
+images, one shifted relative to the other.  We wish to recover the
+shift that will best align our images.
+
+Our optimization function will "jiggle" one of the images, and see
+whether jiggling it in one direction or another reduces their
+dissimilarity.  By doing this repeatedly, we can try to find the
+correct alignment.
+
+For the optimization algorithm to do its work, we need some way of
+defining "dissimilarity"---or, the cost function.  The easiest is to
+simply calculate the sum of the squared differences:
+``np.sum((image_0 - image_1)**2)``.
+
+This will return 0 when the images are perfectly aligned, and a higher
+value otherwise.
+
+...
 
 There are a few problems with the approach as we've just described it, but
-we'll deal with the first one: how do you define "image similarity"? One metric
+we'll deal with the first one:  One metric
 is the *normalized mutual information*, or NMI, which measures how easy it
 would be to predict a pixel value of one image given the value of the
 corresponding pixel in the other. This measure was defined in the paper:
