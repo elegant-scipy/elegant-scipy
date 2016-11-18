@@ -90,108 +90,51 @@ dissimilarity.  By doing this repeatedly, we can try to find the
 correct alignment.
 
 For the optimization algorithm to do its work, we need some way of
-defining "dissimilarity"---or, the cost function.  The easiest is to
+defining "dissimilarity"---i.e., the cost function.  The easiest is to
 simply calculate the sum of the squared differences:
-``np.sum((image_0 - image_1)**2)``.
-
-This will return 0 when the images are perfectly aligned, and a higher
-value otherwise.
-
-...
-
-There are a few problems with the approach as we've just described it, but
-we'll deal with the first one:  One metric
-is the *normalized mutual information*, or NMI, which measures how easy it
-would be to predict a pixel value of one image given the value of the
-corresponding pixel in the other. This measure was defined in the paper:
-
-* Studholme, C., Hill, D.L.G., Hawkes, D.J.: An Overlap Invariant Entropy
-  Measure of 3D Medical Image Alignment. Patt. Rec. 32, 71–86 (1999)
-
-Let's start with the definition of NMI:
-
-$$
-I(X, Y) = \frac{H(X) + H(Y)}{H(X, Y)},
-$$
-
-where $H(X)$ is the *entropy* of $X$, and $H(X, Y)$ is the joint entropy of $X$
-and $Y$. (See Chapter 5 for a more in-depth discussion of entropy.)
 
 ```python
 import numpy as np
 
-from scipy.stats import entropy
-from scipy import optimize
-from scipy import ndimage as ndi
-
-from skimage import transform
-from skimage.util import random_noise
-
-
-def normalized_mutual_information(A, B):
-    """Compute the normalized mutual information.
-
-    The normalized mutual information is given by:
-
-                H(A) + H(B)
-      Y(A, B) = -----------
-                  H(A, B)
-
-    where H(X) is the entropy ``- sum(x log x) for x in X``.
-
-    Parameters
-    ----------
-    A, B : ndarray
-        Images to be registered.
-
-    Returns
-    -------
-    nmi : float
-        The normalized mutual information between the two arrays, computed at a
-        granularity of 100 bins per axis (10,000 bins total).
-    """
-    hist, bin_edges = np.histogramdd([np.ravel(A), np.ravel(B)], bins=100)
-    hist /= np.sum(hist)
-
-    H_A = entropy(np.sum(hist, axis=0))
-    H_B = entropy(np.sum(hist, axis=1))
-    H_AB = entropy(np.ravel(hist))
-
-    return (H_A + H_B) / H_AB
+def ssd(A, B):
+    """Sum of squared differences."""
+    return np.sum((A - B)**2) / np.prod(A.shape)
 ```
 
-With this, we can already check whether two images are aligned:
+This will return 0 when the images are perfectly aligned, and a higher
+value otherwise.
+
+With this cost function, we can check whether two images are aligned:
 
 ```python
 from scipy import ndimage as ndi
 from skimage import data, color
-astronaut = color.rgb2gray(data.astronaut())
 
+astronaut = color.rgb2gray(data.astronaut())
 ncol = astronaut.shape[1]
-nmis = []
+
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
+costs = []
+
 for shift in shifts:
     shifted = ndi.shift(astronaut, (0, shift))
-    nmis.append(normalized_mutual_information(astronaut, shifted))
+    costs.append(ssd(astronaut, shifted))
 
 fig, ax = plt.subplots()
-ax.plot(shifts, nmis)
+ax.plot(shifts, costs)
 ```
 
-This is the crux of optimization: define a function to optimize (in this case,
-the NMI of two images for a given offset value), optimize it, and apply the
-resulting parameter set (in this case, align the images with the found offset):
+With the cost function defined, we can ask `scipy.optimize.minimize`
+to search for optimal parameters:
 
 ```python
 from scipy import optimize
 
 shifted = ndi.shift(astronaut, (0, 50))
 
-
 def error_function(shift):
     corrected = ndi.shift(shifted, (0, shift))
-    return -normalized_mutual_information(astronaut, corrected)
-    
+    return ssd(astronaut, corrected)
 
 res = optimize.minimize(error_function, 0, method='Powell')
 
@@ -201,6 +144,7 @@ print('The optimal shift for correction is: %f' % res.x)
 Brilliant! Thanks to our NMI measure, SciPy's `optimize.minimize` function has
 recovered the correct amount to shift our distorted image to get it back to its
 original state.
+
 Unfortunately, this brings us to the principal difficulty of this kind of
 alignment: sometimes, the NMI has to get worse before it gets better. Have a
 look at the NMI value as the shift gets larger and larger: at around 200
@@ -244,16 +188,42 @@ ax.plot(shifts, nmis_smooth, label='smoothed')
 ax.legend()
 ```
 
-As you can see, with some rather extreme smoothing, the "funnel" of the error
-function becomes wider.
-Therefore, modern alignment software uses what's called a *Gaussian pyramid*,
-which is a set of progressively lower resolution versions of the same image.
-We can the align the lower resolution (blurrier) images first, to get an
-approximate alignment, and then progressively refine the alignment with sharper
-images.
+As you can see, with some rather extreme smoothing, the "funnel" of
+the error function becomes wider.  Therefore, modern alignment
+software uses what's called a *Gaussian pyramid*, which is a set of
+progressively lower resolution versions of the same image.  We align
+the the lower resolution (blurrier) images first, to get an
+approximate alignment, and then progressively refine the alignment
+with sharper images.
 
 ```python
-# TODO: ab initio implementation of Gaussian pyramid
+def gaussian_pyramid(image, levels=7):
+    """Make a Gaussian image pyramid.
+
+    Parameters
+    ----------
+    image : array of float
+        The input image.
+    max_layer : int, optional
+        The number of levels in the pyramid.
+
+    Returns
+    -------
+    pyramid : list of array of float
+        A list of Gaussian pyramid levels, starting with the top
+        (lowest resolution) level.
+    """
+    pyramid = [image]
+    rows, cols = image.shape[0], image.shape[1]
+
+    for level in range(levels):
+        rows = np.ceil(rows / 2)
+        cols = np.ceil(cols / 2)
+        blurred = ndi.gaussian_filter(image, sigma=2/3)
+        image = transform.resize(blurred, (rows, cols))
+        pyramid.append(image)
+
+    return pyramid[::-1]
 ```
 
 Let's see how the 1D alignment looks along that pyramid:
@@ -275,23 +245,24 @@ def build_tf(param):
                                          translation=(tx, ty))
 
 
-def cost_nmi(param, X, Y):
+def cost_ssd(param, X, Y):
     transformation = build_tf(param)
     Y_prime = transform.warp(Y, transformation, order=3)
-    return -normalized_mutual_information(X, Y_prime)
+    return ssd(X, Y_prime)
 
 
 # TODO: Generalize this for N-d
 def align(A, B, cost=cost_nmi):
-    pyramid_A = transform.pyramid_gaussian(A, downscale=2, max_layer=7)
-    pyramid_B = transform.pyramid_gaussian(B, downscale=2, max_layer=7)
+    pyramid_A = gaussian_pyramid(A, levels=5)
+    pyramid_B = gaussian_pyramid(B, levels=5)
     image_pairs = list(zip(pyramid_A, pyramid_B))
-    n_levels = len(image_pairs)
+
+    levels = range(len(pyramid_A), 0, -1)
+    image_pairs = zip(pyramid_A, pyramid_B)
 
     p = np.zeros(3)
 
-    for n, (X, Y) in zip(range(n_levels, 0, -1),
-                         reversed(list(image_pairs))):
+    for n, (X, Y) in zip(levels, image_pairs):
         p[1:] *= 2
 
         res = optimize.minimize(cost, p, args=(X, Y))
@@ -310,7 +281,7 @@ def align(A, B, cost=cost_nmi):
 from skimage import data, transform, color
 
 img0 = color.rgb2gray(data.astronaut())
-theta = 40
+theta = 50
 img1 = transform.rotate(img0, theta)
 img1 = random_noise(img1, mode='gaussian', seed=0, mean=0, var=1e-3)
 
@@ -327,11 +298,19 @@ ax2.imshow(corrected, cmap='gray')
 ax2.set_title('Registered image')
 ```
 
-Oops! That didn't work at all! Since this is a toy example, we can actually
-look at the cost function for *all* possible angles at each level of the
-pyramid:
+We're feeling pretty good now.  And then a friend from neuroimaging
+challenges us to use our new method to align two brain volumes, one
+from a PET scan, the other from an MRI scan.
+
+Thinking about it, the Sum of Squared Differences no longer seems to
+be such a good idea.  PET and MRI images look very dissimilar!
+
+Let's examine, for example, how the SSD cost function would vary with
+increasing angles of rotation:
 
 ```python
+# MODIFY WITH BRAIN IMAGES
+
 f, ax0 = plt.subplots()
 pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
 pyr1 = transform.pyramid_gaussian(img1, downscale=2, max_layer=5)
@@ -353,11 +332,104 @@ ax0.legend(loc='lower right', frameon=True, framealpha=0.9)
 plt.show()
 ```
 
-Thus we can see that the mutual information fails dramatically at the
-higher (low-resolution) pyramid levels, while it is virtually flat
-at the lower (high-resolution) levels, except for a narrow region around the true
-transformation angle! If you start with a relatively faraway angle,
-you have no hope of recovering the true transformation.
+Since SSD won't work, we have to search for a better cost function.
+It's not altogether surprising that cost functions tend to be highly domain and
+problem specific!
+
+A suggested metric for multi-modal images, like the brain scans here,
+is  *normalized mutual information*, or NMI, which measures how easy it
+would be to predict a pixel value of one image given the value of the
+corresponding pixel in the other[^nmi_paper].
+
+[^nmi_paper]: This measure was defined in the paper: Studholme, C.,
+              Hill, D.L.G., Hawkes, D.J.: An Overlap Invariant
+              Entropy Measure of 3D Medical Image
+              Alignment. Patt. Rec. 32, 71–86 (1999)
+
+Let's start with the definition of NMI:
+
+$$
+I(X, Y) = \frac{H(X) + H(Y)}{H(X, Y)},
+$$
+
+where $H(X)$ is the *entropy* of $X$, and $H(X, Y)$ is the joint
+entropy of $X$ and $Y$.  The numerator describes the entropy of the
+two images, seen separately, and the denomenator the total entropy if
+they are observed together.  Values can vary between 1 (maximally
+aligned) and 2 (minimally aligned)[^mi_calc]. (See Chapter 5 for a
+more in-depth discussion of entropy.)
+
+[^mi_calc]: A quick handwavy explanation is that entropy is calculated
+            from the histogram of the quantity under consideration.
+            If $X = Y$, then the joint histogram $(X, Y)$ is diagonal,
+            and that diagonal is the same as that of either $X$ or
+            $Y$.  Thus, $H(X) = H(Y) = H(X, Y)$ and $I(X, Y) = 2$.
+
+We compute normalized mutual information as follows:
+
+```
+from scipy.stats import entropy
+
+def normalized_mutual_information(A, B):
+    """Compute the normalized mutual information.
+
+    The normalized mutual information is given by:
+
+                H(A) + H(B)
+      Y(A, B) = -----------
+                  H(A, B)
+
+    where H(X) is the entropy ``- sum(x log x) for x in X``.
+
+    Parameters
+    ----------
+    A, B : ndarray
+        Images to be registered.
+
+    Returns
+    -------
+    nmi : float
+        The normalized mutual information between the two arrays, computed at a
+        granularity of 100 bins per axis (10,000 bins total).
+    """
+    hist, bin_edges = np.histogramdd([np.ravel(A), np.ravel(B)], bins=100)
+    hist /= np.sum(hist)
+
+    H_A = entropy(np.sum(hist, axis=0))
+    H_B = entropy(np.sum(hist, axis=1))
+    H_AB = entropy(np.ravel(hist))
+
+    return (H_A + H_B) / H_AB
+```
+
+Now, let's attempt the same optimization as before, this time using
+mutual information:
+
+<!-- ```python -->
+<!-- import numpy as np -->
+
+<!-- from scipy import optimize -->
+<!-- from scipy import ndimage as ndi -->
+
+<!-- from skimage import transform -->
+<!-- from skimage.util import random_noise -->
+
+
+```python
+# Add example here
+```
+
+In difficult cases, NMI registration may still fail.  E.g.:
+
+```python
+# register two tricky images
+```
+
+<!-- Thus we can see that the mutual information fails dramatically at the -->
+<!-- higher (low-resolution) pyramid levels, while it is virtually flat -->
+<!-- at the lower (high-resolution) levels, except for a narrow region around the true -->
+<!-- transformation angle! If you start with a relatively faraway angle, -->
+<!-- you have no hope of recovering the true transformation. -->
 
 In their 2000 paper, Pluim *et al.* showed that you can improve the properties
 of the objective function by adding *gradient* information to the NMI metric.
@@ -423,7 +495,7 @@ def alignment(A, B, sigma=1.5):
 
 ```
 
-Next, we use those functions to align the same image:
+We attempt the registration again:
 
 ```python
 from skimage import data, transform, color
@@ -477,6 +549,7 @@ ax0.legend(loc='lower right')
 plt.show()
 ```
 
-As you can see, it's much more funnel-shaped than the NMI. It's easy to see why
-progressive optimization of Pluim's function at decreasing levels of the
-pyramid would result in the correct alignment.
+As you can see, it's much more funnel-shaped than NMI by itself. It's
+easy to see why progressive optimization of Pluim's function at
+decreasing levels of the pyramid would result in the correct
+alignment.
