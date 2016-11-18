@@ -30,6 +30,8 @@ ipynb/ch2.ipynb: data/counts.txt
 
 ipynb/ch4.ipynb: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
 
+ipynb/ch7.ipynb: $(FIGURES)/optimization_comparison.png
+
 ipynb/ch8.ipynb: data/dm6.fa
 
 .SECONDARY: data/counts.txt data/dm6.fa data/dm6.fa.gz
