@@ -267,7 +267,7 @@ def align(A, B, cost=cost_ssd):
     for n, (X, Y) in zip(levels, image_pairs):
         p[1:] *= 2
 
-        res = optimize.minimize(cost, p, args=(X, Y))
+        res = optimize.minimize(cost, p, args=(X, Y), method='Powell')
         p = res.x
 
         print('Pyramid level %i' % n)
