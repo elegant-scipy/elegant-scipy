@@ -47,13 +47,15 @@ attempt to address the issue[^line_search].
                 confidence.  If not, we lower our confidence and
                 search a wider area.
 
-There are many different optimization algorithms to choose from.  You
-get to choose whether your cost function takes a scalar or a vector as
-input (i.e., do you have one or multiple parameters to optimize?).
-There are those that require the cost function gradient to be given
-and those that automatically estimate it.  Some only search for
-parameters in a given area (*constrained optimization*), and others
-examine the entire parameter space.
+![Optimization Comparison](../figures/generated/optimization_comparison.png)
+
+There are many different optimization algorithms to choose from (see
+figure).  You get to choose whether your cost function takes a scalar
+or a vector as input (i.e., do you have one or multiple parameters to
+optimize?).  There are those that require the cost function gradient
+to be given and those that automatically estimate it.  Some only
+search for parameters in a given area (*constrained optimization*),
+and others examine the entire parameter space.
 
 In the rest of this chapter, we are going to use SciPy's `optimize`
 module to align two images, using the method described in the papers:
@@ -114,14 +116,14 @@ astronaut = color.rgb2gray(data.astronaut())
 ncol = astronaut.shape[1]
 
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
-costs = []
+ssd_costs = []
 
 for shift in shifts:
     shifted = ndi.shift(astronaut, (0, shift))
-    costs.append(ssd(astronaut, shifted))
+    ssd_costs.append(ssd(astronaut, shifted))
 
 fig, ax = plt.subplots()
-ax.plot(shifts, costs)
+ax.plot(shifts, ssd_costs)
 ```
 
 With the cost function defined, we can ask `scipy.optimize.minimize`
@@ -176,15 +178,15 @@ from skimage import filters
 
 astronaut_smooth = filters.gaussian(astronaut, sigma=20)
 
-nmis_smooth = []
+ssd_costs_smooth = []
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
 for shift in shifts:
     shifted = ndi.shift(astronaut_smooth, (0, shift))
-    nmis_smooth.append(normalized_mutual_information(astronaut_smooth, shifted))
+    ssd_costs_smooth.append(ssd(astronaut_smooth, shifted))
 
 fig, ax = plt.subplots()
-ax.plot(shifts, nmis, label='original')
-ax.plot(shifts, nmis_smooth, label='smoothed')
+ax.plot(shifts, ssd_costs, label='original')
+ax.plot(shifts, ssd_costs_smooth, label='smoothed')
 ax.legend()
 ```
 
@@ -252,7 +254,7 @@ def cost_ssd(param, X, Y):
 
 
 # TODO: Generalize this for N-d
-def align(A, B, cost=cost_nmi):
+def align(A, B, cost=cost_ssd):
     pyramid_A = gaussian_pyramid(A, levels=5)
     pyramid_B = gaussian_pyramid(B, levels=5)
     image_pairs = list(zip(pyramid_A, pyramid_B))
@@ -278,12 +280,12 @@ def align(A, B, cost=cost_nmi):
 ```
 
 ```python
-from skimage import data, transform, color
+from skimage import data, transform, color, util
 
 img0 = color.rgb2gray(data.astronaut())
 theta = 50
 img1 = transform.rotate(img0, theta)
-img1 = random_noise(img1, mode='gaussian', seed=0, mean=0, var=1e-3)
+img1 = util.random_noise(img1, mode='gaussian', seed=0, mean=0, var=1e-3)
 
 tf = align(img0, img1)
 corrected = transform.warp(img1, tf, order=3)
@@ -310,6 +312,7 @@ increasing angles of rotation:
 
 ```python
 # MODIFY WITH BRAIN IMAGES
+# POSSIBLY FROM http://www.insight-journal.org/rire/ ?
 
 f, ax0 = plt.subplots()
 pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
@@ -319,8 +322,7 @@ n_levels = len(image_pairs)
 angles = np.linspace(-theta - 180, -theta + 180, 201)
 for n, (X, Y) in zip(range(n_levels, 0, -1),
                      reversed(list(image_pairs))):
-    costs = np.array([-normalized_mutual_information(X,
-                                                     transform.rotate(Y, angle))
+    costs = np.array([ssd(X, transform.rotate(Y, angle))
                       for angle in angles])
     costs = (costs - np.min(costs)) / (np.max(costs) - np.min(costs))
     ax0.plot(angles, costs, label='level %i' % n)
@@ -367,7 +369,7 @@ more in-depth discussion of entropy.)
 
 We compute normalized mutual information as follows:
 
-```
+```python
 from scipy.stats import entropy
 
 def normalized_mutual_information(A, B):
@@ -498,14 +500,6 @@ def alignment(A, B, sigma=1.5):
 We attempt the registration again:
 
 ```python
-from skimage import data, transform, color
-
-img0 = transform.rescale(color.rgb2gray(data.astronaut()), 0.3)
-
-theta = 40
-img1 = transform.rotate(img0, theta)
-img1 = random_noise(img1, mode='gaussian', seed=0, mean=0, var=1e-3)
-
 def cost_alignment(param, X, Y):
     transformation = build_tf(param)
     Y_prime = transform.warp(Y, transformation, order=3)
