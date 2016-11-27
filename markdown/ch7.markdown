@@ -100,7 +100,7 @@ import numpy as np
 
 def ssd(A, B):
     """Sum of squared differences."""
-    return np.sum((A - B)**2) / np.prod(A.shape)
+    return np.sum((A - B)**2) / A.size
 ```
 
 This will return 0 when the images are perfectly aligned, and a higher
@@ -132,35 +132,36 @@ to search for optimal parameters:
 ```python
 from scipy import optimize
 
-shifted = ndi.shift(astronaut, (0, 50))
+shifted1 = ndi.shift(astronaut, (0, 50))
 
-def error_function(shift):
-    corrected = ndi.shift(shifted, (0, shift))
+def astronaut_shift_error(shift, image):
+    corrected = ndi.shift(image, (0, shift))
     return ssd(astronaut, corrected)
 
-res = optimize.minimize(error_function, 0, method='Powell')
+res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
+                        method='Powell')
 
 print('The optimal shift for correction is: %f' % res.x)
 ```
 
-Brilliant! Thanks to our NMI measure, SciPy's `optimize.minimize` function has
+Brilliant! Thanks to our SSD measure, SciPy's `optimize.minimize` function has
 recovered the correct amount to shift our distorted image to get it back to its
 original state.
 
 Unfortunately, this brings us to the principal difficulty of this kind of
-alignment: sometimes, the NMI has to get worse before it gets better. Have a
-look at the NMI value as the shift gets larger and larger: at around 200
-pixels of shift, it starts to get higher again! Only slightly higher, but
-higher nonetheless. Because optimization methods only have access to "nearby"
+alignment: sometimes, the SSD has to get worse before it gets better. Have a
+look at the SSD value as the shift gets larger and larger: at around -300
+pixels of shift, it starts to decrease again! Only slightly, but it decreases
+nonetheless. Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
 direction, the `minimize` process will move that way regardless. So, if we
-start by an image shifted by 200 pixels:
+start by an image shifted by -340 pixels:
 
 ```python
-shifted = ndi.shift(astronaut, (0, 200))
+shifted = ndi.shift(astronaut, (0, -340))
 ```
 
-`minimize` will shift it by a further 90 pixels or so, instead of recovering
+`minimize` will shift it by a further 40 pixels or so, instead of recovering
 the original image:
 
 ```python
@@ -191,7 +192,7 @@ ax.legend()
 ```
 
 As you can see, with some rather extreme smoothing, the "funnel" of
-the error function becomes wider.  Therefore, modern alignment
+the error function becomes wider, and less bumpy. Therefore, modern alignment
 software uses what's called a *Gaussian pyramid*, which is a set of
 progressively lower resolution versions of the same image.  We align
 the the lower resolution (blurrier) images first, to get an
