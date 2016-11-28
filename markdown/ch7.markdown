@@ -158,14 +158,15 @@ direction, the `minimize` process will move that way regardless. So, if we
 start by an image shifted by -340 pixels:
 
 ```python
-shifted = ndi.shift(astronaut, (0, -340))
+shifted2 = ndi.shift(astronaut, (0, -340))
 ```
 
 `minimize` will shift it by a further 40 pixels or so, instead of recovering
 the original image:
 
 ```python
-res = optimize.minimize(error_function, 0, method='Powell')
+res = optimize.minimize(astronaut_shift_error, 0, args=(shifted2,),
+                        method='Powell')
 
 print('The optimal shift for correction is %f' % res.x)
 ```
@@ -207,7 +208,7 @@ def downsample2x(image):
     return ndi.map_coordinates(image, coords, order=1)
 
 
-def gaussian_pyramid(image, levels=7):
+def gaussian_pyramid(image, levels=6):
     """Make a Gaussian image pyramid.
 
     Parameters
@@ -225,9 +226,9 @@ def gaussian_pyramid(image, levels=7):
     """
     pyramid = [image]
 
-    for level in range(levels):
+    for level in range(levels - 1):
         blurred = ndi.gaussian_filter(image, sigma=2/3)
-        image = downscale2x(image)
+        image = downsample2x(image)
         pyramid.append(image)
 
     return reversed(pyramid)
@@ -260,11 +261,12 @@ def cost_ssd(param, X, Y):
 
 # TODO: Generalize this for N-d
 def align(A, B, cost=cost_ssd):
-    pyramid_A = gaussian_pyramid(A, levels=5)
-    pyramid_B = gaussian_pyramid(B, levels=5)
+    nlevels = 6
+    pyramid_A = gaussian_pyramid(A, levels=nlevels)
+    pyramid_B = gaussian_pyramid(B, levels=nlevels)
     image_pairs = list(zip(pyramid_A, pyramid_B))
 
-    levels = range(len(pyramid_A), 0, -1)
+    levels = range(nlevels, -1, -1)
     image_pairs = zip(pyramid_A, pyramid_B)
 
     p = np.zeros(3)
@@ -552,3 +554,4 @@ As you can see, it's much more funnel-shaped than NMI by itself. It's
 easy to see why progressive optimization of Pluim's function at
 decreasing levels of the pyramid would result in the correct
 alignment.
+
