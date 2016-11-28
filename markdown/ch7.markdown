@@ -200,6 +200,13 @@ approximate alignment, and then progressively refine the alignment
 with sharper images.
 
 ```python
+
+def downsample2x(image):
+    slices = [slice(0.5, end, 2) for end in image.shape]
+    coords = np.mgrid[slices]
+    return ndi.map_coordinates(image, coords, order=1)
+
+
 def gaussian_pyramid(image, levels=7):
     """Make a Gaussian image pyramid.
 
@@ -212,21 +219,18 @@ def gaussian_pyramid(image, levels=7):
 
     Returns
     -------
-    pyramid : list of array of float
-        A list of Gaussian pyramid levels, starting with the top
+    pyramid : iterator of array of float
+        An iterator of Gaussian pyramid levels, starting with the top
         (lowest resolution) level.
     """
     pyramid = [image]
-    rows, cols = image.shape[0], image.shape[1]
 
     for level in range(levels):
-        rows = np.ceil(rows / 2)
-        cols = np.ceil(cols / 2)
         blurred = ndi.gaussian_filter(image, sigma=2/3)
-        image = transform.resize(blurred, (rows, cols))
+        image = downscale2x(image)
         pyramid.append(image)
 
-    return pyramid[::-1]
+    return reversed(pyramid)
 ```
 
 Let's see how the 1D alignment looks along that pyramid:
