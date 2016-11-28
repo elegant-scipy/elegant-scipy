@@ -264,7 +264,6 @@ def align(A, B, cost=cost_ssd):
     nlevels = 6
     pyramid_A = gaussian_pyramid(A, levels=nlevels)
     pyramid_B = gaussian_pyramid(B, levels=nlevels)
-    image_pairs = list(zip(pyramid_A, pyramid_B))
 
     levels = range(nlevels, -1, -1)
     image_pairs = zip(pyramid_A, pyramid_B)
