@@ -284,7 +284,7 @@ def align(A, B, cost=cost_ssd):
 from skimage import data, transform, color, util
 
 img0 = color.rgb2gray(data.astronaut())
-theta = 50
+theta = 60
 img1 = transform.rotate(img0, theta)
 img1 = util.random_noise(img1, mode='gaussian', seed=0, mean=0, var=1e-3)
 
