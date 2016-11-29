@@ -203,7 +203,9 @@ with sharper images.
 ```python
 
 def downsample2x(image):
-    slices = [slice(0.5, end, 2) for end in image.shape]
+    offsets = [((s + 1) % 2) / 2 for s in image.shape]
+    slices = [slice(offset, end, 2)
+              for offset, end in zip(offsets, image.shape)]
     coords = np.mgrid[slices]
     return ndi.map_coordinates(image, coords, order=1)
 
