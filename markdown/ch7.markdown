@@ -263,7 +263,7 @@ def cost_ssd(param, X, Y):
 
 # TODO: Generalize this for N-d
 def align(A, B, cost=cost_ssd):
-    nlevels = 6
+    nlevels = 7
     pyramid_A = gaussian_pyramid(A, levels=nlevels)
     pyramid_B = gaussian_pyramid(B, levels=nlevels)
 
