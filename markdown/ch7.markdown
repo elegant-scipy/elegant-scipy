@@ -259,9 +259,15 @@ ax.set_xlabel('Shift')
 ax.set_ylabel('SSD')
 ```
 
-Now that we have that working, let's try a real alignment, with three
-parameters: rotation, translation in the row dimension, and translation in the
-column dimension:
+As you can see, at the highest level of the pyramid, that bump at a shift of
+about -325 disappears. We can therefore get an approximate alignment at that
+level, then pop down to the lower levels to refine that alignment.
+
+Let's automate that, and try with a "real" alignment, with three parameters:
+rotation, translation in the row dimension, and translation in the
+column dimension. (This is called a "*rigid* registration".) To simplify the
+code, we'll use the scikit-image *transform* module to compute the shift and
+rotation of the image.
 
 ```python
 from skimage import transform
