@@ -1,8 +1,12 @@
 # Function optimization in SciPy
 
-> Life is like a landscape. You live in the midst of it but can
-> describe it only from the vantage point of distance. --- Charles
-> Lindbergh
+> "What's new?" is an interesting and broadening eternal question, but one
+> which, if pursued exclusively, results only in an endless parade of trivia
+> and fashion, the silt of tomorrow. I would like, instead, to be concerned
+> with the question "What is best?", a question which cuts deeply rather than
+> broadly, a question whose answers tend to move the silt downstream.
+>
+> — Robert M Pirsig, Zen and the Art of Motorcycle Maintenance
 
 Hanging a picture on the wall, it is sometimes hard to get it
 straight.  You make an adjustment, step back, evaluate the picture's
