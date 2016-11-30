@@ -273,9 +273,9 @@ rotation of the image.
 from skimage import transform
 
 def build_tf(param):
-    r, tx, ty = param
+    r, tc, tr = param
     return transform.SimilarityTransform(rotation=r,
-                                         translation=(tx, ty))
+                                         translation=(tc, tr))
 
 
 def cost_ssd(param, X, Y):
