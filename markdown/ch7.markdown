@@ -241,7 +241,22 @@ def gaussian_pyramid(image, levels=6):
 Let's see how the 1D alignment looks along that pyramid:
 
 ```python
-# TODO: plot NMI for many offset values for each level of the pyramid
+shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
+nlevels = 6
+costs = np.empty((nlevels, len(shifts)), dtype=float)
+astronaut_pyramid = list(gaussian_pyramid(astronaut, levels=nlevels))
+for col, shift in enumerate(shifts):
+    shifted = ndi.shift(astronaut, (0, shift))
+    shifted_pyramid = gaussian_pyramid(shifted, levels=nlevels)
+    for row, image in enumerate(shifted_pyramid):
+        costs[row, col] = ssd(astronaut_pyramid[row], image)
+
+fig, ax = plt.subplots()
+for level, cost in enumerate(costs):
+    ax.plot(shifts, cost, label='Level %d' % (nlevels - level))
+ax.legend(loc='lower right', frameon=True, framealpha=0.9)
+ax.set_xlabel('Shift')
+ax.set_ylabel('SSD')
 ```
 
 Now that we have that working, let's try a real alignment, with three
