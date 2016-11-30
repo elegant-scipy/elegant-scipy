@@ -248,7 +248,7 @@ Let's see how the 1D alignment looks along that pyramid:
 
 ```python
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
-nlevels = 6
+nlevels = 8
 costs = np.empty((nlevels, len(shifts)), dtype=float)
 astronaut_pyramid = list(gaussian_pyramid(astronaut, levels=nlevels))
 for col, shift in enumerate(shifts):
@@ -274,7 +274,10 @@ rotation, translation in the row dimension, and translation in the
 column dimension. (This is called a "*rigid* registration".)
 
 To simplify the code, we'll use the scikit-image *transform* module to compute
-the shift and rotation of the image.
+the shift and rotation of the image. SciPy's `optimize` requires a vector of
+parameters as input. These are just numbers, without meaning. We first make a
+function that will take such a vector and produce a rigid transformation with
+the right parameters:
 
 ```python
 from skimage import transform
@@ -283,15 +286,26 @@ def make_rigid_transform(param):
     r, tc, tr = param
     return transform.SimilarityTransform(rotation=r,
                                          translation=(tc, tr))
+```
 
+Next, we need a cost function. This is just MSE, but SciPy requires a specific
+format: the first argument needs to be the *parameter vector*, which it is
+optimizing. Subsequent arguments can be passed through the `args` keyword as a
+tuple, but must remain fixed: only the parameter vector can be optimized. In
+our case, this is just the rotation angle and the two translation parameters:
 
+```python
 def cost_mse(param, reference_image, target_image):
     transformation = make_rigid_transform(param)
     transformed = transform.warp(target_image, transformation, order=3)
     return mse(reference_image, transformed)
+```
 
+Finally, we write our alignment function, which optimizes our cost function
+*at each level of the Gaussian pyramid*, using the result of the previous
+level as a starting point for the next one:
 
-# TODO: Generalize this for N-d
+```python
 def align(reference, target, cost=cost_mse):
     nlevels = 7
     pyramid_ref = gaussian_pyramid(reference, levels=nlevels)
@@ -317,25 +331,29 @@ def align(reference, target, cost=cost_mse):
     return make_rigid_transform(p)
 ```
 
+Let's try it with our astronaut image. We rotate it by 60 degrees and add some
+noise to it. Can SciPy recover the correct transform?
+
 ```python
-from skimage import data, transform, color, util
+from skimage import util
 
-img0 = color.rgb2gray(data.astronaut())
 theta = 60
-img1 = transform.rotate(img0, theta)
-img1 = util.random_noise(img1, mode='gaussian', seed=0, mean=0, var=1e-3)
+rotated = transform.rotate(astronaut, theta)
+rotated = util.random_noise(rotated, mode='gaussian',
+                            seed=0, mean=0, var=1e-3)
 
-tf = align(img0, img1)
-corrected = transform.warp(img1, tf, order=3)
-
+tf = align(astronaut, rotated)
+corrected = transform.warp(rotated, tf, order=3)
 
 f, (ax0, ax1, ax2) = plt.subplots(1, 3)
-ax0.imshow(img0, cmap='gray')
-ax0.set_title('Input image')
-ax1.imshow(img1, cmap='gray')
-ax1.set_title('Transformed image + noise')
-ax2.imshow(corrected, cmap='gray')
-ax2.set_title('Registered image')
+ax0.imshow(astronaut)
+ax0.set_title('Original')
+ax1.imshow(rotated)
+ax1.set_title('Rotated')
+ax2.imshow(corrected)
+ax2.set_title('Registered')
+for ax in (ax0, ax1, ax2):
+    ax.axis('off')
 ```
 
 We're feeling pretty good now.  And then a friend from neuroimaging
