@@ -189,7 +189,9 @@ for shift in shifts:
 fig, ax = plt.subplots()
 ax.plot(shifts, ssd_costs, label='original')
 ax.plot(shifts, ssd_costs_smooth, label='smoothed')
-ax.legend()
+ax.legend(loc='lower right')
+ax.set_xlabel('Shift')
+ax.set_ylabel('SSD')
 ```
 
 As you can see, with some rather extreme smoothing, the "funnel" of
