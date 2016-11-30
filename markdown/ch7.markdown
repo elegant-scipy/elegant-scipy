@@ -78,7 +78,7 @@ stitching, combination of multi-modal brain scans, super-resolution
 imaging, and, in astronomy, object denoising through the combination
 of multiple exposures.
 
-We start, now, by setting up our plotting environment:
+We start, as usual, by setting up our plotting environment:
 
 ```python
 %matplotlib inline
@@ -97,14 +97,16 @@ correct alignment.
 
 For the optimization algorithm to do its work, we need some way of
 defining "dissimilarity"---i.e., the cost function.  The easiest is to
-simply calculate the sum of the squared differences:
+simply calculate the average of the squared differences, often called the
+*mean squared error*, or MSE. As in previous chapters, images will just be
+NumPy arrays.
 
 ```python
 import numpy as np
 
-def ssd(A, B):
-    """Sum of squared differences."""
-    return np.sum((A - B)**2) / A.size
+def mse(arr1, arr2):
+    """Compute the mean squared error between two arrays."""
+    return np.mean((arr1 - arr2)**2)
 ```
 
 This will return 0 when the images are perfectly aligned, and a higher
@@ -120,14 +122,14 @@ astronaut = color.rgb2gray(data.astronaut())
 ncol = astronaut.shape[1]
 
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
-ssd_costs = []
+mse_costs = []
 
 for shift in shifts:
     shifted = ndi.shift(astronaut, (0, shift))
-    ssd_costs.append(ssd(astronaut, shifted))
+    mse_costs.append(mse(astronaut, shifted))
 
 fig, ax = plt.subplots()
-ax.plot(shifts, ssd_costs)
+ax.plot(shifts, mse_costs)
 ```
 
 With the cost function defined, we can ask `scipy.optimize.minimize`
@@ -140,7 +142,7 @@ shifted1 = ndi.shift(astronaut, (0, 50))
 
 def astronaut_shift_error(shift, image):
     corrected = ndi.shift(image, (0, shift))
-    return ssd(astronaut, corrected)
+    return mse(astronaut, corrected)
 
 res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
                         method='Powell')
@@ -148,13 +150,13 @@ res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
 print('The optimal shift for correction is: %f' % res.x)
 ```
 
-Brilliant! Thanks to our SSD measure, SciPy's `optimize.minimize` function has
+Brilliant! Thanks to our MSE measure, SciPy's `optimize.minimize` function has
 recovered the correct amount to shift our distorted image to get it back to its
 original state.
 
 Unfortunately, this brings us to the principal difficulty of this kind of
-alignment: sometimes, the SSD has to get worse before it gets better. Have a
-look at the SSD value as the shift gets larger and larger: at around -300
+alignment: sometimes, the MSE has to get worse before it gets better. Have a
+look at the MSE value as the shift gets larger and larger: at around -300
 pixels of shift, it starts to decrease again! Only slightly, but it decreases
 nonetheless. Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
@@ -184,18 +186,18 @@ from skimage import filters
 
 astronaut_smooth = filters.gaussian(astronaut, sigma=20)
 
-ssd_costs_smooth = []
+mse_costs_smooth = []
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
 for shift in shifts:
     shifted = ndi.shift(astronaut_smooth, (0, shift))
-    ssd_costs_smooth.append(ssd(astronaut_smooth, shifted))
+    mse_costs_smooth.append(mse(astronaut_smooth, shifted))
 
 fig, ax = plt.subplots()
-ax.plot(shifts, ssd_costs, label='original')
-ax.plot(shifts, ssd_costs_smooth, label='smoothed')
+ax.plot(shifts, mse_costs, label='original')
+ax.plot(shifts, mse_costs_smooth, label='smoothed')
 ax.legend(loc='lower right')
 ax.set_xlabel('Shift')
-ax.set_ylabel('SSD')
+ax.set_ylabel('MSE')
 ```
 
 As you can see, with some rather extreme smoothing, the "funnel" of
@@ -253,14 +255,14 @@ for col, shift in enumerate(shifts):
     shifted = ndi.shift(astronaut, (0, shift))
     shifted_pyramid = gaussian_pyramid(shifted, levels=nlevels)
     for row, image in enumerate(shifted_pyramid):
-        costs[row, col] = ssd(astronaut_pyramid[row], image)
+        costs[row, col] = mse(astronaut_pyramid[row], image)
 
 fig, ax = plt.subplots()
 for level, cost in enumerate(costs):
     ax.plot(shifts, cost, label='Level %d' % (nlevels - level))
 ax.legend(loc='lower right', frameon=True, framealpha=0.9)
 ax.set_xlabel('Shift')
-ax.set_ylabel('SSD')
+ax.set_ylabel('MSE')
 ```
 
 As you can see, at the highest level of the pyramid, that bump at a shift of
@@ -283,14 +285,14 @@ def make_rigid_transform(param):
                                          translation=(tc, tr))
 
 
-def cost_ssd(param, reference_image, target_image):
+def cost_mse(param, reference_image, target_image):
     transformation = make_rigid_transform(param)
     transformed = transform.warp(target_image, transformation, order=3)
-    return ssd(reference_image, transformed)
+    return mse(reference_image, transformed)
 
 
 # TODO: Generalize this for N-d
-def align(reference, target, cost=cost_ssd):
+def align(reference, target, cost=cost_mse):
     nlevels = 7
     pyramid_ref = gaussian_pyramid(reference, levels=nlevels)
     pyramid_tgt = gaussian_pyramid(target, levels=nlevels)
@@ -343,7 +345,7 @@ from a PET scan, the other from an MRI scan.
 Thinking about it, the Sum of Squared Differences no longer seems to
 be such a good idea.  PET and MRI images look very dissimilar!
 
-Let's examine, for example, how the SSD cost function would vary with
+Let's examine, for example, how the MSE cost function would vary with
 increasing angles of rotation:
 
 ```python
@@ -358,7 +360,7 @@ n_levels = len(image_pairs)
 angles = np.linspace(-theta - 180, -theta + 180, 201)
 for n, (X, Y) in zip(range(n_levels, 0, -1),
                      reversed(list(image_pairs))):
-    costs = np.array([ssd(X, transform.rotate(Y, angle))
+    costs = np.array([mse(X, transform.rotate(Y, angle))
                       for angle in angles])
     costs = (costs - np.min(costs)) / (np.max(costs) - np.min(costs))
     ax0.plot(angles, costs, label='level %i' % n)
@@ -370,7 +372,7 @@ ax0.legend(loc='lower right', frameon=True, framealpha=0.9)
 plt.show()
 ```
 
-Since SSD won't work, we have to search for a better cost function.
+Since MSE won't work, we have to search for a better cost function.
 It's not altogether surprising that cost functions tend to be highly domain and
 problem specific!
 
