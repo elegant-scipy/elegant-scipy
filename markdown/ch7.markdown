@@ -265,40 +265,41 @@ level, then pop down to the lower levels to refine that alignment.
 
 Let's automate that, and try with a "real" alignment, with three parameters:
 rotation, translation in the row dimension, and translation in the
-column dimension. (This is called a "*rigid* registration".) To simplify the
-code, we'll use the scikit-image *transform* module to compute the shift and
-rotation of the image.
+column dimension. (This is called a "*rigid* registration".)
+
+To simplify the code, we'll use the scikit-image *transform* module to compute
+the shift and rotation of the image.
 
 ```python
 from skimage import transform
 
-def build_tf(param):
+def make_rigid_transform(param):
     r, tc, tr = param
     return transform.SimilarityTransform(rotation=r,
                                          translation=(tc, tr))
 
 
-def cost_ssd(param, X, Y):
-    transformation = build_tf(param)
-    Y_prime = transform.warp(Y, transformation, order=3)
-    return ssd(X, Y_prime)
+def cost_ssd(param, reference_image, target_image):
+    transformation = make_rigid_transform(param)
+    transformed = transform.warp(target_image, transformation, order=3)
+    return ssd(reference_image, transformed)
 
 
 # TODO: Generalize this for N-d
-def align(A, B, cost=cost_ssd):
+def align(reference, target, cost=cost_ssd):
     nlevels = 7
-    pyramid_A = gaussian_pyramid(A, levels=nlevels)
-    pyramid_B = gaussian_pyramid(B, levels=nlevels)
+    pyramid_ref = gaussian_pyramid(reference, levels=nlevels)
+    pyramid_tgt = gaussian_pyramid(target, levels=nlevels)
 
     levels = range(nlevels, -1, -1)
-    image_pairs = zip(pyramid_A, pyramid_B)
+    image_pairs = zip(pyramid_ref, pyramid_tgt)
 
     p = np.zeros(3)
 
-    for n, (X, Y) in zip(levels, image_pairs):
+    for n, (ref, tgt) in zip(levels, image_pairs):
         p[1:] *= 2
 
-        res = optimize.minimize(cost, p, args=(X, Y), method='Powell')
+        res = optimize.minimize(cost, p, args=(ref, tgt), method='Powell')
         p = res.x
 
         print('Pyramid level %i' % n)
@@ -307,7 +308,7 @@ def align(A, B, cost=cost_ssd):
         print('Cost function:', res.fun)
         print('')
 
-    return build_tf(p)
+    return make_rigid_transform(p)
 ```
 
 ```python
@@ -532,7 +533,7 @@ We attempt the registration again:
 
 ```python
 def cost_alignment(param, X, Y):
-    transformation = build_tf(param)
+    transformation = make_rigid_transform(param)
     Y_prime = transform.warp(Y, transformation, order=3)
     return -alignment(X, Y_prime)
 
