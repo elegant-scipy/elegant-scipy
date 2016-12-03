@@ -356,7 +356,88 @@ for ax in (ax0, ax1, ax2):
     ax.axis('off')
 ```
 
-We're feeling pretty good now.  And then a friend from neuroimaging
+We're feeling pretty good now. But it turns out that we've only solved the
+easiest of registration problems: images of the same *modality*. This means
+that we expect bright pixels in the reference image to match up to bright
+pixels in the test image. We now move on to aligning different color channels
+of the same image. This task has historical significance: between 1909 and
+1915, the photographer Sergei Mikhailovich Prokudin-Gorskii produced color
+photographs of the Russian empire before color photography had been invented.
+He did this by taking three different monochrome pictures of a scene, each
+with a different color filter placed in front of the lens.
+
+Aligning bright pixels together, as the MSE implicitly does, won't work in
+this case. Take, for example, these three pictures of a stained glass window
+in a church:
+
+```python
+stained_glass = io.imread('data/00998v.jpg')
+fig, ax = plt.subplots()
+ax.imshow(stained_glass)
+ax.axis('off')
+```
+
+Take a look at St John's robes: they look pitch black in one image, gray in
+another, and bright white in the third! This would result in a terrible MSE
+score, even with perfect alignment.
+
+Instead, we turn to a measure called *normalized mutual information*, which
+measures instead correlations between the different brightness bands of the
+different images. When the images are perfectly aligned, any object of
+uniform color will create a large correlation between the shades of the
+different channels.
+
+Let's start by splitting the plate into its component channels:
+
+```python
+nrows = stained_glass.shape[0]
+step = nrows // 3
+channels = (stained_glass[:step],
+            stained_glass[step:2*step],
+            stained_glass[2*step:3*step])
+channel_names = ['blue', 'green', 'red']
+fig, axes = plt.subplots(1, 3)
+for ax, image, name in zip(axes, channels, channel_names):
+    ax.imshow(image)
+    ax.axis('off')
+    ax.set_title(name)
+```
+
+Let's double check that aligning things with the MSE won't work. First, let's
+check that the alignment indeed needs to be fine-tuned between the three
+channels:
+
+```python
+blue, green, red = channels
+original = np.dstack((red, green, blue))
+fig, ax = plt.subplots()
+ax.imshow(original)
+ax.axis('off')
+```
+
+You can see by the color "halos" around objects in the image that the colors
+are close to alignment, but not quite. Let's try to align them in the same
+way that we aligned the astronaut image above:
+
+```python
+tf = align(blue, green)
+cgreen = transform.warp(green, tf, order=3)
+tf = align(blue, red)
+cred = transform.warp(red, tf, order=3)
+
+corrected = np.dstack((cred, cgreen, blue / 255))
+f, (ax0, ax1) = plt.subplots(1, 2)
+ax0.imshow(original)
+ax0.set_title('Original')
+ax1.imshow(corrected)
+ax1.set_title('Corrected')
+for ax in (ax0, ax1):
+    ax.axis('off')
+```
+
+The alignment wasn't
+
+And then a friend from neuroimaging
 challenges us to use our new method to align two brain volumes, one
 from a PET scan, the other from an MRI scan.
 
