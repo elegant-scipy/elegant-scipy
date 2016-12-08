@@ -31,7 +31,7 @@
 
 -->
 
-# Frequency and the Fast Fourier Transform
+# Frequency and the fast Fourier transform
 
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
 
@@ -77,7 +77,7 @@ ax.set_xlabel('Time [s]')
 ax.set_ylabel('Signal amplitude')
 ```
 
-[^discrete]: The Discrete Fourier Transform operates on sampled data,
+[^discrete]: The discrete Fourier transform operates on sampled data,
              in contrast to the standard Fourier Transform which is
              defined for continuous functions.
 
@@ -104,8 +104,8 @@ ax.set_ylim(-5, 110)
 
 The Fourier transform takes us from the *time* to the *frequency*
 domain, and this turns out to have a massive number of applications.
-The *Fast Fourier Transform (FFT)* is an algorithm for computing the
-discrete Fourier Transform; it achieves its high speed by storing and
+The *fast Fourier transform* is an algorithm for computing the
+discrete Fourier transform; it achieves its high speed by storing and
 re-using results of computations as it progresses.
 
 In this chapter, we examine a few applications of the Discrete Fourier
@@ -173,9 +173,9 @@ speaker, I might hear a bird chirping, but I can't very well imagine
 how it would sound like in my head.  Is there a better way of *seeing*
 what is going on?
 
-There is, and it is called the Discrete Fast Fourier Transform
+There is, and it is called the discrete fast Fourier transform
 (discrete, because our recording consists of discrete measurements,
-and fast—because we're in a hurry!).  The Fast Fourier Transform (FFT)
+and fast—because we're in a hurry!). The fast Fourier transform
 tells us which frequencies or "notes" to expect in our signal.
 
 Of course, a bird sings many notes throughout the song, so we'd also
@@ -311,7 +311,7 @@ hot topics of calculating asteroid orbits and solving the heat (flow)
 equation that led to several breakthroughs in the early 1800s.  Whom
 exactly among Clairaut, LaGrange, Euler, Gauss and D'Alembert we
 should thank is not exactly clear, but Gauss was the first to describe
-the Fast Fourier Transform (an algorithm for computing the Discrete
+the fast Fourier transform (an algorithm for computing the Discrete
 Fourier Transform, popularized by Cooley and Tukey in 1965).  Joseph
 Fourier, after whom the transform is named, first claimed that
 *arbitrary* functions can be expressed as a sum of trigonometric
@@ -328,7 +328,7 @@ following FFT-related functionality:
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms
  - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the
    spectrum and back, respectively (more about that soon)
- - ``fftfreq``: Return the Discrete Fourier Transform sample frequencies
+ - ``fftfreq``: Return the discrete Fourier transform sample frequencies
 
 This is complemented by the following functions in NumPy:
 
@@ -351,7 +351,7 @@ you take the dot product with the signal (which, in itself, entails N
 multiplication operations).  Repeating this operation N times, once
 for each sinusoid, then gives $N^2$ operations.
 
-Now, contrast that with the Fast Fourier Transform, which is
+Now, contrast that with the fast Fourier transform, which is
 $\mathcal{O}(N \log N)$ in the ideal case—a great improvement!
 However, the classical Cooley-Tukey algorithm implemented in FFTPACK
 recursively breaks up the transform into smaller (prime-sized) pieces
@@ -424,7 +424,7 @@ multiplications, instead of $N^2 = 1048576$.
          [PyFFTW](https://github.com/hgomersall/pyFFTW) for faster
          FFTs.
 
-## Discrete Fourier Transform concepts
+## Discrete Fourier transform concepts
 
 Next, we present a couple of common concepts worth knowing before
 operating heavy Fourier Transform machinery, whereafter we tackle
