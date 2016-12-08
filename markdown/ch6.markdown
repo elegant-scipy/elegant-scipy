@@ -522,9 +522,9 @@ and, say, two temporary matrices used during calculations, you climb up to
 "Ha!", some of you might be thinking. "Ha! My desktop has 512GB of RAM! It would
 make short work of this so-called 'large' graph!"
 
-Perhaps. But we will also be analysing the Association for Computing Machinery
-(ACM) citation graph, a network of over two million scholarly works and
-references. *That* Laplacian would take up 32 terabytes of RAM.
+Perhaps. But you might also want to analyze the Association for Computing
+Machinery (ACM) citation graph, a network of over two million scholarly works
+and references. *That* Laplacian would take up 32 terabytes of RAM.
 
 However, we know that the dependency and reference graphs are *sparse*:
 packages usually depend on just a few other packages, not on the whole of PyPI.
