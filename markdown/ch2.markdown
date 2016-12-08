@@ -391,7 +391,8 @@ Now we apply these functions to our normalized counts matrix to display row and 
 ```python
 counts_log = np.log(counts + 1)
 counts_var = most_variable_rows(counts_log, n=1500)
-yr, yc = bicluster(counts_var)
+yr, yc = bicluster(counts_var, linkage_method='ward',
+                   distance_metric='euclidean')
 plot_bicluster(counts_var, yr, yc)
 ```
 
