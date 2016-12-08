@@ -217,7 +217,7 @@ Clustering the samples tells us which samples have similar gene expression profi
 Because clustering can be an expensive operation, we will limit our analysis to the 1,500 genes that are most variable, since these will account for most of the correlation signal in either dimension.
 
 ```python
-def most_variable_rows(data, n=1500):
+def most_variable_rows(data, *, n=1500):
     """Subset data to the n most variable rows
 
     In this case, we want the n most variable genes.
@@ -228,10 +228,6 @@ def most_variable_rows(data, n=1500):
         The data to be subset
     n : int, optional
         Number of rows to return.
-    method : function, optional
-        The function with which to compute variance. Must take an array
-        of shape (nrows, ncols) and an axis parameter and return an
-        array of shape (nrows,).
     """
     # compute variance along the columns axis
     rowvar = np.var(data, axis=1)
