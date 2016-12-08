@@ -653,74 +653,23 @@ were missing from the MSE-based alignment.
 
 Notice also the realistic gold of the candlesticks in the foreground.
 
+## Registration in human brain imaging
 
-And then a friend from neuroimaging
-challenges us to use our new method to align two brain volumes, one
-from a PET scan, the other from an MRI scan.
-
-Thinking about it, the Sum of Squared Differences no longer seems to
-be such a good idea.  PET and MRI images look very dissimilar!
-
-Let's examine, for example, how the MSE cost function would vary with
-increasing angles of rotation:
+This brings us to our final optimization in this chapter: aligning brain
+images taken with extremely different techniques. MRI and PET imaging are
+so different, that even normalized mutual information is insufficient for
+some alignments.
 
 ```python
-# MODIFY WITH BRAIN IMAGES
-# POSSIBLY FROM http://www.insight-journal.org/rire/ ?
-
-f, ax0 = plt.subplots()
-pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
-pyr1 = transform.pyramid_gaussian(img1, downscale=2, max_layer=5)
-image_pairs = list(zip(pyr0, pyr1))
-n_levels = len(image_pairs)
-angles = np.linspace(-theta - 180, -theta + 180, 201)
-for n, (X, Y) in zip(range(n_levels, 0, -1),
-                     reversed(list(image_pairs))):
-    costs = np.array([mse(X, transform.rotate(Y, angle))
-                      for angle in angles])
-    costs = (costs - np.min(costs)) / (np.max(costs) - np.min(costs))
-    ax0.plot(angles, costs, label='level %i' % n)
-ax0.set_title('Cost function around angle of interest')
-ax0.set_xlabel('Angle')
-ax0.set_ylabel('Cost')
-ax0.legend(loc='lower right', frameon=True, framealpha=0.9)
-
-plt.show()
+#TODO: attempt to align multimodal 3D images with NMI
 ```
-
-
-Now, let's attempt the same optimization as before, this time using
-mutual information:
-
-<!-- ```python -->
-<!-- import numpy as np -->
-
-<!-- from scipy import optimize -->
-<!-- from scipy import ndimage as ndi -->
-
-<!-- from skimage import transform -->
-<!-- from skimage.util import random_noise -->
-
-
-```python
-# Add example here
-```
-
-In difficult cases, NMI registration may still fail.  E.g.:
-
-```python
-# register two tricky images
-```
-
-<!-- Thus we can see that the mutual information fails dramatically at the -->
-<!-- higher (low-resolution) pyramid levels, while it is virtually flat -->
-<!-- at the lower (high-resolution) levels, except for a narrow region around the true -->
-<!-- transformation angle! If you start with a relatively faraway angle, -->
-<!-- you have no hope of recovering the true transformation. -->
 
 In their 2000 paper, Pluim *et al.* showed that you can improve the properties
-of the objective function by adding *gradient* information to the NMI metric.
-Let's try it here to see if we can improve our alignment:
+of the cost function by adding *gradient* information to the NMI metric. In
+short, they measure the gradients magnitude and direction in both images (think
+back to Chapter 3 and the Sobel filter), and score highly where the gradients
+align, meaning they point in similar or opposite directions, but not at sharp
+angles to each other.
 
 ```python
 def gradient(image, sigma=1):
@@ -778,58 +727,8 @@ def alignment(A, B, sigma=1.5):
     G = np.sum(gradient_similarity(A, B, sigma=sigma))
 
     return I * G
-
-
 ```
-
-We attempt the registration again:
 
 ```python
-def cost_alignment(param, X, Y):
-    transformation = make_rigid_transform(param)
-    Y_prime = transform.warp(Y, transformation, order=3)
-    return -alignment(X, Y_prime)
-
-
-tf = align(img0, img1, cost=cost_alignment)
-corrected = transform.warp(img1, tf, order=3)
-
-
-f, (ax0, ax1, ax2) = plt.subplots(1, 3)
-ax0.imshow(img0, cmap='gray')
-ax0.set_title('Input image')
-ax1.imshow(img1, cmap='gray')
-ax1.set_title('Transformed image + noise')
-ax2.imshow(corrected, cmap='gray')
-ax2.set_title('Registered image')
+# TODO: align brain images with this alignment similarity function
 ```
-
-Success! Let's look at the objective function profile:
-
-```python
-print('Calculating cost function profile...')
-f, ax0 = plt.subplots()
-pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
-pyr1 = transform.pyramid_gaussian(img1, downscale=2, max_layer=5)
-image_pairs = list(zip(pyr0, pyr1))
-n_levels = len(image_pairs)
-angles = np.linspace(-theta - 180, -theta + 180, 201)
-for n, (X, Y) in zip(range(n_levels, 0, -1),
-                     reversed(list(image_pairs))):
-    costs = np.array([-alignment(X, transform.rotate(Y, angle))
-                      for angle in angles])
-    costs = (costs - np.min(costs)) / (np.max(costs) - np.min(costs))
-    ax0.plot(angles, costs, label='level %i' % n)
-ax0.set_title('Cost function around angle of interest')
-ax0.set_xlabel('Angle')
-ax0.set_ylabel('Cost')
-ax0.legend(loc='lower right')
-
-plt.show()
-```
-
-As you can see, it's much more funnel-shaped than NMI by itself. It's
-easy to see why progressive optimization of Pluim's function at
-decreasing levels of the pyramid would result in the correct
-alignment.
-
