@@ -968,3 +968,8 @@ np.corrcoef([pagerank, pagerank_power, pagerank_power2])
 
 <!-- exercise end -->
 
+## Concluding remarks
+
+The field of linear algebra is far too broad to adequately cover in a chapter,
+but we hope that we have given you a taste of the power of it here, and of
+the way Python, NumPy, and SciPy make its elegant algorithms accessible.
