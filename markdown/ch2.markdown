@@ -464,8 +464,8 @@ def survival_distribution_function(lifetimes, right_censored=None):
     if right_censored is not None:
         rc |= right_censored
     observed = lifetimes[~rc]
-    xs = np.concatenate(([0], np.sort(observed)))
-    ys = np.concatenate((np.arange(1, 0, -1/n_obs), [0]))
+    xs = np.concatenate( ([0], np.sort(observed)) )
+    ys = np.linspace(1, 0, n_obs + 1)
     ys = ys[:len(xs)]
     return xs, ys
 ```
