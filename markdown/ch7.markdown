@@ -480,7 +480,8 @@ this case. Take, for example, these three pictures of a stained glass window
 in a church:
 
 ```python
-stained_glass = io.imread('data/00998v.jpg')
+from skimage import io
+stained_glass = io.imread('data/00998v.jpg') / 255  # use float image in [0, 1]
 fig, ax = plt.subplots()
 ax.imshow(stained_glass)
 ax.axis('off')
@@ -490,13 +491,8 @@ Take a look at St John's robes: they look pitch black in one image, gray in
 another, and bright white in the third! This would result in a terrible MSE
 score, even with perfect alignment.
 
-Instead, we turn to a measure called *normalized mutual information*, which
-measures instead correlations between the different brightness bands of the
-different images. When the images are perfectly aligned, any object of
-uniform color will create a large correlation between the shades of the
-different channels.
-
-Let's start by splitting the plate into its component channels:
+Let's see what we can do with this. We start by splitting the plate into its
+component channels:
 
 ```python
 nrows = stained_glass.shape[0]
@@ -512,9 +508,8 @@ for ax, image, name in zip(axes, channels, channel_names):
     ax.set_title(name)
 ```
 
-Let's double check that aligning things with the MSE won't work. First, let's
-check that the alignment indeed needs to be fine-tuned between the three
-channels:
+First, we verify that the alignment indeed needs to be fine-tuned between the
+three channels:
 
 ```python
 blue, green, red = channels
@@ -526,15 +521,20 @@ ax.axis('off')
 
 You can see by the color "halos" around objects in the image that the colors
 are close to alignment, but not quite. Let's try to align them in the same
-way that we aligned the astronaut image above:
+way that we aligned the astronaut image above, using the MSE. We use one color
+channel, green, as the reference image, and align the blue and red channels to
+that.
 
 ```python
-tf = align(blue, green)
-cgreen = transform.warp(green, tf, order=3)
-tf = align(blue, red)
+print('*** Aligning blue to green ***')
+tf = align(green, blue)
+cblue = transform.warp(blue, tf, order=3)
+
+print('** Aligning red to green ***')
+tf = align(green, red)
 cred = transform.warp(red, tf, order=3)
 
-corrected = np.dstack((cred, cgreen, blue / 255))
+corrected = np.dstack((cred, green, cblue))
 f, (ax0, ax1) = plt.subplots(1, 2)
 ax0.imshow(original)
 ax0.set_title('Original')
@@ -544,66 +544,31 @@ for ax in (ax0, ax1):
     ax.axis('off')
 ```
 
-The alignment wasn't
+The alignment is a little bit better than with the raw images, because the red
+and the green channels are correctly aligned, probably thanks to the giant
+yellow patch of sky. However, the blue channel is still off, because the bright
+spots of blue don't coincide with the green channel. That means that the MSE
+will be lower when the channels are *mis*-aligned so that blue patches overlap
+with some bright green spots.
 
-And then a friend from neuroimaging
-challenges us to use our new method to align two brain volumes, one
-from a PET scan, the other from an MRI scan.
-
-Thinking about it, the Sum of Squared Differences no longer seems to
-be such a good idea.  PET and MRI images look very dissimilar!
-
-Let's examine, for example, how the MSE cost function would vary with
-increasing angles of rotation:
-
-```python
-# MODIFY WITH BRAIN IMAGES
-# POSSIBLY FROM http://www.insight-journal.org/rire/ ?
-
-f, ax0 = plt.subplots()
-pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
-pyr1 = transform.pyramid_gaussian(img1, downscale=2, max_layer=5)
-image_pairs = list(zip(pyr0, pyr1))
-n_levels = len(image_pairs)
-angles = np.linspace(-theta - 180, -theta + 180, 201)
-for n, (X, Y) in zip(range(n_levels, 0, -1),
-                     reversed(list(image_pairs))):
-    costs = np.array([mse(X, transform.rotate(Y, angle))
-                      for angle in angles])
-    costs = (costs - np.min(costs)) / (np.max(costs) - np.min(costs))
-    ax0.plot(angles, costs, label='level %i' % n)
-ax0.set_title('Cost function around angle of interest')
-ax0.set_xlabel('Angle')
-ax0.set_ylabel('Cost')
-ax0.legend(loc='lower right', frameon=True, framealpha=0.9)
-
-plt.show()
-```
-
-Since MSE won't work, we have to search for a better cost function.
-It's not altogether surprising that cost functions tend to be highly domain and
-problem specific!
-
-A suggested metric for multi-modal images, like the brain scans here,
-is  *normalized mutual information*, or NMI, which measures how easy it
-would be to predict a pixel value of one image given the value of the
-corresponding pixel in the other[^nmi_paper].
-
-[^nmi_paper]: This measure was defined in the paper: Studholme, C.,
-              Hill, D.L.G., Hawkes, D.J.: An Overlap Invariant
-              Entropy Measure of 3D Medical Image
-              Alignment. Patt. Rec. 32, 71–86 (1999)
-
-Let's start with the definition of NMI:
+We turn instead to a measure called *normalized mutual information* (NMI),
+which measures correlations between the different brightness bands of the
+different images. When the images are perfectly aligned, any object of uniform
+color will create a large correlation between the shades of the different
+component channels, and a correspondingly large NMI value. In a sense, NMI
+measures how easy it would be to predict a pixel value of one image given the
+value of the corresponding pixel in the other. It was defined in the paper:
+Studholme, C., Hill, D.L.G., Hawkes, D.J.: An Overlap Invariant Entropy Measure
+of 3D Medical Image Alignment. Patt. Rec. 32, 71–86 (1999):
 
 $$
 I(X, Y) = \frac{H(X) + H(Y)}{H(X, Y)},
 $$
 
 where $H(X)$ is the *entropy* of $X$, and $H(X, Y)$ is the joint
-entropy of $X$ and $Y$.  The numerator describes the entropy of the
-two images, seen separately, and the denomenator the total entropy if
-they are observed together.  Values can vary between 1 (maximally
+entropy of $X$ and $Y$. The numerator describes the entropy of the
+two images, seen separately, and the denominator the total entropy if
+they are observed together. Values can vary between 1 (maximally
 aligned) and 2 (minimally aligned)[^mi_calc]. (See Chapter 5 for a
 more in-depth discussion of entropy.)
 
@@ -613,7 +578,7 @@ more in-depth discussion of entropy.)
             and that diagonal is the same as that of either $X$ or
             $Y$.  Thus, $H(X) = H(Y) = H(X, Y)$ and $I(X, Y) = 2$.
 
-We compute normalized mutual information as follows:
+In Python code, this becomes:
 
 ```python
 from scipy.stats import entropy
@@ -649,6 +614,78 @@ def normalized_mutual_information(A, B):
 
     return (H_A + H_B) / H_AB
 ```
+
+Now we define a *cost function* to optimize, as we defined `cost_mse` above:
+
+```python
+def cost_nmi(param, reference_image, target_image):
+    transformation = make_rigid_transform(param)
+    transformed = transform.warp(target_image, transformation, order=3)
+    return -normalized_mutual_information(reference_image, transformed)
+```
+
+Finally, we use this with our basinhopping-optimizing aligner:
+
+```python
+print('*** Aligning blue to green ***')
+tf = align(green, blue, cost=cost_nmi)
+cblue = transform.warp(blue, tf, order=3)
+
+print('** Aligning red to green ***')
+tf = align(green, red, cost=cost_nmi)
+cred = transform.warp(red, tf, order=3)
+
+corrected = np.dstack((cred, green, cblue))
+f, (ax0, ax1) = plt.subplots(1, 2)
+ax0.imshow(original)
+ax0.set_title('Original')
+ax1.imshow(corrected)
+ax1.set_title('Corrected')
+for ax in (ax0, ax1):
+    ax.axis('off')
+```
+
+What a glorious image! Realise that this artifact was created before color
+photography existed! Notice God's pearly white robes, John's white beard,
+and the white pages of the book held by Prochorus, his scribe — all of which
+were missing from the MSE-based alignment.
+
+Notice also the realistic gold of the candlesticks in the foreground.
+
+And then a friend from neuroimaging
+challenges us to use our new method to align two brain volumes, one
+from a PET scan, the other from an MRI scan.
+
+Thinking about it, the Sum of Squared Differences no longer seems to
+be such a good idea.  PET and MRI images look very dissimilar!
+
+Let's examine, for example, how the MSE cost function would vary with
+increasing angles of rotation:
+
+```python
+# MODIFY WITH BRAIN IMAGES
+# POSSIBLY FROM http://www.insight-journal.org/rire/ ?
+
+f, ax0 = plt.subplots()
+pyr0 = transform.pyramid_gaussian(img0, downscale=2, max_layer=5)
+pyr1 = transform.pyramid_gaussian(img1, downscale=2, max_layer=5)
+image_pairs = list(zip(pyr0, pyr1))
+n_levels = len(image_pairs)
+angles = np.linspace(-theta - 180, -theta + 180, 201)
+for n, (X, Y) in zip(range(n_levels, 0, -1),
+                     reversed(list(image_pairs))):
+    costs = np.array([mse(X, transform.rotate(Y, angle))
+                      for angle in angles])
+    costs = (costs - np.min(costs)) / (np.max(costs) - np.min(costs))
+    ax0.plot(angles, costs, label='level %i' % n)
+ax0.set_title('Cost function around angle of interest')
+ax0.set_xlabel('Angle')
+ax0.set_ylabel('Cost')
+ax0.legend(loc='lower right', frameon=True, framealpha=0.9)
+
+plt.show()
+```
+
 
 Now, let's attempt the same optimization as before, this time using
 mutual information:
