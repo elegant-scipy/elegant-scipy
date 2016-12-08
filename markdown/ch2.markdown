@@ -5,7 +5,7 @@ Our use case is using gene expression data to predict mortality in skin cancer p
 The code we will work to understand is an implementation of [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
 This requires a strong assumption: if the data are not distributed according to a bell curve, we just make it fit!
 But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
-For example, Bolstad and colleagues [showed](http://bioinformatics.oxfordjournals.org/content/19/2/185.full.pdf) that it performs admirably in recovering known expression levels in microarray data.
+For example, Bolstad and colleagues [showed](https://doi.org/10.1093/bioinformatics/19.2.185) that it performs admirably in recovering known expression levels in microarray data.
 
 Using NumPy indexing tricks and the `scipy.stats.mstats.rankdata` function, quantile normalization in Python is fast, efficient, and elegant.
 
@@ -62,14 +62,6 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 - Arrays underpin the scientific Python ecosystem. The `scipy.stats.mstats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
 - Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
 
-
-```python
-%matplotlib inline
-
-import matplotlib.pyplot as plt
-plt.style.use('style/elegant.mplstyle')
-```
-
 ### Get the data
 
 As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq data set.
@@ -78,6 +70,14 @@ By the end of this chapter we will have reproduced a simplified version of [Figu
 
 As in Chapter 1, first we will use Pandas to make our job of reading in the data much easier.
 First we will read in our counts data as a pandas table.
+
+```python
+# Make all plots appear inline in the Jupyter notebook and set splotting style
+%matplotlib inline
+
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+```
 
 ```python
 import numpy as np
@@ -101,7 +101,7 @@ counts = np.asarray(data_table, dtype=int)
 ```
 
 Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
-We will use a gaussian kernel to smooth out bumps in our data so we can get a
+We will use a Gaussian kernel to smooth out bumps in our data so we can get a
 better idea of the overall shape.
 
 ```python
@@ -112,7 +112,7 @@ def plot_col_density(data, xlabel=None):
     xlabel : x axis label
     """
 
-    density_per_col = [stats.kde.gaussian_kde(col) for col in data.T] # Use gaussian smoothing to estimate the density
+    density_per_col = [stats.kde.gaussian_kde(col) for col in data.T] # Use Gaussian smoothing to estimate the density
     x = np.linspace(np.min(data), np.max(data), 100)
 
     fig, ax = plt.subplots()
@@ -130,9 +130,11 @@ some individuals have flatter distributions and a few are pushed right over to t
 When doing our analysis of the counts data later in this chapter, we will be assuming
 that changes in gene expression are due to biological differences between our samples.
 But a major distribution shift like this suggests that the differences are technical.
-So we will try to normalise out these global differences between individuals.
+That is, the changes are likely due to differences in the way we processed each sample,
+rather than due to biological variation.
+So we will try to normalize out these global differences between individuals.
 
-To do this, we will be performing quantile normalisation.
+To do this, we will be performing quantile normalization.
 The idea is that we assume all our samples should have a similar distribution,
 so any differences in the shape are due to some technical variation.
 We can fix this by forcing all the samples to have the same distribution.
@@ -215,7 +217,7 @@ Clustering the samples tells us which samples have similar gene expression profi
 Because clustering can be an expensive operation, we will limit our analysis to the 1,500 genes that are most variable, since these will account for most of the correlation signal in either dimension.
 
 ```python
-def most_variable_rows(data, n=1500):
+def most_variable_rows(data, *, n=1500):
     """Subset data to the n most variable rows
 
     In this case, we want the n most variable genes.
@@ -226,10 +228,6 @@ def most_variable_rows(data, n=1500):
         The data to be subset
     n : int, optional
         Number of rows to return.
-    method : function, optional
-        The function with which to compute variance. Must take an array
-        of shape (nrows, ncols) and an axis parameter and return an
-        array of shape (nrows,).
     """
     # compute variance along the columns axis
     rowvar = np.var(data, axis=1)
@@ -303,7 +301,7 @@ Simple: we just call `linkage` for the input matrix and also for the transpose o
 Next, we define a function to visualize the output of that clustering.
 We are going to rearrange the rows and columns of the input data so that similar rows are together and similar columns are together.
 And we are additionally going to show the merge tree for both rows and columns, displaying which observations belong together for each.
-The merge trees are presented as dendrograms, with the branch-lengths indicating how similar the obvservations are to each other (shorter = more similar).
+The merge trees are presented as dendrograms, with the branch-lengths indicating how similar the observations are to each other (shorter = more similar).
 
 As a word of warning, there is a fair bit of hard-coding of parameters going on here.
 This is difficult to avoid for plotting, where design is often a matter of eyeballing to find the correct proportions.
@@ -466,8 +464,8 @@ def survival_distribution_function(lifetimes, right_censored=None):
     if right_censored is not None:
         rc |= right_censored
     observed = lifetimes[~rc]
-    xs = np.concatenate(([0], np.sort(observed)))
-    ys = np.concatenate((np.arange(1, 0, -1/n_obs), [0]))
+    xs = np.concatenate( ([0], np.sort(observed)) )
+    ys = np.linspace(1, 0, n_obs + 1)
     ys = ys[:len(xs)]
     return xs, ys
 ```
