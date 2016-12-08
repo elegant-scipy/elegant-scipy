@@ -62,7 +62,7 @@ refers to the number of times per second at which the membrane inside
 the headphone moves to-and-fro.  That, in turn, creates compressed
 pulses of air which, upon arrival at your eardrum, induces a vibration
 at the same frequency.  So, if you take a simple periodic function,
-$\sin(10 * 2 \pi t)$, you can view it as a wave:
+$\sin(10 \times 2 \pi t)$, you can view it as a wave:
 
 ```python
 f = 10  # Frequency, in cycles per second, or Herz
