@@ -78,7 +78,7 @@ $(BUILD_NB):
 $(FIGURES):
 	 mkdir -p $(FIGURES)
 
-exercises:
+exercises: chs
 	./tools/split_exercise.py html/ch?.html
 
 # all: build the book.
