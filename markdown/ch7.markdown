@@ -311,7 +311,7 @@ def align(reference, target, cost=cost_mse):
     pyramid_ref = gaussian_pyramid(reference, levels=nlevels)
     pyramid_tgt = gaussian_pyramid(target, levels=nlevels)
 
-    levels = range(nlevels, -1, -1)
+    levels = range(nlevels, 0, -1)
     image_pairs = zip(pyramid_ref, pyramid_tgt)
 
     p = np.zeros(3)
@@ -356,7 +356,116 @@ for ax in (ax0, ax1, ax2):
     ax.axis('off')
 ```
 
-We're feeling pretty good now. But it turns out that we've only solved the
+We're feeling pretty good now. But our choice of parameters actually masked
+the difficulty of optimization: Let's see what happens with a rotation of
+50 degrees, which is *closer* to the original image:
+
+```python
+theta = 50
+rotated = transform.rotate(astronaut, theta)
+rotated = util.random_noise(rotated, mode='gaussian',
+                            seed=0, mean=0, var=1e-3)
+
+tf = align(astronaut, rotated)
+corrected = transform.warp(rotated, tf, order=3)
+
+f, (ax0, ax1, ax2) = plt.subplots(1, 3)
+ax0.imshow(astronaut)
+ax0.set_title('Original')
+ax1.imshow(rotated)
+ax1.set_title('Rotated')
+ax2.imshow(corrected)
+ax2.set_title('Registered')
+for ax in (ax0, ax1, ax2):
+    ax.axis('off')
+
+```
+
+Oops! Even though we started closer to the original image, we failed to
+recover the correct rotation. This is because optimization techniques can get
+stuck in local minima, little bumps on the road to success, as we saw above
+with the shift-only alignment. They can therefore be quite sensitive to the
+starting parameters.
+
+<!-- exercise begin -->
+
+**Exercise:** Try incorporating the `scipy.optimize.basinhopping` function
+into the `align` function, which has explicit strategies to avoid local minima.
+
+*Hint:* limit basinhopping to the top levels of the pyramid, as it is a slower
+optimization approach, and could take rather long to run at full image
+resolution.
+
+*Note:* you need the solution to this exercise for subsequent alignments, so
+look it up in the solutions if you are having trouble getting it to work.
+
+<!-- solution begin -->
+
+**Solution:** We use basin-hopping at the higher levels of the pyramid, but use
+Powell's method for the lower levels, because basin-hopping is too
+computationally expensive to run at full resolution:
+
+```python
+def align(reference, target, cost=cost_mse, nlevels=7, method='Powell'):
+    pyramid_ref = gaussian_pyramid(reference, levels=nlevels)
+    pyramid_tgt = gaussian_pyramid(target, levels=nlevels)
+
+    levels = range(nlevels, 0, -1)
+    image_pairs = zip(pyramid_ref, pyramid_tgt)
+
+    p = np.zeros(3)
+
+    for n, (ref, tgt) in zip(levels, image_pairs):
+        p[1:] *= 2
+        if method.upper() == 'BH':
+            res = optimize.basinhopping(cost, p,
+                                        minimizer_kwargs={'args': (ref, tgt)})
+            if n <= 4:
+                method = 'Powell'
+        else:
+            res = optimize.minimize(cost, p, args=(ref, tgt), method='Powell')
+        p = res.x
+        print('Pyramid level %i' % n)
+        print('Angle:', np.rad2deg(res.x[0]))
+        print('Offset:', res.x[1:] * 2 ** n)
+        print('Cost function:', res.fun)
+        print('')
+
+    return make_rigid_transform(p)
+```
+
+Now let's try that alignment:
+
+```python
+from skimage import util
+
+theta = 50
+rotated = transform.rotate(astronaut, theta)
+rotated = util.random_noise(rotated, mode='gaussian',
+                            seed=0, mean=0, var=1e-3)
+
+tf = align(astronaut, rotated, nlevels=8, method='BH')
+corrected = transform.warp(rotated, tf, order=3)
+
+f, (ax0, ax1, ax2) = plt.subplots(1, 3)
+ax0.imshow(astronaut)
+ax0.set_title('Original')
+ax1.imshow(rotated)
+ax1.set_title('Rotated')
+ax2.imshow(corrected)
+ax2.set_title('Registered')
+for ax in (ax0, ax1, ax2):
+    ax.axis('off')
+```
+
+Boom! Consider that basin *hopped!*
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+At this point, we have a working registration approach, which is most
+excellent. But it turns out that we've only solved the
 easiest of registration problems: images of the same *modality*. This means
 that we expect bright pixels in the reference image to match up to bright
 pixels in the test image. We now move on to aligning different color channels
