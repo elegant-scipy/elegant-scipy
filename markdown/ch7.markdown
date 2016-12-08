@@ -477,7 +477,8 @@ with a different color filter placed in front of the lens.
 
 Aligning bright pixels together, as the MSE implicitly does, won't work in
 this case. Take, for example, these three pictures of a stained glass window
-in a church:
+in the Church of Saint John the Theologian, taken from the [Library of Congress
+Prokudin-Gorskii Collection](http://www.loc.gov/pictures/item/prk2000000263/):
 
 ```python
 from skimage import io
@@ -651,6 +652,7 @@ and the white pages of the book held by Prochorus, his scribe — all of which
 were missing from the MSE-based alignment.
 
 Notice also the realistic gold of the candlesticks in the foreground.
+
 
 And then a friend from neuroimaging
 challenges us to use our new method to align two brain volumes, one
