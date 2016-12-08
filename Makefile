@@ -11,6 +11,7 @@ VPATH = markdown
 #     intermediate IPython notebooks.
 BUILD_HTML = html
 BUILD_NB = ipynb
+BUILD_MD = mdout
 FIGURES = figures/generated
 
 # TITLES: This should be an exhaustive list of all the chapters to be
@@ -23,6 +24,9 @@ TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue acknowledgements
 #     extension. chs then constitutes the full list of targets.
 CHS_ := $(addprefix $(BUILD_HTML)/,$(TITLES))
 chs: build_dirs $(addsuffix .html,$(CHS_))
+
+MD_ := $(addprefix $(BUILD_MD)/,$(TITLES))
+md: build_dirs $(addsuffix .markdown,$(MD_))
 
 ipynb/ch1.ipynb: data/counts.txt
 
@@ -52,6 +56,9 @@ $(FIGURES)/%.png: script/%.py $(FIGURES)
 $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	jupyter nbconvert --to html $< --stdout > $@
 
+$(BUILD_MD)/%.markdown: $(BUILD_NB)/%.ipynb
+	jupyter nbconvert --to=markdown --output="$(notdir $@)" --output-dir=$(BUILD_MD) $<
+
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
 
@@ -77,6 +84,8 @@ $(BUILD_NB):
 	 mkdir -p $(BUILD_NB)
 $(FIGURES):
 	 mkdir -p $(FIGURES)
+$(BUILD_MD):
+	 mkdir -p $(BUILD_MD)
 
 exercises:
 	./tools/split_exercise.py html/ch?.html
@@ -95,6 +104,8 @@ zip: all
 	mkdir $$TMP_DIR ; \
 	ln -s $$ES_DIR/index.html $$TMP_DIR ; \
 	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
+	ln -s $$ES_DIR/figures $$TMP_DIR/ ; \
+	ln -s $$ES_DIR/images $$TMP_DIR/ ; \
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
 # clean: remove intermediate products (IPython notebooks)

@@ -8,6 +8,10 @@ build:
         code: |
           mv /data/* ./data
           make zip
+    - script:
+        name: build markdown
+        code: |
+          make md
 
   after-steps:
     - 1syo/gitter-notify@0.0.1:
