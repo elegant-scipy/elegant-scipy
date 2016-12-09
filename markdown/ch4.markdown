@@ -78,7 +78,7 @@ ax.set_ylabel('Signal amplitude')
 ```
 
 [^discrete]: The discrete Fourier transform operates on sampled data,
-             in contrast to the standard Fourier Transform which is
+             in contrast to the standard fast Fourier transform which is
              defined for continuous functions.
 
 Or you can equivalently think of it as an repeating signal of
@@ -119,7 +119,8 @@ Let's start with one of the most common applications, converting a sound signal 
 ![Stereo spectrogram](../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG)
 **[ED NOTE: Used with permission from the author, Sergey Gerasimuk, http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html]**
 
-Listen to the following snippet of nightingale birdsong:
+Listen to the following snippet of nightingale birdsong (released under CC BY 4.0 at
+http://www.orangefreesounds.com/nightingale-sound/):
 
 ```python
 from IPython.display import Audio
@@ -135,8 +136,7 @@ Since we realise that not everyone is fluent in bird-speak, perhaps
 it's best if we visualize the measurements—better known as "the
 signal"—instead.
 
-We load the audio file (released under CC BY 4.0 at
-http://www.orangefreesounds.com/nightingale-sound/), which gives us
+We load the audio file, which gives us
 the sampling rate (number of measurements per second) as well as audio
 data as an `(N, 2)` array—two columns because this is a stereo
 recording.
@@ -240,7 +240,7 @@ print('Shape of `slices`:', slices.shape)
 ```
 
 For each slice, calculate the Fourier transform.  The Fourier
-transform returns both positive and "negative" frequencies (more on
+transform returns both positive and negative frequencies (more on
 that in "Frequencies and their ordering"), so we slice out the
 positive M / 2 frequencies for now.
 
@@ -249,7 +249,7 @@ spectrum = np.fft.fft(slices, axis=0)[:M // 2 + 1:-1]
 spectrum = np.abs(spectrum)
 ```
 
-Do a log plot of the ratio of the signal / the maximum signal
+Do a log plot of the ratio of the signal / the maximum signal.
 The unit for such a ratio is the decibel.
 
 Another reason to take logs is because the spectrum can contain both
@@ -309,7 +309,7 @@ Tracing the exact origins of the Fourier transform is tricky.  Some
 related procedures go as far back as Babylonian times, but it was the
 hot topics of calculating asteroid orbits and solving the heat (flow)
 equation that led to several breakthroughs in the early 1800s.  Whom
-exactly among Clairaut, LaGrange, Euler, Gauss and D'Alembert we
+exactly among Clairaut, Lagrange, Euler, Gauss and D'Alembert we
 should thank is not exactly clear, but Gauss was the first to describe
 the fast Fourier transform (an algorithm for computing the Discrete
 Fourier Transform, popularized by Cooley and Tukey in 1965).  Joseph
@@ -325,7 +325,7 @@ following FFT-related functionality:
 
  - ``fft``, ``fft2``, ``fftn``: Compute the Fast (discrete) Fourier Transform
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the FFT
- - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms
+ - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
  - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the
    spectrum and back, respectively (more about that soon)
  - ``fftfreq``: Return the discrete Fourier transform sample frequencies
@@ -343,12 +343,12 @@ there, but unlike packages such as FFTW, it has a permissive free
 software license.
 
 Consider that a naive calculation of the FFT takes
-$\mathcal{O}\left(N^2\right)$ operations.  How come?  Well, you have N
+$\mathcal{O}\left(N^2\right)$ operations.  How come?  Well, you have $N$
 (complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
 1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
 strongly your signal corresponds to each.  Starting with the first,
-you take the dot product with the signal (which, in itself, entails N
-multiplication operations).  Repeating this operation N times, once
+you take the dot product with the signal (which, in itself, entails $N$
+multiplication operations).  Repeating this operation$N$times, once
 for each sinusoid, then gives $N^2$ operations.
 
 Now, contrast that with the fast Fourier transform, which is
@@ -427,7 +427,7 @@ multiplications, instead of $N^2 = 1048576$.
 ## Discrete Fourier transform concepts
 
 Next, we present a couple of common concepts worth knowing before
-operating heavy Fourier Transform machinery, whereafter we tackle
+operating heavy Fourier transform machinery, whereafter we tackle
 another real-world problem: analyzing target detection in radar data.
 
 ### Frequencies and their ordering
@@ -704,7 +704,7 @@ detection.
 Roughly[^detail_fmcw], an FMCW radar works like this:
 
 A signal with changing frequency is generated.  This signal is
-transmitted by antenna, after which it travels outwards, away from the
+transmitted by an antenna, after which it travels outwards, away from the
 radar.  When it hits an object, part of the signal is reflected back
 to the radar, where it is received, multiplied by a copy of the
 transmitted signal, and sampled, turning it into
@@ -1060,8 +1060,8 @@ for increasing values of $k$ in Fig. ([fig:wkn values])
 for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from
 $k$ to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When
 $n=1$, the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
-increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi
-is$precisely once around the circle, the step equates to
+increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
+is precisely once around the circle, the step equates to
 $-\frac{2\pi}{N}$, i.e. in the direction of a negative
 frequency. The components up to $N/2$ represent *positive* frequency
 components, those above $N/2$ up to $N-1$ represent *negative*
@@ -1454,7 +1454,7 @@ plt.show()
 
 The examples above show just one of the uses of the FFT in
 radar. There are many others, such as movement (Doppler) measurement
-and target recognition.  The Fourier Transform is pervasive, and is
+and target recognition.  The fast Fourier transform is pervasive, and is
 seen anywhere from Magnetic Resonance Imaging (MRI) to statistics.
 With the basic techniques that this chapter outlines in hand, you
 should be well equipped to use it!
