@@ -1,18 +1,19 @@
 name: elegant
+channels:
+- conda-forge
 dependencies:
 - python=3.5*
 - numpy=1.11*
 - matplotlib=1.5*
-- astropy=1.1*
 - pandas=0.18*
-- scipy=0.17*
+- scipy=0.18*
 - scikit-learn=0.17*
 - scikit-image=0.12*
-- networkx=1.10*
-- xlrd=0.9*
+- networkx=1.11*
+- xlrd=1.0*
 - jupyter=1.0*
 - sympy=0.7*
-- toolz=0.7*
+- toolz=0.8*
 - six=1.10*
 - beautifulsoup4=4.4*
 - seaborn=0.7*
