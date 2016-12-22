@@ -51,10 +51,10 @@ Disaster!
 
 So, in this chapter, we will explore some alternative approaches to graph
 analysis, based on linear algebra. It turns out that we can think of a graph,
-G, as an *adjacency matrix*, in which we number the nodes of the graph from $0$
+$G$, as an *adjacency matrix*, in which we number the nodes of the graph from $0$
 to $n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there is
 an edge from node $i$ to node $j$. In other words, if we call the adjacency
-matrix $A$, then $A_{i, j} = 1$ if and only if the link (i, j) is in G. We can
+matrix $A$, then $A_{i, j} = 1$ if and only if the link $(i, j)$ is in $G$. We can
 then use linear algebra techniques to study this matrix, often with striking
 results.
 
@@ -103,16 +103,16 @@ R = \begin{bmatrix}
 \end{bmatrix}
 $$
 
-When R is multiplied with a 3-dimensional column-vector $p =
+When $R$ is multiplied with a 3-dimensional column-vector $p =
 \left[ x\, y\, z \right]^T$, the resulting vector $R p$ is rotated
 by $\theta$ degrees around the z-axis.
 
 1. For $\theta = 45^\circ$, verify (by testing on a few arbitrary
-   vectors) that R rotates these vectors around the z axis.
+   vectors) that $R$ rotates these vectors around the z axis.
 
 2. Now, verify that multiplying by $R$ leaves the vector
    $\left[ 0\, 0\, 1\right]^T$ unchanged.  In other words, $R p = 1
-   p$, which means $p$ is an eigenvector of R with eigenvalue 1.
+   p$, which means $p$ is an eigenvector of $R$ with eigenvalue 1.
    Remember that matrix multiplication in Python is denoted with `@`.
 
 <!-- solution begin -->
@@ -179,8 +179,8 @@ nx.draw(g, pos=layout,
 
 You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
 Can the Fiedler vector tell us this? First, we must compute the degree matrix
-and the Laplacian. We first get the degrees by summing along either axis of A.
-(Either axis works because A is symmetric.)
+and the Laplacian. We first get the degrees by summing along either axis of $A$.
+(Either axis works because $A$ is symmetric.)
 
 ```python
 d = np.sum(A, axis=0)
@@ -265,7 +265,7 @@ layout of the worm brain neurons, they used a related matrix, the
 
 Because the order of the neurons is important in this analysis, we will use a
 preprocessed dataset, rather than clutter this chapter with data cleaning. We
-got the original data from Lars Varshney's
+got the original data from Lav Varshney's
 [website](http://www.ifp.illinois.edu/~varshney/elegans),
 and the processed data is in our `data/` directory.
 
@@ -336,16 +336,16 @@ z = linalg.pinv(L) @ b
 matrix multiplication. As we noted in the preface and in Chapter 5, in previous
 versions of Python, you would need to use the function `np.dot`.)
 
-In order to obtain the degree-normalized Laplacian, Q, we need the inverse
-square root of the D matrix:
+In order to obtain the degree-normalized Laplacian, $Q$, we need the inverse
+square root of the $D$ matrix:
 
 ```python
 Dinv2 = np.diag(degrees ** (-.5))
 Q = Dinv2 @ L @ Dinv2
 ```
 
-Finally, we are able to extract the x coordinates of the neurons to ensure that
-highly-connected neurons remain close: the eigenvector of Q corresponding to
+Finally, we are able to extract the $x$ coordinates of the neurons to ensure that
+highly-connected neurons remain close: the eigenvector of $Q$ corresponding to
 its second-smallest eigenvalue, normalized by the degrees:
 
 ```python
@@ -654,9 +654,9 @@ plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
 
 <!-- exercise end -->
 
-## Pagerank: linear algebra for reputation and importance
+## PageRank: linear algebra for reputation and importance
 
-Another application of linear algebra and eigenvectors is Google's Pagerank
+Another application of linear algebra and eigenvectors is Google's PageRank
 algorithm, which is punnily named both for webpages and for one of its
 co-founders, Larry Page.
 
@@ -690,9 +690,9 @@ largest eigenvalue of $M$.
 The transition matrix imagines a web
 surfer, often named Webster, randomly clicking a link from each webpage he
 visits, and then asks, what's the probability that he ends up at any given
-page? This probability is called the pagerank.
+page? This probability is called the PageRank.
 
-Since Google's rise, researchers have been applying pagerank to all sorts of
+Since Google's rise, researchers have been applying PageRank to all sorts of
 networks. We'll start with an example by Stefano Allesina and Mercedes Pascual,
 which they
 [published](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000494i)
@@ -705,7 +705,7 @@ disappeared, then all its "dependent" species might disappear with it. In
 network parlance, you could say that its *in-degree* determines its ecological
 importance.
 
-Could pagerank be a better measure of importance for an ecosystem?
+Could PageRank be a better measure of importance for an ecosystem?
 
 Professor Allesina kindly provided us with a few food webs to play around
 with. We've saved one of these, from the St Marks National Wildlife Refuge in
@@ -758,16 +758,16 @@ Deginv = sparse.diags(1 / degrees).tocsr()
 Trans = (Deginv @ Adj).T
 ```
 
-Normally, the pagerank score would simply be the first eigenvector of the
+Normally, the PageRank score would simply be the first eigenvector of the
 transition matrix. If we call the transition matrix $M$ and the vector of
-pagerank values $r$, we have:
+PageRank values $r$, we have:
 
 $$
 \boldsymbol{r} = M\boldsymbol{r}
 $$
 
 But the `np.seterr` call above is a clue that it's not quite
-so simple. The pagerank approach only works when the
+so simple. The PageRank approach only works when the
 transition matrix is a *column-stochastic* matrix, in which every
 column sums to 1. Additionally, every page must be reachable
 from every other page, even if the path to reach it is very long.
@@ -777,7 +777,7 @@ what the authors call *detritus* (basically sea sludge), doesn't actually *eat*
 anything (the Circle of Life notwithstanding), so you can't reach other species
 from it.
 
-To deal with this, the pagerank algorithm uses a so-called "damping
+To deal with this, the PageRank algorithm uses a so-called "damping
 factor", usually taken to be 0.85. This means that 85% of the time, the
 algorithm follows a link at random, but for the other 15%, it randomly jumps to
 any arbitrary page. It's as if every page had a low probability link to every
@@ -787,7 +787,7 @@ representation of the Circle of Life. We'll set it to 0.85, but actually it
 doesn't really matter for this analysis: the results are similar for a large
 range of possible damping factors.
 
-If we call the damping factor $d$, then the modified pagerank equation is:
+If we call the damping factor $d$, then the modified PageRank equation is:
 
 $$
 \boldsymbol{r} = dM\boldsymbol{r} + \frac{1-d}{n} \boldsymbol{1}
@@ -851,7 +851,7 @@ pagerank_plot(in_degrees, pagerank, species, annotations=interesting)
 ```
 
 Sea sludge ("detritus") is the most important element both by number of
-species feeding on it (15) and by pagerank (>0.003). But the second most
+species feeding on it (15) and by PageRank (>0.003). But the second most
 important element is *not* benthic algae, which feeds 13 other species, but
 rather phytoplankton, which feeds just 7! That's because other *important*
 species feed on it. On the bottom left, we've got sea gulls, who, we can now
@@ -860,20 +860,20 @@ confirm, do bugger-all for the ecosystem. Those vicious *predatory shrimps*
 but they are less essential species, so they end up with a lower foodrank.
 
 Although we won't do it here, Allesina and Pascual go on to model the
-ecological impact of species extinction, and indeed find that pagerank
+ecological impact of species extinction, and indeed find that PageRank
 predicts ecological importance better than in-degree.
 
-Before we move on though, we'll note that pagerank can be computed several
+Before we move on though, we'll note that PageRank can be computed several
 different ways. One way, complementary to what we did above, is called the
 *power method*, and it's quite, well, powerful! It stems from the
 [Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
 which states, among other things, that a stochastic matrix has 1 as an
 eigenvalue, and that this is its *largest* eigenvalue. (The corresponding
-eigenvector is the pagerank vector.) What this means is that, whenever we
+eigenvector is the PageRank vector.) What this means is that, whenever we
 multiply *any* vector by $M$, its component pointing towards this major
 eigenvector stays the same, while *all other components shrink* by a
 multiplicative factor! The consequence is that if we multiply some random
-starting vector by $M$ repeatedly, we should eventually get the pagerank
+starting vector by $M$ repeatedly, we should eventually get the PageRank
 vector.
 
 SciPy makes this very efficient with its sparse matrix module:
@@ -936,7 +936,7 @@ def power2(Trans, damping=0.85, max_iter=int(1e5)):
 
 Try this out manually for a few iterations. Notice that if you start with a
 stochastic vector (a vector whose elements all sum to 1), the next vector will
-still be a stochastic vector. Thus, the output pagerank from this function will
+still be a stochastic vector. Thus, the output PageRank from this function will
 be a true probability vector, and the values will represent the probability
 that we end up at a particular species when following links in the food chain.
 
