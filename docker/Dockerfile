@@ -17,6 +17,10 @@ RUN pip2 install gsutil
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 RUN ln -sf /usr/bin/pip3 /usr/bin/pip
 
+# Tools for building scikit-image's latest version
+RUN apt-get install -y git build-essential
+RUN pip install cython
+
 # Install dependencies not included in Debian
 RUN pip install setuptools
 RUN pip install jupyter notedown>=1.4 scikit-image toolz networkx \
