@@ -4,7 +4,7 @@ notedown>=1.4
 numpy
 scipy
 matplotlib
-scikit-image
+-e git://github.com/scikit-image/scikit-image.git#egg=scikit-image
 toolz
 networkx
 xlrd
