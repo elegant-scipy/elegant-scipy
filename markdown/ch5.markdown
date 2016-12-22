@@ -47,36 +47,36 @@ def vi(x, y):
 ```
 
 > **Python 3.5 pro-tip!**
-> 
+>
 > The `@` symbols in the above paragraph represent the *matrix multiplication*
 > operator, and were introduced in Python 3.5 in 2015. This is one of the most
 > compelling arguments to use Python 3 for scientific programmers: they enable
 > the programming of linear algebra algorithms using code that remains very
 > close to the original mathematics. Compare the above:
-> 
+>
 > `hygx = -px.T @ xlogx(Px_inv @ Pxy).sum(axis=1)`
-> 
+>
 > with the equivalent Python 2 code:
-> 
+>
 > `hygx = -px.T.dot(xlogx(Px_inv.dot(Pxy)).sum(axis=1))`
-> 
+>
 > Yuck! By using the `@` operator to stay closer to mathematical notation, we
 > can avoid implementation errors and produce code that is much easier to read.
-> 
+>
 > Actually, SciPy's authors knew this long before the `@` operator was
 > introduced, and actually altered the meaning of the
 > `*` operator when the inputs are SciPy matrices. Available in Python
 > 2.7, it lets us produce nice, readable code like the above:
-> 
+>
 > `hygx = -px.T * xlog(Px_inv * Pxy).sum(axis=1)`
-> 
+>
 > But there is a huge catch: this code will behave differently when `px` or
 > `Px_inv` are SciPy matrices than when they are not! If `Px_inv` and `Pxy` are
 > NumPy arrays, `*` produces the element-wise multiplication, while if they are
 > SciPy matrices, it produces the matrix product! As you can imagine, this is
 > the source of a great many errors, and much of the SciPy community has
 > abandoned this use in favor of the uglier but unambiguous `.dot` method.
-> 
+>
 > Python 3.5's `@` operator gives us the best of both worlds!
 
 
@@ -434,7 +434,7 @@ ones and zeros), representing an adjacency matrix.  The dominant
 eigenvector of this matrix is then calculated.  The sign of each entry
 in the (length $M$) eigenvector groups the nodes into two sub-groups
 (see Newman (2006), Modularity and community structure in networks,
-http://www.pnas.org/content/103/23/8577.full).  Rinse and repeat to
+https://doi.org/10.1073/pnas.0601602103).  Rinse and repeat to
 form more and more and more sub-groups [^submod].  It turns out that
 these subgroups, or communities, tell us a lot about functional
 regions of the brain!
@@ -743,7 +743,7 @@ can you rotate the image around its center?
 up/down or left/right, is given by:
 
 $$
-H_{tr} = 
+H_{tr} =
 \begin{bmatrix}
     1 & 0 & t_r \\
     0 & 1 & t_c \\
@@ -976,7 +976,7 @@ look at Christopher Olah's stellar blog post,
 [Visual Information Theory](https://colah.github.io/posts/2015-09-Visual-Information/).
 
 The basic unit of information is the *bit*, commonly shown as a 0 or 1,
-representing choice between two options.
+representing an equal probability choice between two options.
 This is straightforward: if I want to tell you whether a coin toss landed as
 heads or tails, I need one bit, which can take many forms:
 a long or short pulse over a telegraph wire (as in Morse code), a light
@@ -1027,7 +1027,7 @@ $$
 \begin{align}
 H(R) & = p_r \log_2(1/p_r) + p_s \log_2(1/p_s) \\
      & = 1/6 \log_2(6) + 5/6 \log_2(6/5) \\
-     & \approx 0.65 \textrm{bits}
+     & \approx 0.65 \textrm{ bits}
 \end{align}
 $$
 
@@ -1092,7 +1092,7 @@ H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(1/0.25) +
            ... +
            \frac{1}{12} \left( 0.23 \log_2(1/0.23) +
                                0.77 \log_2(1/0.77) \right) \\
-       & \approx 0.626 \textrm{bits}
+       & \approx 0.626 \textrm{ bits}
 \end{align}
 $$
 
@@ -1175,14 +1175,14 @@ For example, if every GT segment $g$ is split into two equally-sized
 segments $a_1$ and $a_2$ in AS, then $H(AS|GT) = 1$, because after knowing a
 pixel is in $g$, you
 still need 1 additional bit to know whether it belongs to $a_1$ or $a_2$.
-However, H(GT|AS) = 0, because regardless of whether a pixel is in $a_1$ or
+However, $H(GT | AS) = 0$, because regardless of whether a pixel is in $a_1$ or
 $a_2$, it is guaranteed to be in $g$, so you need no more information than
 the segment in AS.
 
 So, together, in this case,
 
 $$
-VI(AS, GT) = H(AS | GT) + H(GT | AS) = 1 + 0 = 1 \textrm{bit.}
+VI(AS, GT) = H(AS | GT) + H(GT | AS) = 1 + 0 = 1 \textrm{ bit.}
 $$
 
 Here's a simple example:
@@ -1252,13 +1252,13 @@ We'll write the following convenience function:
 ```python
 def xlog1x(arr_or_mat):
     """Compute the element-wise entropy function of an array or matrix.
-    
+
     Parameters
     ----------
     arr_or_mat : numpy array or scipy sparse matrix
         The input array of probabilities. Only sparse matrix formats with a
         `data` attribute are supported.
-        
+
     Returns
     -------
     out : array or sparse matrix, same type as input
@@ -1443,7 +1443,7 @@ human_seg = ndi.label(boundaries > 100)[0]
 plt.imshow(color.label2rgb(human_seg, tiger));
 ```
 
-Now, let's grab our image segmentation code from chapter 3, and see how well a Python does a recognizing a tiger!
+Now, let's grab our image segmentation code from chapter 3, and see how well a Python does at recognizing a tiger!
 
 ```python
 # Draw a region adjacency graph (RAG) - all code from Ch3
