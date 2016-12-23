@@ -1166,23 +1166,23 @@ VI(A, B) = H(A | B) + H(B | A)
 $$
 
 Back in the image segmentation context, "days" become "pixels", and "rain" and "month"
-become "label in automated segmentation (AS)" and "label ground truth (GT)".
+become "label in automated segmentation ($S$)" and "label ground truth ($T$)".
 Then, the conditional entropy of the automatic segmentation given the ground
 truth measures how much additional
-information we need to determine a pixel's identity in AS if we are told its
-identity in GT.
-For example, if every GT segment $g$ is split into two equally-sized
-segments $a_1$ and $a_2$ in AS, then $H(AS|GT) = 1$, because after knowing a
+information we need to determine a pixel's identity in $S$ if we are told its
+identity in $T$.
+For example, if every $T$ segment $g$ is split into two equally-sized
+segments $a_1$ and $a_2$ in $S$, then $H(S|T) = 1$, because after knowing a
 pixel is in $g$, you
 still need 1 additional bit to know whether it belongs to $a_1$ or $a_2$.
-However, $H(GT | AS) = 0$, because regardless of whether a pixel is in $a_1$ or
+However, $H(T | S) = 0$, because regardless of whether a pixel is in $a_1$ or
 $a_2$, it is guaranteed to be in $g$, so you need no more information than
-the segment in AS.
+the segment in S.
 
 So, together, in this case,
 
 $$
-VI(AS, GT) = H(AS | GT) + H(GT | AS) = 1 + 0 = 1 \textrm{ bit.}
+VI(S, T) = H(S | T) + H(T | S) = 1 + 0 = 1 \textrm{ bit.}
 $$
 
 Here's a simple example:
@@ -1289,7 +1289,7 @@ mat = sparse.csr_matrix([[0.125, 0.125, 0.25,    0],
 xlog1x(mat).todense()
 ```
 
-So, the conditional entropy of AS given GT:
+So, the conditional entropy of $S$ given $T$:
 
 ```python
 H_ag = np.sum(np.sum(xlog1x(cont / p_gt), axis=0) * p_gt)
