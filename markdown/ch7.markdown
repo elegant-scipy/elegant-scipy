@@ -222,7 +222,9 @@ ax.set_ylabel('MSE')
 ```
 
 As you can see, with some rather extreme smoothing, the "funnel" of
-the error function becomes wider, and less bumpy. Therefore, modern alignment
+the error function becomes wider, and less bumpy. Rather than smoothing the
+function itself we can get a similar affect by blurring the images before
+comparing them. Therefore, modern alignment
 software uses what's called a *Gaussian pyramid*, which is a set of
 progressively lower resolution versions of the same image.  We align
 the the lower resolution (blurrier) images first, to get an
@@ -413,7 +415,7 @@ starting parameters.
 **Exercise:** Try incorporating the `scipy.optimize.basinhopping` function
 into the `align` function, which has explicit strategies to avoid local minima.
 
-*Hint:* limit basinhopping to the top levels of the pyramid, as it is a slower
+*Hint:* limit using basinhopping to just the top levels of the pyramid, as it is a slower
 optimization approach, and could take rather long to run at full image
 resolution.
 
@@ -490,7 +492,8 @@ excellent. But it turns out that we've only solved the
 easiest of registration problems: images of the same *modality*. This means
 that we expect bright pixels in the reference image to match up to bright
 pixels in the test image. We now move on to aligning different color channels
-of the same image. This task has historical significance: between 1909 and
+of the same image, where we can no longer rely on the channels having the same
+modality. This task has historical significance: between 1909 and
 1915, the photographer Sergei Mikhailovich Prokudin-Gorskii produced color
 photographs of the Russian empire before color photography had been invented.
 He did this by taking three different monochrome pictures of a scene, each
@@ -530,8 +533,8 @@ for ax, image, name in zip(axes, channels, channel_names):
     ax.set_title(name)
 ```
 
-First, we verify that the alignment indeed needs to be fine-tuned between the
-three channels:
+First, we overlay all three images to verify that the alignment indeed needs to
+be fine-tuned between the three channels:
 
 ```python
 blue, green, red = channels
@@ -591,8 +594,8 @@ where $H(X)$ is the *entropy* of $X$, and $H(X, Y)$ is the joint
 entropy of $X$ and $Y$. The numerator describes the entropy of the
 two images, seen separately, and the denominator the total entropy if
 they are observed together. Values can vary between 1 (maximally
-aligned) and 2 (minimally aligned)[^mi_calc]. (See Chapter 5 for a
-more in-depth discussion of entropy.)
+aligned) and 2 (minimally aligned)[^mi_calc]. See Chapter 5 for a
+more in-depth discussion of entropy.
 
 [^mi_calc]: A quick handwavy explanation is that entropy is calculated
             from the histogram of the quantity under consideration.
@@ -670,7 +673,7 @@ for ax in (ax0, ax1):
 What a glorious image! Realise that this artifact was created before color
 photography existed! Notice God's pearly white robes, John's white beard,
 and the white pages of the book held by Prochorus, his scribe — all of which
-were missing from the MSE-based alignment.
+were missing from the MSE-based alignment, but nevertheless look clear.
 
 Notice also the realistic gold of the candlesticks in the foreground.
 
