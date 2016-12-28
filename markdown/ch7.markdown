@@ -12,7 +12,7 @@ Hanging a picture on the wall, it is sometimes hard to get it
 straight.  You make an adjustment, step back, evaluate the picture's
 horizontality, and repeat.  This is a process of *optimization*: we're
 changing the orientation of the portrait until it satisfies our
-demand---that it makes a zero angle with the horizon.
+demand&mdash;that it makes a zero angle with the horizon.
 
 In mathematics, our demand is called a "cost function", and the
 orientation of the portrait the "parameter".  In a typical
@@ -96,7 +96,7 @@ dissimilarity.  By doing this repeatedly, we can try to find the
 correct alignment.
 
 For the optimization algorithm to do its work, we need some way of
-defining "dissimilarity"---i.e., the cost function.  The easiest is to
+defining "dissimilarity"&mdash;i.e., the cost function.  The easiest is to
 simply calculate the average of the squared differences, often called the
 *mean squared error*, or MSE. As in previous chapters, images will just be
 NumPy arrays.
