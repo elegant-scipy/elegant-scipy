@@ -96,11 +96,31 @@ whether jiggling it in one direction or another reduces their
 dissimilarity.  By doing this repeatedly, we can try to find the
 correct alignment.
 
+You'll remember our astronaut - Eileen Collins - from chapter 3.
+We will be shifting this image then comparing it back to the original until we
+find the shift that best matches. Obviously this is a silly thing to do, as we
+know the original orientation, but this way we know the truth. Here's the
+original and shifted image.
+As in previous chapters, images will just be NumPy arrays.
+
+```python
+from skimage import data, color
+from scipy import ndimage as ndi
+
+astronaut = color.rgb2gray(data.astronaut())
+shifted = ndi.shift(astronaut, (0, 50))
+
+fig, axes = plt.subplots(nrows=1, ncols=2)
+axes[0].imshow(astronaut)
+axes[0].set_title('Original')
+axes[1].imshow(shifted)
+axes[1].set_title('Shifted');
+```
+
 For the optimization algorithm to do its work, we need some way of
-defining "dissimilarity"&mdash;i.e., the cost function.  The easiest is to
+defining "dissimilarity"&mdash;i.e., the cost function.  The easiest way to do this is to
 simply calculate the average of the squared differences, often called the
-*mean squared error*, or MSE. As in previous chapters, images will just be
-NumPy arrays.
+*mean squared error*, or MSE.
 
 ```python
 import numpy as np
@@ -111,15 +131,13 @@ def mse(arr1, arr2):
 ```
 
 This will return 0 when the images are perfectly aligned, and a higher
-value otherwise.
-
-With this cost function, we can check whether two images are aligned:
+value otherwise. With this cost function, we can check whether two images are aligned:
 
 ```python
-from scipy import ndimage as ndi
-from skimage import data, color
+#from scipy import ndimage as ndi
+#from skimage import data, color
 
-astronaut = color.rgb2gray(data.astronaut())
+#astronaut = color.rgb2gray(data.astronaut())
 ncol = astronaut.shape[1]
 
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
@@ -131,6 +149,8 @@ for shift in shifts:
 
 fig, ax = plt.subplots()
 ax.plot(shifts, mse_costs)
+ax.set_xlabel('Shift')
+ax.set_ylabel('MSE');
 ```
 
 With the cost function defined, we can ask `scipy.optimize.minimize`
