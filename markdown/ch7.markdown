@@ -19,13 +19,14 @@ orientation of the portrait the "parameter".  In a typical
 optimization problem, we vary the parameters until the cost function
 is minimized.
 
-Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.  We
+Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.  
+We'd like to find the value of x that minimises this cost function. We
 know that this function, with parameter $x$, has a minimum at 3,
 because we can calculate the derivative, set it to zero, and see that
 $2 (x - 3) = 0$, i.e. $x = 3$.
 
-But, if this function were much more complicated (e.g., was an
-expression with many terms, had multiple points of zero derivative,
+But, if this function were much more complicated (for example if the
+expression had many terms, multiple points of zero derivative,
 contained non-linearities, or was dependent on more variables), using
 a hand calculation would become arduous.
 
@@ -33,8 +34,8 @@ You can think of the cost function as representing a landscape, where we
 are trying to find the lowest point.  That analogy immediately
 highlights one of the hard parts of this problem: if you are standing
 in any valley, with mountains surrounding you, how do you know whether
-you are in the lowest valley, or whether the valley is perhaps
-surrounded by *even taller* mountains?  In optimization parlance: how
+you are in the lowest valley, or whether this valley just seems low because it is
+surrounded by particularly tall mountains?  In optimization parlance: how
 do you know whether you are trapped in a *local
 minimum*?  Most of the optimization algorithms available make some
 attempt to address the issue[^line_search].
@@ -75,7 +76,7 @@ and
 
 Applications of image alignment or *registration* include panorama
 stitching, combination of multi-modal brain scans, super-resolution
-imaging, and, in astronomy, object denoising through the combination
+imaging, and, in astronomy, object denoising (noise reduction) through the combination
 of multiple exposures.
 
 We start, as usual, by setting up our plotting environment:
