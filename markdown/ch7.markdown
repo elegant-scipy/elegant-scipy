@@ -177,7 +177,7 @@ original state.
 
 Unfortunately, this brings us to the principal difficulty of this kind of
 alignment: sometimes, the MSE has to get worse before it gets better. Have a
-look at the MSE value as the shift gets larger and larger: at around -300
+look at the MSE value as the shift gets larger and larger: at around -400
 pixels of shift, it starts to decrease again! Only slightly, but it decreases
 nonetheless. Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
