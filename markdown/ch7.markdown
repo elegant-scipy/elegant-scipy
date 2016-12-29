@@ -134,10 +134,6 @@ This will return 0 when the images are perfectly aligned, and a higher
 value otherwise. With this cost function, we can check whether two images are aligned:
 
 ```python
-#from scipy import ndimage as ndi
-#from skimage import data, color
-
-#astronaut = color.rgb2gray(data.astronaut())
 ncol = astronaut.shape[1]
 
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
@@ -177,7 +173,8 @@ original state.
 
 Unfortunately, this brings us to the principal difficulty of this kind of
 alignment: sometimes, the MSE has to get worse before it gets better. Have a
-look at the MSE value as the shift gets larger and larger: at around -400
+look at the MSE value as the shift increases: it reaches a local minimum at
+around -400, increases slightly, then at around -300
 pixels of shift, it starts to decrease again! Only slightly, but it decreases
 nonetheless. Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
@@ -188,8 +185,8 @@ start by an image shifted by -340 pixels:
 shifted2 = ndi.shift(astronaut, (0, -340))
 ```
 
-`minimize` will shift it by a further 40 pixels or so, instead of recovering
-the original image:
+`minimize` will shift it by a further 40 pixels or so to find a local minimum,
+instead of recovering the original image:
 
 ```python
 res = optimize.minimize(astronaut_shift_error, 0, args=(shifted2,),
