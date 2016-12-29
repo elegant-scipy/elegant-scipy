@@ -474,22 +474,24 @@ import warnings
 warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
 
-#### A quick note on plotting
-
-As a short aside, the code above does a few neat things to make our plots
-prettier. First, `%matplotlib inline` is a Jupyter notebook
-[magic command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
-that simply makes all plots appear in the notebook rather than pop up a new
-window. Second, we import `matplotlib.pyplot` then direct it to use our own
-plotting style `plt.style.use('style/elegant.mplstyle')`. You will see a block
-of code like this before the first plot in every chapter.
-
-You may have seen people importing existing styles like this
-`plt.style.use('ggplot')`. But we wanted some particular settings, and we
-wanted all the plots in this book to follow the same style. So we rolled our
-own matplotlib style. To see how we did it, take a look at the style file in
-the Elegant SciPy repository: `style/elegant.mplstyle`. For more information on
-styles, check out (http://matplotlib.org/users/style_sheets.html).
+> ## Tip: A quick note on plotting {.callout}
+>
+> As a short aside, the code above does a few neat things to make our plots
+> prettier. First, `%matplotlib inline` is a Jupyter notebook
+> [magic command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
+> that simply makes all plots appear in the notebook rather than pop up a new
+> window. Second, we import `matplotlib.pyplot` then direct it to use our own
+> plotting style `plt.style.use('style/elegant.mplstyle')`. You will see a block
+> of code like this before the first plot in every chapter.
+>
+> You may have seen people importing existing styles like this
+> `plt.style.use('ggplot')`. But we wanted some particular settings, and we
+> wanted all the plots in this book to follow the same style. So we rolled our
+> own matplotlib style. To see how we did it, take a look at the style file in
+> the Elegant SciPy repository: `style/elegant.mplstyle`. For more information
+> on styles, check out the
+> [Matplotlib documentation on style sheets](http://matplotlib.org/users/style_sheets.html).
+>
 
 Now back to plotting our counts distribution!
 

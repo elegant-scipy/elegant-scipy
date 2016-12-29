@@ -97,9 +97,8 @@ We will use a Gaussian kernel to smooth out bumps in our data so we can get a
 better idea of the overall shape.
 
 ```python
-# Make all plots appear inline in the Jupyter notebook
+# Make plots appear inline, set custom plotting style
 %matplotlib inline
-# Set custom plotting style
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```

@@ -566,7 +566,7 @@ matrices.
 We'll use the following image as a test:
 
 ```python
-# Set up plotting
+# Make plots appear inline, set custom plotting style
 %matplotlib inline
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')

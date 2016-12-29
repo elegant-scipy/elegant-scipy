@@ -342,7 +342,7 @@ This totally works and is streaming, so reads are loaded from disk one at a time
 We can then plot a histogram of the counts, and confirm that there are indeed two well-separated populations of correct and erroneous k-mers:
 
 ```python
-# Set up plotting
+# Make plots appear inline, set custom plotting style
 %matplotlib inline
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
