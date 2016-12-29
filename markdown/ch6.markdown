@@ -164,7 +164,7 @@ A = np.array([[0, 1, 1, 0, 0, 0],
 We can use NetworkX to draw this network:
 
 ```python
-# Set up plotting
+# Make plots appear inline, set custom plotting style
 %matplotlib inline
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')

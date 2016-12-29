@@ -81,6 +81,7 @@ of multiple exposures.
 We start, as usual, by setting up our plotting environment:
 
 ```python
+# Make plots appear inline, set custom plotting style
 %matplotlib inline
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')

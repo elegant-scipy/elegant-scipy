@@ -69,11 +69,13 @@ with matplotlib. First, we import the necessary packages, and use the `matplotli
 inline` IPython magic to make our images appear below the code:
 
 ```python
+# Make plots appear inline, set custom plotting style
 %matplotlib inline
-
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
+```
 
+```python
 import numpy as np
 import matplotlib as mpl
 from matplotlib import cm  # colormap module
@@ -83,7 +85,7 @@ Finally, "make some noise" and display it as an image:
 
 ```python
 random_image = np.random.rand(500, 500)
-plt.imshow(random_image);
+plt.imshow(random_image); # ; suppresses the output (i.e. the plotting object text) being displayed in the notebook.
 ```
 
 This `imshow` function displays a numpy array as an image. The converse is also true: an image
