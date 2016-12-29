@@ -172,11 +172,12 @@ Brilliant! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
 get it back to its original state.
 
 Unfortunately, this brings us to the principal difficulty of this kind of
-alignment: sometimes, the MSE has to get worse before it gets better. Have a
-look at the MSE value as the shift increases: it reaches a local minimum at
-around -400, increases slightly, then at around -300
-pixels of shift, it starts to decrease again! Only slightly, but it decreases
-nonetheless. Because optimization methods only have access to "nearby"
+alignment: sometimes, the MSE has to get worse before it gets better.
+Starting at zero shift, have a look at the MSE value as the shift becomes
+increasingly negative: it increases consistently until around -300
+pixels of shift, where it starts to decrease again! Only slightly, but it
+decreases nonetheless. There's a local minimum at around -400, before it 
+increases again. Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
 direction, the `minimize` process will move that way regardless. So, if we
 start by an image shifted by -340 pixels:
@@ -677,11 +678,10 @@ for ax in (ax0, ax1):
     ax.axis('off')
 ```
 
-What a glorious image! Realise that this artifact was created before color
+What a glorious image! Realize that this artifact was created before color
 photography existed! Notice God's pearly white robes, John's white beard,
 and the white pages of the book held by Prochorus, his scribe — all of which
-were missing from the MSE-based alignment, but nevertheless look clear.
-
+were missing from the MSE-based alignment, but look wonderfully clear using NMI!
 Notice also the realistic gold of the candlesticks in the foreground.
 
 ## Registration in human brain imaging
