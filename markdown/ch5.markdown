@@ -1,10 +1,3 @@
-```python
-# Set up plotting
-%matplotlib inline
-import matplotlib.pyplot as plt
-plt.style.use('style/elegant.mplstyle')
-```
-
 # Contingency tables using sparse coordinate matrices
 
 **Code by Juan Nunez-Iglesias,**  
@@ -571,6 +564,13 @@ we'd like to show you a quick workaround using SciPy's sparse
 matrices.
 
 We'll use the following image as a test:
+
+```python
+# Set up plotting
+%matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+```
 
 ```python
 from skimage import data
