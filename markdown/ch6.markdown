@@ -233,14 +233,14 @@ is the second-smallest:
 
 ```python
 print(eigvals)
-plt.plot(eigvals, '-o')
+plt.plot(eigvals, '-o');
 ```
 
 It's the second eigenvalue. The Fiedler vector is thus the second eigenvector.
 
 ```python
 f = Eigvecs[:, np.argsort(eigvals)[1]]
-plt.plot(f, '-o')
+plt.plot(f, '-o');
 ```
 
 It's pretty remarkable: by looking at the *sign* of the Fiedler vector, we can
