@@ -601,10 +601,7 @@ Much better!
 Also notice how we used broadcasting twice there.
 Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
 
-**[ED'S NOTE]: the following function will probably be replaced by Seaborn's new boxplot function, which supports exactly this use case.**
-
 ```python
-import matplotlib.pyplot as plt
 import itertools as it
 from collections import defaultdict
 
