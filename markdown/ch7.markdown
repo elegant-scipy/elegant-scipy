@@ -97,7 +97,8 @@ dissimilarity.  By doing this repeatedly, we can try to find the
 correct alignment.
 
 You'll remember our astronaut - Eileen Collins - from chapter 3.
-We will be shifting this image then comparing it back to the original until we
+We will be shifting this image by 50 pixels to the right then comparing it back
+to the original until we
 find the shift that best matches. Obviously this is a silly thing to do, as we
 know the original orientation, but this way we know the truth. Here's the
 original and shifted image.
@@ -167,7 +168,8 @@ res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
 print('The optimal shift for correction is: %f' % res.x)
 ```
 
-Brilliant! Thanks to our MSE measure, SciPy's `optimize.minimize` function has
+Brilliant! We show we shifted it by +50 pixels.
+Thanks to our MSE measure, SciPy's `optimize.minimize` function has
 recovered the correct amount to shift our distorted image to get it back to its
 original state.
 
@@ -282,7 +284,7 @@ for level, cost in enumerate(costs):
     ax.plot(shifts, cost, label='Level %d' % (nlevels - level))
 ax.legend(loc='lower right', frameon=True, framealpha=0.9)
 ax.set_xlabel('Shift')
-ax.set_ylabel('MSE')
+ax.set_ylabel('MSE');
 ```
 
 As you can see, at the highest level of the pyramid, that bump at a shift of
@@ -291,11 +293,13 @@ level, then pop down to the lower levels to refine that alignment.
 
 Let's automate that, and try with a "real" alignment, with three parameters:
 rotation, translation in the row dimension, and translation in the
-column dimension. (This is called a "*rigid* registration".)
+column dimension. This is called a "*rigid* registration" because there are no
+deformations of any kind (scaling, skew, or other stretching). The object is
+considered solid and moved around (including rotation) until a match is found.
 
 To simplify the code, we'll use the scikit-image *transform* module to compute
 the shift and rotation of the image. SciPy's `optimize` requires a vector of
-parameters as input. These are just numbers, without meaning. We first make a
+parameters as input. We first make a
 function that will take such a vector and produce a rigid transformation with
 the right parameters:
 
