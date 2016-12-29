@@ -12,7 +12,7 @@ Hanging a picture on the wall, it is sometimes hard to get it
 straight.  You make an adjustment, step back, evaluate the picture's
 horizontality, and repeat.  This is a process of *optimization*: we're
 changing the orientation of the portrait until it satisfies our
-demand&mdash;that it makes a zero angle with the horizon.
+demand—that it makes a zero angle with the horizon.
 
 In mathematics, our demand is called a "cost function", and the
 orientation of the portrait the "parameter".  In a typical
@@ -20,7 +20,7 @@ optimization problem, we vary the parameters until the cost function
 is minimized.
 
 Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.  
-We'd like to find the value of x that minimises this cost function. We
+We'd like to find the value of x that minimizes this cost function. We
 know that this function, with parameter $x$, has a minimum at 3,
 because we can calculate the derivative, set it to zero, and see that
 $2 (x - 3) = 0$, i.e. $x = 3$.
@@ -102,7 +102,6 @@ to the original until we
 find the shift that best matches. Obviously this is a silly thing to do, as we
 know the original orientation, but this way we know the truth. Here's the
 original and shifted image.
-As in previous chapters, images will just be NumPy arrays.
 
 ```python
 from skimage import data, color
@@ -119,7 +118,7 @@ axes[1].set_title('Shifted');
 ```
 
 For the optimization algorithm to do its work, we need some way of
-defining "dissimilarity"&mdash;i.e., the cost function.  The easiest way to do this is to
+defining "dissimilarity"—i.e., the cost function.  The easiest way to do this is to
 simply calculate the average of the squared differences, often called the
 *mean squared error*, or MSE.
 
@@ -168,10 +167,9 @@ res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
 print('The optimal shift for correction is: %f' % res.x)
 ```
 
-Brilliant! We show we shifted it by +50 pixels.
-Thanks to our MSE measure, SciPy's `optimize.minimize` function has
-recovered the correct amount to shift our distorted image to get it back to its
-original state.
+Brilliant! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
+`optimize.minimize` function has given us the correct amount of shift (-50) to
+get it back to its original state.
 
 Unfortunately, this brings us to the principal difficulty of this kind of
 alignment: sometimes, the MSE has to get worse before it gets better. Have a
@@ -222,7 +220,7 @@ ax.set_ylabel('MSE');
 
 As you can see, with some rather extreme smoothing, the "funnel" of
 the error function becomes wider, and less bumpy. Rather than smoothing the
-function itself we can get a similar affect by blurring the images before
+function itself we can get a similar effect by blurring the images before
 comparing them. Therefore, modern alignment
 software uses what's called a *Gaussian pyramid*, which is a set of
 progressively lower resolution versions of the same image.  We align

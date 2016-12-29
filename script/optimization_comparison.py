@@ -76,7 +76,6 @@ def optimization_paths():
 
     z = rosenbrock(x, y).T
     axes[0, 1].matshow(z + 1e-3, norm=LogNorm(), origin='lower', extent=extent)
-    #axes[0, 1].set_title('Cost Function')
 
     x0 = (-0.5, 2.5)
 
