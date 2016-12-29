@@ -46,9 +46,9 @@ suspects:
 
 ```python
 %matplotlib inline
-
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
+
 import numpy as np
 ```
 

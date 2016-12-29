@@ -70,11 +70,13 @@ inline` IPython magic to make our images appear below the code:
 
 ```python
 %matplotlib inline
+
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+
 import numpy as np
 import matplotlib as mpl
-from matplotlib import pyplot as plt
 from matplotlib import cm  # colormap module
-plt.style.use('style/elegant.mplstyle')
 ```
 
 Finally, "make some noise" and display it as an image:

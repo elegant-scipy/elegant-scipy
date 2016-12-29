@@ -1,11 +1,5 @@
 # Linear algebra in SciPy
 
-```python
-%matplotlib inline
-import matplotlib.pyplot as plt
-plt.style.use('style/elegant.mplstyle')
-```
-
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
 will feature an elegant *method*. We
 want to highlight the linear algebra packages available in SciPy, which form
@@ -168,6 +162,13 @@ A = np.array([[0, 1, 1, 0, 0, 0],
 ```
 
 We can use NetworkX to draw this network:
+
+```python
+# Set up plotting
+%matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+```
 
 ```python
 import networkx as nx
