@@ -217,7 +217,7 @@ ax.plot(shifts, mse_costs, label='original')
 ax.plot(shifts, mse_costs_smooth, label='smoothed')
 ax.legend(loc='lower right')
 ax.set_xlabel('Shift')
-ax.set_ylabel('MSE')
+ax.set_ylabel('MSE');
 ```
 
 As you can see, with some rather extreme smoothing, the "funnel" of
@@ -310,6 +310,14 @@ def make_rigid_transform(param):
     r, tc, tr = param
     return transform.SimilarityTransform(rotation=r,
                                          translation=(tc, tr))
+
+rotated = transform.rotate(astronaut, 45)
+
+fig, axes = plt.subplots(nrows=1, ncols=2)
+axes[0].imshow(astronaut)
+axes[0].set_title('Original')
+axes[1].imshow(rotated)
+axes[1].set_title('Rotated');
 ```
 
 Next, we need a cost function. This is just MSE, but SciPy requires a specific
