@@ -599,7 +599,7 @@ print(components.shape)
 We can now plot the components:
 
 ```python
-plt.scatter(*components.T)
+plt.scatter(*components.T);
 ```
 
 You can verify that this gives (approximately) the same result as a standard
@@ -608,7 +608,7 @@ PCA:
 ```python
 iris = np.loadtxt('data/iris.csv', delimiter=',')
 components2 = decomposition.PCA(n_components=2).fit_transform(iris)
-plt.scatter(*components2.T)
+plt.scatter(*components2.T);
 ```
 
 The difference, of course, is that streaming PCA can scale to extremely large

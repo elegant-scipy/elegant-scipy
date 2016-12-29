@@ -74,7 +74,7 @@ x = np.sin(f * 2 * np.pi * t)
 fig, ax = plt.subplots()
 ax.plot(t, x)
 ax.set_xlabel('Time [s]')
-ax.set_ylabel('Signal amplitude')
+ax.set_ylabel('Signal amplitude');
 ```
 
 [^discrete]: The discrete Fourier transform operates on sampled data,

@@ -791,7 +791,7 @@ We can test that this works:
 
 ```python
 tf = transform_rotate_about_center(image.shape, 30)
-plt.imshow(apply_transform(image, tf))
+plt.imshow(apply_transform(image, tf));
 ```
 
 <!-- solution end -->
