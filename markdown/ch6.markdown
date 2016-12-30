@@ -1,11 +1,5 @@
 # Linear algebra in SciPy
 
-```python
-%matplotlib inline
-import matplotlib.pyplot as plt
-plt.style.use('style/elegant.mplstyle')
-```
-
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
 will feature an elegant *method*. We
 want to highlight the linear algebra packages available in SciPy, which form
@@ -170,6 +164,13 @@ A = np.array([[0, 1, 1, 0, 0, 0],
 We can use NetworkX to draw this network:
 
 ```python
+# Make plots appear inline, set custom plotting style
+%matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+```
+
+```python
 import networkx as nx
 g = nx.from_numpy_matrix(A)
 layout = nx.spring_layout(g, pos=nx.circular_layout(g))
@@ -232,14 +233,14 @@ is the second-smallest:
 
 ```python
 print(eigvals)
-plt.plot(eigvals, '-o')
+plt.plot(eigvals, '-o');
 ```
 
 It's the second eigenvalue. The Fiedler vector is thus the second eigenvector.
 
 ```python
 f = Eigvecs[:, np.argsort(eigvals)[1]]
-plt.plot(f, '-o')
+plt.plot(f, '-o');
 ```
 
 It's pretty remarkable: by looking at the *sign* of the Fiedler vector, we can

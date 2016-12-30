@@ -1,10 +1,3 @@
-```python
-# Set up plotting
-%matplotlib inline
-import matplotlib.pyplot as plt
-plt.style.use('style/elegant.mplstyle')
-```
-
 # Contingency tables using sparse coordinate matrices
 
 **Code by Juan Nunez-Iglesias,**  
@@ -573,6 +566,13 @@ matrices.
 We'll use the following image as a test:
 
 ```python
+# Make plots appear inline, set custom plotting style
+%matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+```
+
+```python
 from skimage import data
 image = data.camera()
 plt.imshow(image);
@@ -791,7 +791,7 @@ We can test that this works:
 
 ```python
 tf = transform_rotate_about_center(image.shape, 30)
-plt.imshow(apply_transform(image, tf))
+plt.imshow(apply_transform(image, tf));
 ```
 
 <!-- solution end -->

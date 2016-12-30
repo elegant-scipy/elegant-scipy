@@ -466,13 +466,34 @@ KDE is commonly used to smooth out histograms, which gives a clearer picture of 
 ```python
 # Make all plots appear inline in the Jupyter notebook from now onwards
 %matplotlib inline
-import matplotlib.pyplot as plt
 # Use our own style file for the plots
+import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 # ignore MPL layout warnings
 import warnings
 warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
+
+> ## Tip: A quick note on plotting {.callout}
+>
+> As a short aside, the code above does a few neat things to make our plots
+> prettier. First, `%matplotlib inline` is a Jupyter notebook
+> [magic command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
+> that simply makes all plots appear in the notebook rather than pop up a new
+> window. Second, we import `matplotlib.pyplot` then direct it to use our own
+> plotting style `plt.style.use('style/elegant.mplstyle')`. You will see a block
+> of code like this before the first plot in every chapter.
+>
+> You may have seen people importing existing styles like this
+> `plt.style.use('ggplot')`. But we wanted some particular settings, and we
+> wanted all the plots in this book to follow the same style. So we rolled our
+> own matplotlib style. To see how we did it, take a look at the style file in
+> the Elegant SciPy repository: `style/elegant.mplstyle`. For more information
+> on styles, check out the
+> [Matplotlib documentation on style sheets](http://matplotlib.org/users/style_sheets.html).
+>
+
+Now back to plotting our counts distribution!
 
 ```python
 total_counts = counts.sum(axis=0) # sum each column (axis=1 would sum rows)
@@ -582,10 +603,7 @@ Much better!
 Also notice how we used broadcasting twice there.
 Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
 
-**[ED'S NOTE]: the following function will probably be replaced by Seaborn's new boxplot function, which supports exactly this use case.**
-
 ```python
-import matplotlib.pyplot as plt
 import itertools as it
 from collections import defaultdict
 

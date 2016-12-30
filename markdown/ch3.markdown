@@ -69,19 +69,25 @@ with matplotlib. First, we import the necessary packages, and use the `matplotli
 inline` IPython magic to make our images appear below the code:
 
 ```python
+# Make plots appear inline, set custom plotting style
 %matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+```
+
+```python
 import numpy as np
 import matplotlib as mpl
-from matplotlib import pyplot as plt
 from matplotlib import cm  # colormap module
-plt.style.use('style/elegant.mplstyle')
 ```
 
 Finally, "make some noise" and display it as an image:
 
 ```python
 random_image = np.random.rand(500, 500)
-plt.imshow(random_image);
+plt.imshow(random_image); 
+# Note ; suppresses the output (i.e. the plotting object text)
+# from being displayed inline in the Jupyter notebook.
 ```
 
 This `imshow` function displays a numpy array as an image. The converse is also true: an image
@@ -200,7 +206,7 @@ def overlay_grid(image, spacing=128):
     image_gridded[:, spacing:-1:spacing] = [0, 0, 255]
     return image_gridded
 
-plt.imshow(overlay_grid(astro, 128))
+plt.imshow(overlay_grid(astro, 128));
 ```
 
 Note that we used `-1` to mean the last value of the axis, as is standard in
@@ -324,7 +330,7 @@ is usually much smaller than the data.
 
 ```python
 smooth_diff = ndi.convolve(gaussian_kernel(25, 3), diff)
-plt.plot(smooth_diff)
+plt.plot(smooth_diff);
 ```
 
 This smoothed difference filter looks for an edge in the central position,
@@ -462,7 +468,7 @@ house_price_map = (0.5 + np.random.rand(100, 100)) * 1e6
 footprint = morphology.disk(radius=10)
 tax_rate_map = ndi.generic_filter(house_price_map, tax, footprint=footprint)
 plt.imshow(tax_rate_map)
-plt.colorbar()
+plt.colorbar();
 ```
 
 Now lets step back for a moment and put what we've learnt so far together to tackle a few exercises.
@@ -829,7 +835,7 @@ visualize the result of SLIC:
 
 ```python
 from skimage import color
-io.imshow(color.label2rgb(seg, tiger))
+io.imshow(color.label2rgb(seg, tiger));
 ```
 
 This shows that the tiger has been split in three parts, with the rest of the image
@@ -843,7 +849,7 @@ from scikit-image — indeed, the library that contains this chapter's code snip
 ```python
 from skimage.future import graph
 g = graph.rag_mean_color(tiger, seg)
-graph.show_rag(seg, g, tiger)
+graph.show_rag(seg, g, tiger);
 ```
 
 Here, you can see the nodes corresponding to each segment, and the edges

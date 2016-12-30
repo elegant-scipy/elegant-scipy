@@ -1,8 +1,3 @@
-```python
-%matplotlib inline
-import matplotlib.pyplot as plt
-plt.style.use('style/elegant.mplstyle')
-```
 # Big Data in Little Laptop with Toolz
 
 **Code by Matt Rocklin.**  
@@ -347,6 +342,13 @@ This totally works and is streaming, so reads are loaded from disk one at a time
 We can then plot a histogram of the counts, and confirm that there are indeed two well-separated populations of correct and erroneous k-mers:
 
 ```python
+# Make plots appear inline, set custom plotting style
+%matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+```
+
+```python
 def integer_histogram(counts, normed=True, xlim=[], ylim=[],
                       *args, **kwargs):
     hist = np.bincount(counts)
@@ -597,7 +599,7 @@ print(components.shape)
 We can now plot the components:
 
 ```python
-plt.scatter(*components.T)
+plt.scatter(*components.T);
 ```
 
 You can verify that this gives (approximately) the same result as a standard
@@ -606,7 +608,7 @@ PCA:
 ```python
 iris = np.loadtxt('data/iris.csv', delimiter=',')
 components2 = decomposition.PCA(n_components=2).fit_transform(iris)
-plt.scatter(*components2.T)
+plt.scatter(*components2.T);
 ```
 
 The difference, of course, is that streaming PCA can scale to extremely large

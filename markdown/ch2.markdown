@@ -72,14 +72,6 @@ As in Chapter 1, first we will use Pandas to make our job of reading in the data
 First we will read in our counts data as a pandas table.
 
 ```python
-# Make all plots appear inline in the Jupyter notebook and set splotting style
-%matplotlib inline
-
-import matplotlib.pyplot as plt
-plt.style.use('style/elegant.mplstyle')
-```
-
-```python
 import numpy as np
 import pandas as pd
 
@@ -103,6 +95,13 @@ counts = np.asarray(data_table, dtype=int)
 Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
 We will use a Gaussian kernel to smooth out bumps in our data so we can get a
 better idea of the overall shape.
+
+```python
+# Make plots appear inline, set custom plotting style
+%matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('style/elegant.mplstyle')
+```
 
 ```python
 def plot_col_density(data, xlabel=None):

@@ -45,10 +45,13 @@ We'll start by setting up some plotting styles and importing the usual
 suspects:
 
 ```python
+# Make plots appear inline, set custom plotting style
 %matplotlib inline
-
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
+```
+
+```python
 import numpy as np
 ```
 
@@ -74,7 +77,7 @@ x = np.sin(f * 2 * np.pi * t)
 fig, ax = plt.subplots()
 ax.plot(t, x)
 ax.set_xlabel('Time [s]')
-ax.set_ylabel('Signal amplitude')
+ax.set_ylabel('Signal amplitude');
 ```
 
 [^discrete]: The discrete Fourier transform operates on sampled data,
