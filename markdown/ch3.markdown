@@ -85,7 +85,9 @@ Finally, "make some noise" and display it as an image:
 
 ```python
 random_image = np.random.rand(500, 500)
-plt.imshow(random_image); # ; suppresses the output (i.e. the plotting object text) being displayed in the notebook.
+plt.imshow(random_image); 
+# Note ; suppresses the output (i.e. the plotting object text)
+# from being displayed inline in the Jupyter notebook.
 ```
 
 This `imshow` function displays a numpy array as an image. The converse is also true: an image
