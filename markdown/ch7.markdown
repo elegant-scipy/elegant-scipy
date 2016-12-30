@@ -12,20 +12,21 @@ Hanging a picture on the wall, it is sometimes hard to get it
 straight.  You make an adjustment, step back, evaluate the picture's
 horizontality, and repeat.  This is a process of *optimization*: we're
 changing the orientation of the portrait until it satisfies our
-demand---that it makes a zero angle with the horizon.
+demand—that it makes a zero angle with the horizon.
 
 In mathematics, our demand is called a "cost function", and the
 orientation of the portrait the "parameter".  In a typical
 optimization problem, we vary the parameters until the cost function
 is minimized.
 
-Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.  We
+Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.  
+We'd like to find the value of x that minimizes this cost function. We
 know that this function, with parameter $x$, has a minimum at 3,
 because we can calculate the derivative, set it to zero, and see that
 $2 (x - 3) = 0$, i.e. $x = 3$.
 
-But, if this function were much more complicated (e.g., was an
-expression with many terms, had multiple points of zero derivative,
+But, if this function were much more complicated (for example if the
+expression had many terms, multiple points of zero derivative,
 contained non-linearities, or was dependent on more variables), using
 a hand calculation would become arduous.
 
@@ -33,8 +34,8 @@ You can think of the cost function as representing a landscape, where we
 are trying to find the lowest point.  That analogy immediately
 highlights one of the hard parts of this problem: if you are standing
 in any valley, with mountains surrounding you, how do you know whether
-you are in the lowest valley, or whether the valley is perhaps
-surrounded by *even taller* mountains?  In optimization parlance: how
+you are in the lowest valley, or whether this valley just seems low because it is
+surrounded by particularly tall mountains?  In optimization parlance: how
 do you know whether you are trapped in a *local
 minimum*?  Most of the optimization algorithms available make some
 attempt to address the issue[^line_search].
@@ -75,7 +76,7 @@ and
 
 Applications of image alignment or *registration* include panorama
 stitching, combination of multi-modal brain scans, super-resolution
-imaging, and, in astronomy, object denoising through the combination
+imaging, and, in astronomy, object denoising (noise reduction) through the combination
 of multiple exposures.
 
 We start, as usual, by setting up our plotting environment:
@@ -96,11 +97,31 @@ whether jiggling it in one direction or another reduces their
 dissimilarity.  By doing this repeatedly, we can try to find the
 correct alignment.
 
+You'll remember our astronaut - Eileen Collins - from chapter 3.
+We will be shifting this image by 50 pixels to the right then comparing it back
+to the original until we
+find the shift that best matches. Obviously this is a silly thing to do, as we
+know the original orientation, but this way we know the truth. Here's the
+original and shifted image.
+
+```python
+from skimage import data, color
+from scipy import ndimage as ndi
+
+astronaut = color.rgb2gray(data.astronaut())
+shifted = ndi.shift(astronaut, (0, 50))
+
+fig, axes = plt.subplots(nrows=1, ncols=2)
+axes[0].imshow(astronaut)
+axes[0].set_title('Original')
+axes[1].imshow(shifted)
+axes[1].set_title('Shifted');
+```
+
 For the optimization algorithm to do its work, we need some way of
-defining "dissimilarity"---i.e., the cost function.  The easiest is to
+defining "dissimilarity"—i.e., the cost function.  The easiest way to do this is to
 simply calculate the average of the squared differences, often called the
-*mean squared error*, or MSE. As in previous chapters, images will just be
-NumPy arrays.
+*mean squared error*, or MSE.
 
 ```python
 import numpy as np
@@ -111,15 +132,9 @@ def mse(arr1, arr2):
 ```
 
 This will return 0 when the images are perfectly aligned, and a higher
-value otherwise.
-
-With this cost function, we can check whether two images are aligned:
+value otherwise. With this cost function, we can check whether two images are aligned:
 
 ```python
-from scipy import ndimage as ndi
-from skimage import data, color
-
-astronaut = color.rgb2gray(data.astronaut())
 ncol = astronaut.shape[1]
 
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
@@ -131,6 +146,8 @@ for shift in shifts:
 
 fig, ax = plt.subplots()
 ax.plot(shifts, mse_costs)
+ax.set_xlabel('Shift')
+ax.set_ylabel('MSE');
 ```
 
 With the cost function defined, we can ask `scipy.optimize.minimize`
@@ -151,15 +168,17 @@ res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
 print('The optimal shift for correction is: %f' % res.x)
 ```
 
-Brilliant! Thanks to our MSE measure, SciPy's `optimize.minimize` function has
-recovered the correct amount to shift our distorted image to get it back to its
-original state.
+Brilliant! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
+`optimize.minimize` function has given us the correct amount of shift (-50) to
+get it back to its original state.
 
 Unfortunately, this brings us to the principal difficulty of this kind of
-alignment: sometimes, the MSE has to get worse before it gets better. Have a
-look at the MSE value as the shift gets larger and larger: at around -300
-pixels of shift, it starts to decrease again! Only slightly, but it decreases
-nonetheless. Because optimization methods only have access to "nearby"
+alignment: sometimes, the MSE has to get worse before it gets better.
+Starting at zero shift, have a look at the MSE value as the shift becomes
+increasingly negative: it increases consistently until around -300
+pixels of shift, where it starts to decrease again! Only slightly, but it
+decreases nonetheless. There's a local minimum at around -400, before it 
+increases again. Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
 direction, the `minimize` process will move that way regardless. So, if we
 start by an image shifted by -340 pixels:
@@ -168,8 +187,8 @@ start by an image shifted by -340 pixels:
 shifted2 = ndi.shift(astronaut, (0, -340))
 ```
 
-`minimize` will shift it by a further 40 pixels or so, instead of recovering
-the original image:
+`minimize` will shift it by a further 40 pixels or so to find a local minimum,
+instead of recovering the original image:
 
 ```python
 res = optimize.minimize(astronaut_shift_error, 0, args=(shifted2,),
@@ -198,11 +217,13 @@ ax.plot(shifts, mse_costs, label='original')
 ax.plot(shifts, mse_costs_smooth, label='smoothed')
 ax.legend(loc='lower right')
 ax.set_xlabel('Shift')
-ax.set_ylabel('MSE')
+ax.set_ylabel('MSE');
 ```
 
 As you can see, with some rather extreme smoothing, the "funnel" of
-the error function becomes wider, and less bumpy. Therefore, modern alignment
+the error function becomes wider, and less bumpy. Rather than smoothing the
+function itself we can get a similar effect by blurring the images before
+comparing them. Therefore, modern alignment
 software uses what's called a *Gaussian pyramid*, which is a set of
 progressively lower resolution versions of the same image.  We align
 the the lower resolution (blurrier) images first, to get an
@@ -263,7 +284,7 @@ for level, cost in enumerate(costs):
     ax.plot(shifts, cost, label='Level %d' % (nlevels - level))
 ax.legend(loc='lower right', frameon=True, framealpha=0.9)
 ax.set_xlabel('Shift')
-ax.set_ylabel('MSE')
+ax.set_ylabel('MSE');
 ```
 
 As you can see, at the highest level of the pyramid, that bump at a shift of
@@ -272,11 +293,13 @@ level, then pop down to the lower levels to refine that alignment.
 
 Let's automate that, and try with a "real" alignment, with three parameters:
 rotation, translation in the row dimension, and translation in the
-column dimension. (This is called a "*rigid* registration".)
+column dimension. This is called a "*rigid* registration" because there are no
+deformations of any kind (scaling, skew, or other stretching). The object is
+considered solid and moved around (including rotation) until a match is found.
 
 To simplify the code, we'll use the scikit-image *transform* module to compute
 the shift and rotation of the image. SciPy's `optimize` requires a vector of
-parameters as input. These are just numbers, without meaning. We first make a
+parameters as input. We first make a
 function that will take such a vector and produce a rigid transformation with
 the right parameters:
 
@@ -287,6 +310,14 @@ def make_rigid_transform(param):
     r, tc, tr = param
     return transform.SimilarityTransform(rotation=r,
                                          translation=(tc, tr))
+
+rotated = transform.rotate(astronaut, 45)
+
+fig, axes = plt.subplots(nrows=1, ncols=2)
+axes[0].imshow(astronaut)
+axes[0].set_title('Original')
+axes[1].imshow(rotated)
+axes[1].set_title('Rotated');
 ```
 
 Next, we need a cost function. This is just MSE, but SciPy requires a specific
@@ -393,7 +424,7 @@ starting parameters.
 **Exercise:** Try incorporating the `scipy.optimize.basinhopping` function
 into the `align` function, which has explicit strategies to avoid local minima.
 
-*Hint:* limit basinhopping to the top levels of the pyramid, as it is a slower
+*Hint:* limit using basinhopping to just the top levels of the pyramid, as it is a slower
 optimization approach, and could take rather long to run at full image
 resolution.
 
@@ -470,7 +501,8 @@ excellent. But it turns out that we've only solved the
 easiest of registration problems: images of the same *modality*. This means
 that we expect bright pixels in the reference image to match up to bright
 pixels in the test image. We now move on to aligning different color channels
-of the same image. This task has historical significance: between 1909 and
+of the same image, where we can no longer rely on the channels having the same
+modality. This task has historical significance: between 1909 and
 1915, the photographer Sergei Mikhailovich Prokudin-Gorskii produced color
 photographs of the Russian empire before color photography had been invented.
 He did this by taking three different monochrome pictures of a scene, each
@@ -510,8 +542,8 @@ for ax, image, name in zip(axes, channels, channel_names):
     ax.set_title(name)
 ```
 
-First, we verify that the alignment indeed needs to be fine-tuned between the
-three channels:
+First, we overlay all three images to verify that the alignment indeed needs to
+be fine-tuned between the three channels:
 
 ```python
 blue, green, red = channels
@@ -571,8 +603,8 @@ where $H(X)$ is the *entropy* of $X$, and $H(X, Y)$ is the joint
 entropy of $X$ and $Y$. The numerator describes the entropy of the
 two images, seen separately, and the denominator the total entropy if
 they are observed together. Values can vary between 1 (maximally
-aligned) and 2 (minimally aligned)[^mi_calc]. (See Chapter 5 for a
-more in-depth discussion of entropy.)
+aligned) and 2 (minimally aligned)[^mi_calc]. See Chapter 5 for a
+more in-depth discussion of entropy.
 
 [^mi_calc]: A quick handwavy explanation is that entropy is calculated
             from the histogram of the quantity under consideration.
@@ -647,11 +679,10 @@ for ax in (ax0, ax1):
     ax.axis('off')
 ```
 
-What a glorious image! Realise that this artifact was created before color
+What a glorious image! Realize that this artifact was created before color
 photography existed! Notice God's pearly white robes, John's white beard,
 and the white pages of the book held by Prochorus, his scribe — all of which
-were missing from the MSE-based alignment.
-
+were missing from the MSE-based alignment, but look wonderfully clear using NMI!
 Notice also the realistic gold of the candlesticks in the foreground.
 
 ## Registration in human brain imaging

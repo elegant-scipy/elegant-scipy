@@ -65,16 +65,17 @@ def optimization_paths():
     path = {}
 
     fig, axes = plt.subplots(4, 3)
+    fig.tight_layout(h_pad=1.0)
+    fig.subplots_adjust(top = 0.9)
     fig.delaxes(axes[0, 0])
     fig.delaxes(axes[0, 2])
-    fig.suptitle('Comparison of Optimation Methods on Rosenbrock Function')
+    fig.suptitle('Comparison of Optimation Methods on Rosenbrock Function (top: cost function)')
 
     x, y = np.ogrid[-2:2:0.05, -1:3:0.05]
     extent = (-2, 2, -1, 3)
 
     z = rosenbrock(x, y).T
     axes[0, 1].matshow(z + 1e-3, norm=LogNorm(), origin='lower', extent=extent)
-    axes[0, 1].set_title('Cost Function')
 
     x0 = (-0.5, 2.5)
 
