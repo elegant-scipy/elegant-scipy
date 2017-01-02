@@ -399,7 +399,7 @@ plot_bicluster(counts_var, yr, yc)
 We can see that the sample data naturally falls into at least 2 clusters.
 Are these clusters meaningful?
 To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
-After some preprocessing, we get the [patients table]() (TODO: LINK TO FINAL PATIENTS TABLE), which contains survival information for each patient.
+After some preprocessing, we get the [patients table](https://github.com/elegant-scipy/elegant-scipy/blob/master/data/patients.csv), which contains survival information for each patient.
 We can then match these to the counts clusters, and understand whether the patients' gene expression can predict differences in their pathology.
 
 ```python

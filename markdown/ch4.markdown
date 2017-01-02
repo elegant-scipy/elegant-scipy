@@ -120,7 +120,7 @@ Let's start with one of the most common applications, converting a sound signal 
 (You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
 
 ![Stereo spectrogram](../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG)
-**[ED NOTE: Used with permission from the author, Sergey Gerasimuk, http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html]**
+(Image used with permission from the author, Sergey Gerasimuk. Source: http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html)
 
 Listen to the following snippet of nightingale birdsong (released under CC BY 4.0 at
 http://www.orangefreesounds.com/nightingale-sound/):
