@@ -218,3 +218,85 @@ on PyPI!
 <!-- exercise end -->
 
 
+================== Chapter 7 ===================
+
+## Registration in human brain imaging
+
+This brings us to our final optimization in this chapter: aligning brain
+images taken with extremely different techniques. MRI and PET imaging are
+so different, that even normalized mutual information is insufficient for
+some alignments.
+
+```python
+#TODO: attempt to align multimodal 3D images with NMI
+```
+
+In their 2000 paper, Pluim *et al.* showed that you can improve the properties
+of the cost function by adding *gradient* information to the NMI metric. In
+short, they measure the gradients magnitude and direction in both images (think
+back to Chapter 3 and the Sobel filter), and score highly where the gradients
+align, meaning they point in similar or opposite directions, but not at sharp
+angles to each other.
+
+```python
+def gradient(image, sigma=1):
+    gaussian_filtered = ndi.gaussian_filter(image, sigma=sigma,
+                                            mode='constant', cval=0)
+    return np.gradient(gaussian_filtered)
+
+
+def gradient_norm(g):
+    return np.linalg.norm(g, axis=-1)
+
+
+def gradient_similarity(A, B, sigma=1, scale=True):
+    """For each pixel, calculate the angle between the gradients of A & B.
+
+    Parameters
+    ----------
+    A, B : ndarray
+        Images.
+    sigma : float
+        Sigma for the Gaussian filter, used to calculate the image gradient.
+
+    Notes
+    -----
+    In multi-modal images, gradients may often be similar but point
+    in opposite directions.  This weighting function compensates for
+    that by mapping both 0 and pi to 1.
+
+    Different imaging modalities can highlight different structures.  We
+    are only interested in edges that occur in both images, so we scale the
+    similarity by the minimum of the two gradients.
+
+    """
+    g_A = np.dstack(gradient(A, sigma=sigma))
+    g_B = np.dstack(gradient(B, sigma=sigma))
+
+    mag_g_A = gradient_norm(g_A)
+    mag_g_B = gradient_norm(g_B)
+
+    alpha = np.arccos(np.sum(g_A * g_B, axis=-1) /
+                        (mag_g_A * mag_g_B))
+
+    # Transform the alpha so that gradients that point in opposite directions
+    # count as the same angle
+    w = (np.cos(2 * alpha) + 1) / 2
+
+    w[np.isclose(mag_g_A, 0)] = 0
+    w[np.isclose(mag_g_B, 0)] = 0
+
+    return w * np.minimum(mag_g_A, mag_g_B)
+
+
+def alignment(A, B, sigma=1.5):
+    I = normalized_mutual_information(A, B)
+    G = np.sum(gradient_similarity(A, B, sigma=sigma))
+
+    return I * G
+```
+
+```python
+# TODO: align brain images with this alignment similarity function
+```
+
