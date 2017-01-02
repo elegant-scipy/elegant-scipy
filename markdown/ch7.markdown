@@ -62,22 +62,11 @@ to be given and those that automatically estimate it.  Some only
 search for parameters in a given area (*constrained optimization*),
 and others examine the entire parameter space.
 
-In the rest of this chapter, we are going to use SciPy's `optimize`
-module to align two images, using the method described in the papers:
-
-* Pluim et al., Image registration by maximization of combined mutual
-  information and gradient information, IEEE Transactions on Medical
-  Imaging, 19(8) 2000
-
-and
-
-* Pluim et al., Mutual-Information-Based Registration of Medical
-  Images: A Survey, IEEE Transactions on Medical Imaging, 22(8) 2003
-
-Applications of image alignment or *registration* include panorama
-stitching, combination of multi-modal brain scans, super-resolution
-imaging, and, in astronomy, object denoising (noise reduction) through the combination
-of multiple exposures.
+In the rest of this chapter, we are going to use SciPy's `optimize` module to
+align two images. Applications of image alignment or *registration* include
+panorama stitching, combination of multi-modal brain scans, super-resolution
+imaging, and, in astronomy, object denoising (noise reduction) through the
+combination of multiple exposures.
 
 We start, as usual, by setting up our plotting environment:
 
