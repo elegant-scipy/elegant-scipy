@@ -220,6 +220,17 @@ on PyPI!
 
 ================== Chapter 7 ===================
 
+
+* Pluim et al., Image registration by maximization of combined mutual
+  information and gradient information, IEEE Transactions on Medical
+  Imaging, 19(8) 2000
+
+and
+
+* Pluim et al., Mutual-Information-Based Registration of Medical
+  Images: A Survey, IEEE Transactions on Medical Imaging, 22(8) 2003
+
+
 ## Registration in human brain imaging
 
 This brings us to our final optimization in this chapter: aligning brain
