@@ -691,7 +691,7 @@ So if a gene is twice as long, we are twice as likely to sample it.
 Let's see if the relationship between gene length and counts plays out in our data set.
 
 ```python
-def binned_boxplot(x, y, *,      # check out this Python 3-exclusive *! (see tip box)
+def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
                    xlabel='gene length (log scale)',
                    ylabel='average log counts'):
     """Plot the distribution of `y` dependent on `x` using many boxplots.
@@ -741,40 +741,37 @@ def binned_boxplot(x, y, *,      # check out this Python 3-exclusive *! (see tip
 
 
 
-TODO: make this a tip box. Code currently doesn't run using the ">" notedown format.
-Also, can't have code with a deliberate error in it or it crashes the whole thing.
-
-**Tip Box: Python 3-exclusive: using '*' to create Keyword-Only Arguments**
-
-Since version 3.0 Python has enabled us to create
-["keyword-only" arguments](https://www.python.org/dev/peps/pep-3102/).
-These are arguments that you have to call using a keyword, you can't rely on position alone.
-For example, in the `binned_boxplot` function we just wrote, you could call it like this:
-```
-binned_boxplot(x, y, xlabel='my x label', ylabel='my y label')
-```
-but not like this:
-```
-binned_boxplot(x, y, 'my x label', 'my y label')
-
----------------------------------------------------------------------------
-TypeError                                 Traceback (most recent call last)
-<ipython-input-58-7a118d2d5750in <module>()
-      1 x_vals = [1, 2, 3, 4, 5]
-      2 y_vals = [1, 2, 3, 4, 5]
-----3 binned_boxplot(x, y, 'my x label', 'my y label')
-
-TypeError: binned_boxplot() takes 2 positional arguments but 4 were given
-```
-The idea is to prevent you from accidentally doing something like this:
-```
-binned_boxplot(x, y, 'my y label')
-```
-Which would give you your y label on the x axis.
-
-This strategy because particularly useful when you are using a function that
-has lots of arguments, where the positions aren't particularly meaningful
-(as, let's face it, is the case most of the time).
+> ## Python 3 Tip: using `*` to create keyword-only arguments {.callout}
+>
+> Since version 3.0 Python allows
+> ["keyword-only" arguments](https://www.python.org/dev/peps/pep-3102/).
+> These are arguments that you have to call using a keyword, rather than relying
+> on position alone.
+> For example, with the `binned_boxplot` function we just wrote, you can call it
+> like this:
+>
+>     >>> binned_boxplot(x, y, xlabel='my x label', ylabel='my y label')
+>
+> but not this, which would have been valid Python 2, raises an error in
+> Python 3:
+>
+>     >>> binned_boxplot(x, y, 'my x label', 'my y label')
+>
+>     ---------------------------------------------------------------------------
+>     TypeError                                 Traceback (most recent call last)
+>     <ipython-input-58-7a118d2d5750in <module>()
+>         1 x_vals = [1, 2, 3, 4, 5]
+>         2 y_vals = [1, 2, 3, 4, 5]
+>     ----3 binned_boxplot(x, y, 'my x label', 'my y label')
+>
+>     TypeError: binned_boxplot() takes 2 positional arguments but 4 were given
+>
+> The idea is to prevent you from accidentally doing something like this:
+>
+>     binned_boxplot(x, y, 'my y label')
+>
+> which would give you your y label on the x axis, and is a common error for
+> signatures with many optional parameters that don't have an obvious ordering.
 
 ```python
 log_counts = np.log(counts_lib_norm + 1)
