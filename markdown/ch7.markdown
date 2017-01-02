@@ -62,22 +62,11 @@ to be given and those that automatically estimate it.  Some only
 search for parameters in a given area (*constrained optimization*),
 and others examine the entire parameter space.
 
-In the rest of this chapter, we are going to use SciPy's `optimize`
-module to align two images, using the method described in the papers:
-
-* Pluim et al., Image registration by maximization of combined mutual
-  information and gradient information, IEEE Transactions on Medical
-  Imaging, 19(8) 2000
-
-and
-
-* Pluim et al., Mutual-Information-Based Registration of Medical
-  Images: A Survey, IEEE Transactions on Medical Imaging, 22(8) 2003
-
-Applications of image alignment or *registration* include panorama
-stitching, combination of multi-modal brain scans, super-resolution
-imaging, and, in astronomy, object denoising (noise reduction) through the combination
-of multiple exposures.
+In the rest of this chapter, we are going to use SciPy's `optimize` module to
+align two images. Applications of image alignment or *registration* include
+panorama stitching, combination of multi-modal brain scans, super-resolution
+imaging, and, in astronomy, object denoising (noise reduction) through the
+combination of multiple exposures.
 
 We start, as usual, by setting up our plotting environment:
 
@@ -685,82 +674,7 @@ and the white pages of the book held by Prochorus, his scribe — all of which
 were missing from the MSE-based alignment, but look wonderfully clear using NMI!
 Notice also the realistic gold of the candlesticks in the foreground.
 
-## Registration in human brain imaging
-
-This brings us to our final optimization in this chapter: aligning brain
-images taken with extremely different techniques. MRI and PET imaging are
-so different, that even normalized mutual information is insufficient for
-some alignments.
-
-```python
-#TODO: attempt to align multimodal 3D images with NMI
-```
-
-In their 2000 paper, Pluim *et al.* showed that you can improve the properties
-of the cost function by adding *gradient* information to the NMI metric. In
-short, they measure the gradients magnitude and direction in both images (think
-back to Chapter 3 and the Sobel filter), and score highly where the gradients
-align, meaning they point in similar or opposite directions, but not at sharp
-angles to each other.
-
-```python
-def gradient(image, sigma=1):
-    gaussian_filtered = ndi.gaussian_filter(image, sigma=sigma,
-                                            mode='constant', cval=0)
-    return np.gradient(gaussian_filtered)
-
-
-def gradient_norm(g):
-    return np.linalg.norm(g, axis=-1)
-
-
-def gradient_similarity(A, B, sigma=1, scale=True):
-    """For each pixel, calculate the angle between the gradients of A & B.
-
-    Parameters
-    ----------
-    A, B : ndarray
-        Images.
-    sigma : float
-        Sigma for the Gaussian filter, used to calculate the image gradient.
-
-    Notes
-    -----
-    In multi-modal images, gradients may often be similar but point
-    in opposite directions.  This weighting function compensates for
-    that by mapping both 0 and pi to 1.
-
-    Different imaging modalities can highlight different structures.  We
-    are only interested in edges that occur in both images, so we scale the
-    similarity by the minimum of the two gradients.
-
-    """
-    g_A = np.dstack(gradient(A, sigma=sigma))
-    g_B = np.dstack(gradient(B, sigma=sigma))
-
-    mag_g_A = gradient_norm(g_A)
-    mag_g_B = gradient_norm(g_B)
-
-    alpha = np.arccos(np.sum(g_A * g_B, axis=-1) /
-                        (mag_g_A * mag_g_B))
-
-    # Transform the alpha so that gradients that point in opposite directions
-    # count as the same angle
-    w = (np.cos(2 * alpha) + 1) / 2
-
-    w[np.isclose(mag_g_A, 0)] = 0
-    w[np.isclose(mag_g_B, 0)] = 0
-
-    return w * np.minimum(mag_g_A, mag_g_B)
-
-
-def alignment(A, B, sigma=1.5):
-    I = normalized_mutual_information(A, B)
-    G = np.sum(gradient_similarity(A, B, sigma=sigma))
-
-    return I * G
-```
-
-```python
-# TODO: align brain images with this alignment similarity function
-```
+We've illustrated the two key concepts in function optimization in this
+chapter: understanding local minima and how to avoid them, and choosing the
+right function to optimize to achieve a particular objective. Solving these
+allows you to apply optimization to a wide array of scientific problems!
