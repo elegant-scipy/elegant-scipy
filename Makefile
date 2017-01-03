@@ -96,6 +96,8 @@ zip: all
 	rm -rf $$TMP_DIR ; \
 	mkdir $$TMP_DIR ; \
 	ln -s $$ES_DIR/index.html $$TMP_DIR ; \
+	ln -s $$ES_DIR/figures $$TMP_DIR/figures ; \
+	ln -s $$ES_DIR/images $$TMP_DIR/images ; \
 	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
