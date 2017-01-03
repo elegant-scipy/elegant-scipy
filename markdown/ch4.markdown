@@ -81,7 +81,7 @@ ax.set_ylabel('Signal amplitude');
 ```
 
 [^discrete]: The discrete Fourier transform operates on sampled data,
-             in contrast to the standard fast Fourier transform which is
+             in contrast to the standard Fourier transform which is
              defined for continuous functions.
 
 Or you can equivalently think of it as an repeating signal of
