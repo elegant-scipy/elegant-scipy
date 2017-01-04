@@ -848,8 +848,14 @@ from scikit-image — indeed, the library that contains this chapter's code snip
 
 ```python
 from skimage.future import graph
+
 g = graph.rag_mean_color(tiger, seg)
-graph.show_rag(seg, g, tiger);
+
+# Remove after release of skimage v0.13
+import skimage
+if skimage.__version__ >= '0.13':
+
+    graph.show_rag(seg, g, tiger);
 ```
 
 Here, you can see the nodes corresponding to each segment, and the edges
