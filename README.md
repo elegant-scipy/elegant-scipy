@@ -107,6 +107,12 @@ To generate a zip file containing html of all chapters along with a table of con
 $ make zip
 ```
 
+## Building HTMLBook
+
+To export to HTMLBook, install
+[htmlbook.js](https://www.npmjs.com/package/htmlbook) and then run `make
+htmlbook`.
+
 ## Building with Docker
 
 0. Switch to the directory containing this file

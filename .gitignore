@@ -4,6 +4,7 @@ _projects
 _steps
 ipynb
 html
+htmlbook
 data/dm*
 *.pyc
 **/__pycache__
