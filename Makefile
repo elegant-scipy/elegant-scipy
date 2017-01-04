@@ -9,9 +9,10 @@ VPATH = markdown
 
 # BUILD_{HTML,NB}: where to put the output HTML files and the
 #     intermediate IPython notebooks.
-BUILD_HTML = html
-BUILD_NB = ipynb
-FIGURES = figures/generated
+BUILD_HTML = ./html
+BUILD_NB = ./ipynb
+BUILD_HTMLBOOK = ./htmlbook
+FIGURES = ./figures/generated
 
 # TITLES: This should be an exhaustive list of all the chapters to be
 #     built, and correspond to markdown filenames in the markdown
@@ -54,6 +55,11 @@ $(FIGURES)/%.png: script/%.py $(FIGURES)
 $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	jupyter nbconvert --to html $< --stdout > $@
 
+$(BUILD_HTMLBOOK)/%.xml: $(BUILD_NB)/%.ipynb
+	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
+	htmlbook -s $< -o $@
+	rm $@.md
+
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
 
@@ -72,13 +78,8 @@ nbs: $(addsuffix .ipynb,$(NBS_))
 .PHONY: all build_dirs chs
 
 # build_dirs: directories for build products
-build_dirs: $(BUILD_HTML) $(BUILD_NB)
-$(BUILD_HTML):
-	 mkdir -p $(BUILD_HTML)
-$(BUILD_NB):
-	 mkdir -p $(BUILD_NB)
-$(FIGURES):
-	 mkdir -p $(FIGURES)
+build_dirs:
+	mkdir -p $(BUILD_HTML) $(BUILD_NB) $(BUILD_HTMLBOOK) $(FIGURES)
 
 exercises: chs
 	./tools/split_exercise.py html/ch?.html
@@ -100,6 +101,8 @@ zip: all
 	ln -s $$ES_DIR/images $$TMP_DIR/images ; \
 	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
+
+htmlbook: build_dirs $(addsuffix .xml, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
 
 # clean: remove intermediate products (IPython notebooks)
 clean:

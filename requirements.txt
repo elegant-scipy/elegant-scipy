@@ -13,3 +13,5 @@ seaborn
 astropy
 scikit-learn
 sympy
+jupytercontrib>=0.0.5
+
