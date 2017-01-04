@@ -3,8 +3,8 @@ ipython
 notedown>=1.4
 numpy
 scipy
-matplotlib
-scikit-image
+matplotlib>=2.0.0rc2
+-e git://github.com/scikit-image/scikit-image.git#egg=scikit-image
 toolz
 networkx
 xlrd
