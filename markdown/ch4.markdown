@@ -265,8 +265,7 @@ f, ax = plt.subplots(figsize=(10, 5))
 S = np.abs(spectrum)
 S = 20 * np.log10(S / S.max())
 
-ax.imshow(S, cmap='viridis', origin='lower',
-          extent=(0, L, 0, rate / 2 / 1000))
+ax.imshow(S, origin='lower', extent=(0, L, 0, rate / 2 / 1000))
 ax.axis('tight')
 ax.set_ylabel('Frequency [kHz]')
 ax.set_xlabel('Time [s]')
@@ -291,7 +290,7 @@ freqs, times, Sx = signal.spectrogram(audio, fs=rate, window='hanning',
                                       detrend=False, scaling='spectrum')
 
 ## Plot using:
-# plt.pcolormesh(times, freqs, 10 * np.log10(Sx), cmap='viridis');
+# plt.pcolormesh(times, freqs, 10 * np.log10(Sx));
 ```
 
 The only differences are that SciPy returns the spectrum squared
@@ -519,7 +518,6 @@ values, before displaying:
 f, ax = plt.subplots(figsize=(10, 10))
 
 ax.imshow(np.log(1 + F_magnitude),
-          cmap='viridis',
           extent=(-N // 2, N // 2, -M // 2, M // 2))
 ax.set_title('Spectrum magnitude')
 plt.show()
@@ -873,7 +871,8 @@ Beff = 100e6        # Range of transmit signal frequency during the time the
 
 S = Beff / Teff     # Frequency sweep rate in Hz/s
 
-# Specification of targets
+# Specification of targets.  We made these targets up, imagining they
+# are objects seen by the radar with the specified range and size
 
 R = np.array([100, 137, 154, 159,  180])  # Ranges (in meter)
 M = np.array([0.33, 0.2, 0.9, 0.02, 0.1])  # Target size
@@ -886,7 +885,12 @@ fd = 2 * S * R / 3E8      # Frequency differences for these targets
 # Generate five targets
 signals = np.cos(2 * pi * fd * t[:, np.newaxis] + P)
 
+# Save the signal associated with the first target as an example for
+# later inspection
 v_single = signals[:, 0]
+
+# Weigh the signals, according to target size, and sum, to generate
+# the combined signal seen by the radar
 v_sim = np.sum(M * signals, axis=1)
 
 ## The above code is equivalent to:
@@ -946,8 +950,11 @@ data = np.load('data/radar_scan_0.npz')
 # Load variable 'scan' from 'radar_scan_0.npz'
 scan = data['scan']
 
-# Grab one (azimuth, elevation) measurement
-# It has shape (2048,)
+# The dataset contains multiple measurements, each taken with the
+# radar pointing in a different direction.  Here we take one such as
+# measurement, at a specified azimuth (left-right position) and elevation
+# (up-down position).  The measurement has shape (2048,).
+
 v_actual = scan['samples'][5, 14, :]
 
 # The signal amplitude ranges from -2.5V to +2.5V.  The 14-bit
@@ -1323,11 +1330,12 @@ diameter <!-- on the half power contour at a distance of 60 m
 -->. Outside this spot the power drops off quite rapidly but strong
 echoes from outside the spot will nevertheless still be visible.
 
-By varying the pencil beam's azimuth and elevation, we can sweep it
-across the target area of interest.  When reflections are picked up,
-we can calculate the distance to the reflector (the object hit by the
-radar signal).  Together with the current pencil beam azimuth and
-elevation, this defines the reflector's position in 3D.
+By varying the pencil beam's azimuth (left-right position) and
+elevation (up-down position), we can sweep it across the target area
+of interest.  When reflections are picked up, we can calculate the
+distance to the reflector (the object hit by the radar signal).
+Together with the current pencil beam azimuth and elevation, this
+defines the reflector's position in 3D.
 
 A rock slope consists of thousands of reflectors. A range bin can be
 thought of as a large sphere with the radar at its center that
