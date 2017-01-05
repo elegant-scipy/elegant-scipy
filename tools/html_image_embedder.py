@@ -7,13 +7,14 @@ Embed PNGs and JPGs inline in HTML documents.
 import sys
 import os
 import encodings
+import urllib
+import bs4
+import textwrap
+
 
 if len(sys.argv) != 2:
     print("Usage: html_image_embedder.py document.html")
     sys.exit(0)
-
-import bs4
-import textwrap
 
 
 def wrap(text):
@@ -38,10 +39,16 @@ for image_tag in soup.find_all("img"):
                        'jpeg': 'jpeg',
                        'png': 'png'}
 
-        with open(os.path.join(html_dir, src), 'rb') as image:
-            image_tag.attrs['src'] = 'data:image/{};base64,{}'.format(
-                image_types[ext.lower()],
-                wrap(encodings.codecs.encode(image.read(), 'base64')).rstrip()
-                )
+        if src.startswith('http'):
+            with urllib.request.urlopen(src) as response:
+                image_data = response.read()
+        else:
+            with open(os.path.join(html_dir, src), 'rb') as image:
+                image_data = image.read()
+
+        image_tag.attrs['src'] = 'data:image/{};base64,{}'.format(
+            image_types[ext.lower()],
+            wrap(encodings.codecs.encode(image_data, 'base64')).rstrip()
+            )
 
 print(soup)
