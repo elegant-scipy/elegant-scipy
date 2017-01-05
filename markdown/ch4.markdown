@@ -68,7 +68,7 @@ at the same frequency.  So, if you take a simple periodic function,
 $\sin(10 \times 2 \pi t)$, you can view it as a wave:
 
 ```python
-f = 10  # Frequency, in cycles per second, or Herz
+f = 10  # Frequency, in cycles per second, or Hertz
 f_s = 100  # Sampling rate, or number of measurements per second
 
 t = np.linspace(0, 2, 2 * f_s, endpoint=False)
@@ -84,7 +84,7 @@ ax.set_ylabel('Signal amplitude');
              in contrast to the standard Fourier transform which is
              defined for continuous functions.
 
-Or you can equivalently think of it as an repeating signal of
+Or you can equivalently think of it as a repeating signal of
 *frequency* 10 Hertz (it repeats once every $1/10$ seconds—a length of
 time we call its *period*):
 
@@ -176,10 +176,13 @@ speaker, I might hear a bird chirping, but I can't very well imagine
 how it would sound like in my head.  Is there a better way of *seeing*
 what is going on?
 
-There is, and it is called the discrete fast Fourier transform
-(discrete, because our recording consists of discrete measurements,
-and fast—because we're in a hurry!). The fast Fourier transform
-tells us which frequencies or "notes" to expect in our signal.
+There is, and it is called the Discrete Fourier Transform (DFT), where
+discrete refers to the recording consisting of time-spaced sound
+measurements, in contrast to a continual recording as, e.g., on
+magnetic tape (can you even remember casettes!).  The Discrete Fourier
+Transform is often computed using the *Fast Fourier Transform* (FFT)
+algorithm, a name informally used to refer to the DFT itself. The
+DFT tells us which frequencies or "notes" to expect in our signal.
 
 Of course, a bird sings many notes throughout the song, so we'd also
 like to know *when* each note occurs.  The Fourier transform takes a
@@ -316,21 +319,22 @@ should thank is not exactly clear, but Gauss was the first to describe
 the fast Fourier transform (an algorithm for computing the Discrete
 Fourier Transform, popularized by Cooley and Tukey in 1965).  Joseph
 Fourier, after whom the transform is named, first claimed that
-*arbitrary* functions can be expressed as a sum of trigonometric
-functions.
+*arbitrary* periodic functions can be expressed as a sum of
+trigonometric functions.
 
 ## Implementation
 
-The Fourier Transform functionality in SciPy lives in the
+The Discrete Fourier Transform functionality in SciPy lives in the
 `scipy.fftpack`` module.  Among other things, it provides the
-following FFT-related functionality:
+following DFT-related functionality:
 
- - ``fft``, ``fft2``, ``fftn``: Compute the Fast (discrete) Fourier Transform
- - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the FFT
+ - ``fft``, ``fft2``, ``fftn``: Compute the Discrete Fourier Transform
+                                using the Fast Fourier Transform algorithm
+ - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
  - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the
    spectrum and back, respectively (more about that soon)
- - ``fftfreq``: Return the discrete Fourier transform sample frequencies
+ - ``fftfreq``: Return the Discrete Fourier Transform sample frequencies
 
 This is complemented by the following functions in NumPy:
 
@@ -344,7 +348,7 @@ SciPy wraps the Fortran FFTPACK library—it is not the fastest out
 there, but unlike packages such as FFTW, it has a permissive free
 software license.
 
-Consider that a naive calculation of the FFT takes
+Consider that a naive calculation of the DFT takes
 $\mathcal{O}\left(N^2\right)$ operations.  How come?  Well, you have $N$
 (complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
 1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
@@ -478,8 +482,11 @@ differently, from high-negative to low to-high-positive (for now, we
 won't dive too deeply into the concept of negative frequency, other
 than saying a real-world sine wave is produced by a combination of
 positive and negative frequencies).  We re-shuffle the spectrum using
-the `fftshift` function.  Let's examine the frequency components in a
-noisy image.
+the `fftshift` function.
+
+Let's examine the frequency components in a noisy image.  Note that,
+while a static image has no time-varying component, its values do vary
+across *space*.  The DFT applies equally to either case.
 
 First, load and display the image:
 
@@ -499,7 +506,7 @@ although clearly distorted by either the measurement or transmission
 equipment.
 
 To examine the spectrum of the image, we use `fftn` (instead of `fft`)
-to compute the FFT, since it has more than one dimension.  The
+to compute the DFT, since it has more than one dimension.  The
 two-dimensional FFT is equivalent to taking the 1-D FFT across rows
 and then across columns (or vice versa).
 
