@@ -3,7 +3,7 @@ ipython
 notedown>=1.4
 numpy
 scipy
-matplotlib
+matplotlib>=2.0.0rc2
 scikit-image
 toolz
 networkx
