@@ -31,5 +31,5 @@ RUN curl http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz \
 
 # Install dependencies for HTMLBook build
 RUN apt-get install npm
-npm install -g htmlbook
+RUN npm install -g htmlbook
 
