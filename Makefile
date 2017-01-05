@@ -57,7 +57,7 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 
 $(BUILD_HTMLBOOK)/%.xml: $(BUILD_NB)/%.ipynb
 	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
-	htmlbook -s $< -o $@
+	htmlbook -s $@.md -o $@
 	rm $@.md
 
 $(BUILD_HTML)/custom.css:

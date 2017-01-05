@@ -17,10 +17,6 @@ RUN pip2 install gsutil
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 RUN ln -sf /usr/bin/pip3 /usr/bin/pip
 
-# Tools for building scikit-image's latest version
-RUN apt-get install -y git build-essential
-RUN pip install cython
-
 # Install dependencies not included in Debian
 RUN pip install setuptools
 RUN pip install jupyter notedown>=1.4 scikit-image toolz networkx \
@@ -32,4 +28,8 @@ RUN ipython3 kernel install
 RUN mkdir /data
 RUN curl http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz \
          -o /data/dm6.fa.gz
+
+# Install dependencies for HTMLBook build
+RUN apt-get install npm
+npm install -g htmlbook
 
