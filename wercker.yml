@@ -16,6 +16,7 @@ deploy:
       code: |
         ln -sf /usr/bin/python2.7 /usr/bin/python
 
+    # Uploaded to https://storage.cloud.google.com/elegant-scipy-proofs/
     - michilu/gcs-website-deploy:
       bucket: elegant-scipy-proofs
       project: $GOOGLE_PROJECT_ID
