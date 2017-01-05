@@ -111,8 +111,8 @@ The *fast Fourier transform* is an algorithm for computing the
 discrete Fourier transform; it achieves its high speed by storing and
 re-using results of computations as it progresses.
 
-In this chapter, we examine a few applications of the Discrete Fourier
-Transform to demonstrate that the FFT can be applied to
+In this chapter, we examine a few applications of the discrete Fourier
+transform to demonstrate that the FFT can be applied to
 multidimensional data (not just 1D measurements) to achieve a variety
 of goals.
 
@@ -179,8 +179,8 @@ what is going on?
 There is, and it is called the Discrete Fourier Transform (DFT), where
 discrete refers to the recording consisting of time-spaced sound
 measurements, in contrast to a continual recording as, e.g., on
-magnetic tape (can you even remember casettes!).  The Discrete Fourier
-Transform is often computed using the *Fast Fourier Transform* (FFT)
+magnetic tape (can you even remember casettes!).  The discrete Fourier
+transform is often computed using the *Fast Fourier Transform* (FFT)
 algorithm, a name informally used to refer to the DFT itself. The
 DFT tells us which frequencies or "notes" to expect in our signal.
 
@@ -315,25 +315,25 @@ hot topics of calculating asteroid orbits and solving the heat (flow)
 equation that led to several breakthroughs in the early 1800s.  Whom
 exactly among Clairaut, Lagrange, Euler, Gauss and D'Alembert we
 should thank is not exactly clear, but Gauss was the first to describe
-the fast Fourier transform (an algorithm for computing the Discrete
-Fourier Transform, popularized by Cooley and Tukey in 1965).  Joseph
+the fast Fourier transform (an algorithm for computing the discrete
+Fourier transform, popularized by Cooley and Tukey in 1965).  Joseph
 Fourier, after whom the transform is named, first claimed that
 *arbitrary* periodic functions can be expressed as a sum of
 trigonometric functions.
 
 ## Implementation
 
-The Discrete Fourier Transform functionality in SciPy lives in the
+The discrete Fourier transform functionality in SciPy lives in the
 `scipy.fftpack`` module.  Among other things, it provides the
 following DFT-related functionality:
 
- - ``fft``, ``fft2``, ``fftn``: Compute the Discrete Fourier Transform
+ - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform
                                 using the Fast Fourier Transform algorithm
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
  - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the
    spectrum and back, respectively (more about that soon)
- - ``fftfreq``: Return the Discrete Fourier Transform sample frequencies
+ - ``fftfreq``: Return the discrete Fourier transform sample frequencies
 
 This is complemented by the following functions in NumPy:
 
