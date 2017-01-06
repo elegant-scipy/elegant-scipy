@@ -14,6 +14,7 @@ RUN apt-get install -y python-pip python-pkg-resources python-setuptools \
 
 # Install dependencies for HTMLBook build
 RUN apt-get install -y npm git
+RUN ln -s /usr/bin/nodejs /usr/bin/node
 RUN npm install -g htmlbook
 
 RUN pip2 install gsutil
