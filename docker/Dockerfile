@@ -11,6 +11,11 @@ RUN apt-get install -y python3-pip python3-numpy python3-scipy \
 # gsutil is installed to deploy the book to Google Cloud Storage
 RUN apt-get install -y python-pip python-pkg-resources python-setuptools \
                        libffi-dev libssl-dev
+
+# Install dependencies for HTMLBook build
+RUN apt-get install -y npm
+RUN npm install -g htmlbook
+
 RUN pip2 install gsutil
 
 # Make sure Python 3 is the default
@@ -28,8 +33,4 @@ RUN ipython3 kernel install
 RUN mkdir /data
 RUN curl http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz \
          -o /data/dm6.fa.gz
-
-# Install dependencies for HTMLBook build
-RUN apt-get install -y npm
-RUN npm install -g htmlbook
 
