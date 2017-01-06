@@ -13,7 +13,7 @@ RUN apt-get install -y python-pip python-pkg-resources python-setuptools \
                        libffi-dev libssl-dev
 
 # Install dependencies for HTMLBook build
-RUN apt-get install -y npm
+RUN apt-get install -y npm git
 RUN npm install -g htmlbook
 
 RUN pip2 install gsutil
@@ -23,6 +23,7 @@ RUN ln -sf /usr/bin/python3 /usr/bin/python
 RUN ln -sf /usr/bin/pip3 /usr/bin/pip
 
 # Install dependencies not included in Debian
+RUN pip install --upgrade pip
 RUN pip install setuptools
 RUN pip install jupyter notedown>=1.4 scikit-image toolz networkx \
                 xlrd seaborn sympy
