@@ -104,7 +104,7 @@ In 2014, Thomas Robitaille and Chris Beaumont
 Python's growing use in astronomy. Here's what we found when we [updated](https://gist.github.com/jni/3339985a016572f178d3c2f18e27ec0d) their
 plot in the second half of 2016:
 
-![Python in astronomy](../images/python-in-astronomy.png)
+![Python in astronomy](../figures/python-in-astronomy.png)
 
 It is clear that SciPy and related libraries will be driving much of scientific data analysis for years to come.
 
