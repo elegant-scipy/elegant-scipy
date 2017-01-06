@@ -37,7 +37,8 @@ for image_tag in soup.find_all("img"):
 
         image_types = {'jpg': 'jpeg',
                        'jpeg': 'jpeg',
-                       'png': 'png'}
+                       'png': 'png',
+                       'svg': 'svg'}
 
         if src.startswith('http'):
             with urllib.request.urlopen(src) as response:
