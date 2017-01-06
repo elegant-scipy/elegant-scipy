@@ -268,7 +268,8 @@ f, ax = plt.subplots(figsize=(10, 5))
 S = np.abs(spectrum)
 S = 20 * np.log10(S / S.max())
 
-ax.imshow(S, origin='lower', extent=(0, L, 0, rate / 2 / 1000))
+ax.imshow(S, origin='lower', cmap='viridis',
+          extent=(0, L, 0, rate / 2 / 1000))
 ax.axis('tight')
 ax.set_ylabel('Frequency [kHz]')
 ax.set_xlabel('Time [s]')
@@ -292,7 +293,7 @@ freqs, times, Sx = signal.spectrogram(audio, fs=rate, window='hanning',
                                       nperseg=1024, noverlap=M - 100,
                                       detrend=False, scaling='spectrum')
 
-plt.pcolormesh(times, freqs, 10 * np.log10(Sx));
+plt.pcolormesh(times, freqs, 10 * np.log10(Sx), cmap='viridis');
 ```
 
 The only differences are that SciPy returns the spectrum squared
@@ -523,7 +524,7 @@ values, before displaying:
 ```python
 f, ax = plt.subplots(figsize=(10, 10))
 
-ax.imshow(np.log(1 + F_magnitude),
+ax.imshow(np.log(1 + F_magnitude), cmap='viridis',
           extent=(-N // 2, N // 2, -M // 2, M // 2))
 ax.set_title('Spectrum magnitude')
 plt.show()
@@ -568,7 +569,7 @@ from scipy import ndimage as ndi
 image_filtered = ndi.gaussian_filter(image_filtered, sigma=1)
 
 f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
-ax0.imshow(np.log10(1 + np.abs(F_dim)))
+ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='viridis')
 ax0.set_title('Spectrum after suppression')
 
 ax1.imshow(ndi.gaussian_filter(image_filtered, sigma=1))
