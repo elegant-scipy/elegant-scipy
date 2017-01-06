@@ -98,8 +98,7 @@ Here is a PNG image from the scikit-image repository. It is a black and white
 (sometimes called "grayscale") picture of some ancient Roman coins from
 Pompeii, obtained from the Brooklyn Museum [^coins-source]:
 
-![Coins](https://raw.githubusercontent.com/scikit-image/scikit-
-image/v0.10.1/skimage/data/coins.png)
+![Coins](https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png)
 
 Here is the coin image loaded with scikit-image:
 
