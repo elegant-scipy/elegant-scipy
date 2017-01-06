@@ -51,4 +51,4 @@ for image_tag in soup.find_all("img"):
             wrap(encodings.codecs.encode(image_data, 'base64')).rstrip()
             )
 
-print(soup)
+sys.stdout.buffer.write(str(soup).encode('utf-8'))
