@@ -25,7 +25,7 @@ def wrap(text):
 html_file = sys.argv[1]
 html_dir = os.path.abspath(os.path.dirname(html_file))
 
-with open(html_file) as f:
+with open(html_file, 'rb') as f:
     soup = bs4.BeautifulSoup(f.read(), "lxml")
 
 for image_tag in soup.find_all("img"):
