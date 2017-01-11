@@ -67,6 +67,7 @@ $(BUILD_HTMLBOOK)/%.xml: $(BUILD_NB)/%.ipynb OReilly_HTMLBook
 	
 	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
 	
+	htmlbook -s $@.md -o $@
 	rm $@.md
 
 $(BUILD_HTML)/custom.css:
