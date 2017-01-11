@@ -68,6 +68,7 @@ This molecule has a repetitive backbone on which lie chemical groups called *bas
 There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
 
 ![The chemical structure of DNA](https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg)
+
 *Image by Madeleine Price Ball, used under the terms of the CC0 public domain license*
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
@@ -474,7 +475,7 @@ import warnings
 warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
 
-> ## Tip: A quick note on plotting {.callout}
+> **Tip: A quick note on plotting {.callout}**
 >
 > As a short aside, the code above does a few neat things to make our plots
 > prettier. First, `%matplotlib inline` is a Jupyter notebook

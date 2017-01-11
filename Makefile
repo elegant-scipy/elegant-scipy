@@ -56,9 +56,17 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	jupyter nbconvert --to html $< --stdout > $@
 	tools/html_image_embedder.py $@ > $@.embed && mv $@.embed $@
 
-$(BUILD_HTMLBOOK)/%.xml: $(BUILD_NB)/%.ipynb
+OReilly_HTMLBook:
+	git submodule init && git submodule update
+
+$(BUILD_HTMLBOOK)/%.xml: $(BUILD_NB)/%.ipynb OReilly_HTMLBook
 	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
-	htmlbook -s $@.md -o $@
+	
+	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
+	htmlbook -c -s $@.md -o $@ -t "$$TITLE" ; \
+	
+	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
+	
 	rm $@.md
 
 $(BUILD_HTML)/custom.css:
