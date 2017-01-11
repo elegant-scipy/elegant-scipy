@@ -132,6 +132,7 @@ Let's start with one of the most common applications, converting a sound signal 
 (You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
 
 ![Stereo spectrogram](../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG)
+
 (Image used with permission from the author, Sergey Gerasimuk. Source: http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html)
 
 Listen to the following snippet of nightingale birdsong (released under CC BY 4.0 at
@@ -778,10 +779,10 @@ those numbers to form meaningful results.
 The multiplication step above is important.  From school, recall the
 trigonometric identity:
 
-$$
+$
 \sin(xt) \sin(yt) = \frac{1}{2}
 \left[ \sin \left( (x - y)t + \frac{\pi}{2} \right) - \sin \left( (x + y)t + \frac{\pi}{2} \right) \right]
-$$
+$
 
 Thus, if we multiply the received signal by the transmitted signal, we
 expect two frequency components to appear in the spectrum: one that is
@@ -856,7 +857,7 @@ propagation speed of electro-magnetic waves in air is ever-so-slightly
 slower than the speed of light in a vacuum) hits a target at a range
 $R$, the echo will reach the radar after a time
 
-$$t_{d}=\frac{2R}{v}.\label{eq:transit time}$$
+$t_{d}=\frac{2R}{v}.\label{eq:transit time}$
 
 Here it is collected by the receive antenna and converted to a
 sinusoidally fluctuating voltage. The received signal is a replica of
@@ -909,11 +910,11 @@ Combining the above observations, we can calculate the amount of time
 it would take the signal to travel to, bounce off, and return from a
 target that is distance $R$ away:
 
-$$ t_R = 2R / v $$
+$ t_R = 2R / v $
 
 Therefore, the change in frequency for a target at range $R$ will be:
 
-$$ f_{d}= t_R S = \frac{2RS}{v}\label{eq:difference frequency}$$
+$ f_{d}= t_R S = \frac{2RS}{v}\label{eq:difference frequency}$
 
 
 ```python
@@ -1036,7 +1037,8 @@ the one we want: ``data['scan']``.  That returns a
 
 - **time** : unsigned 64-bit (8 byte) integer (`np.uint64`)
 - **size** : unsigned 32-bit (4 byte) integer (`np.uint32`)
-- **position** :
+- **position**
+
   - **az** : 32-bit float (`np.float32`)
   - **el** : 32-bit float (`np.float32`)
   - **region_type** : unsigned 8-bit (1 byte) integer (`np.uint8`)
@@ -1089,22 +1091,22 @@ a function $x(t)$ of time (or another variable, depending on the
 application) into a sequence of $N$ complex numbers $X_{k}$ by the
 summation
 
-$$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
-N-1.\label{eq:Forward DFT}$$
+$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
+N-1.\label{eq:Forward DFT}$
 
 With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
 sample values $x_{n}$ through the summation
 
-$$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
-kn/N}.\label{eq:Inverse DFT}$$
+$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
+kn/N}.\label{eq:Inverse DFT}$
 
 Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
 equation shows that the DFT has decomposed the sequence $x_{n}$ into a
 complex discrete Fourier series with coefficients $X_{k}$. Comparing
 the DFT with a continuous complex Fourier series
 
-$$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
-Fourier series}$$
+$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
+Fourier series}$
 
 the DFT is a *finite *series with $N$ terms defined at the equally
 spaced discrete instances of the *angle*
@@ -1215,7 +1217,7 @@ open-cast mine.
 To get useful information from the plot, we must determine the range!
 Again, we use the formula:
 
-$$R_{n}=\frac{nv}{2B_{eff}}$$
+$R_{n}=\frac{nv}{2B_{eff}}$
 
 In radar terminology, each DFT component is known as a *range bin*.
 
@@ -1239,7 +1241,7 @@ This equation also defines the range resolution of the radar: targets
 will only be distinguishable if they are separated by more than two
 range bins, i.e.
 
-$$\Delta R>\frac{1}{B_{eff}}.$$
+$\Delta R>\frac{1}{B_{eff}}.$
 
 This is a fundamental property of all types of radar.
 

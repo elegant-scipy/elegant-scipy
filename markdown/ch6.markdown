@@ -63,9 +63,9 @@ as the *degree matrix*, $D$, which
 contains the degree of each node along the diagonal and zero everywhere else,
 minus the adjacency matrix $A$:
 
-$$
+$
 L = D - A
-$$
+$
 
 We definitely can't fit all of the linear algebra theory needed to understand
 the properties of this matrix, but suffice it to say: it has some *great*
@@ -89,13 +89,13 @@ $\lambda = 1$.
 
 **Exercise:** Consider the rotation matrix
 
-$$
+$
 R = \begin{bmatrix}
   \cos \theta &  -\sin \theta & 0 \\[3pt]
   \sin \theta & \cos \theta & 0\\[3pt]
   0 & 0 & 1\\
 \end{bmatrix}
-$$
+$
 
 When $R$ is multiplied with a 3-dimensional column-vector $p =
 \left[ x\, y\, z \right]^T$, the resulting vector $R p$ is rotated
@@ -129,8 +129,6 @@ print("R @ z-axis:", R @ [0, 0, 1])
 
 R rotates both the x and y axes, but not the z-axis.
 
-----
-
 <!-- solution end -->
 
 <!-- exercise end -->
@@ -140,6 +138,7 @@ How do you draw nodes and links in such a way that you don't get a complete
 mess such as this one?
 
 ![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
+
 **Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
 
 One way is to put nodes that share many links close together. It turns out
@@ -763,9 +762,9 @@ Normally, the PageRank score would simply be the first eigenvector of the
 transition matrix. If we call the transition matrix $M$ and the vector of
 PageRank values $r$, we have:
 
-$$
+$
 \boldsymbol{r} = M\boldsymbol{r}
-$$
+$
 
 But the `np.seterr` call above is a clue that it's not quite
 so simple. The PageRank approach only works when the
@@ -790,15 +789,15 @@ range of possible damping factors.
 
 If we call the damping factor $d$, then the modified PageRank equation is:
 
-$$
+$
 \boldsymbol{r} = dM\boldsymbol{r} + \frac{1-d}{n} \boldsymbol{1}
-$$
+$
 
 and
 
-$$
+$
 (\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{n} \boldsymbol{1}
-$$
+$
 
 We can solve this equation using `scipy.sparse.linalg`'s direct
 solver, `spsolve`. Depending on the structure and size of a linear algebra

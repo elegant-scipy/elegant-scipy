@@ -1,6 +1,6 @@
 # Networks of Image Regions with ndimage
 
-**Code by Vighnesh Birodkar.**  
+**Code by Vighnesh Birodkar.**
 **Nominated by Juan Nunez-Iglesias.**
 
 This chapter gets a special mention because it inspired the whole book.
