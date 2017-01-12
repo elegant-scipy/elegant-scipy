@@ -258,15 +258,20 @@ slices = slices.T
 print('Shape of `slices`:', slices.shape)
 ```
 
-For each slice, calculate the Fourier transform.  The Fourier
-transform returns both positive and negative frequencies (more on
-that in "Frequencies and their ordering"), so we slice out the
-positive M / 2 frequencies for now.
+For each slice, calculate the discrete Fourier transform.  The DFT
+returns both positive and negative frequencies (more on that in
+"Frequencies and their ordering"), so we slice out the positive M / 2
+frequencies for now.
 
 ```python
 spectrum = np.fft.fft(slices, axis=0)[:M // 2 + 1:-1]
 spectrum = np.abs(spectrum)
 ```
+
+(As a quick aside, you'll note that we use `scipy.fftpack.fft` and
+`np.fft` interchangeably.  NumPy provides basic FFT functionality,
+which SciPy extends further, but both include an `fft` function, based
+on the Fortran FFTPACK.)
 
 The spectrum can contain both very large and very small values.
 Taking the log compresses the range significantly.
@@ -372,7 +377,7 @@ software license.
 ## Choosing the length of the DFT
 
 Consider that a naive calculation of the DFT takes
-$\mathcal{O}\left(N^2\right)$ operations.  How come?  Well, you have $N$
+$\mathcal{O}\left(N^2\right)$ operations [^big_O].  How come?  Well, you have $N$
 (complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
 1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
 strongly your signal corresponds to each.  Starting with the first,
@@ -380,15 +385,28 @@ you take the dot product with the signal (which, in itself, entails $N$
 multiplication operations).  Repeating this operation$N$times, once
 for each sinusoid, then gives $N^2$ operations.
 
+[^big_O]: In computer science, the computational cost of an algorithm
+          is often expressed in "Big O" notation.  The notation gives
+          us an indication of how an algorithm's execution time scales
+          with an increasing number of elements.  If an algorithm is
+          $O(N)$, it means its execution time increases linearly with
+          the number of input elements (for example, searching for a
+          given value in an unsorted list is $O(N)$).  Bubble sort is
+          an example of an $O(N^2)$ algorithm; the exact number of
+          operations performed may, hypothetically, be $N + 1/2 N^2$,
+          meaning that the computational cost grows quadratically with
+          the number of input elements.
+
 Now, contrast that with the fast Fourier transform, which is
-$\mathcal{O}(N \log N)$ in the ideal case—a great improvement!
-However, the classical Cooley-Tukey algorithm implemented in FFTPACK
-recursively breaks up the transform into smaller (prime-sized) pieces
-and only shows this improvement for "smooth" input lengths (an
-input length is considered smooth when its largest prime factor is
-small).  For large prime sized pieces, the Bluestein or Rader
-algorithms can be used in conjunction with the Cooley-Tukey algorithm,
-but this optimization is not implemented in FFTPACK.[^fast]
+$\mathcal{O}(N \log N)$ in the ideal case due to the clever re-use of
+calculations—a great improvement!  However, the classical Cooley-Tukey
+algorithm implemented in FFTPACK recursively breaks up the transform
+into smaller (prime-sized) pieces and only shows this improvement for
+"smooth" input lengths (an input length is considered smooth when its
+largest prime factor is small).  For large prime sized pieces, the
+Bluestein or Rader algorithms can be used in conjunction with the
+Cooley-Tukey algorithm, but this optimization is not implemented in
+FFTPACK.[^fast]
 
 Let us illustrate:
 
@@ -607,7 +625,7 @@ plt.show()
 ### Windowing
 
 If we examine the Fourier transform of a rectangular pulse, we see
-significant ringing in the spectrum:
+significant sidelobes in the spectrum:
 
 ```python
 x = np.zeros(500)
@@ -626,8 +644,8 @@ plt.show()
 ```
 
 In theory, you would need a combination of infinitely many sinusoids
-(frequencies) to make an ideal pulse; the coefficients would
-have the ringing shape shown.
+(frequencies) to represent any abrupt transition; the coefficients would
+typically have the same sidelobe structure as seen here for the pulse.
 
 Importantly, the discrete Fourier transform assumes that the input
 signal is periodic.  If the signal is not, the assumption is simply
@@ -671,8 +689,8 @@ from 0 to 100:
 ```python
 f, ax = plt.subplots()
 
-N = 500
-beta_max = 100
+N = 100
+beta_max = 50
 colormap = plt.cm.plasma
 
 norm = plt.Normalize(vmin=0, vmax=beta_max)
@@ -1103,7 +1121,8 @@ usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
 limited as such, the inverse DFT can, in general, not be used to
 reconstruct $x(t)$ by interpolation.  Note that this limit does not
 imply that there are *no* methods that can do such a
-reconstruction—see, e.g., compressed sensing.
+reconstruction—see, e.g., compressed sensing, or finite rate of
+innovation sampling.
 
 The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
 discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
