@@ -591,7 +591,7 @@ vector $z$ that would satisfy $L z = b$,
 where $b = C \odot \textrm{sign}\left(A - A^T\right) \mathbf{1}$.
 (You can see this in the supplementary material for Varshney *et al*.) With
 dense matrices, we can simply use $z = L^+b$. With sparse ones, though, we can
-use one of the *solvers* in `sparse.linalg.isolve` to get the `z` vector after
+use one of the *solvers* (see SIDEBOX) in `sparse.linalg.isolve` to get the `z` vector after
 providing `L` and `b`, no inversion required!
 
 ```python
@@ -654,6 +654,39 @@ plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
 <!-- solution end -->
 
 <!-- exercise end -->
+
+## SIDEBOX: Solvers
+
+SciPy has several sparse iterative solvers available, and it is not
+always obvious which to use.  Unfortunately, that question also has no
+easy answer: different algorithms have different strengths in terms
+of, e.g., speed of convergence, stability, accuracy, and memory use.
+It is also not possible to predict, by looking at the input data,
+which algorithm will perform best.
+
+Here is a rough guideline for choosing an iterative solver:
+
+- If A, the input matrix, is symmetric and positive definite, use the
+  Conjugate Gradient solver `cg`.  If A is symmetric, but
+  near-singular or indefinite, try the Minimum Residual iteration
+  method `minres`.
+
+- For non-symmetric systems, try the Biconjugate Gradient Stabilized
+  method, `bicgstab`.  The Conjugate Gradient Squared method, `cgs`,
+  is a bit faster, but has more erratic convergence.
+
+- If you need to solve many similar systems, use the LGMRES algorithm `lgmres`.
+
+- If A is not square, use the least squares algorithm `lsmr`.
+
+For further reading, see
+
+- **How Fast are Nonsymmetric Matrix Iterations?**,
+  Noël M. Nachtigal, Satish C. Reddy, and Lloyd N. Trefethen
+  SIAM Journal on Matrix Analysis and Applications 1992 13:3, 778-795.
+
+- **Survey of recent Krylov methods**, Jack Dongarra,
+  http://www.netlib.org/linalg/html_templates/node50.html
 
 ## PageRank: linear algebra for reputation and importance
 
