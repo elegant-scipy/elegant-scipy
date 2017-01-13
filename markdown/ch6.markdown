@@ -657,12 +657,12 @@ plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
 
 ## SIDEBOX: Solvers
 
-SciPy has several sparse iterative solvers available, and it is not
-always obvious which to use.  Unfortunately, that question also has no
-easy answer: different algorithms have different strengths in terms
-of, e.g., speed of convergence, stability, accuracy, and memory use.
-It is also not possible to predict, by looking at the input data,
-which algorithm will perform best.
+SciPy has several sparse iterative solvers available, and it is not always
+obvious which to use.  Unfortunately, that question also has no easy answer:
+different algorithms have different strengths in terms of speed of
+convergence, stability, accuracy, and memory use (amongst others).  It is also
+not possible to predict, by looking at the input data, which algorithm will
+perform best.
 
 Here is a rough guideline for choosing an iterative solver:
 
