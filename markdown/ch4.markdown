@@ -483,7 +483,7 @@ another real-world problem: analyzing target detection in radar data.
 
 For historical reasons, most implementations return an array where
 frequencies vary from low-to-high-to-low (*SEE ALSO: Sidebox on DFT
-for further explanation of frequencies).  E.g., when we do the real
+for further explanation of frequencies*).  E.g., when we do the real
 Fourier transform of a signal of all ones, an input that has no
 variation and therefore only has the slowest, constant Fourier
 component (also known as the "DC" or Direct Current component—just
