@@ -729,9 +729,8 @@ lobes ($\beta$ typically between 5 and 10) [^choosing_a_window].
                       application, as illustrated in the main text, by
                       adjusting the parameter $\beta$.
 
-Applying the Kaiser window here, we see that the peaks are
-significantly sharper, at the cost of some reduction in peak width
-(spectrum resolution):
+Applying the Kaiser window here, we see that the sidelobes have been
+drastically reduced, at the cost of a slight widening in the main lobe.
 
 *For online notebook, use something like:*
 
