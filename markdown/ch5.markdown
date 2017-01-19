@@ -914,7 +914,7 @@ one of size 1.
 
 <!-- exercise end -->
 
-# Contingency matrices in segmentation
+## Contingency matrices in segmentation
 
 You can think of the segmentation of an image in the same way as the classification problem above:
 The segment label at each *pixel* is a *prediction* about which *class* the pixel belongs to.

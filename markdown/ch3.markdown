@@ -58,7 +58,7 @@ There are a few things going on here: images being represented as numpy arrays,
 regions into a graph (network) using the NetworkX library. We'll go over these
 in turn.
 
-# Images are numpy arrays
+## Images are numpy arrays
 
 In the previous chapter, we saw that numpy arrays can efficiently represent
 tabular data, and are a convenient way to perform computations on it.
@@ -85,7 +85,7 @@ Finally, "make some noise" and display it as an image:
 
 ```python
 random_image = np.random.rand(500, 500)
-plt.imshow(random_image); 
+plt.imshow(random_image);
 # Note ; suppresses the output (i.e. the plotting object text)
 # from being displayed inline in the Jupyter notebook.
 ```
@@ -219,7 +219,7 @@ overlay, this is probably the desired behavior.
 
 <!-- exercise end -->
 
-# Filters in signal processing
+## Filters in signal processing
 
 Filtering is one of the most fundamental and common operations in image
 processing. You can filter an image to remove noise, to enhance features, or to
@@ -351,7 +351,7 @@ lets certain kinds of current through, but not others; these components
 are called filters. For example, a common filter that removes high-frequency
 voltage fluctuations from a current is called a *low-pass filter*.)
 
-# Filtering images (2D filters)
+## Filtering images (2D filters)
 
 Now that you've seen filtering in 1D, I hope you'll find it straightforward
 to extend these concepts to 2D. Here's a 2D difference filter finding the
@@ -446,7 +446,7 @@ coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
 plt.imshow(coins_sobel, cmap=plt.cm.viridis);
 ```
 
-# Generic filters
+## Generic filters
 
 In addition to dot-products, implemented by `ndi.convolve`, SciPy lets you
 define a filter that is an *arbitrary function* of the points in a neighborhood,
@@ -530,7 +530,7 @@ does this in a single pass using `ndi.generic_filter`?
 
 <!-- exercise end -->
 
-# Graphs and the NetworkX library
+## Graphs and the NetworkX library
 
 To introduce you to graphs, we will reproduce some results from the paper
 ["Structural properties of the *Caenorhabditis elegans* neuronal network"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Varshney *et al*, 2011.
@@ -743,7 +743,7 @@ to include that line.
 
 <!-- exercise end -->
 
-# Region adjacency graphs
+## Region adjacency graphs
 
 I hope that the previous section gave you an idea of the power of graphs as a scientific
 abstraction, and also how Python makes it easy to manipulate and analyse
@@ -872,7 +872,7 @@ graph along those edges, we will get our segmentation! (Yes, I have chosen an ea
 example for color-based segmentation, but the same principles hold true for
 graphs with more complicated pairwise relationships!)
 
-# Elegant ndimage
+## Elegant ndimage
 
 All the pieces are in place: you know about numpy arrays, image filtering,
 generic filters, graphs, and region adjacency graphs. Let's build one to pluck
@@ -985,7 +985,7 @@ There's a few things to notice here:
 
 Overall, I think this is just a brilliant piece of code.
 
-# Putting it all together: mean color segmentation
+## Putting it all together: mean color segmentation
 
 Now, we can use it to segment the tiger in the image above:
 
