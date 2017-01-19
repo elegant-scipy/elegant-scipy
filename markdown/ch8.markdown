@@ -771,7 +771,7 @@ to open tar files (even compressed ones) as if they were normal files.
 
 <!-- exercise end -->
 
-# Conclusions
+## Conclusions
 
 We hope to have shown you at least a hint that streaming in Python can be easy when you use a few abstractions, like the ones Toolz provides.
 

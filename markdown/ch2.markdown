@@ -62,7 +62,7 @@ We'll unpack that example throughout the chapter, but for now note that it illus
 - Arrays underpin the scientific Python ecosystem. The `scipy.stats.mstats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
 - Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
 
-### Get the data
+## Get the data
 
 As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq data set.
 Our goal is to predict mortality in skin cancer patients using their RNA expression data.
@@ -295,7 +295,7 @@ def bicluster(data, linkage_method='average', distance_metric='correlation'):
 
 Simple: we just call `linkage` for the input matrix and also for the transpose of that matrix, in which columns become rows and rows become columns.
 
-# Visualizing clusters
+## Visualizing clusters
 
 Next, we define a function to visualize the output of that clustering.
 We are going to rearrange the rows and columns of the input data so that similar rows are together and similar columns are together.

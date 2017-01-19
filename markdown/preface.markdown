@@ -1,4 +1,4 @@
-#Preface
+# Preface
 
 > "Unlike the stereotypical wedding dress, it was—to use a technical term—elegant, like a computer algorithm that achieves an impressive outcome with just a few lines of code."
 
