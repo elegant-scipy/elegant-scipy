@@ -622,25 +622,11 @@ point approximation error:
 print(H @ H @ H @ point)
 ```
 
-Now, we will build a function that defines a "sparse operator".  The
-goal of the sparse operator is to take all pixels of the output image,
-figure out where they came from in the input image and, doing the
-appropriate (bi-linear) interpolation, calculate their values. It does this
-using just matrix multiplication on the image values, and
-thus is extremely fast.
-
-It will be used as follows:
-
-```
-## Turn input image into a vector
-input_flat = input_image.ravel()
-
-## Multiply input image by sparse operator
-out_flat = input_flat @ Sparse_operator
-
-## Reshape output vector back into an image of the same shape as the input
-out_image = out_flat.reshape(input_flat.shape)
-```
+Now, we will build a function that defines a "sparse operator".  The goal of
+the sparse operator is to take all pixels of the output image, figure out where
+they came from in the input image and, doing the appropriate (bi-linear)
+interpolation (see figure), calculate their values. It does this using just
+matrix multiplication on the image values, and thus is extremely fast.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg"/>
 
