@@ -1316,20 +1316,6 @@ import numpy as np
 from scipy import sparse
 
 
-def diag(arr):
-    """Return a diagonal square matrix with `arr` as its nonzero elements.
-
-    Parameters
-    ----------
-    arr : array
-        The input array.
-
-    Returns
-    -------
-    D : the output matrix
-    """
-
-
 def invert_nonzero(arr):
     arr_inv = arr.copy()
     nz = np.nonzero(arr)
