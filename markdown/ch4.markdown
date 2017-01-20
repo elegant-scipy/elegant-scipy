@@ -355,12 +355,10 @@ The discrete Fourier transform functionality in SciPy lives in the
 `scipy.fftpack`` module.  Among other things, it provides the
 following DFT-related functionality:
 
- - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform
-                                using the Fast Fourier Transform algorithm
+ - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform using the Fast Fourier Transform algorithm
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
- - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the
-   spectrum and back, respectively (more about that soon)
+ - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the spectrum and back, respectively (more about that soon)
  - ``fftfreq``: Return the discrete Fourier transform sample frequencies
 
 This is complemented by the following functions in NumPy:
