@@ -290,12 +290,22 @@ col = np.array([0, 2, 1])
 s_coo = sparse.coo_matrix((data, (row, col)))
 ```
 
-The `.todense()` method of every sparse format in `scipy.sparse` returns a
-numpy array representation of the sparse data.
+The `.toarray()` method of every sparse format in `scipy.sparse` returns a
+NumPy array representation of the sparse data.
 We can use this to check that we created `s_coo` correctly:
 
 ```python
-s_coo.todense()
+s_coo.toarray()
+```
+
+Identically, we can use the `.A` *property*, which is just like an attribute,
+but actually executes a function. `.A` is a particularly dangerous property,
+because it can hide a potentially very large operation: the dense version
+of a sparse matrix can be orders of magnitude bigger than the sparse matrix
+itself, bringing a computer to its knees, in just three keystrokes!
+
+```python
+s_coo.A
 ```
 
 <!-- exercise begin -->
@@ -345,7 +355,7 @@ and:
 
 ```python
 s2_coo1 = sparse.coo_matrix((s2_data, (s2_row, s2_col)))
-print(s2_coo1.todense())
+print(s2_coo1.A)
 ```
 
 <!-- solution end -->
@@ -393,7 +403,7 @@ indptr = [0, 1, 5, 6, 7, 9]
 ```
 
 Let's use these hand-computed arrays to build a CSR matrix in SciPy.
-We can check our work by comparing the `.todense()` output from our COO and
+We can check our work by comparing the `.A` output from our COO and
 CSR representations to the numpy array `s2` that we defined earlier.
 
 ```python
@@ -403,9 +413,9 @@ coo = sparse.coo_matrix((data, (row, col)))
 csr = sparse.csr_matrix((data, col, indptr))
 
 print('The COO and CSR arrays are equal: ',
-      np.all(coo.todense() == csr.todense()))
+      np.all(coo.A == csr.A))
 print('The CSR and NumPy arrays are equal: ',
-      np.all(s2 == csr.todense()))
+      np.all(s2 == csr.A))
 ```
 
 The ability to store large, sparse matrices is incredibly powerful!
@@ -845,7 +855,7 @@ made for both the earliest entry encountered, or the latest, but what was in
 fact chosen is the *sum*:
 
 ```python
-print(S.todense())
+print(S.A)
 ```
 
 So, COO format will sum together repeated entries... Which is exactly what we
@@ -863,7 +873,7 @@ def confusion_matrix(pred, gt):
     return cont
 ```
 
-To look at a small one, we simply use the `.todense()` method, which returns the numpy array corresponding to that matrix:
+To look at a small one, we simply use the `.A` property, as above:
 
 ```python
 cont = confusion_matrix(pred, gt)
@@ -871,7 +881,7 @@ print(cont)
 ```
 
 ```python
-print(cont.todense())
+print(cont.A)
 ```
 
 It works!
@@ -902,7 +912,7 @@ Let's make sure it still works as expected:
 
 ```python
 cont = confusion_matrix(pred, gt)
-print(cont.todense())
+print(cont.A)
 ```
 
 Boom. Instead of making an array as big as the original data, we just make
@@ -954,7 +964,7 @@ Some indices appear more than once, but we can use the summing feature of the
 COO format to confirm that this represents the matrix we want:
 
 ```python
-print(cont.todense())
+print(cont.A)
 ```
 
 Segmentation is a hard problem, so it's important to measure how well a
@@ -1215,7 +1225,7 @@ predicting spam:
 ```python
 cont = sparse.coo_matrix((np.broadcast_to(1., aseg.size),
                           (aseg.ravel(), gt.ravel())))
-cont = np.asarray(cont.todense())
+cont = np.asarray(cont.A)
 cont
 ```
 
@@ -1284,7 +1294,7 @@ xlog1x(a)
 ```python
 mat = sparse.csr_matrix([[0.125, 0.125, 0.25,    0],
                          [0.125, 0.125,    0, 0.25]])
-xlog1x(mat).todense()
+xlog1x(mat).A
 ```
 
 So, the conditional entropy of $S$ given $T$:
