@@ -252,7 +252,7 @@ efficiently represent sparse matrices.
 ## scipy.sparse data formats
 
 We covered the internal data format of NumPy arrays in Chapter 1.
-I hope you agree that it's a fairly intuitive, and, in some sense, inevitable
+We hope you agree that it's a fairly intuitive, and, in some sense, inevitable
 format to hold n-dimensional array data.
 For sparse matrices, there are actually a wide array of possible formats, and
 the "right" format depends on the problem you want to solve.
@@ -671,8 +671,9 @@ def homography(tf, image_shape):
 
     m, n = image_shape
 
-    # We are going to construct a COO matrix, for which we'll need I
-    # (row coordinates), col (column coordinates), and K (values)
+    # We are going to construct a COO matrix, often called IJK matrix,
+    # for which we'll need row coordinates (I), column coordinates (J),
+    # and values (K).
     row, col, values = [], [], []
 
     # For each pixel in the output image...
