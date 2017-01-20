@@ -59,7 +59,7 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 OReilly_HTMLBook:
 	git submodule init && git submodule update
 
-$(BUILD_HTMLBOOK)/%.xml: $(BUILD_NB)/%.ipynb OReilly_HTMLBook
+$(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb OReilly_HTMLBook
 	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
 	
 	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
@@ -110,7 +110,7 @@ zip: all
 	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
-htmlbook: build_dirs $(addsuffix .xml, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
+htmlbook: build_dirs $(addsuffix .html, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
 
 # clean: remove intermediate products (IPython notebooks)
 clean:
