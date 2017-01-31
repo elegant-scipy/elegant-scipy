@@ -60,6 +60,9 @@ OReilly_HTMLBook:
 	git submodule init && git submodule update
 
 $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
+	mkdir -p $(BUILD_HTMLBOOK)/downloaded
+	ln -sf $(PWD)/figures $(BUILD_HTMLBOOK)/figures
+	
 	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
 	
 	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
@@ -69,6 +72,9 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	
 	htmlbook -s $@.md -o $@
 	rm $@.md
+	
+	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
+	sed -i '' 's/..\/figures/.\/figures/' $@
 
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
