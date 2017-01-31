@@ -32,8 +32,6 @@ for image_tag in soup.find_all("img"):
         new_url = 'downloaded/{}'.format(fn)
 
         with urllib.request.urlopen(src) as response:
-            print('Downloading external media: {}'.format(src))
-
             with open(os.path.join(html_dir, new_url), 'wb') as image_file:
                 image_file.write(response.read())
 
