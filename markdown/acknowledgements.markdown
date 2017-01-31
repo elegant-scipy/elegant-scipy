@@ -24,6 +24,11 @@ We are indebted to everyone who made corrections and suggestions while the book
 was in pre-release, including Bill Katz, Matthias Bussonnier, and
 Mark Hyun-ki Kim.
 
+We thank our technical reviewers, Thomas Caswell, Nelle Varoquaux, Lav
+Varshney, and Greg Wilson, who generously took time out of
+their busy schedules to comb through our final drafts and share their expert
+advice.
+
 Although we will continue to improve the book based on comments from you, our
 readers, we owe a great deal to our friends and family who proofread much
 earlier versions and provided valuable feedback, suggestions, and
