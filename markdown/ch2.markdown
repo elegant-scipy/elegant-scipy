@@ -111,7 +111,8 @@ def plot_col_density(data, xlabel=None):
     xlabel : x axis label
     """
 
-    density_per_col = [stats.kde.gaussian_kde(col) for col in data.T] # Use Gaussian smoothing to estimate the density
+    # Use Gaussian smoothing to estimate the density
+    density_per_col = [stats.kde.gaussian_kde(col) for col in data.T]
     x = np.linspace(np.min(data), np.max(data), 100)
 
     fig, ax = plt.subplots()
@@ -200,7 +201,8 @@ Now, let's see what our distributions look like after quantile normalization.
 # After normalization
 log_quant_norm_counts = np.log(quantile_norm(counts)+1)
 
-plot_col_density(log_quant_norm_counts, xlabel="Log count distribution for each individual")
+plot_col_density(log_quant_norm_counts,
+                    xlabel="Log count distribution for each individual")
 ```
 
 As you might expect, the distributions now look virtually identical!
