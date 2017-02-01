@@ -1057,7 +1057,9 @@ signals reflected by each of several objects.  We need to determine
 each of the constituent components of these composite radar
 signals. The FFT is the tool that will do this for us.
 
-### SIDEBOX: Discrete Fourier transforms
+<!-- tag: aside -->
+
+### Discrete Fourier transforms
 
 The Discrete Fourier Transform (DFT) converts a sequence of $N$
 equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
@@ -1137,7 +1139,7 @@ year $2000$.
 
 ![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
 
-
+<!-- tag: /aside -->
 ### Signal properties in the frequency domain
 
 First, we take the FFTs of our three signals and then display the

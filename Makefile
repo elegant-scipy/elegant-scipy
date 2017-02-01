@@ -76,6 +76,8 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	
 	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	sed -i '' 's/..\/figures/.\/figures/' $@
+	
+	tools/tag_translator.py $@ > $@.tagged && mv $@.tagged $@
 
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
