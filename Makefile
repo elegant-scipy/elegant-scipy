@@ -62,13 +62,13 @@ OReilly_HTMLBook:
 $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	mkdir -p $(BUILD_HTMLBOOK)/downloaded
 	ln -sf $(PWD)/figures $(BUILD_HTMLBOOK)/figures
+	ln -sf $(PWD)/images $(BUILD_HTMLBOOK)/images
 	
 	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
 	
 	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
+	tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
 	htmlbook -c -s $@.md -o $@ -t "$$TITLE" ; \
-	
-	tools/latex_to_mathml.py $@ > $@.mathml && mv $@.mathml $@
 	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
 	
 	htmlbook -s $@.md -o $@
@@ -76,8 +76,6 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	
 	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	sed -i '' 's/..\/figures/.\/figures/' $@
-	
-	tools/latex_to_mathml.py $@ > $@.mathml && mv $@.mathml $@
 
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
