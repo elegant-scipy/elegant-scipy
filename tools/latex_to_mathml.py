@@ -25,34 +25,55 @@ with open(html_file, 'rb') as f:
     data = f.read().decode('utf-8')
 
 # Temporary workaround for figure captions containing math.  Destroy them.
-data = re.sub('alt=\'.*?\'', '', data, flags=re.DOTALL)
+#data = re.sub('alt=\'.*?\'', '', data, flags=re.DOTALL)
+
+
+def pipe(command, stdin_data):
+    ps = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    stdout_data, stderr_data = ps.communicate(input=stdin_data.encode('utf-8'))
+
+    if ps.returncode != 0:
+        sys.stderr.write(stderr_data.decode('utf-8'))
+        sys.stderr.write('Saving stdin to /tmp/pipe.log\n')
+        with open('/tmp/pipe.log', 'w') as f:
+            f.write(stdin_data)
+        sys.exit(-1)
+
+    return stdout_data.decode('utf-8')
+
+
+def latex_to_mathml(latex_str):
+    mathml = pipe(['blahtexml', '--mathml'], latex_str)
+    mathml = ''.join(mathml.split('\n')[1:-2])
+    mathml = mathml.replace('<mathml>', '<math xmlns="http://www.w3.org/1998/Math/MathML">')
+    mathml = mathml.replace('</mathml>', '</math>')
+    mathml = mathml.replace('<markup>', '')
+    mathml = mathml.replace('</markup>', '')
+    return mathml
+
 
 def math_wrap(matchobj):
     math = matchobj.group(1)
-#    math = html.escape(math)
+    return latex_to_mathml(math)
 
-    return '''
-<div xmlns:b="http://gva.noekeon.org/blahtexml" b:inline="{}"/>
-'''.format(math)
+def equation_wrap(matchobj):
+    math = matchobj.group(1)
 
-html_with_hooks = re.sub('\$(.*?)\$', math_wrap, data, flags=re.DOTALL)
+    label = []
+    def gather_labels(matchobj):
+        label.append(matchobj.group(1))
 
-ps = subprocess.Popen(('blahtexml', '--xmlin'), stdin=PIPE, stdout=PIPE, stderr=PIPE)
-stdout_data, stderr_data = ps.communicate(input=html_with_hooks.encode('utf-8'))
+    math = re.sub('\\\label{(.*?)}', gather_labels, math, flags=re.DOTALL)
 
-if ps.returncode != 0:
-    sys.stderr.write(stderr_data.decode('utf-8'))
-    sys.stderr.write(stdout_data.decode('utf-8'))
-    sys.exit(-1)
+    if label:
+        label = '<h5>{}</h5>'.format(label[0])
+    else:
+        label = ''
+
+    return '<div data-type="equation">{}{}</div>'.format(label, latex_to_mathml(math))
 
 
-post_mathml = stdout_data.decode('utf-8')
 
-def inner_only(matchobj):
-    return matchobj.group(1)
-
-post_mathml = re.sub(
-    '<div xmlns:b="http://gva.noekeon.org/blahtexml">(.*?)</div>',
-    inner_only, post_mathml, flags=re.DOTALL)
-
-print(post_mathml.replace('<?xml version="1.0" encoding="UTF-8"?>', ''))
+mathml_data = re.sub('\$\$(.*?)\$\$', equation_wrap, data, flags=re.DOTALL)
+mathml_data = re.sub('\$(.*?)\$', math_wrap, mathml_data, flags=re.DOTALL)
+print(mathml_data)
