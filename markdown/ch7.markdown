@@ -22,8 +22,7 @@ is minimized.
 Consider, for example, the shifted parabola, $f(x) = (x - 3)^2$.
 We'd like to find the value of x that minimizes this cost function. We
 know that this function, with parameter $x$, has a minimum at 3,
-because we can calculate the derivative, set it to zero, and see that
-$2 (x - 3) = 0$, i.e. $x = 3$.
+because we can calculate the derivative, set it to zero, and see that $2 (x - 3) = 0$, i.e. $x = 3$.
 
 But, if this function were much more complicated (for example if the
 expression had many terms, multiple points of zero derivative,
@@ -584,9 +583,7 @@ value of the corresponding pixel in the other. It was defined in the paper:
 Studholme, C., Hill, D.L.G., Hawkes, D.J.: An Overlap Invariant Entropy Measure
 of 3D Medical Image Alignment. Patt. Rec. 32, 71–86 (1999):
 
-$
-I(X, Y) = \frac{H(X) + H(Y)}{H(X, Y)},
-$
+$$I(X, Y) = \frac{H(X) + H(Y)}{H(X, Y)},$$
 
 where $H(X)$ is the *entropy* of $X$, and $H(X, Y)$ is the joint
 entropy of $X$ and $Y$. The numerator describes the entropy of the

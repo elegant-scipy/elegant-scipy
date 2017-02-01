@@ -455,7 +455,7 @@ complex filters.
 
 For example, suppose an image represents median house values in a county,
 with a 100m x 100m resolution. The local council decides to tax house sales as
-$10,000 plus 5% of the 90th percentile of house prices in a 1km radius. (So,
+&#36;10,000 plus 5% of the 90th percentile of house prices in a 1km radius. (So,
 selling a house in an expensive neighborhood costs more.) With
 `generic_filter`, we can produce the map of the tax rate everywhere in the map:
 
