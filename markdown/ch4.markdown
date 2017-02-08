@@ -1057,89 +1057,86 @@ signals reflected by each of several objects.  We need to determine
 each of the constituent components of these composite radar
 signals. The FFT is the tool that will do this for us.
 
-<!-- tag: aside -->
-
-### Discrete Fourier transforms
-
-The Discrete Fourier Transform (DFT) converts a sequence of $N$
-equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
-a function $x(t)$ of time (or another variable, depending on the
-application) into a sequence of $N$ complex numbers $X_{k}$ by the
-summation
-
-$$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
-N-1.\label{eq:Forward DFT}$$
-
-With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
-sample values $x_{n}$ through the summation
-
-$$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
-kn/N}.\label{eq:Inverse DFT}$$
-
-Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
-equation shows that the DFT has decomposed the sequence $x_{n}$ into a
-complex discrete Fourier series with coefficients $X_{k}$. Comparing
-the DFT with a continuous complex Fourier series
-
-$$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
-Fourier series}$$
-
-the DFT is a *finite *series with $N$ terms defined at the equally
-spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
-in the interval $[0,2\pi)$,
-i.e. *including* $0$  and *excluding* $3\pi$.
-This automatically normalizes the DFT so that time does
-not appear explicitly in the forward or inverse transform.
-
-If the original function $x(t)$ is limited in frequency to less than
-half of the sampling frequency (the so-called *Nyquist frequency*),
-interpolation between sample values produced by the inverse DFT will
-usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
-limited as such, the inverse DFT can, in general, not be used to
-reconstruct $x(t)$ by interpolation.  Note that this limit does not
-imply that there are *no* methods that can do such a
-reconstruction—see, e.g., compressed sensing, or finite rate of
-innovation sampling.
-
-The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
-discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
-the complex plane. The function $e^{j2\pi kn/N}=w^{kn}$ encircles the
-origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
-sinusoid for which $n=1$.
-
-The way in which we defined the DFT leads to a few subtleties
-when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
-for increasing values of $k$ in Fig. ([fig:wkn values])
-for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from $k$
-to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
-the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
-increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
-is precisely once around the circle, the step equates to $-\frac{2\pi}{N}$,
-i.e. in the direction of a negative
-frequency. The components up to $N/2$ represent *positive* frequency
-components, those above $N/2$ up to $N-1$ represent *negative*
-frequencies with frequency. The angle increment for the component $N/2$
-for $N$ even advances precisely halfway around the circle for
-each increment in $k$ and can therefore be interpreted as either a
-positive or a negative frequency. This component of the DFT represents
-the Nyquist Frequency, i.e. half of the sampling frequency, and is
-useful to orientate oneself when looking at DFT graphics.
+> **Discrete Fourier transforms {.callout}**
+>
+> The Discrete Fourier Transform (DFT) converts a sequence of $N$
+> equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
+> a function $x(t)$ of time (or another variable, depending on the
+> application) into a sequence of $N$ complex numbers $X_{k}$ by the
+> summation
+> 
+> $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
+> N-1.\label{eq:Forward DFT}$$
+> 
+> With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
+> sample values $x_{n}$ through the summation
+> 
+> $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
+> kn/N}.\label{eq:Inverse DFT}$$
+> 
+> Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
+> equation shows that the DFT has decomposed the sequence $x_{n}$ into a
+> complex discrete Fourier series with coefficients $X_{k}$. Comparing
+> the DFT with a continuous complex Fourier series
+> 
+> $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
+> Fourier series}$$
+> 
+> the DFT is a *finite *series with $N$ terms defined at the equally
+> spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
+> in the interval $[0,2\pi)$,
+> i.e. *including* $0$  and *excluding* $3\pi$.
+> This automatically normalizes the DFT so that time does
+> not appear explicitly in the forward or inverse transform.
+> 
+> If the original function $x(t)$ is limited in frequency to less than
+> half of the sampling frequency (the so-called *Nyquist frequency*),
+> interpolation between sample values produced by the inverse DFT will
+> usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
+> limited as such, the inverse DFT can, in general, not be used to
+> reconstruct $x(t)$ by interpolation.  Note that this limit does not
+> imply that there are *no* methods that can do such a
+> reconstruction—see, e.g., compressed sensing, or finite rate of
+> innovation sampling.
+> 
+> The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
+> discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
+> the complex plane. The function $e^{j2\pi kn/N}=w^{kn}$ encircles the
+> origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
+> sinusoid for which $n=1$.
+> 
+> The way in which we defined the DFT leads to a few subtleties
+> when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
+> for increasing values of $k$ in Fig. ([fig:wkn values])
+> for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from $k$
+> to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
+> the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
+> increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
+> is precisely once around the circle, the step equates to $-\frac{2\pi}{N}$,
+> i.e. in the direction of a negative
+> frequency. The components up to $N/2$ represent *positive* frequency
+> components, those above $N/2$ up to $N-1$ represent *negative*
+> frequencies with frequency. The angle increment for the component $N/2$
+> for $N$ even advances precisely halfway around the circle for
+> each increment in $k$ and can therefore be interpreted as either a
+> positive or a negative frequency. This component of the DFT represents
+> the Nyquist Frequency, i.e. half of the sampling frequency, and is
+> useful to orientate oneself when looking at DFT graphics.
+> 
+> The FFT in turn is simply a special and highly efficient algorithm for
+> calculating the DFT. Whereas a straightforward calculation of the DFT
+> takes of the order of $N^{2}$ calculations to compute, the FFT
+> algorithm requires of the order $N\log N$ calculations. The FFT was
+> the key to the wide-spread use of the DFT in real-time applications
+> and was included in a list of the top $10$ algorithms of the $20^{th}$
+> century by the IEEE journal Computing in Science & Engineering in the
+> year $2000$.
+> 
+> ![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
 
 [^odd_N]: We leave it as an exercise for the reader to picture the situation
  for $N$ odd.  In this chapter, all examples use even-order DFTs.
 
-The FFT in turn is simply a special and highly efficient algorithm for
-calculating the DFT. Whereas a straightforward calculation of the DFT
-takes of the order of $N^{2}$ calculations to compute, the FFT
-algorithm requires of the order $N\log N$ calculations. The FFT was
-the key to the wide-spread use of the DFT in real-time applications
-and was included in a list of the top $10$ algorithms of the $20^{th}$
-century by the IEEE journal Computing in Science & Engineering in the
-year $2000$.
-
-![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
-
-<!-- tag: /aside -->
 ### Signal properties in the frequency domain
 
 First, we take the FFTs of our three signals and then display the
