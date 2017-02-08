@@ -80,8 +80,8 @@ ax.set_ylabel('Signal amplitude');
 ```
 
 [^discrete]: The discrete Fourier transform operates on sampled data,
- in contrast to the standard Fourier transform which is
- defined for continuous functions.
+             in contrast to the standard Fourier transform which is
+             defined for continuous functions.
 
 Or you can equivalently think of it as a repeating signal of
 *frequency* 10 Hertz (it repeats once every $1/10$ seconds—a length of
@@ -114,7 +114,10 @@ zero, except for two entries.  Traditionally, we visualize the
 magnitude of the result as a *stem plot*, in which the height of each
 stem corresponds to the underlying value.
 
-(We'll explain why you see positive and negative frequencies later on.)
+(We'll explain why you see positive and negative frequencies later on
+in the sidebox titled "Discrete Fourier transforms".  You may also
+refer to that section for a more in-depth overview of the underlying
+mathematics.)
 
 The Fourier transform takes us from the *time* to the *frequency*
 domain, and this turns out to have a massive number of applications.
@@ -203,15 +206,17 @@ turns it into a spectrum—a set of frequencies with corresponding
 (complex[^complex]) values.  The spectrum does not contain any information about
 time! [^time]
 
-[^complex]: The Fourier transform essentially tells us how to combine a set of
- sinusoids of varying frequency to form the input signal.  The spectrum
- consists of complex numbers—one for each sinusoid.  A complex number encodes
- two things: a magnitude and an angle.  The magnitude is the strength of the
- sinusoid in the signal, and the angle how much it is shifted in time.  At this
- point, we only care about the magnitude, which we calculate using ``np.abs``.
+[^complex]: The Fourier transform essentially tells us how to combine
+            a set of sinusoids of varying frequency to form the input
+            signal.  The spectrum consists of complex numbers—one for
+            each sinusoid.  A complex number encodes two things: a
+            magnitude and an angle.  The magnitude is the strength of
+            the sinusoid in the signal, and the angle how much it is
+            shifted in time.  At this point, we only care about the
+            magnitude, which we calculate using ``np.abs``.
 
 [^time]: For more on techniques for calculating both (approximate) frequencies
- and time of occurrence, read up on wavelet analysis.
+         and time of occurrence, read up on wavelet analysis.
 
 So, to find both the frequencies and the time at which they were sung,
 we'll need to be somewhat clever.  Our strategy will be as follows:
@@ -315,11 +320,13 @@ The only differences are that SciPy returns the spectrum magnitude
 squared (which turns measured voltage into measured energy), and
 multiplies it by some normalization factors[^scaling].
 
-[^scaling]: SciPy goes to some effort to preserve the energy in the spectrum.
- Therefore, when taking only half the components (for N even), it multiplies
- the remaining components, apart from the first and last components, by two
- (those two components are "shared" by the two halves of the spectrum).  It
- also normalizes the window by dividing it by its sum.
+[^scaling]: SciPy goes to some effort to preserve the energy in the
+            spectrum.  Therefore, when taking only half the components
+            (for N even), it multiplies the remaining components,
+            apart from the first and last components, by two (those
+            two components are "shared" by the two halves of the
+            spectrum).  It also normalizes the window by dividing it
+            by its sum.
 
 ## History
 
@@ -336,12 +343,13 @@ Fourier, after whom the transform is named, first claimed that
 trigonometric functions.
 
 [^periodic]: The period can, in fact, also be infinite!  The general
- continuous Fourier transform provides for this possibility.
- Discrete Fourier transforms are generally defined over a finite
- interval, and this is implicitly the period of the time domain
- function that is transformed.  In other words, if you do the
- inverse discrete Fourier transform, you *always* get a periodic
- signal out.
+             continuous Fourier transform provides for this
+             possibility.  Discrete Fourier transforms are generally
+             defined over a finite interval, and this is implicitly
+             the period of the time domain function that is
+             transformed.  In other words, if you do the inverse
+             discrete Fourier transform, you *always* get a periodic
+             signal out.
 
 ## Implementation
 
@@ -352,8 +360,9 @@ following DFT-related functionality:
  - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform using the Fast Fourier Transform algorithm
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
- - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the spectrum and back, respectively (more about that soon)
- - ``fftfreq``: Return the discrete Fourier transform sample frequencies
+ - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the spectrum and back, respectively (more about that soon).
+ - ``fftfreq``: Return the discrete Fourier transform sample frequencies.
+ - ``rfft``: Compute the DFT of a real sequence, exploiting the symmetry of the resulting spectrum for increased performance.  Also used by ``fft`` internally when applicable.
 
 This is complemented by the following functions in NumPy:
 
@@ -378,20 +387,22 @@ you take the dot product with the signal (which, in itself, entails $N$
 multiplication operations).  Repeating this operation$N$times, once
 for each sinusoid, then gives $N^2$ operations.
 
-[^big_O]: In computer science, the computational cost of an algorithm is often
- expressed in "Big O" notation.  The notation gives us an indication of how an
- algorithm's execution time scales with an increasing number of elements.  If
- an algorithm is $O(N)$, it means its execution time increases linearly with
- the number of input elements (for example, searching for a given value in an
- unsorted list is $O(N)$).  Bubble sort is an example of an $O(N^2)$ algorithm;
- the exact number of operations performed may, hypothetically, be $N + 1/2
- N^2$, meaning that the computational cost grows quadratically with the number
- of input elements.
+[^big_O]: In computer science, the computational cost of an algorithm
+          is often expressed in "Big O" notation.  The notation gives
+          us an indication of how an algorithm's execution time scales
+          with an increasing number of elements.  If an algorithm is $O(N)$,
+          it means its execution time increases linearly with
+          the number of input elements (for example, searching for a
+          given value in an unsorted list is $O(N)$).  Bubble sort is
+          an example of an $O(N^2)$ algorithm; the exact number of
+          operations performed may, hypothetically, be $N + 1/2 N^2$,
+          meaning that the computational cost grows quadratically with
+          the number of input elements.
 
 Now, contrast that with the fast Fourier transform, which is $\mathcal{O}(N \log N)$ in
 the ideal case due to the clever re-use of
 calculations—a great improvement!  However, the classical Cooley-Tukey
-algorithm implemented in FFTPACK recursively breaks up the transform
+algorithm implemented in FFTPACK (and used by SciPy) recursively breaks up the transform
 into smaller (prime-sized) pieces and only shows this improvement for
 "smooth" input lengths (an input length is considered smooth when its
 largest prime factor is small).  For large prime sized pieces, the
@@ -452,13 +463,16 @@ algorithm, which computes the FFT using only $(N/2) \log_2 N = 5120$ complex
 multiplications, instead of $N^2 = 1048576$.  Choosing $N = 2^m$
 always ensures a maximally smooth $N$ (and, thus, the fastest FFT).
 
-[^fast]: While ideally we don't want to reimplement existing algorithms,
- sometimes it becomes necessary in order to obtain the best execution speeds
- possible, and tools like [Cython](http://cython.org)—which compiles Python to
- C—and [Numba](http://numba.pydata.org)—which does just-in-time compilation of
- Python code—make life a lot easier (and faster!).  If you are able to use
- GPL-licenced software, you may consider using
- [PyFFTW](https://github.com/hgomersall/pyFFTW) for faster FFTs.
+[^fast]: While ideally we don't want to reimplement existing
+         algorithms, sometimes it becomes necessary in order to obtain
+         the best execution speeds possible, and tools
+         like [Cython](http://cython.org)—which compiles Python to
+         C—and [Numba](http://numba.pydata.org)—which does
+         just-in-time compilation of Python code—make life a lot
+         easier (and faster!).  If you are able to use GPL-licenced
+         software, you may consider
+         using [PyFFTW](https://github.com/hgomersall/pyFFTW) for
+         faster FFTs.
 
 ## Discrete Fourier transform concepts
 
@@ -467,7 +481,6 @@ operating heavy Fourier transform machinery, whereafter we tackle
 another real-world problem: analyzing target detection in radar data.
 
 ### Frequencies and their ordering
-
 
 For historical reasons, most implementations return an array where
 frequencies vary from low-to-high-to-low (*SEE ALSO: Sidebox on DFT
@@ -482,11 +495,8 @@ entry:
 from scipy import fftpack
 N = 10
 
-fftpack.fft(np.ones(N))  # Note first component is np.mean(x) * N
+fftpack.fft(np.ones(N))  # The first component is np.mean(x) * N
 ```
-
-Note that the FFT returns a complex spectrum which, in the case of
-real inputs, is conjugate symmetrical.
 
 When we try the FFT on a rapidly changing signal, we see a high
 frequency component appear:
@@ -499,7 +509,26 @@ print("Applying FFT to {}".format(z))
 fftpack.fft(z)
 ```
 
-The `fftfreq` function tells us which frequencies we are looking at:
+Note that the FFT returns a complex spectrum which, in the case of
+real inputs, is conjugate symmetrical (i.e., symmetric in the real
+part, and anti-symmetric in the imaginary part):
+
+```python
+x = np.array([1, 5, 12, 7, 3, 0, 4, 3, 2, 8])
+X = fftpack.fft(x)
+
+np.set_printoptions(precision=2)
+
+print("Real part:     ", X.real)
+print("Imaginary part:", X.imag)
+
+np.set_printoptions()
+```
+
+(And, again, recall that the first component is ``np.mean(x) * N``.)
+
+The `fftfreq` function tells us which frequencies we are looking at
+specifically:
 
 ```python
 fftpack.fftfreq(10)
@@ -677,8 +706,8 @@ from 0 to 100:
 ```python
 f, ax = plt.subplots()
 
-N = 100
-beta_max = 50
+N = 5
+beta_max = 10
 colormap = plt.cm.plasma
 
 norm = plt.Normalize(vmin=0, vmax=beta_max)
@@ -704,14 +733,18 @@ produces signals that smoothly increase from zero and decrease to zero
 at the endpoints of the sampled interval, producing very low side
 lobes ($\beta$ typically between 5 and 10) [^choosing_a_window].
 
-[^choosing_a_window]: The classical windowing functions include Hann, Hamming,
- and Blackman.  They differ in their sidelobe levels and in the broadening of
- the main lobe (in the Fourier domain).  A modern and flexible window function
- that is close to optimal for most applications is the Kaiser window---a good
- approximation to the optimal prolate spheroid window, which concentrates the
- most energy into the main lobe.  The Kaiser window can be tuned to suit the
- particular application, as illustrated in the main text, by adjusting the
- parameter $\beta$.
+[^choosing_a_window]: The classical windowing functions include Hann,
+                      Hamming, and Blackman.  They differ in their
+                      sidelobe levels and in the broadening of the
+                      main lobe (in the Fourier domain).  A modern and
+                      flexible window function that is close to
+                      optimal for most applications is the Kaiser
+                      window---a good approximation to the optimal
+                      prolate spheroid window, which concentrates the
+                      most energy into the main lobe.  The Kaiser
+                      window can be tuned to suit the particular
+                      application, as illustrated in the main text, by
+                      adjusting the parameter $\beta$.
 
 Applying the Kaiser window here, we see that the sidelobes have been
 drastically reduced, at the cost of a slight widening in the main lobe.
@@ -789,27 +822,36 @@ To summarize, we should note that:
  - The **frequency measured** is an indication of the **distance** of the
    target object from the radar.
 
-[^detail_fmcw]: A block diagram of a simple FMCW radar that uses separate
- transmit and receive antennas is shown in Fig. [fig: block-diagram]. The radar
- consists of a waveform generator that generates a sinusoidal signal of which
- the frequency varies linearly around the required transmit frequency. The
- generated signal is amplified to the required power level by the transmit
- amplifier and routed to the transmit antenna via a coupler circuit where a
- copy of the transmit signal is tapped off. The transmit antenna radiates the
- transmit signal as an electromagnetic wave in a narrow beam towards the target
- to be detected. When the wave encounters an object that reflects
- electromagnetic waves, a fraction of of the energy irradiating the target is
- reflected back to the receiver as a second electromagnetic wave that
- propagates in the direction of the radar system. When this wave encounters the
- receive antenna, the antenna collects the energy in the wave energy impinging
- on it and converts it to a fluctuating voltage that is fed to the mixer. The
- mixer multiplies the received signal with a replica of the transmit signal and
- produces a sinusoidal signal with a frequency equal to the difference in
- frequency between the transmitted and received signals. The low-pass filter
- ensures that the received signal is band limited (i.e., does not contain
- frequencies that we don't care about) and the receive amplifier strengthens
- the signal to a suitable amplitude for the analog to digital converter (ADC)
- that feeds data to the computer.
+[^detail_fmcw]: A block diagram of a simple FMCW radar that uses
+                separate transmit and receive antennas is shown in
+                Fig. [fig: block-diagram]. The radar consists of a
+                waveform generator that generates a sinusoidal signal
+                of which the frequency varies linearly around the
+                required transmit frequency. The generated signal is
+                amplified to the required power level by the transmit
+                amplifier and routed to the transmit antenna via a
+                coupler circuit where a copy of the transmit signal is
+                tapped off. The transmit antenna radiates the transmit
+                signal as an electromagnetic wave in a narrow beam
+                towards the target to be detected. When the wave
+                encounters an object that reflects electromagnetic
+                waves, a fraction of of the energy irradiating the
+                target is reflected back to the receiver as a second
+                electromagnetic wave that propagates in the direction
+                of the radar system. When this wave encounters the
+                receive antenna, the antenna collects the energy in
+                the wave energy impinging on it and converts it to a
+                fluctuating voltage that is fed to the mixer. The
+                mixer multiplies the received signal with a replica of
+                the transmit signal and produces a sinusoidal signal
+                with a frequency equal to the difference in frequency
+                between the transmitted and received signals. The
+                low-pass filter ensures that the received signal is
+                band limited (i.e., does not contain frequencies that
+                we don't care about) and the receive amplifier
+                strengthens the signal to a suitable amplitude for the
+                analog to digital converter (ADC) that feeds data to
+                the computer.
 
 ![[fig: block-diagram]The block diagram of a simple FMCW radar system.](../figures/FMCW Block.png)
 
@@ -1134,8 +1176,9 @@ signals. The FFT is the tool that will do this for us.
 > 
 > ![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
 
-[^odd_N]: We leave it as an exercise for the reader to picture the situation
- for $N$ odd.  In this chapter, all examples use even-order DFTs.
+[^odd_N]: We leave it as an exercise for the reader to picture the
+          situation for $N$ odd.  In this chapter, all examples use
+          even-order DFTs.
 
 ### Signal properties in the frequency domain
 
