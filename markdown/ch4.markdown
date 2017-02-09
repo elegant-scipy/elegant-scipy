@@ -739,7 +739,7 @@ lobes ($\beta$ typically between 5 and 10) [^choosing_a_window].
                       main lobe (in the Fourier domain).  A modern and
                       flexible window function that is close to
                       optimal for most applications is the Kaiser
-                      window---a good approximation to the optimal
+                      window—a good approximation to the optimal
                       prolate spheroid window, which concentrates the
                       most energy into the main lobe.  The Kaiser
                       window can be tuned to suit the particular
