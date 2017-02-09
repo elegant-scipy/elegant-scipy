@@ -1030,9 +1030,17 @@ Many of these functions are available in the scikit-image library. If you
 are interested in image analysis, check it out!
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
+
 [^openworm]: http://www.openworm.org
+
 [^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
+
 [^nxdoc]: http://networkx.github.io/documentation/latest/reference/index.html
+
 [^bwcdoc]: http://networkx.github.io/documentation/latest/reference/generated/networkx.algorithms.centrality.betweenness_centrality.html
+
 [^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
+
 [^slic]: http://ivrg.epfl.ch/research/superpixels
+
+<!-- -->

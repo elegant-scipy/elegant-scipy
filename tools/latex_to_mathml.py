@@ -24,9 +24,6 @@ html_dir = os.path.abspath(os.path.dirname(html_file))
 with open(html_file, 'rb') as f:
     data = f.read().decode('utf-8')
 
-# Temporary workaround for figure captions containing math.  Destroy them.
-#data = re.sub('alt=\'.*?\'', '', data, flags=re.DOTALL)
-
 
 def pipe(command, stdin_data):
     ps = subprocess.Popen(command, stdin=PIPE, stdout=PIPE, stderr=PIPE)

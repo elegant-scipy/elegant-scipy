@@ -390,16 +390,16 @@ for each sinusoid, then gives $N^2$ operations.
 [^big_O]: In computer science, the computational cost of an algorithm
           is often expressed in "Big O" notation.  The notation gives
           us an indication of how an algorithm's execution time scales
-          with an increasing number of elements.  If an algorithm is $O(N)$,
+          with an increasing number of elements.  If an algorithm is $\mathcal{O}(N)$,
           it means its execution time increases linearly with
           the number of input elements (for example, searching for a
-          given value in an unsorted list is $O(N)$).  Bubble sort is
-          an example of an $O(N^2)$ algorithm; the exact number of
-          operations performed may, hypothetically, be $N + 1/2 N^2$,
+          given value in an unsorted list is $\mathcal{O}\left(N\right)$).  Bubble sort is
+          an example of an $O\left(N^2\right)$ algorithm; the exact number of
+          operations performed may, hypothetically, be $N + \frac{1}{2} N^2$,
           meaning that the computational cost grows quadratically with
           the number of input elements.
 
-Now, contrast that with the fast Fourier transform, which is $\mathcal{O}(N \log N)$ in
+Now, contrast that with the fast Fourier transform, which is $\mathcal{O}\left(N \log N\right)$ in
 the ideal case due to the clever re-use of
 calculations—a great improvement!  However, the classical Cooley-Tukey
 algorithm implemented in FFTPACK (and used by SciPy) recursively breaks up the transform
@@ -706,14 +706,14 @@ from 0 to 100:
 ```python
 f, ax = plt.subplots()
 
-N = 5
-beta_max = 10
+N = 10
+beta_max = 5
 colormap = plt.cm.plasma
 
 norm = plt.Normalize(vmin=0, vmax=beta_max)
 
 lines = [
-    ax.plot(np.kaiser(N, beta), color=colormap(norm(beta)))
+    ax.plot(np.kaiser(100, beta), color=colormap(norm(beta)))
     for beta in np.linspace(0, beta_max, N)
     ]
 
