@@ -14,7 +14,7 @@ from subprocess import PIPE
 
 
 if len(sys.argv) != 2:
-    print("Usage: latex_to_mathml.py document.html")
+    print("Usage: latex_to_mathml.py document.md")
     sys.exit(0)
 
 
@@ -50,10 +50,18 @@ def latex_to_mathml(latex_str):
 
 
 def math_wrap(matchobj):
+    # Ignore code blocks
+    if matchobj.group(1) is None:
+        return matchobj.group(0)
+
     math = matchobj.group(1)
     return latex_to_mathml(math)
 
 def equation_wrap(matchobj):
+    # Ignore code blocks
+    if matchobj.group(1) is None:
+        return matchobj.group(0)
+
     math = matchobj.group(1)
 
     label = []
@@ -70,7 +78,6 @@ def equation_wrap(matchobj):
     return '<div data-type="equation">{}{}</div>'.format(label, latex_to_mathml(math))
 
 
-
-mathml_data = re.sub('\$\$(.*?)\$\$', equation_wrap, data, flags=re.DOTALL)
-mathml_data = re.sub('\$(.*?)\$', math_wrap, mathml_data, flags=re.DOTALL)
+mathml_data = re.sub('```python[^`]+```|\$\$(.*?)\$\$', equation_wrap, data, flags=re.DOTALL)
+mathml_data = re.sub('```python[^`]+```|\$(.*?)\$', math_wrap, mathml_data, flags=re.DOTALL)
 print(mathml_data)
