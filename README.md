@@ -113,6 +113,12 @@ To export to HTMLBook, install
 [htmlbook.js](https://www.npmjs.com/package/htmlbook) and then run `make
 htmlbook`.
 
+The results can be checked in to
+
+`git@git.atlas.oreilly.com:oreillymedia/elegant-scipy.git`
+
+and built at https://atlas.oreilly.com/oreillymedia/elegant-scipy
+
 ## Building with Docker
 
 0. Switch to the directory containing this file

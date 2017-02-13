@@ -374,6 +374,7 @@ There are a whole bunch of other great GitHub features, but we will leave many t
 In essence, GitHub has democratized software development. It has substantially reduced the barrier to entry.
 
 ![The impact of GitHub](https://jakevdp.github.io/figures/author_count.png)
+
 **[Used with permission of the author, Jake VanderPlas]**
 
 ### Make your Mark on the SciPy Ecosystem

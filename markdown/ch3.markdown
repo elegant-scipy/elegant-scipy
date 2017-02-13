@@ -1,6 +1,6 @@
 # Networks of Image Regions with ndimage
 
-**Code by Vighnesh Birodkar.**  
+**Code by Vighnesh Birodkar.**
 **Nominated by Juan Nunez-Iglesias.**
 
 This chapter gets a special mention because it inspired the whole book.
@@ -455,7 +455,7 @@ complex filters.
 
 For example, suppose an image represents median house values in a county,
 with a 100m x 100m resolution. The local council decides to tax house sales as
-$10,000 plus 5% of the 90th percentile of house prices in a 1km radius. (So,
+&#36;10,000 plus 5% of the 90th percentile of house prices in a 1km radius. (So,
 selling a house in an expensive neighborhood costs more.) With
 `generic_filter`, we can produce the map of the tax rate everywhere in the map:
 
@@ -1030,9 +1030,17 @@ Many of these functions are available in the scikit-image library. If you
 are interested in image analysis, check it out!
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
+
 [^openworm]: http://www.openworm.org
+
 [^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
+
 [^nxdoc]: http://networkx.github.io/documentation/latest/reference/index.html
+
 [^bwcdoc]: http://networkx.github.io/documentation/latest/reference/generated/networkx.algorithms.centrality.betweenness_centrality.html
+
 [^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
+
 [^slic]: http://ivrg.epfl.ch/research/superpixels
+
+<!-- -->

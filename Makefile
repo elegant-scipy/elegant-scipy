@@ -56,10 +56,34 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	jupyter nbconvert --to html $< --stdout > $@
 	tools/html_image_embedder.py $@ > $@.embed && mv $@.embed $@
 
-$(BUILD_HTMLBOOK)/%.xml: $(BUILD_NB)/%.ipynb
+OReilly_HTMLBook:
+	git submodule init && git submodule update
+
+$(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
+	mkdir -p $(BUILD_HTMLBOOK)/downloaded
+	ln -sf $(PWD)/figures $(BUILD_HTMLBOOK)/figures
+	ln -sf $(PWD)/images $(BUILD_HTMLBOOK)/images
+	
 	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
+	
+	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
+	tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
+	cp $@.md /tmp ; \
+	tools/footnote_fixer.py $@.md > $@.footnoted && cp $@.footnoted /tmp && mv $@.footnoted $@.md ; \
+	htmlbook -c -s $@.md -o $@ -t "$$TITLE" ; \
+	cp $@ /tmp
+	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
+	
 	htmlbook -s $@.md -o $@
 	rm $@.md
+	
+	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
+	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
+	tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
+	
+	sed -i'' 's/..\/figures/.\/figures/' $@
+	sed -i'' 's/..\/images/.\/images/' $@
+	sed -i'' 's/data-code-language="output" data-type="programlisting"//' $@
 
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
@@ -101,7 +125,7 @@ zip: all
 	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
-htmlbook: build_dirs $(addsuffix .xml, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
+htmlbook: OReilly_HTMLBook build_dirs $(addsuffix .html, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
 
 # clean: remove intermediate products (IPython notebooks)
 clean:

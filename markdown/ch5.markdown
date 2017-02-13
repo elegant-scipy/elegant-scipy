@@ -1,7 +1,7 @@
 # Contingency tables using sparse coordinate matrices
 
-**Code by Juan Nunez-Iglesias,**  
-**with suggestions by Jaime Frio and Warren Weckesser.**  
+**Code by Juan Nunez-Iglesias,**
+**with suggestions by Jaime Frio and Warren Weckesser.**
 **Nominated by Andreas Mueller.**
 
 Many real-world matrices are *sparse*, which means that most of their values are zero.
@@ -100,7 +100,7 @@ Conversely, at positions where both values are 1, the predictor has correctly id
 Then, there are two kinds of errors.
 If we let a spam message (where `gt` is 1) through to the user's inbox (`pred` is 0), we've made a *false negative* error.
 If we predict a legitimate message (`gt` is 0) to be spam (`pred` is 1), we've made a *false positive* prediction.
-(An email from the director of my scientific institute once landed in my spam folder. The reason? His announcement of a postdoc talk competition started with "You could win $500!")
+(An email from the director of my scientific institute once landed in my spam folder. The reason? His announcement of a postdoc talk competition started with "You could win &#36;500!")
 
 If we want to measure how well we are doing, we have to count the above kinds of errors using a *contingency matrix*.
 (This is also sometimes called a confusion matrix. The name is apt.)
@@ -110,9 +110,7 @@ So, for example, since there are 4 true positives (where `pred` and `gt` are bot
 
 Generally:
 
-$$
-C_{i, j} = \sum_k{\mathbb{I}(p_k = i) \mathbb{I}(g_k = j)}
-$$
+$$C_{i, j} = \sum_k{\mathbb{I}(p_k = i) \mathbb{I}(g_k = j)}$$
 
 Here's an intuitive, but inefficient way of building the above:
 
@@ -1012,23 +1010,23 @@ So, the entropy of a coin toss $T$ that can take values heads ($h$) and tails
 ($t$) is:
 
 $$
-\begin{align}
+\begin{aligned}
 H(T) & = p_h \log_2(1/p_h) + p_t \log_2(1/p_t) \\
      & = 1/2 log_2(2) + 1/2 \log_2(2) \\
      & = 1/2 \cdot 1 + 1/2 \cdot 1 \\
      & = 1
-\end{align}
+\end{aligned}
 $$
 
 The long-term probability of rain on any given day in LA is about 1 in 6, so
 the entropy of rain in LA, $R$, taking values rain ($r$) or shine ($s$) is:
 
 $$
-\begin{align}
+\begin{aligned}
 H(R) & = p_r \log_2(1/p_r) + p_s \log_2(1/p_s) \\
      & = 1/6 \log_2(6) + 5/6 \log_2(6/5) \\
      & \approx 0.65 \textrm{ bits}
-\end{align}
+\end{aligned}
 $$
 
 A special kind of entropy is the *conditional* entropy.
@@ -1044,12 +1042,12 @@ $$
 and
 
 $$
-\begin{align}
+\begin{aligned}
 H(R | M=m) &= {p_{r|m}\log_2\left(\frac{1}{p_{r|m}}\right) +
                p_{s|m}\log_2\left(\frac{1}{p_{s|m}}\right)} \\
            &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_m}{p_{rm}}\right) +
                \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)}
-\end{align}
+\end{aligned}
 $$
 
 You now have all the information theory you need to understand the variation
@@ -1084,7 +1082,7 @@ instead we use the historical table below, roughly eyeballed from
 The conditional entropy of rain given month is then:
 
 $$
-\begin{align}
+\begin{aligned}
 H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(1/0.25) +
                                0.75 \log_2(1/0.75) \right) +
            \frac{1}{12} \left( 0.27 \log_2(1/0.27) +
@@ -1093,7 +1091,7 @@ H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(1/0.25) +
            \frac{1}{12} \left( 0.23 \log_2(1/0.23) +
                                0.77 \log_2(1/0.77) \right) \\
        & \approx 0.626 \textrm{ bits}
-\end{align}
+\end{aligned}
 $$
 
 So, by using the month, we've reduced the randomness of the signal, but not by
