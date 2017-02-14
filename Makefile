@@ -3,6 +3,13 @@
 
 SHELL = /bin/bash
 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	SED_I = sed -i ''
+else
+	SED_I = sed -i''
+endif
+
 # VPATH: where to look for source files. This is a Makefile built-in
 #     special variable.
 VPATH = markdown
@@ -81,9 +88,9 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
 	
-	sed -i'' 's/..\/figures/.\/figures/' $@
-	sed -i'' 's/..\/images/.\/images/' $@
-	sed -i'' 's/data-code-language="output" data-type="programlisting"//' $@
+	${SED_I} 's/..\/figures/.\/figures/' $@
+	${SED_I} 's/..\/images/.\/images/' $@
+	${SED_I} 's/data-code-language="output" data-type="programlisting"//' $@
 
 $(BUILD_HTML)/custom.css:
 	 cp style/custom.css $(BUILD_HTML)
