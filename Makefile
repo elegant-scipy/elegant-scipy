@@ -75,10 +75,8 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	
 	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
 	tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
-	cp $@.md /tmp ; \
 	tools/footnote_fixer.py $@.md > $@.footnoted && cp $@.footnoted /tmp && mv $@.footnoted $@.md ; \
 	htmlbook -c -s $@.md -o $@ -t "$$TITLE" ; \
-	cp $@ /tmp
 	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
 	
 	htmlbook -s $@.md -o $@
@@ -87,6 +85,8 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
+	cp $@ /tmp
+	tools/wrap_figure.py $@ > $@.figures && mv $@.figures $@
 	
 	${SED_I} 's/..\/figures/.\/figures/' $@
 	${SED_I} 's/..\/images/.\/images/' $@
