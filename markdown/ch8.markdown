@@ -1,6 +1,6 @@
 # Big Data in Little Laptop with Toolz
 
-**Code by Matt Rocklin.**  
+**Code by Matt Rocklin.**
 **Nominated by Juan Nunez-Iglesias.**
 
 Whenever I think too hard about streaming data analysis, my head hurts.
@@ -515,7 +515,7 @@ counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
 
-> ## tips {.callout}
+> **tips {.callout}**
 >  - (list of list -> list) with tz.concat
 >  - don’t get caught out:
 >     * iterators get consumed.
@@ -789,4 +789,5 @@ from the beginning. Your future self will thank you.
 Doing it later is harder, and results in things like this:
 
 ![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg)
+
 (Comic by Manu Cornet, used with permission.)

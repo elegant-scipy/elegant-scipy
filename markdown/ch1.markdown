@@ -68,6 +68,7 @@ This molecule has a repetitive backbone on which lie chemical groups called *bas
 There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
 
 ![The chemical structure of DNA](https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg)
+
 *Image by Madeleine Price Ball, used under the terms of the CC0 public domain license*
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
@@ -474,7 +475,7 @@ import warnings
 warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
 
-> ## Tip: A quick note on plotting {.callout}
+> **Tip: A quick note on plotting {.callout}**
 >
 > As a short aside, the code above does a few neat things to make our plots
 > prettier. First, `%matplotlib inline` is a Jupyter notebook
@@ -741,7 +742,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 
 
 
-> ## Python 3 Tip: using `*` to create keyword-only arguments {.callout}
+> **Python 3 Tip: using `*` to create keyword-only arguments {.callout}**
 >
 > Since version 3.0 Python allows
 > ["keyword-only" arguments](https://www.python.org/dev/peps/pep-3102/).
@@ -797,32 +798,36 @@ and the gene length.
 
 Working through how RPKM is derived:
 
-Let's say:  
-C = Number of reads mapped to a gene  
-L = exon length in base-pairs for a gene  
-N = Total mapped reads in the experiment  
+Let's say:
+
+C = Number of reads mapped to a gene
+L = exon length in base-pairs for a gene
+N = Total mapped reads in the experiment
 
 First, let's calculate reads per kilobase.
 
-Reads per base would be:  
+Reads per base would be:
 $\frac{C}{L}$
 
 The formula asks for reads per kilobase instead of reads per base.
 One kilobase = 1000 bases, so we'll need to divide length (L) by 1000.
 
-Reads per kilobase would be:  
+Reads per kilobase would be:
+
 $\frac{C}{L/1000}  = \frac{10^3C}{L}$
 
 Next, we need to normalize by library size.
-If we just divide by the number of mapped reads we get:  
+If we just divide by the number of mapped reads we get:
+
 $ \frac{10^3C}{LN} $
 
 But biologists like thinking in millions of reads so that the numbers don't get
-too big. Counting per million reads we get:  
+too big. Counting per million reads we get:
+
 $ \frac{10^3C}{L(N/10^6)} = \frac{10^9C}{LN}$
 
 
-In summary, to calculate reads per kilobase transcript per million reads:  
+In summary, to calculate reads per kilobase transcript per million reads:
 $RPKM = \frac{10^9C}{LN}$
 
 Now let's implement RPKM over the entire counts array.
@@ -859,22 +864,26 @@ Once the two arrays have the same number of dimensions,
 broadcasting can only occur if the sizes of the dimensions match,
 or one of them is equal to 1.
 
-For example, let's say we have two ndarrays, A and B:  
-`A.shape = (1, 2)`  
+For example, let's say we have two ndarrays, A and B:
+`A.shape = (1, 2)`
 `B.shape = (2,)`
 
 If we performed the operation `A * B` then broadcasting would occur.
 B has fewer dimension than A, so during the calculation
-a new dimension is prepended to B with value 1.  
-`B.shape = (1, 2)`  
+a new dimension is prepended to B with value 1.
+`B.shape = (1, 2)`
 Now A and B have the same number of dimensions, so broadcasting can proceed.
 
-Now let's say we have another array, C:  
-`C.shape = (2, 1)`  
-`B.shape = (2,)`  
+Now let's say we have another array, C:
+
+`C.shape = (2, 1)`
+`B.shape = (2,)`
+
 Now, if we were to do the operation `C * B`,
-a new dimension needs to be prepended to B.  
-`B.shape = (1, 2)`  
+a new dimension needs to be prepended to B.
+
+`B.shape = (1, 2)`
+
 However, the dimensions of the two ndarrays do not match,
 so broadcasting will fail.
 
@@ -927,8 +936,11 @@ print('C_tmp.shape', C_tmp.shape)
 print('N.shape', N.shape)
 ```
 
-Once we trigger broadcasting, an additional dimension will be prepended to N:  
-`N.shape (1, 375)`  
+Once we trigger broadcasting, an additional dimension will be
+prepended to N:
+
+`N.shape (1, 375)`
+
 The dimensions will match so we don't have to do anything.
 However, for readability, it can be useful to add the extra dimension to N anyway.
 

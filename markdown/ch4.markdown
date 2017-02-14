@@ -64,8 +64,7 @@ Hertz.  Hertz (Hz), or oscillations per second, in this case literally
 refers to the number of times per second at which the membrane inside
 the headphone moves to-and-fro.  That, in turn, creates compressed
 pulses of air which, upon arrival at your eardrum, induces a vibration
-at the same frequency.  So, if you take a simple periodic function,
-$\sin(10 \times 2 \pi t)$, you can view it as a wave:
+at the same frequency.  So, if you take a simple periodic function, $\sin(10 \times 2 \pi t)$, you can view it as a wave:
 
 ```python
 f = 10  # Frequency, in cycles per second, or Hertz
@@ -115,7 +114,10 @@ zero, except for two entries.  Traditionally, we visualize the
 magnitude of the result as a *stem plot*, in which the height of each
 stem corresponds to the underlying value.
 
-(We'll explain why you see positive and negative frequencies later on.)
+(We'll explain why you see positive and negative frequencies later on
+in the sidebox titled "Discrete Fourier transforms".  You may also
+refer to that section for a more in-depth overview of the underlying
+mathematics.)
 
 The Fourier transform takes us from the *time* to the *frequency*
 domain, and this turns out to have a massive number of applications.
@@ -132,6 +134,7 @@ Let's start with one of the most common applications, converting a sound signal 
 (You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
 
 ![Stereo spectrogram](../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG)
+
 (Image used with permission from the author, Sergey Gerasimuk. Source: http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html)
 
 Listen to the following snippet of nightingale birdsong (released under CC BY 4.0 at
@@ -212,9 +215,8 @@ time! [^time]
             shifted in time.  At this point, we only care about the
             magnitude, which we calculate using ``np.abs``.
 
-[^time]: For more on techniques for calculating both (approximate)
-         frequencies and time of occurrence, read up on wavelet
-         analysis.
+[^time]: For more on techniques for calculating both (approximate) frequencies
+         and time of occurrence, read up on wavelet analysis.
 
 So, to find both the frequencies and the time at which they were sung,
 we'll need to be somewhat clever.  Our strategy will be as follows:
@@ -341,12 +343,13 @@ Fourier, after whom the transform is named, first claimed that
 trigonometric functions.
 
 [^periodic]: The period can, in fact, also be infinite!  The general
-    continuous Fourier transform provides for this possibility.
-    Discrete Fourier transforms are generally defined over a finite
-    interval, and this is implicitly the period of the time domain
-    function that is transformed.  In other words, if you do the
-    inverse discrete Fourier transform, you *always* get a periodic
-    signal out.
+             continuous Fourier transform provides for this
+             possibility.  Discrete Fourier transforms are generally
+             defined over a finite interval, and this is implicitly
+             the period of the time domain function that is
+             transformed.  In other words, if you do the inverse
+             discrete Fourier transform, you *always* get a periodic
+             signal out.
 
 ## Implementation
 
@@ -354,13 +357,12 @@ The discrete Fourier transform functionality in SciPy lives in the
 `scipy.fftpack`` module.  Among other things, it provides the
 following DFT-related functionality:
 
- - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform
-                                using the Fast Fourier Transform algorithm
+ - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform using the Fast Fourier Transform algorithm
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
- - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the
-   spectrum and back, respectively (more about that soon)
- - ``fftfreq``: Return the discrete Fourier transform sample frequencies
+ - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the spectrum and back, respectively (more about that soon).
+ - ``fftfreq``: Return the discrete Fourier transform sample frequencies.
+ - ``rfft``: Compute the DFT of a real sequence, exploiting the symmetry of the resulting spectrum for increased performance.  Also used by ``fft`` internally when applicable.
 
 This is complemented by the following functions in NumPy:
 
@@ -376,8 +378,8 @@ software license.
 
 ## Choosing the length of the DFT
 
-Consider that a naive calculation of the DFT takes
-$\mathcal{O}\left(N^2\right)$ operations [^big_O].  How come?  Well, you have $N$
+Consider that a naive calculation of the DFT takes $\mathcal{O}\left(N^2\right)$ operations [^big_O].
+How come?  Well, you have $N$
 (complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
 1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
 strongly your signal corresponds to each.  Starting with the first,
@@ -388,19 +390,19 @@ for each sinusoid, then gives $N^2$ operations.
 [^big_O]: In computer science, the computational cost of an algorithm
           is often expressed in "Big O" notation.  The notation gives
           us an indication of how an algorithm's execution time scales
-          with an increasing number of elements.  If an algorithm is
-          $O(N)$, it means its execution time increases linearly with
+          with an increasing number of elements.  If an algorithm is $\mathcal{O}(N)$,
+          it means its execution time increases linearly with
           the number of input elements (for example, searching for a
-          given value in an unsorted list is $O(N)$).  Bubble sort is
-          an example of an $O(N^2)$ algorithm; the exact number of
-          operations performed may, hypothetically, be $N + 1/2 N^2$,
+          given value in an unsorted list is $\mathcal{O}\left(N\right)$).  Bubble sort is
+          an example of an $O\left(N^2\right)$ algorithm; the exact number of
+          operations performed may, hypothetically, be $N + \frac{1}{2} N^2$,
           meaning that the computational cost grows quadratically with
           the number of input elements.
 
-Now, contrast that with the fast Fourier transform, which is
-$\mathcal{O}(N \log N)$ in the ideal case due to the clever re-use of
+Now, contrast that with the fast Fourier transform, which is $\mathcal{O}\left(N \log N\right)$ in
+the ideal case due to the clever re-use of
 calculations—a great improvement!  However, the classical Cooley-Tukey
-algorithm implemented in FFTPACK recursively breaks up the transform
+algorithm implemented in FFTPACK (and used by SciPy) recursively breaks up the transform
 into smaller (prime-sized) pieces and only shows this improvement for
 "smooth" input lengths (an input length is considered smooth when its
 largest prime factor is small).  For large prime sized pieces, the
@@ -463,14 +465,14 @@ always ensures a maximally smooth $N$ (and, thus, the fastest FFT).
 
 [^fast]: While ideally we don't want to reimplement existing
          algorithms, sometimes it becomes necessary in order to obtain
-         the best execution speeds possible, and tools like
-         [Cython](http://cython.org)—which compiles Python to C—and
-         [Numba](http://numba.pydata.org)—which does just-in-time
-         compilation of Python code—make life a lot easier (and
-         faster!).  If you are able to use GPL-licenced software, you
-         may consider using
-         [PyFFTW](https://github.com/hgomersall/pyFFTW) for faster
-         FFTs.
+         the best execution speeds possible, and tools
+         like [Cython](http://cython.org)—which compiles Python to
+         C—and [Numba](http://numba.pydata.org)—which does
+         just-in-time compilation of Python code—make life a lot
+         easier (and faster!).  If you are able to use GPL-licenced
+         software, you may consider
+         using [PyFFTW](https://github.com/hgomersall/pyFFTW) for
+         faster FFTs.
 
 ## Discrete Fourier transform concepts
 
@@ -479,7 +481,6 @@ operating heavy Fourier transform machinery, whereafter we tackle
 another real-world problem: analyzing target detection in radar data.
 
 ### Frequencies and their ordering
-
 
 For historical reasons, most implementations return an array where
 frequencies vary from low-to-high-to-low (*SEE ALSO: Sidebox on DFT
@@ -494,11 +495,8 @@ entry:
 from scipy import fftpack
 N = 10
 
-fftpack.fft(np.ones(N))  # Note first component is np.mean(x) * N
+fftpack.fft(np.ones(N))  # The first component is np.mean(x) * N
 ```
-
-Note that the FFT returns a complex spectrum which, in the case of
-real inputs, is conjugate symmetrical.
 
 When we try the FFT on a rapidly changing signal, we see a high
 frequency component appear:
@@ -511,7 +509,26 @@ print("Applying FFT to {}".format(z))
 fftpack.fft(z)
 ```
 
-The `fftfreq` function tells us which frequencies we are looking at:
+Note that the FFT returns a complex spectrum which, in the case of
+real inputs, is conjugate symmetrical (i.e., symmetric in the real
+part, and anti-symmetric in the imaginary part):
+
+```python
+x = np.array([1, 5, 12, 7, 3, 0, 4, 3, 2, 8])
+X = fftpack.fft(x)
+
+np.set_printoptions(precision=2)
+
+print("Real part:     ", X.real)
+print("Imaginary part:", X.imag)
+
+np.set_printoptions()
+```
+
+(And, again, recall that the first component is ``np.mean(x) * N``.)
+
+The `fftfreq` function tells us which frequencies we are looking at
+specifically:
 
 ```python
 fftpack.fftfreq(10)
@@ -689,14 +706,14 @@ from 0 to 100:
 ```python
 f, ax = plt.subplots()
 
-N = 100
-beta_max = 50
+N = 10
+beta_max = 5
 colormap = plt.cm.plasma
 
 norm = plt.Normalize(vmin=0, vmax=beta_max)
 
 lines = [
-    ax.plot(np.kaiser(N, beta), color=colormap(norm(beta)))
+    ax.plot(np.kaiser(100, beta), color=colormap(norm(beta)))
     for beta in np.linspace(0, beta_max, N)
     ]
 
@@ -722,7 +739,7 @@ lobes ($\beta$ typically between 5 and 10) [^choosing_a_window].
                       main lobe (in the Fourier domain).  A modern and
                       flexible window function that is close to
                       optimal for most applications is the Kaiser
-                      window---a good approximation to the optimal
+                      window—a good approximation to the optimal
                       prolate spheroid window, which concentrates the
                       most energy into the main lobe.  The Kaiser
                       window can be tuned to suit the particular
@@ -778,10 +795,10 @@ those numbers to form meaningful results.
 The multiplication step above is important.  From school, recall the
 trigonometric identity:
 
-$$
+$
 \sin(xt) \sin(yt) = \frac{1}{2}
 \left[ \sin \left( (x - y)t + \frac{\pi}{2} \right) - \sin \left( (x + y)t + \frac{\pi}{2} \right) \right]
-$$
+$
 
 Thus, if we multiply the received signal by the transmitted signal, we
 expect two frequency components to appear in the spectrum: one that is
@@ -846,15 +863,15 @@ The transmit signal is a sinusoidal signal with an instantaneous
 frequency that increases linearly with time, as shown in
 Fig. [fig:FMCW waveform](a).
 
-Starting at $f_{min}$, the frequency increases at a rate $S$ Hz/s to
-$f_{max}.$ The frequency is then decreased rapidly back to $f_{min}$
+Starting at $f_{min}$, the frequency increases at a rate $S$ Hz/s to $f_{max}.$
+The frequency is then decreased rapidly back to $f_{min}$
 after which a next frequency sweep occurs.
 
 This signal is radiated by a directional transmit antenna. When the
 wave with propagation velocity $v\approx300\times10^{6}$ m/s (the
 propagation speed of electro-magnetic waves in air is ever-so-slightly
-slower than the speed of light in a vacuum) hits a target at a range
-$R$, the echo will reach the radar after a time
+slower than the speed of light in a vacuum) hits a target at a range $R$,
+the echo will reach the radar after a time
 
 $$t_{d}=\frac{2R}{v}.\label{eq:transit time}$$
 
@@ -863,8 +880,8 @@ sinusoidally fluctuating voltage. The received signal is a replica of
 the transmitted signal, delayed by the transit time $t_{d}$ and is
 shown dashed in Fig. [fig:FMCW waveform](b).
 
-A radar is designed to detect targets up to a maximum range
-$R_{max}$. Echoes from maximum range reach the radar after a transit
+A radar is designed to detect targets up to a maximum range $R_{max}$.
+Echoes from maximum range reach the radar after a transit
 time $t_{dm}$ as shown in Fig. [fig:FMCW waveform](c).
 
 We note that there is a constant difference in frequency between the
@@ -872,9 +889,9 @@ transmitted and received signals and this will be true for all targets
 after time $t_{s}$ until $t_{e}$. We conclude from
 Fig. [fig:FMCW waveform] that the frequency difference is given by
 
-$$f_{d}=S\times t_{d}=\frac{2SR}{v}\label{eq:difference frequency}$$
+$$f_{d}=S\times t_{d}=\frac{2SR}{v}\label{eq:difference frequency},$$
 
-$T_{eff}=t_{e}-t_{s}=\frac{N}{f_{s}}$ is the effective sweep duration
+where $T_{eff}=t_{e}-t_{s}=\frac{N}{f_{s}}$ is the effective sweep duration
 of the radar. The frequency excursion of the sweep during $T_{eff}$ is
 the effective bandwidth of the radar, given by
 
@@ -1036,7 +1053,8 @@ the one we want: ``data['scan']``.  That returns a
 
 - **time** : unsigned 64-bit (8 byte) integer (`np.uint64`)
 - **size** : unsigned 32-bit (4 byte) integer (`np.uint32`)
-- **position** :
+- **position**
+
   - **az** : 32-bit float (`np.float32`)
   - **el** : 32-bit float (`np.float32`)
   - **region_type** : unsigned 8-bit (1 byte) integer (`np.uint8`)
@@ -1081,87 +1099,86 @@ signals reflected by each of several objects.  We need to determine
 each of the constituent components of these composite radar
 signals. The FFT is the tool that will do this for us.
 
-### SIDEBOX: Discrete Fourier transforms
-
-The Discrete Fourier Transform (DFT) converts a sequence of $N$
-equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
-a function $x(t)$ of time (or another variable, depending on the
-application) into a sequence of $N$ complex numbers $X_{k}$ by the
-summation
-
-$$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
-N-1.\label{eq:Forward DFT}$$
-
-With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
-sample values $x_{n}$ through the summation
-
-$$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
-kn/N}.\label{eq:Inverse DFT}$$
-
-Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
-equation shows that the DFT has decomposed the sequence $x_{n}$ into a
-complex discrete Fourier series with coefficients $X_{k}$. Comparing
-the DFT with a continuous complex Fourier series
-
-$$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
-Fourier series}$$
-
-the DFT is a *finite *series with $N$ terms defined at the equally
-spaced discrete instances of the *angle*
-$(\omega_{0}t_{n})=2\pi\frac{k}{N}$ in the interval
-$[0,2\pi)$, i.e. *including* $0$  and *excluding* $2\pi$.
-This automatically normalizes the DFT so that time does
-not appear explicitly in the forward or inverse transform.
-
-If the original function $x(t)$ is limited in frequency to less than
-half of the sampling frequency (the so-called *Nyquist frequency*),
-interpolation between sample values produced by the inverse DFT will
-usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
-limited as such, the inverse DFT can, in general, not be used to
-reconstruct $x(t)$ by interpolation.  Note that this limit does not
-imply that there are *no* methods that can do such a
-reconstruction—see, e.g., compressed sensing, or finite rate of
-innovation sampling.
-
-The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
-discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
-the complex plane. The function $e^{j2\pi kn/N}=w^{kn}$ encircles the
-origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
-sinusoid for which $n=1$.
-
-The way in which we defined the DFT leads to a few subtleties
-when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
-for increasing values of $k$ in Fig. ([fig:wkn values])
-for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from
-$k$ to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When
-$n=1$, the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
-increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
-is precisely once around the circle, the step equates to
-$-\frac{2\pi}{N}$, i.e. in the direction of a negative
-frequency. The components up to $N/2$ represent *positive* frequency
-components, those above $N/2$ up to $N-1$ represent *negative*
-frequencies with frequency. The angle increment for the component
-$N/2$ for $N$ even advances precisely halfway around the circle for
-each increment in $k$ and can therefore be interpreted as either a
-positive or a negative frequency. This component of the DFT represents
-the Nyquist Frequency, i.e. half of the sampling frequency, and is
-useful to orientate oneself when looking at DFT graphics.
+> **Discrete Fourier transforms {.callout}**
+>
+> The Discrete Fourier Transform (DFT) converts a sequence of $N$
+> equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
+> a function $x(t)$ of time (or another variable, depending on the
+> application) into a sequence of $N$ complex numbers $X_{k}$ by the
+> summation
+> 
+> $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
+> N-1.\label{eq:Forward DFT}$$
+> 
+> With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
+> sample values $x_{n}$ through the summation
+> 
+> $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
+> kn/N}.\label{eq:Inverse DFT}$$
+> 
+> Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
+> equation shows that the DFT has decomposed the sequence $x_{n}$ into a
+> complex discrete Fourier series with coefficients $X_{k}$. Comparing
+> the DFT with a continuous complex Fourier series
+> 
+> $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
+> Fourier series}$$
+> 
+> the DFT is a *finite *series with $N$ terms defined at the equally
+> spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
+> in the interval $[0,2\pi)$,
+> i.e. *including* $0$  and *excluding* $3\pi$.
+> This automatically normalizes the DFT so that time does
+> not appear explicitly in the forward or inverse transform.
+> 
+> If the original function $x(t)$ is limited in frequency to less than
+> half of the sampling frequency (the so-called *Nyquist frequency*),
+> interpolation between sample values produced by the inverse DFT will
+> usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
+> limited as such, the inverse DFT can, in general, not be used to
+> reconstruct $x(t)$ by interpolation.  Note that this limit does not
+> imply that there are *no* methods that can do such a
+> reconstruction—see, e.g., compressed sensing, or finite rate of
+> innovation sampling.
+> 
+> The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
+> discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
+> the complex plane. The function $e^{j2\pi kn/N}=w^{kn}$ encircles the
+> origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
+> sinusoid for which $n=1$.
+> 
+> The way in which we defined the DFT leads to a few subtleties
+> when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
+> for increasing values of $k$ in Fig. ([fig:wkn values])
+> for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from $k$
+> to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
+> the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
+> increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
+> is precisely once around the circle, the step equates to $-\frac{2\pi}{N}$,
+> i.e. in the direction of a negative
+> frequency. The components up to $N/2$ represent *positive* frequency
+> components, those above $N/2$ up to $N-1$ represent *negative*
+> frequencies with frequency. The angle increment for the component $N/2$
+> for $N$ even advances precisely halfway around the circle for
+> each increment in $k$ and can therefore be interpreted as either a
+> positive or a negative frequency. This component of the DFT represents
+> the Nyquist Frequency, i.e. half of the sampling frequency, and is
+> useful to orientate oneself when looking at DFT graphics.
+> 
+> The FFT in turn is simply a special and highly efficient algorithm for
+> calculating the DFT. Whereas a straightforward calculation of the DFT
+> takes of the order of $N^{2}$ calculations to compute, the FFT
+> algorithm requires of the order $N\log N$ calculations. The FFT was
+> the key to the wide-spread use of the DFT in real-time applications
+> and was included in a list of the top $10$ algorithms of the $20^{th}$
+> century by the IEEE journal Computing in Science & Engineering in the
+> year $2000$.
+> 
+> ![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
 
 [^odd_N]: We leave it as an exercise for the reader to picture the
           situation for $N$ odd.  In this chapter, all examples use
           even-order DFTs.
-
-The FFT in turn is simply a special and highly efficient algorithm for
-calculating the DFT. Whereas a straightforward calculation of the DFT
-takes of the order of $N^{2}$ calculations to compute, the FFT
-algorithm requires of the order $N\log N$ calculations. The FFT was
-the key to the wide-spread use of the DFT in real-time applications
-and was included in a list of the top $10$ algorithms of the $20^{th}$
-century by the IEEE journal Computing in Science & Engineering in the
-year $2000$.
-
-![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
-
 
 ### Signal properties in the frequency domain
 
@@ -1204,10 +1221,10 @@ plt.show()
 
 Suddenly, the information makes sense!
 
-The plot for $|V_{0}|$ clearly shows a target at component 67, and for
-$|V_\mathrm{sim}|$ shows the targets that produced the signal that was
-uninterpretable in the time domain. The real radar signal,
-$|V_\mathrm{actual}|$ shows a large number of targets between
+The plot for $|V_{0}|$ clearly shows a target at component 67, and
+for $|V_\mathrm{sim}|$ shows the targets that produced the signal that was
+uninterpretable in the time domain. The real radar
+signal, $|V_\mathrm{actual}|$ shows a large number of targets between
 component 400 and 500 with a large peak in component 443. This happens
 to be an echo return from a radar illuminating the high wall of an
 open-cast mine.

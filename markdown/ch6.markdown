@@ -44,8 +44,8 @@ the river, and it remains standing, the enemy's army can come marching through!
 Disaster!
 
 So, in this chapter, we will explore some alternative approaches to graph
-analysis, based on linear algebra. It turns out that we can think of a graph,
-$G$, as an *adjacency matrix*, in which we number the nodes of the graph from $0$
+analysis, based on linear algebra. It turns out that we can think of a graph, $G$,
+as an *adjacency matrix*, in which we number the nodes of the graph from $0$
 to $n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there is
 an edge from node $i$ to node $j$. In other words, if we call the adjacency
 matrix $A$, then $A_{i, j} = 1$ if and only if the link $(i, j)$ is in $G$. We can
@@ -63,9 +63,9 @@ as the *degree matrix*, $D$, which
 contains the degree of each node along the diagonal and zero everywhere else,
 minus the adjacency matrix $A$:
 
-$$
+$
 L = D - A
-$$
+$
 
 We definitely can't fit all of the linear algebra theory needed to understand
 the properties of this matrix, but suffice it to say: it has some *great*
@@ -82,20 +82,20 @@ properties — sometimes seeming even magical!
 As an example, a 3x3 rotation matrix $R$, when multiplied by any
 3-dimensional vector $p$, rotates it $30^\circ$ degrees around the z-axis.  $R$
 will rotate all vectors except for those that lie *on* the z-axis.  For those,
-we'll see no effect, or $Rp = p$, i.e. $Rp = \lambda p$ with eigenvalue
-$\lambda = 1$.
+we'll see no effect, or $Rp = p$, i.e. $Rp = \lambda p$ with
+eigenvalue $\lambda = 1$.
 
 <!-- exercise begin -->
 
 **Exercise:** Consider the rotation matrix
 
-$$
+$
 R = \begin{bmatrix}
   \cos \theta &  -\sin \theta & 0 \\[3pt]
   \sin \theta & \cos \theta & 0\\[3pt]
   0 & 0 & 1\\
 \end{bmatrix}
-$$
+$
 
 When $R$ is multiplied with a 3-dimensional column-vector $p =
 \left[ x\, y\, z \right]^T$, the resulting vector $R p$ is rotated
@@ -129,8 +129,6 @@ print("R @ z-axis:", R @ [0, 0, 1])
 
 R rotates both the x and y axes, but not the z-axis.
 
-----
-
 <!-- solution end -->
 
 <!-- exercise end -->
@@ -140,6 +138,7 @@ How do you draw nodes and links in such a way that you don't get a complete
 mess such as this one?
 
 ![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
+
 **Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
 
 One way is to put nodes that share many links close together. It turns out
@@ -381,8 +380,9 @@ There is one small kink that we must address before proceeding: eigenvectors
 are only defined up to a multiplicative constant. This follows simply from the
 definition of an eigenvector: suppose $v$ is an eigenvector of the matrix $M$,
 with corresponding eigenvalue $\lambda$. Then $\alpha v$ is also an eigenvector
-of $M$ for any scalar number $\alpha$, because
-$Mv = \lambda v$ implies $M(\alpha v) = \lambda (\alpha v)$. So, it is
+of $M$ for any scalar number $\alpha$,
+because $Mv = \lambda v$ implies $M(\alpha v) = \lambda (\alpha v)$.
+So, it is
 arbitrary whether a software package returns $v$ or $-v$ when asked for the
 eigenvectors of $M$. In order to make sure we reproduce the layout from the
 Varshney et al. paper, we must make sure that the vector is pointing in the
@@ -514,8 +514,8 @@ nodes, this is feasible. However, for larger graphs, it would fail.
 
 In what follows, we will analyze the dependency graph for packages in the
 Python Package Index, or PyPI, which contains over 75 thousand packages. To
-hold the Laplacian matrix for this graph would take up
-$8 \left(75 \times 10^3\right)^2 = 45 \times 10^9$ bytes, or 45GB,
+hold the Laplacian matrix for this graph would take 
+up $8 \left(75 \times 10^3\right)^2 = 45 \times 10^9$ bytes, or 45GB,
 of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
 and, say, two temporary matrices used during calculations, you climb up to
 270GB, beyond the reach of most desktop computers.
@@ -586,9 +586,9 @@ Ls = Ds - Cs
 Now we want to get the processing depth. Remember that getting the
 pseudo-inverse of the Laplacian matrix is out of the question, because it will
 be a dense matrix (the inverse of a sparse matrix is not generally sparse
-itself). However, we were actually using the pseudo-inverse to compute a vector
-$z$ that would satisfy $L z = b$, where
-$b = C \odot \textrm{sign}\left(A - A^T\right) \mathbb{1}$.
+itself). However, we were actually using the pseudo-inverse to compute a
+vector $z$ that would satisfy $L z = b$,
+where $b = C \odot \textrm{sign}\left(A - A^T\right) \mathbf{1}$.
 (You can see this in the supplementary material for Varshney *et al*.) With
 dense matrices, we can simply use $z = L^+b$. With sparse ones, though, we can
 use one of the *solvers* in `sparse.linalg.isolve` to get the `z` vector after
@@ -679,9 +679,8 @@ of the so-called *transition matrix*, which contains the links
 between webpages. Suppose you have your vector of importance $\boldsymbol{r}$,
 and your matrix of links $M$. You don't know $\boldsymbol{r}$ yet, but you
 do know that the importance of a page is proportional to the sum of
-importances of the pages that link to it:
-$\boldsymbol{r} = \alpha M \boldsymbol{r}$, or
-$M \boldsymbol{r} = \lambda \boldsymbol{r}$, for $\lambda = 1/\alpha$. That's
+importances of the pages that link to it: $\boldsymbol{r} = \alpha M \boldsymbol{r}$,
+or $M \boldsymbol{r} = \lambda \boldsymbol{r}$, for $\lambda = 1/\alpha$. That's
 just the definition of an eigenvalue!
 
 By ensuring some special properties are satisfied by the transition matrix, we
@@ -712,8 +711,8 @@ Professor Allesina kindly provided us with a few food webs to play around
 with. We've saved one of these, from the St Marks National Wildlife Refuge in
 Florida, in the Graph Markup Language format. The web was
 [described](http://www.sciencedirect.com/science/article/pii/S0304380099000228)
-in 1999 by Robert R. Christian and Joseph J. Luczovich. In the dataset, a node
-$i$ has a link to node $j$ if species $i$ eats species $j$.
+in 1999 by Robert R. Christian and Joseph J. Luczovich. In the dataset, a
+node $i$ has a link to node $j$ if species $i$ eats species $j$.
 
 We'll start by loading in the data, which NetworkX knows how to read trivially:
 
