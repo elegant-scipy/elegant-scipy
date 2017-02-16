@@ -13,29 +13,30 @@ More than just teaching you how to write code that works, we will inspire you to
 In The Rosie Effect (hilarious book; go read its prequel [The Rosie Project](https://en.wikipedia.org/wiki/The_Rosie_Project) when you’re done with Elegant SciPy), Graeme Simsion twists the conventions of the word "elegant" around.
 Most would use it to describe the visual simplicity, style, and grace of, say, the first iPhone.
 Instead Graeme Simsion's hero, Don Tillman, uses a computer algorithm to *define* elegance.
-We hope that you will understand exactly what he means after reading this book.
-That you will read or write a piece of elegant code, and feel calmed in the glow of its beauty and grace.
+We hope that you will understand exactly what he means after reading
+this book; that you will read or write a piece of elegant code, and feel calmed in the glow of its beauty and grace.
 (Note: the authors may be prone to hyperbole.)
-Perhaps you too will compliment your significant other on how their outfit reminds you of that bit of code you saw in Elegant SciPy...
 
-So, what makes code elegant?
-Elegant code is a pleasure to read, use and understand because it is:
+A good piece of code just *feels* right.  When you look at it, its
+intent is *clear*, it is often *concise* (but not so concise as to be
+obscure), and it is *efficient* at executing the task at hand.  For
+the authors, the joy of analysing elegant code lies in the lessons
+hidden within, and the way it inspires us to be *creative* in how we
+approach to coding problems.
 
-* Concise
-* Efficient
-* Clear
-* Creative
+Ironically, creativity can also tempt us to show off cleverness at the
+expense of the reader, and write obtuse code that is hard to
+understand.  PEP8 (the Python style guide) and PEP20 (the Zen of
+Python) reminds us that "code is read much more often than it is
+written" and therefore "readability counts".
 
-The conciseness of elegant code comes through abstraction and functions, *not* just through packing in a bunch of nested function calls!
+The conciseness of elegant code comes through abstraction and the
+judicious use of functions, *not* just through packing in a bunch of nested function calls!
 It may take a minute or two to grok, but it should ultimately provide a crisp, "ah-ha!" moment of understanding.
 Once you know the various components of the code, its correctness should be
-obvious!
+obvious.
 This can be aided by clear variable and function names, and carefully crafted comments that *explain* the code, rather than merely *describe* it.
 
-Creativity should support the first three goals.
-Creativity for its own sake can lead to obtuse code that is hard to understand.
-Make sure you are not showing off your cleverness, at the expense of your
-reader!
 In the New York Times, software engineer J. Bradford Hipps [recently
 argued](http://www.nytimes.com/2016/05/22/opinion/sunday/to-write-software-read-novels.html)
 that "to write better code, [one should] read Virginia Woolf":
