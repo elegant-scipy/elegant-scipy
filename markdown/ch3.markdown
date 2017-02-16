@@ -176,7 +176,7 @@ def overlay_grid(image, spacing=128):
     pass  # replace this line with your code...
     return image_gridded
 
-# plt.imshow(overlay_grid(astro, 128));  # ... and uncomment this line to test your function
+# plt.imshow(overlay_grid(astro, 128)); # uncomment this line to test your function
 ```
 
 <!-- solution begin -->

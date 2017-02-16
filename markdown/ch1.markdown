@@ -402,7 +402,8 @@ the index of the pandas table to be the gene names in the first column.
 # Import gene lengths
 filename = 'data/genes.csv'
 with open(filename, 'rt') as f:
-    gene_info = pd.read_csv(f, index_col=0) # Parse file with pandas, index by GeneSymbol
+    # Parse file with pandas, index by GeneSymbol
+    gene_info = pd.read_csv(f, index_col=0)
 print(gene_info.iloc[:5, :])
 ```
 
@@ -432,7 +433,8 @@ Now let's use the intersection of the gene names to index our count data.
 counts = np.asarray(data_table.loc[matched_index], dtype=int)
 
 # Check how many genes and individuals were measured
-print("{0} genes measured in {1} individuals".format(counts.shape[0], counts.shape[1]))
+print("{0} genes measured in {1} individuals".format(counts.shape[0],
+        counts.shape[1]))
 ```
 
 And our gene lengths.
@@ -528,7 +530,8 @@ We say that these individuals have different library sizes.
 ```python
 # Subset data for plotting
 np.random.seed(seed=7) # Set seed so we will get consistent results
-samples_index = np.random.choice(range(counts.shape[1]), size=70, replace=False) # Randomly select 70 samples
+# Randomly select 70 samples
+samples_index = np.random.choice(range(counts.shape[1]), size=70, replace=False)
 counts_subset = counts[:,samples_index]
 ```
 
@@ -582,9 +585,10 @@ plt.show()
 Now let's see what happens when we normalize by library size.
 
 ```python
-# normalize by library size
+# Normalize by library size
 # Divide the expression counts by the total counts for that individual
-counts_lib_norm = counts / total_counts * 1000000 # Multiply by 1 million to get things back in a similar scale
+# Multiply by 1 million to get things back in a similar scale
+counts_lib_norm = counts / total_counts * 1000000
 # Notice how we just used broadcasting twice there!
 counts_subset_lib_norm = counts_lib_norm[:,samples_index]
 
@@ -1029,7 +1033,8 @@ Let's choose a short gene and a long gene and compare their counts before and af
 ```python
 genes2_idx = [80, 186]
 genes2_lengths = gene_lengths[genes2_idx]
-genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]), 'Gene B, {}bp'.format(genes2_lengths[1])]
+genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]),
+                    'Gene B, {}bp'.format(genes2_lengths[1])]
 
 log_counts_2 = list(np.log(counts[genes2_idx] + 1))
 log_ncounts_2 = list(np.log(counts_rpkm[genes2_idx] + 1))
