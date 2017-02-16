@@ -435,6 +435,7 @@ regions of the brain!
            original, *not* the previously split result.  A correct
            approach is explained in detail in Newman (2006).
 
+<div class="landscape">
 <table style="font-size: 50%;">
 <colgroup>
 <col width="2%" />
@@ -544,7 +545,7 @@ regions of the brain!
 </tr>
 </tbody>
 </table>
-
+</div>
 
 ## Applications of sparse matrices: image transformations
 
