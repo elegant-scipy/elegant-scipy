@@ -27,7 +27,7 @@ approach to coding problems.
 Ironically, creativity can also tempt us to show off cleverness at the
 expense of the reader, and write obtuse code that is hard to
 understand.  PEP8 (the Python style guide) and PEP20 (the Zen of
-Python) reminds us that "code is read much more often than it is
+Python) remind us that "code is read much more often than it is
 written" and therefore "readability counts".
 
 The conciseness of elegant code comes through abstraction and the
@@ -160,102 +160,90 @@ Although this book will focus on NumPy and SciPy,
 it is the many surrounding packages that make Python a powerhouse for
 scientific computing.
 
-
-## The Great Cataclysm: Python 2 vs. Python 3
-
-In your Python travels, you may have already heard a few rumblings about which version of Python is better.
-You may have wondered why it's not just the latest version.
-
-At the end of 2008, the Python core developers released Python 3.0, a major update to Python with better Unicode (international) text handling, type consistency, and streaming data handling, among other improvements.
-To quote Douglas Adams in The Hitchhiker's Guide to the Galaxy, "this has made
-a lot of people very angry and been widely regarded as a bad move."
-
-In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python 3.x without at least some modification.
-There will always be a tension between the march of progress and backwards compatibility.
-In this case, the Python core team decided that a clean break was needed to eliminate some inconsistencies in Python, and move it forward into the twenty-first century.
-(Python 1.0 appeared in 1994, more than 20 years ago; a lifetime in the tech world.)
-
-Here's one way in which Python has improved in turning 3:
-
-```
-print "Hello World!"   # Python 2 print statement
-print("Hello World!")  # Python 3 print function
-```
-
-So what, right?
-Why cause such a fuss just to add some parentheses!
-Well, true, but what if you want to instead print to a different *stream*, such as *standard error*, the usual place for debugging information?
-
-```
-print >>sys.stderr, "fatal error"  # Python 2
-print("fatal error", file=sys.stderr)  # Python 3
-```
-
-Ah, that looks a bit more worthwhile.
-What the hell is going on in that Python 2 statement?
-The authors don't rightly know.
-
-Another change is the way Python 3 treats integer division, which is the way most humans treat division.
-(Note `>>>` indicates we are typing at the Python interactive shell.)
-
-```
-# Python 2
->>> 5 / 2
-2
-# Python 3
->>> 5 / 2
-2.5
-```
-
-We were also pretty excited about the new `@` *matrix multiplication* operator introduced in Python 3.5 in 2015.
-Check out chapters 5 and 6 for some examples of this operator in use!
-
-Possibly the biggest improvement in Python 3 is its support for Unicode, a way of encoding text that allows one to use not just the English alphabet, but any alphabet in the world.
-Python 2 allowed you to define a Unicode string, like so:
-
-```python
-beta = u"β"
-```
-
-But in Python 3, *everything* is Unicode:
-
-```python
-β = 0.5
-print(2 * β)
-```
-
-The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
-This is especially true now, when most new coders are from non-English-speaking countries.
-For the sake of interoperability, we still recommend using English characters in most code, but this capability can come in handy, for example, in math-heavy Jupyter notebooks.
-
-Nevertheless, the Python 3 update broke a lot existing code.
-Adding insult to injury, to date, much Python 3 code runs slower than the equivalent Python 2 program — even when many already complained that Python was too slow.
-That's certainly not motivating for someone who has to put work in to make their library work in Python 3, and it's left many continuing to use Python 2.7, refusing to upgrade.
-
-Given the divided state of the community, many developers now write code that is compatible with both Python 2 and 3.
-
-New learners should use Python 3.
-It is the future of the language, and there is no sense in adding to the dead weight of Python 2 code littering the interwebs (including much from your authors!).
-In Elegant SciPy, we use Python 3.5.
-
-If you *must* use Python 2, you can make most of the code in this book
-compatible with Python 2 by using a built-in compatibility module called
-`__future__`, as well as a third-party compatibility library called `six`
-(because 2 times 3 equals six! Get it? Yeah, okay, neither do we).
-You can use them by placing the following imports at the start of the code:
-
-```
-from __future__ import division, print_function
-from six.moves import zip, map, range, filter
-```
-
-A word of warning for Python 2.7 enthusiasts: chapters 5 and 6 rely heavily on the new `@` *matrix multiplication* operator (mentioned above), which is only available in Python 3.5+.
-Trying to use `@` in earlier version of Python will give you a nasty syntax error.
-To make the code in these chapters work with Python 2.7 you will have to use the `.dot` method of NumPy arrays and SciPy matrices, which is decidedly inelegant.
-More on how to do this in chapter 5.
-
-For more reading, check out Ed Schofield's resource, python-future.org,
-and Nick Coghlan's [book-length guide](http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html) on the transition.
+> **The Great Cataclysm: Python 2 vs. Python 3 {.callout}**
+> 
+> In your Python travels, you may have already heard a few rumblings about which version of Python is better.
+> You may have wondered why it's not just the latest version.
+> 
+> At the end of 2008, the Python core developers released Python 3.0, a
+> major update to Python with better Unicode (international) text
+> handling, type consistency, and streaming data handling, among other
+> improvements.
+> 
+> In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python
+> 3.x without at least some modification (although the changes are
+> typically not too invasive).
+> 
+> There is always a tension between the march of progress and backwards
+> compatibility.  In this case, the Python core team decided that a
+> clean break was needed to eliminate some inconsistencies, especially
+> in the underlying C API, and move the language forward into the
+> twenty-first century (Python 1.0 appeared in 1994, more than 20 years
+> ago; a lifetime in the tech world).
+> 
+> Here's one way in which Python has improved in turning 3:
+> 
+> ```
+> print "Hello World!"   # Python 2 print statement
+> print("Hello World!")  # Python 3 print function
+> ```
+> 
+> Why cause such a fuss just to add some parentheses!
+> Well, true, but what if you want to instead print to a different *stream*, such as *standard error*, the usual place for debugging information?
+> 
+> ```
+> print >>sys.stderr, "fatal error"  # Python 2
+> print("fatal error", file=sys.stderr)  # Python 3
+> ```
+> 
+> That already makes it look more worthwhile.
+> 
+> Another change is the way Python 3 treats integer division, which is the way most humans treat division.
+> (Note `>>>` indicates we are typing at the Python interactive shell.)
+> 
+> ```
+> # Python 2
+> >>> 5 / 2
+> 2
+> # Python 3
+> >>> 5 / 2
+> 2.5
+> ```
+> 
+> We were also pretty excited about the new `@` *matrix multiplication* operator introduced in Python 3.5 in 2015.
+> Check out chapters 5 and 6 for some examples of this operator in use!
+> 
+> Possibly the biggest improvement in Python 3 is its support for Unicode, a way of encoding text that allows one to use not just the English alphabet, but any alphabet in the world.
+> Python 2 allowed you to define a Unicode string, like so:
+> 
+> ```python
+> beta = u"β"
+> ```
+> 
+> But in Python 3, *everything* is Unicode:
+> 
+> ```python
+> β = 0.5
+> print(2 * β)
+> ```
+> 
+> The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
+> This is especially true now, when most new coders are from non-English-speaking countries.
+> For the sake of interoperability, we still recommend using English characters in most code, but this capability can come in handy, for example, in math-heavy Jupyter notebooks.
+> 
+> The Python 3 update also breaks a lot of existing 2.x code, and in some
+> cases executes more slowly than before.  Despite these frustrations,
+> we encourage all users to upgrade as soon as possible (Python 2.x is
+> now in maintenance only mode until 2020), as we hope to see most
+> issues addressed as the 3.x series matures.
+> 
+> New learners should start with Python 3.
+> It is the future of the language, and there is no sense in adding to the dead weight of Python 2 code littering the interwebs (including much from your authors!).
+> In Elegant SciPy, we use Python 3.5.
+> 
+> For more reading, see Ed Schofield's resource, [python-future.org](python-future.org),
+> and Nick Coghlan's book-length guide to the transition ([http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html](http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html)).
+>
 
 ## SciPy Ecosystem and Community
 
@@ -266,14 +254,13 @@ It has launched a vast number of related libraries that build on this functional
 The creators of these libraries, and many of their users, gather at many events and conferences around the world.
 These include the yearly SciPy conference in Austin (USA), EuroSciPy, SciPy India, PyData and others.
 We highly recommend attending one of these, and meeting the authors of the best scientific software in the Python world.
-If you can't get there, or simply want a taste of these conferences, many [publish their talks online](https://www.youtube.com/user/EnthoughtMedia/playlists).
+If you can't get there, or simply want a taste of these conferences,
+many publish their talks online (see, e.g., [https://www.youtube.com/user/EnthoughtMedia/playlists](https://www.youtube.com/user/EnthoughtMedia/playlists)).
 
 ### Free and open-source software (FOSS)
 
 The SciPy community embraces open source software development.
 The source code for nearly all SciPy libraries is freely available to read, edit and reuse by anyone.
-
-So, why open?
 
 If you want others to use your code, one of the best ways to achieve this is to make it free and open.
 If you use closed source software, but it doesn't do exactly what you want to achieve, you're out of luck.
@@ -447,13 +434,13 @@ See the the book [GitHub repository](https://github.com/elegant-scipy/elegant-sc
 
 ### Accessing the book materials
 
-All of the code from this book is available on our [GitHub repository](https://github.com/elegant-scipy/elegant-scipy).
+All of the code from this book is available on our GitHub repository: [https://github.com/elegant-scipy/elegant-scipy](https://github.com/elegant-scipy/elegant-scipy)
 
 ## Diving in
 
 We've brought together some of the most elegant code offered up by the SciPy community.
-Along the way we are going to explore some real-world scientific problems that SciPy can solve.
-This book is also a glimpse into a welcoming scientific coding community that wants you to join in.
+Along the way we are going to explore some real-world scientific problems that SciPy solves.
+This book is also a glimpse into a welcoming, collaborative scientific coding community that wants you to join in.
 
 Welcome to Elegant SciPy.
 
