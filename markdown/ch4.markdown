@@ -1504,7 +1504,7 @@ coords = np.column_stack((el.flat, az.flat, r.flat))
 ```
 
 Taking these coordinates, we project them onto the plane (by dropping
-the range coordinate), and perform a Delaunay tesslation.  The
+the range coordinate), and perform a Delaunay tesselation.  The
 tesselation returns a set of indices into our coordinates that define
 triangles (or simplices).  While the triangles are strictly speaking
 defined on the projected coordinates, we use our original coordinates
