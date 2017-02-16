@@ -27,8 +27,8 @@ def variation_of_information(x, y):
     Pxy.data /= np.sum(Pxy.data)
 
     # compute marginal probabilities, converting to array
-    px = Pxy.sum(axis=1).A
-    py = Pxy.sum(axis=0).A
+    px = Pxy.sum(axis=1).A.ravel()
+    py = Pxy.sum(axis=0).A.ravel()
 
     # use sparse matrix linear algebra to compute VI
     Px_inv = sparse.diags(invert_nonzero(px).T, [0])
@@ -308,6 +308,12 @@ itself, bringing a computer to its knees, in just three keystrokes!
 s_coo.A
 ```
 
+In this chapter, and elsewhere, we recommend using the `toarray()` method
+wherever it does not impair readability, as it more clearly signals a
+potentially expensive operation. However, we will use `.A` where it makes
+the code more readable by virtue of its brevity (for example, when trying to
+implement a sequence of mathematical equations).
+
 <!-- exercise begin -->
 
 **Exercise:** write out the COO representation of the following matrix:
@@ -355,7 +361,7 @@ and:
 
 ```python
 s2_coo1 = sparse.coo_matrix((s2_data, (s2_row, s2_col)))
-print(s2_coo1.A)
+print(s2_coo1.toarray())
 ```
 
 <!-- solution end -->
@@ -842,7 +848,7 @@ made for both the earliest entry encountered, or the latest, but what was in
 fact chosen is the *sum*:
 
 ```python
-print(S.A)
+print(S.toarray())
 ```
 
 So, COO format will sum together repeated entries... Which is exactly what we
@@ -860,7 +866,7 @@ def confusion_matrix(pred, gt):
     return cont
 ```
 
-To look at a small one, we simply use the `.A` property, as above:
+To look at a small one, we simply use the `.toarray` method, as above:
 
 ```python
 cont = confusion_matrix(pred, gt)
@@ -868,7 +874,7 @@ print(cont)
 ```
 
 ```python
-print(cont.A)
+print(cont.toarray())
 ```
 
 It works!
@@ -899,7 +905,7 @@ Let's make sure it still works as expected:
 
 ```python
 cont = confusion_matrix(pred, gt)
-print(cont.A)
+print(cont.toarray())
 ```
 
 Boom. Instead of making an array as big as the original data, we just make
@@ -951,7 +957,7 @@ Some indices appear more than once, but we can use the summing feature of the
 COO format to confirm that this represents the matrix we want:
 
 ```python
-print(cont.A)
+print(cont.toarray())
 ```
 
 Segmentation is a hard problem, so it's important to measure how well a
@@ -1212,7 +1218,7 @@ predicting spam:
 ```python
 cont = sparse.coo_matrix((np.broadcast_to(1., aseg.size),
                           (aseg.ravel(), gt.ravel())))
-cont = np.asarray(cont.A)
+cont = cont.toarray()
 cont
 ```
 
