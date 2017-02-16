@@ -20,9 +20,9 @@ this book; that you will read or write a piece of elegant code, and feel calmed 
 A good piece of code just *feels* right.  When you look at it, its
 intent is *clear*, it is often *concise* (but not so concise as to be
 obscure), and it is *efficient* at executing the task at hand.  For
-the authors, the joy of analysing elegant code lies in the lessons
+the authors, the joy of analyzing elegant code lies in the lessons
 hidden within, and the way it inspires us to be *creative* in how we
-approach to coding problems.
+approach new coding problems.
 
 Ironically, creativity can also tempt us to show off cleverness at the
 expense of the reader, and write obtuse code that is hard to
@@ -160,90 +160,92 @@ Although this book will focus on NumPy and SciPy,
 it is the many surrounding packages that make Python a powerhouse for
 scientific computing.
 
-> **The Great Cataclysm: Python 2 vs. Python 3 {.callout}**
-> 
-> In your Python travels, you may have already heard a few rumblings about which version of Python is better.
-> You may have wondered why it's not just the latest version.
-> 
-> At the end of 2008, the Python core developers released Python 3.0, a
-> major update to Python with better Unicode (international) text
-> handling, type consistency, and streaming data handling, among other
-> improvements.
-> 
-> In most cases, Python 2.6 or 2.7 code cannot be interpreted by Python
-> 3.x without at least some modification (although the changes are
-> typically not too invasive).
-> 
-> There is always a tension between the march of progress and backwards
-> compatibility.  In this case, the Python core team decided that a
-> clean break was needed to eliminate some inconsistencies, especially
-> in the underlying C API, and move the language forward into the
-> twenty-first century (Python 1.0 appeared in 1994, more than 20 years
-> ago; a lifetime in the tech world).
-> 
-> Here's one way in which Python has improved in turning 3:
-> 
-> ```
-> print "Hello World!"   # Python 2 print statement
-> print("Hello World!")  # Python 3 print function
-> ```
-> 
-> Why cause such a fuss just to add some parentheses!
-> Well, true, but what if you want to instead print to a different *stream*, such as *standard error*, the usual place for debugging information?
-> 
-> ```
-> print >>sys.stderr, "fatal error"  # Python 2
-> print("fatal error", file=sys.stderr)  # Python 3
-> ```
-> 
-> That already makes it look more worthwhile.
-> 
-> Another change is the way Python 3 treats integer division, which is the way most humans treat division.
-> (Note `>>>` indicates we are typing at the Python interactive shell.)
-> 
-> ```
-> # Python 2
-> >>> 5 / 2
-> 2
-> # Python 3
-> >>> 5 / 2
-> 2.5
-> ```
-> 
-> We were also pretty excited about the new `@` *matrix multiplication* operator introduced in Python 3.5 in 2015.
-> Check out chapters 5 and 6 for some examples of this operator in use!
-> 
-> Possibly the biggest improvement in Python 3 is its support for Unicode, a way of encoding text that allows one to use not just the English alphabet, but any alphabet in the world.
-> Python 2 allowed you to define a Unicode string, like so:
-> 
-> ```python
-> beta = u"β"
-> ```
-> 
-> But in Python 3, *everything* is Unicode:
-> 
-> ```python
-> β = 0.5
-> print(2 * β)
-> ```
-> 
-> The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
-> This is especially true now, when most new coders are from non-English-speaking countries.
-> For the sake of interoperability, we still recommend using English characters in most code, but this capability can come in handy, for example, in math-heavy Jupyter notebooks.
-> 
-> The Python 3 update also breaks a lot of existing 2.x code, and in some
-> cases executes more slowly than before.  Despite these frustrations,
-> we encourage all users to upgrade as soon as possible (Python 2.x is
-> now in maintenance only mode until 2020), as we hope to see most
-> issues addressed as the 3.x series matures.
-> 
-> New learners should start with Python 3.
-> It is the future of the language, and there is no sense in adding to the dead weight of Python 2 code littering the interwebs (including much from your authors!).
-> In Elegant SciPy, we use Python 3.5.
-> 
-> For more reading, see Ed Schofield's resource, [python-future.org](python-future.org),
-> and Nick Coghlan's book-length guide to the transition ([http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html](http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html)).
->
+## The Great Cataclysm: Python 2 vs. Python 3
+
+In your Python travels, you may have already heard a few rumblings about which version of Python is better.
+You may have wondered why it's not just the latest version.
+
+At the end of 2008, the Python core developers released Python 3.0, a
+major update to Python with better Unicode (international) text
+handling, type consistency, and streaming data handling, among other
+improvements.  But in most cases, Python 2.6 or 2.7 code cannot be interpreted by Python
+3.x without at least some modification (although the changes are
+typically not too invasive).
+
+There is always a tension between the march of progress and backwards
+compatibility.  In this case, the Python core team decided that a
+clean break was needed to eliminate some inconsistencies, especially
+in the underlying C API, and move the language forward into the
+twenty-first century (Python 1.0 appeared in 1994, more than 20 years
+ago; a lifetime in the tech world).
+
+Here's one way in which Python has improved in turning 3:
+
+```
+print "Hello World!"   # Python 2 print statement
+print("Hello World!")  # Python 3 print function
+```
+
+Why cause such a fuss just to add some parentheses!
+Well, true, but what if you want to instead print to a different *stream*, such as *standard error*, the usual place for debugging information?
+
+```
+print >>sys.stderr, "fatal error"  # Python 2
+print("fatal error", file=sys.stderr)  # Python 3
+```
+
+That change certainly seems worthwhile; and what is going on in the
+Python 2 version anyway?  The authors don't rightly know.
+
+Another change is the way Python 3 treats integer division, which is the way most humans treat division.
+(Note `>>>` indicates we are typing at the Python interactive shell.)
+
+```
+# Python 2
+>>> 5 / 2
+2
+# Python 3
+>>> 5 / 2
+2.5
+```
+
+We were also pretty excited about the new `@` *matrix multiplication* operator introduced in Python 3.5 in 2015.
+Check out chapters 5 and 6 for some examples of this operator in use!
+
+Possibly the biggest improvement in Python 3 is its support for Unicode, a way of encoding text that allows one to use not just the English alphabet, but any alphabet in the world.
+Python 2 allowed you to define a Unicode string, like so:
+
+```python
+beta = u"β"
+```
+
+But in Python 3, *everything* is Unicode:
+
+```python
+β = 0.5
+print(2 * β)
+```
+
+The Python core team decided, rightly, that it was worth supporting characters from all languages as first-class citizens in Python code.
+This is especially true now, when most new coders are from non-English-speaking countries.
+For the sake of interoperability, we still recommend using English
+characters in most code, but this capability can come in handy, for
+example, in math-heavy Jupyter notebooks[^jupyter-latex-tip].
+
+[^jupyter-latex-tip]: Tip: In the Jupyter notebook, type a LaTeX symbol name
+    followed by the TAB key to have it expanded to unicode.  For
+    example, `\beta<TAB>` becomes β.
+
+The Python 3 update also breaks a lot of existing 2.x code, and in some
+cases executes more slowly than before.  Despite these frustrations,
+we encourage all users to upgrade as soon as possible (Python 2.x is
+now in maintenance only mode until 2020), as we hope to see most
+issues addressed as the 3.x series matures.
+
+In Elegant SciPy, we use **Python 3.5**.
+
+For more reading, see Ed Schofield's resource, [python-future.org](python-future.org),
+and Nick Coghlan's book-length guide to the transition ([http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html](http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html)).
 
 ## SciPy Ecosystem and Community
 
