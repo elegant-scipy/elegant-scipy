@@ -4,7 +4,7 @@ channels:
 dependencies:
 - python=3.5*
 - numpy=1.11*
-- matplotlib=1.5*
+- matplotlib=2.0.0*
 - pandas=0.18*
 - scipy=0.18*
 - scikit-learn=0.17*
@@ -16,7 +16,10 @@ dependencies:
 - toolz=0.8*
 - six=1.10*
 - beautifulsoup4=4.4*
-- seaborn=0.7*
+- pillow
+- lxml
 - pip:
   # not available on conda, so use pip
-  - notedown==1.5
+  - notedown>=1.5
+  - jupytercontrib>=0.0.5
+  - bs4
