@@ -20,15 +20,15 @@ the *variation of information*, which measures the differences between
 segmentations.
 
 ```python
-def vi(x, y):
+def variation_of_information(x, y):
     # compute contingency matrix, aka joint probability matrix
     Pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
                             dtype=float).tocsr()
     Pxy.data /= np.sum(Pxy.data)
 
     # compute marginal probabilities, converting to array
-    px = Pxy.sum(axis=1).A
-    py = Pxy.sum(axis=0).A
+    px = Pxy.sum(axis=1).A.ravel()
+    py = Pxy.sum(axis=0).A.ravel()
 
     # use sparse matrix linear algebra to compute VI
     Px_inv = sparse.diags(invert_nonzero(px).T, [0])
@@ -252,7 +252,7 @@ efficiently represent sparse matrices.
 ## scipy.sparse data formats
 
 We covered the internal data format of NumPy arrays in Chapter 1.
-I hope you agree that it's a fairly intuitive, and, in some sense, inevitable
+We hope you agree that it's a fairly intuitive, and, in some sense, inevitable
 format to hold n-dimensional array data.
 For sparse matrices, there are actually a wide array of possible formats, and
 the "right" format depends on the problem you want to solve.
@@ -290,13 +290,29 @@ col = np.array([0, 2, 1])
 s_coo = sparse.coo_matrix((data, (row, col)))
 ```
 
-The `.todense()` method of every sparse format in `scipy.sparse` returns a
-numpy array representation of the sparse data.
+The `.toarray()` method of every sparse format in `scipy.sparse` returns a
+NumPy array representation of the sparse data.
 We can use this to check that we created `s_coo` correctly:
 
 ```python
-s_coo.todense()
+s_coo.toarray()
 ```
+
+Identically, we can use the `.A` *property*, which is just like an attribute,
+but actually executes a function. `.A` is a particularly dangerous property,
+because it can hide a potentially very large operation: the dense version
+of a sparse matrix can be orders of magnitude bigger than the sparse matrix
+itself, bringing a computer to its knees, in just three keystrokes!
+
+```python
+s_coo.A
+```
+
+In this chapter, and elsewhere, we recommend using the `toarray()` method
+wherever it does not impair readability, as it more clearly signals a
+potentially expensive operation. However, we will use `.A` where it makes
+the code more readable by virtue of its brevity (for example, when trying to
+implement a sequence of mathematical equations).
 
 <!-- exercise begin -->
 
@@ -345,7 +361,7 @@ and:
 
 ```python
 s2_coo1 = sparse.coo_matrix((s2_data, (s2_row, s2_col)))
-print(s2_coo1.todense())
+print(s2_coo1.toarray())
 ```
 
 <!-- solution end -->
@@ -393,7 +409,7 @@ indptr = [0, 1, 5, 6, 7, 9]
 ```
 
 Let's use these hand-computed arrays to build a CSR matrix in SciPy.
-We can check our work by comparing the `.todense()` output from our COO and
+We can check our work by comparing the `.A` output from our COO and
 CSR representations to the numpy array `s2` that we defined earlier.
 
 ```python
@@ -403,9 +419,9 @@ coo = sparse.coo_matrix((data, (row, col)))
 csr = sparse.csr_matrix((data, col, indptr))
 
 print('The COO and CSR arrays are equal: ',
-      np.all(coo.todense() == csr.todense()))
+      np.all(coo.A == csr.A))
 print('The CSR and NumPy arrays are equal: ',
-      np.all(s2 == csr.todense()))
+      np.all(s2 == csr.A))
 ```
 
 The ability to store large, sparse matrices is incredibly powerful!
@@ -613,25 +629,11 @@ point approximation error:
 print(H @ H @ H @ point)
 ```
 
-Now, we will build a function that defines a "sparse operator".  The
-goal of the sparse operator is to take all pixels of the output image,
-figure out where they came from in the input image and, doing the
-appropriate (bi-linear) interpolation, calculate their values. It does this
-using just matrix multiplication on the image values, and
-thus is extremely fast.
-
-It will be used as follows:
-
-```
-## Turn input image into a vector
-input_flat = input_image.ravel()
-
-## Multiply input image by sparse operator
-out_flat = input_flat @ Sparse_operator
-
-## Reshape output vector back into an image of the same shape as the input
-out_image = out_flat.reshape(input_flat.shape)
-```
+Now, we will build a function that defines a "sparse operator".  The goal of
+the sparse operator is to take all pixels of the output image, figure out where
+they came from in the input image and, doing the appropriate (bi-linear)
+interpolation (see figure), calculate their values. It does this using just
+matrix multiplication on the image values, and thus is extremely fast.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg"/>
 
@@ -662,8 +664,9 @@ def homography(tf, image_shape):
 
     m, n = image_shape
 
-    # We are going to construct a COO matrix, for which we'll need I
-    # (row coordinates), col (column coordinates), and K (values)
+    # We are going to construct a COO matrix, often called IJK matrix,
+    # for which we'll need row coordinates (I), column coordinates (J),
+    # and values (K).
     row, col, values = [], [], []
 
     # For each pixel in the output image...
@@ -846,7 +849,7 @@ made for both the earliest entry encountered, or the latest, but what was in
 fact chosen is the *sum*:
 
 ```python
-print(S.todense())
+print(S.toarray())
 ```
 
 So, COO format will sum together repeated entries... Which is exactly what we
@@ -864,7 +867,7 @@ def confusion_matrix(pred, gt):
     return cont
 ```
 
-To look at a small one, we simply use the `.todense()` method, which returns the numpy array corresponding to that matrix:
+To look at a small one, we simply use the `.toarray` method, as above:
 
 ```python
 cont = confusion_matrix(pred, gt)
@@ -872,7 +875,7 @@ print(cont)
 ```
 
 ```python
-print(cont.todense())
+print(cont.toarray())
 ```
 
 It works!
@@ -903,7 +906,7 @@ Let's make sure it still works as expected:
 
 ```python
 cont = confusion_matrix(pred, gt)
-print(cont.todense())
+print(cont.toarray())
 ```
 
 Boom. Instead of making an array as big as the original data, we just make
@@ -955,7 +958,7 @@ Some indices appear more than once, but we can use the summing feature of the
 COO format to confirm that this represents the matrix we want:
 
 ```python
-print(cont.todense())
+print(cont.toarray())
 ```
 
 Segmentation is a hard problem, so it's important to measure how well a
@@ -1216,7 +1219,7 @@ predicting spam:
 ```python
 cont = sparse.coo_matrix((np.broadcast_to(1., aseg.size),
                           (aseg.ravel(), gt.ravel())))
-cont = np.asarray(cont.todense())
+cont = cont.toarray()
 cont
 ```
 
@@ -1285,7 +1288,7 @@ xlog1x(a)
 ```python
 mat = sparse.csr_matrix([[0.125, 0.125, 0.25,    0],
                          [0.125, 0.125,    0, 0.25]])
-xlog1x(mat).todense()
+xlog1x(mat).A
 ```
 
 So, the conditional entropy of $S$ given $T$:
@@ -1320,20 +1323,6 @@ import numpy as np
 from scipy import sparse
 
 
-def diag(arr):
-    """Return a diagonal square matrix with `arr` as its nonzero elements.
-
-    Parameters
-    ----------
-    arr : array
-        The input array.
-
-    Returns
-    -------
-    D : the output matrix
-    """
-
-
 def invert_nonzero(arr):
     arr_inv = arr.copy()
     nz = np.nonzero(arr)
@@ -1341,7 +1330,7 @@ def invert_nonzero(arr):
     return arr_inv
 
 
-def vi(x, y):
+def variation_of_information(x, y):
 
     # Compute the joint probability matrix
     ones = np.broadcast_to(1., x.size)
@@ -1371,7 +1360,7 @@ We can check that this gives the right value (1) for the VI of our toy `aseg`
 and `gt`:
 
 ```python
-vi(aseg, gt)
+variation_of_information(aseg, gt)
 ```
 
 You can see how we use three types of sparse matrices (COO, CSR, and diagonal)
@@ -1384,26 +1373,6 @@ automated segmentation of an image.
 You may remember our friendly stalking tiger from chapter 3.
 (If you don't, you might want to work on your threat-assessment skills!)
 Using our skills from chapter 3, we're going to generate a number of possible ways of segmenting the tiger image, and then figure out the best one.
-
-[Ed note: Tiger image and segmentation licensed for "non-commercial research and educational purposes"?.
-May need to ask permission to use in the book. See: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/]
-
-S: Note to self: the outline image can also be read from the archive at
-
-https://github.com/BIDS/BSDS500/blob/master/BSDS500/data/groundTruth/train/108073.mat
-
-and then loaded using
-
-```
-from scipy import io
-f = io.loadmat('108073.mat')
-outline = f['groundTruth'][0, 3]['Boundaries'][0, 0]
-# ^ 3 refers to third segmentation, the one previously used in this
-example
-
-# I can also convert all the .mat files in the archive to .png files,
-# if needed
-```
 
 
 ```python
@@ -1534,11 +1503,11 @@ Using all our sparse matrix skills, we can calculate the *variation of informati
 
 
 ```python
-vi(auto_seg_10, human_seg)
+variation_of_information(auto_seg_10, human_seg)
 ```
 
 ```python
-vi(auto_seg_40, human_seg)
+variation_of_information(auto_seg_40, human_seg)
 ```
 
 The high threshold has a smaller variation of information, so it's a better segmentation!
@@ -1548,7 +1517,7 @@ Now we can calculate the VI for a range of possible thresholds and see which one
 # Try many thresholds
 def vi_at_threshold(seg, tiger, human_seg, threshold):
     auto_seg = RAG_segmentation(seg, tiger, threshold)
-    return vi(auto_seg, human_seg)
+    return variation_of_information(auto_seg, human_seg)
 
 thresholds = range(0,110,10)
 vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold)
