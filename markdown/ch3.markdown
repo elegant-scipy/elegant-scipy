@@ -1,8 +1,5 @@
 # Networks of Image Regions with ndimage
 
-**Code by Vighnesh Birodkar.**
-**Nominated by Juan Nunez-Iglesias.**
-
 > **The origins of Elegant SciPy {.callout}**
 >
 > (A note from Juan.)  
