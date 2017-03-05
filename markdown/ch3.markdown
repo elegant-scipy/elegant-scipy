@@ -766,13 +766,13 @@ survival = 1 - cumfreq
 Then, plot using Matplotlib:
 
 ```python
-plt.loglog(np.arange(1, len(survival) + 1), survival)
-plt.xlabel('in-degree distribution')
-plt.ylabel('fraction of neurons with higher in-degree distribution')
-plt.scatter(avg_in_degree, 0.0022, marker='v')
-plt.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
-plt.ylim(0.002, 1.0)
-plt.show()
+fig, ax = plt.subplots()
+ax.loglog(np.arange(1, len(survival) + 1), survival)
+ax.set_xlabel('in-degree distribution')
+ax.set_ylabel('fraction of neurons with higher in-degree distribution')
+ax.scatter(avg_in_degree, 0.0022, marker='v')
+ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
+ax.set_ylim(0.002, 1.0)
 ```
 
 <!-- exercise begin -->
