@@ -884,11 +884,12 @@ While you see a face, a computer only sees a bunch of numbers:
     28666688888888888868668668688886665548
 ```
 
-(Yes, your visual system is tuned enough to find faces that it sees the
-face even in this blob of numbers! But I hope you get my point. Also, check
-out the "Faces In Things" Tumblr.)
+Our visual system is so optimized to spot faces that you might see the
+face even in this blob of numbers! But we hope our point is made. Also,
+you might want to look for the "Faces In Things" Tumblr, which demonstrates
+the face-finding optimization of our visual systems far more humorously.
 
-So the challenge is to make sense of those numbers, and where the
+At any rate, the challenge is to make sense of those numbers, and where the
 boundaries lie that divide the different parts of the image. A popular
 approach is to find small regions (called superpixels) that
 you're *sure* belong in the same segment, and then merge those according
