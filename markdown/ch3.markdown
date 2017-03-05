@@ -271,7 +271,7 @@ shows a different feature of the signal.
 Now, think of what happens when the kernel is (1, 0, -1), the difference
 filter, for a signal `s`. At any position `i`, the convolution result is
 `1*s[i+1] + 0*s[i] - 1*s[i-1]`, that is, `s[i+1] - s[i-1]`.
-Thus, when adjacent values are identical, the convolution gives 0, but when
+Thus, when the values adjacent to `s[i]` are identical, the convolution gives 0, but when
 `s[i+1] > s[i-1]` (the signal is increasing), it gives a positive value, and,
 conversely, when `s[i+1] < s[i-1]`, it gives a negative value. You can think
 of this as an estimate of the derivative of the input function.
@@ -558,7 +558,7 @@ because every worm (of this species) has the same number of neurons (302), and t
 connections between them are all known. This has resulted in the fantastic Openworm
 project [^openworm], which I encourage you to follow.
 
-You can download the neuronal dataset in Excel format (yuck) from the WormAtlas
+You can download the neuronal dataset in Excel format from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
 The direct link to the data is:
 [http://www.wormatlas.org/images/NeuronConnect.xls](http://www.wormatlas.org/images/NeuronConnect.xls)
