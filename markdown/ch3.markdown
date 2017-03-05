@@ -503,11 +503,71 @@ Can you implement the Game of Life using `ndi.generic_filter`?
 
 **Solution:**
 
-Code by: Nicolas Rougier (@rougier)
+Nicolas Rougier (@rougier) provides a NumPy-only solution on his 100 NumPy
+Exercises page (Exercise #79):
 
-This is the game of life (cellular automata) in 10 lines of python with numpy.
-The code is available from http://www.labri.fr/perso/nrougier/teaching/numpy.100/ (last question).
-(code explanations is available from http://www.labri.fr/perso/nrougier/teaching/numpy/numpy.html)
+```python
+def next_generation(Z):
+    N = (Z[0:-2,0:-2] + Z[0:-2,1:-1] + Z[0:-2,2:] +
+         Z[1:-1,0:-2]                + Z[1:-1,2:] +
+         Z[2:  ,0:-2] + Z[2:  ,1:-1] + Z[2:  ,2:])
+
+    # Apply rules
+    birth = (N==3) & (Z[1:-1,1:-1]==0)
+    survive = ((N==2) | (N==3)) & (Z[1:-1,1:-1]==1)
+    Z[...] = 0
+    Z[1:-1,1:-1][birth | survive] = 1
+    return Z
+```
+
+Then we can start a board with:
+
+```python
+random_board = np.random.randint(0, 2, size=(50, 50))
+n_generations = 100
+for generation in range(n_generations):
+    random_board = next_generation(random_board)
+```
+
+Using generic filter makes it even easier:
+
+```python
+def nextgen_filter(values):
+    center = values[len(values) // 2]
+    neighbors_count = np.sum(values) - center
+    if neighbors_count == 3 or (center and neighbors_count == 2):
+        return 1.
+    else:
+        return 0.
+
+def next_generation(board):
+    return ndi.generic_filter(board, nextgen_filter, mode='constant')
+```
+
+The nice thing is that some formulations of the Game of Life use what's known
+as a *toroidal board*, which means that the left and right ends "wrap around"
+and connect to each other, as well as the top and bottom ends. With
+`generic_filter`, it's trivial to modify our solution to incorporate this:
+
+```python
+def next_generation_toroidal(board):
+    return ndi.generic_filter(board, nextgen_filter, mode='wrap')
+```
+
+We can now simulate this toroidal board for a few generations:
+
+```python
+random_board = np.random.randint(0, 2, size=(50, 50))
+n_generations = 100
+for generation in range(n_generations):
+    random_board = next_generation_toroidal(random_board)
+```
+
+<!-- solution end -->
+
+<!-- exercise end -->
+
+<!-- exercise begin -->
 
 **Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
 in-degree survival function to a power-law,
@@ -515,7 +575,6 @@ $f(d) \sim d^{-\gamma}, d > d_0$,
 for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
 to include that line.
 
-<!-- solution end -->
 <!-- exercise end -->
 
 <!-- exercise begin -->
