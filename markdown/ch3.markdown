@@ -763,7 +763,7 @@ In a neuronal circuit, you can think of the strongly connected component
 as the "brain" of the circuit, where the processing happens, while nodes
 upstream of it are inputs, and nodes downstream are outputs.
 
-> **Box**
+> **Cycles in neuronal networks {.callout}**
 >
 > The idea of cyclical neuronal circuits dates back to the 1950s. Here's a
 > lovely paragraph about this idea from an article in *Nautilus*,
