@@ -572,6 +572,33 @@ Above, we saw how we can combine the output of two different filters, the
 horizontal Sobel filter, and the vertical one. Can you write a function that
 does this in a single pass using `ndi.generic_filter`?
 
+<!-- solution begin -->
+
+```python
+hsobel = np.array([[ 1,  2,  1],
+                   [ 0,  0,  0],
+                   [-1, -2, -1]])
+
+vsobel = hsobel.T
+
+hsobel_r = np.ravel(hsobel)
+vsobel_r = np.ravel(vsobel)
+
+def sobel_magnitude_filter(values):
+    h_edge = values @ hsobel_r
+    v_edge = values @ hsobel_v
+    return np.hypot(h_edge, v_edge)
+```
+
+Now we can try it out on the coins image:
+
+```
+sobel_mag = ndi.generic_filter(coins, sobel_magnitude_filter, size=3)
+plt.imshow(sobel_mag)
+```
+
+<!-- solution end -->
+
 <!-- exercise end -->
 
 ## Graphs and the NetworkX library
