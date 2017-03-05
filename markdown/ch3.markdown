@@ -463,7 +463,7 @@ plt.imshow(tax_rate_map)
 plt.colorbar();
 ```
 
-Now lets step back for a moment and put what we've learnt so far together to tackle a few exercises.
+### Exercises: generic filters
 
 <!-- exercise begin -->
 
@@ -536,7 +536,8 @@ def nextgen_filter(values):
         return 0.
 
 def next_generation(board):
-    return ndi.generic_filter(board, nextgen_filter, mode='constant')
+    return ndi.generic_filter(board, nextgen_filter,
+                              size=3, mode='constant')
 ```
 
 The nice thing is that some formulations of the Game of Life use what's known
@@ -546,7 +547,8 @@ and connect to each other, as well as the top and bottom ends. With
 
 ```python
 def next_generation_toroidal(board):
-    return ndi.generic_filter(board, nextgen_filter, mode='wrap')
+    return ndi.generic_filter(board, nextgen_filter,
+                              size=3, mode='wrap')
 ```
 
 We can now simulate this toroidal board for a few generations:
