@@ -822,19 +822,21 @@ to include that line.
 
 <!-- exercise end -->
 
+You now should have a fundamental understanding of graphs as a scientific
+abstraction, and how to easily manipulate and analyse them using Python and
+NetworkX. Now, we move on to a particular kind of graph used in image
+processing and computer vision.
+
 ## Region adjacency graphs
 
-I hope that the previous section gave you an idea of the power of graphs as a scientific
-abstraction, and also how Python makes it easy to manipulate and analyse
-them. Now we will study a special kind of graph, the region adjacency
-graph, or RAG. This is a representation of an image that is useful for *segmentation*,
-the division of images into meaningful regions (or *segments*). If you've seen
-Terminator 2, you've seen segmentation:
+A Region Adjacency Graph (RAG) is a representation of an image that is useful
+for *segmentation*, the division of images into meaningful regions (or
+*segments*). If you've seen Terminator 2, you've seen segmentation:
 
 ![Terminator vision](https://raw.githubusercontent.com/scikit-image/skimage-tutorials/master/2014-scipy/images/terminator-vision.png)
 
 Segmentation is one of those problems that humans do trivially, all the time,
-without thinking, whereas computers have a really hard time of it. To
+without thinking, whereas computers have a hard time of it. To
 understand this difficulty, look at this image:
 
 ![Face (Eileen Collins)](http://i.imgur.com/ky5qwIS.png)
