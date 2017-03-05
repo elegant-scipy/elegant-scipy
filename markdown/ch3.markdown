@@ -950,9 +950,9 @@ two nodes.
 The figure also shows the magic of thinking of segmentations as graphs: you can
 see that edges between nodes within the tiger and those outside of it are darker
 (higher-valued) than edges within the same object. Thus, if we can cut the
-graph along those edges, we will get our segmentation! (Yes, I have chosen an easy
+graph along those edges, we will get our segmentation. We have chosen an easy
 example for color-based segmentation, but the same principles hold true for
-graphs with more complicated pairwise relationships!)
+graphs with more complicated pairwise relationships.
 
 ## Elegant ndimage
 
@@ -1052,20 +1052,18 @@ def build_rag(labels, image):
     return g
 ```
 
-There's a few things to notice here:
+Here's a few reasons why we think this is a brilliant piece of code:
 
-- we return "0.0" from the filter function because `generic_filter` requires
+- `ndi.generic_filter` iterates over array elements *with their neighbors*.
+  (Use `numpy.ndindex` to simply iterate over array indices.)
+- We return "0.0" from the filter function because `generic_filter` requires
   the filter function to return a float. However, we will ignore the filter
   output, and only use it for its "side effect" of adding edges to the graph.
-- the loops are not nested several levels deep. This makes the code more
+- The loops are not nested several levels deep. This makes the code more
   compact, easier to take in in one go.
-- the code works identically for 1D, 2D, 3D, or even 8D images!
-- if we want to add support for diagonal connectivity, we just need to
+- The code works identically for 1D, 2D, 3D, or even 8D images!
+- If we want to add support for diagonal connectivity, we just need to
   change the `connectivity` parameter to `ndi.generate_binary_structure`
-- `ndi.generic_filter` iterates over array elements *with their neighbors*;
-  use `numpy.ndindex` to simply iterate over array indices.
-
-Overall, I think this is just a brilliant piece of code.
 
 ## Putting it all together: mean color segmentation
 
