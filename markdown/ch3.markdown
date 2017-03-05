@@ -3,16 +3,17 @@
 **Code by Vighnesh Birodkar.**
 **Nominated by Juan Nunez-Iglesias.**
 
-This chapter gets a special mention because it inspired the whole book.
-Vighnesh Birodkar wrote this code snippet as an undergraduate while participating in
-Google Summer of Code (GSoC) 2014.
-When I saw this bit of code, it blew me away, and over a year later, I still
-haven't seen anything like it.
-For the purposes of this book, it touches on many aspects of scientific Python.
-By the time you're done with this chapter, you should be able to process arrays
-of *any* dimension, rather than thinking of them only as 1D lists or 2D tables.
-More than that, you'll understand the basics of image filtering and network
-processing.
+> **The origins of Elegant SciPy {.callout}**
+>
+> This chapter gets a special mention because it inspired the whole book.
+> Vighnesh Birodkar wrote this code snippet as an undergraduate while
+> participating in Google Summer of Code (GSoC) 2014.  When I saw this bit of
+> code, it blew me away, and over a year later, I still haven't seen anything
+> like it.  For the purposes of this book, it touches on many aspects of
+> scientific Python.  By the time you're done with this chapter, you should be
+> able to process arrays of *any* dimension, rather than thinking of them only
+> as 1D lists or 2D tables.  More than that, you'll understand the basics of
+> image filtering and network processing.
 
 You probably know that digital images are made up of *pixels*. These are
 the light signal *sampled on a regular grid*. When computing
