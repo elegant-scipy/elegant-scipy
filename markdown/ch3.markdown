@@ -811,7 +811,10 @@ ax.set_ylim(0.002, 1.0)
 
 <!-- exercise begin -->
 
-**Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
+### Exercise: Complete Figure 6B from the paper
+
+This exercise is a bit of a preview for chapter 7 (optimization):
+use `scipy.optimize.curve_fit` to fit the tail of the
 in-degree survival function to a power-law,
 $f(d) \sim d^{-\gamma}, d > d_0$,
 for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
