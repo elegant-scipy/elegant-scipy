@@ -351,9 +351,9 @@ voltage fluctuations from a current is called a *low-pass filter*.)
 
 ## Filtering images (2D filters)
 
-Now that you've seen filtering in 1D, I hope you'll find it straightforward
-to extend these concepts to 2D. Here's a 2D difference filter finding the
-edges in the coins image:
+Now that you've seen filtering in 1D, I hope you'll find it straightforward to
+extend these concepts to 2D signals, a.k.a. images. Here's a 2D difference
+filter for finding the edges in the coins image:
 
 ```python
 coins = coins.astype(float) / 255  # prevents overflow errors
