@@ -56,15 +56,15 @@ There are a few things going on here: images being represented as numpy arrays,
 regions into a graph (network) using the NetworkX library. We'll go over these
 in turn.
 
-## Images are numpy arrays
+## Images are just numpy arrays
 
 In the previous chapter, we saw that numpy arrays can efficiently represent
 tabular data, and are a convenient way to perform computations on it.
 It turns out that arrays are equally adept at representing images.
 
 Here's how to create an image of white noise using just numpy, and display it
-with matplotlib. First, we import the necessary packages, and use the `matplotlib
-inline` IPython magic to make our images appear below the code:
+with matplotlib. First, we import the necessary packages, and use the
+`matplotlib inline` IPython magic to make our images appear below the code:
 
 ```python
 # Make plots appear inline, set custom plotting style
@@ -73,15 +73,10 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-```python
-import numpy as np
-import matplotlib as mpl
-from matplotlib import cm  # colormap module
-```
-
 Finally, "make some noise" and display it as an image:
 
 ```python
+import numpy as np
 random_image = np.random.rand(500, 500)
 plt.imshow(random_image);
 # Note ; suppresses the output (i.e. the plotting object text)
@@ -564,16 +559,6 @@ for generation in range(n_generations):
 ```
 
 <!-- solution end -->
-
-<!-- exercise end -->
-
-<!-- exercise begin -->
-
-**Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
-in-degree survival function to a power-law,
-$f(d) \sim d^{-\gamma}, d > d_0$,
-for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
-to include that line.
 
 <!-- exercise end -->
 
