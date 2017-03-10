@@ -588,7 +588,7 @@ vsobel_r = np.ravel(vsobel)
 
 def sobel_magnitude_filter(values):
     h_edge = values @ hsobel_r
-    v_edge = values @ hsobel_v
+    v_edge = values @ vsobel_r
     return np.hypot(h_edge, v_edge)
 ```
 
