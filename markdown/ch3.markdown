@@ -829,21 +829,23 @@ to include that line.
 
 Let's look at the start of the docstring for `curve_fit`:
 
-    Use non-linear least squares to fit a function, f, to data.
+```
+Use non-linear least squares to fit a function, f, to data.
 
-    Assumes ``ydata = f(xdata, *params) + eps``
+Assumes ``ydata = f(xdata, *params) + eps``
 
-    Parameters
-    ----------
-    f : callable
-        The model function, f(x, ...).  It must take the independent
-        variable as the first argument and the parameters to fit as
-        separate remaining arguments.
-    xdata : An M-length sequence or an (k,M)-shaped array
-        for functions with k predictors.
-        The independent variable where the data is measured.
-    ydata : M-length sequence
-        The dependent data --- nominally f(xdata, ...)
+Parameters
+----------
+f : callable
+    The model function, f(x, ...).  It must take the independent
+    variable as the first argument and the parameters to fit as
+    separate remaining arguments.
+xdata : An M-length sequence or an (k,M)-shaped array
+    for functions with k predictors.
+    The independent variable where the data is measured.
+ydata : M-length sequence
+    The dependent data --- nominally f(xdata, ...)
+```
 
 It looks like we just need to provide a function that takes in a data point,
 and some parameters, and gives the predicted value. In our case, we want the
