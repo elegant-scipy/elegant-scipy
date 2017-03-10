@@ -338,15 +338,17 @@ plt.plot(sdsig);
 Although it still looks wobbly, the *signal-to-noise ratio* (SNR),
 is much greater in this version than when using the simple difference filter.
 
-(Note: this operation is called filtering because, in physical electrical
-circuits, many of these operations are implemented by hardware that
-lets certain kinds of current through, but not others; these components
-are called filters. For example, a common filter that removes high-frequency
-voltage fluctuations from a current is called a *low-pass filter*.)
+> **A note about filtering** {.callout}
+>
+> This operation is called filtering because, in physical electrical
+> circuits, many of these operations are implemented by hardware that
+> lets certain kinds of current through, but not others; these components
+> are called filters. For example, a common filter that removes high-frequency
+> voltage fluctuations from a current is called a *low-pass filter*.
 
 ## Filtering images (2D filters)
 
-Now that you've seen filtering in 1D, I hope you'll find it straightforward to
+Now that you've seen filtering in 1D, we hope you'll find it straightforward to
 extend these concepts to 2D signals, a.k.a. images. Here's a 2D difference
 filter for finding the edges in the coins image:
 
@@ -439,7 +441,7 @@ coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
 plt.imshow(coins_sobel, cmap=plt.cm.viridis);
 ```
 
-## Generic filters
+## Generic filters: arbitrary functions of neighborhood values
 
 In addition to dot-products, implemented by `ndi.convolve`, SciPy lets you
 define a filter that is an *arbitrary function* of the points in a neighborhood,
@@ -809,6 +811,9 @@ ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
 ax.set_ylim(0.002, 1.0)
 ```
 
+There you have it: a reproduction of a scientific analysis, using SciPy. We are
+missing the line fit... But that's what exercises are for.
+
 <!-- exercise begin -->
 
 ### Exercise: Complete Figure 6B from the paper
@@ -919,8 +924,8 @@ from skimage import color
 io.imshow(color.label2rgb(seg, tiger));
 ```
 
-This shows that the tiger has been split in three parts, with the rest of the image
-in the remaining segments.
+This shows that the body of the tiger has been split in three parts, with the
+rest of the image in the remaining segments.
 
 A region adjacency graph (RAG) is a graph in which every node represents one
 of the above regions, and an edge connects two nodes when they touch. For a
@@ -954,7 +959,7 @@ graph along those edges, we will get our segmentation. We have chosen an easy
 example for color-based segmentation, but the same principles hold true for
 graphs with more complicated pairwise relationships.
 
-## Elegant ndimage
+## Elegant ndimage: how to build graphs from image regions
 
 All the pieces are in place: you know about numpy arrays, image filtering,
 generic filters, graphs, and region adjacency graphs. Let's build one to pluck
@@ -1067,7 +1072,7 @@ Here's a few reasons why we think this is a brilliant piece of code:
 
 ## Putting it all together: mean color segmentation
 
-Now, we can use it to segment the tiger in the image above:
+Now, we can use everything we've learned to segment the tiger in the image above:
 
 ```python
 g = build_rag(seg, tiger)
@@ -1104,10 +1109,9 @@ plt.imshow(color.label2rgb(segmented, tiger));
 Oops! Looks like the cat lost its tail!
 
 Still, we think that's a nice demonstration of the capabilities of RAGs...
-And the beauty with which SciPy and NetworkX make it feasible!
-
+And the beauty with which SciPy and NetworkX make it feasible.
 Many of these functions are available in the scikit-image library. If you
-are interested in image analysis, check it out!
+are interested in image analysis, look it up!
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 
