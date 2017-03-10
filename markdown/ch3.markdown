@@ -886,7 +886,7 @@ ax.set_ylabel('fraction of neurons with higher in-degree distribution')
 ax.scatter(avg_in_degree, 0.0022, marker='v')
 ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
 ax.set_ylim(0.002, 1.0)
-ax.loglog(xdata[selector], yfit, c='red')
+ax.loglog(x, y_fit, c='red')
 ```
 
 Voilà! A full Figure 6B, fit and all!
