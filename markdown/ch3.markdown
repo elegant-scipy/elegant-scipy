@@ -594,7 +594,7 @@ def sobel_magnitude_filter(values):
 
 Now we can try it out on the coins image:
 
-```
+```python
 sobel_mag = ndi.generic_filter(coins, sobel_magnitude_filter, size=3)
 plt.imshow(sobel_mag)
 ```
