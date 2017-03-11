@@ -827,7 +827,7 @@ to include that line.
 
 <!-- solution begin -->
 
-Let's look at the start of the docstring for `curve_fit`:
+**Solution:** Let's look at the start of the docstring for `curve_fit`:
 
 ```
 Use non-linear least squares to fit a function, f, to data.
