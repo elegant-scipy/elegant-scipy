@@ -8,7 +8,7 @@
 >
 > — Robert M Pirsig, Zen and the Art of Motorcycle Maintenance
 
-Hanging a picture on the wall, it is sometimes hard to get it
+When hanging a picture on the wall, it is sometimes difficult to get it
 straight.  You make an adjustment, step back, evaluate the picture's
 horizontality, and repeat.  This is a process of *optimization*: we're
 changing the orientation of the portrait until it satisfies our
@@ -36,7 +36,7 @@ in any valley, with mountains surrounding you, how do you know whether
 you are in the lowest valley, or whether this valley just seems low because it is
 surrounded by particularly tall mountains?  In optimization parlance: how
 do you know whether you are trapped in a *local
-minimum*?  Most of the optimization algorithms available make some
+minimum*?  Most optimization algorithms make some
 attempt to address the issue[^line_search].
 
 [^line_search]: Optimization algorithms handle this issue in various
