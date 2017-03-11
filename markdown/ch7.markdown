@@ -342,12 +342,13 @@ def align(reference, target, cost=cost_mse):
         res = optimize.minimize(cost, p, args=(ref, tgt), method='Powell')
         p = res.x
 
-        print('Pyramid level %i' % n)
-        print('Angle:', np.rad2deg(res.x[0]))
-        print('Offset:', res.x[1:] * 2 ** n)
-        print('Cost function:', res.fun)
-        print('')
+        # print current level, overwriting each time (like a progress bar)
+        print('Level: %i, Angle: %.2f, Offset: (%.1f, %.1f), Cost: %.2f' %
+              (n, np.rad2deg(res.x[0]),
+               res.x[1] * 2**n, res.x[2] * 2**n,
+               res.fun), end='\r')
 
+    print('')  # newline when alignment complete
     return make_rigid_transform(p)
 ```
 
@@ -445,12 +446,13 @@ def align(reference, target, cost=cost_mse, nlevels=7, method='Powell'):
         else:
             res = optimize.minimize(cost, p, args=(ref, tgt), method='Powell')
         p = res.x
-        print('Pyramid level %i' % n)
-        print('Angle:', np.rad2deg(res.x[0]))
-        print('Offset:', res.x[1:] * 2 ** n)
-        print('Cost function:', res.fun)
-        print('')
+        # print current level, overwriting each time (like a progress bar)
+        print('Level: %i, Angle: %.2f, Offset: (%.1f, %.1f), Cost: %.2f' %
+              (n, np.rad2deg(res.x[0]),
+               res.x[1] * 2**n, res.x[2] * 2**n,
+               res.fun), end='\r')
 
+    print('')  # newline when alignment complete
     return make_rigid_transform(p)
 ```
 
