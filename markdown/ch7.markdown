@@ -153,7 +153,7 @@ def astronaut_shift_error(shift, image):
 res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
                         method='Powell')
 
-print('The optimal shift for correction is: %f' % res.x)
+print(f'The optimal shift for correction is: {res.x}')
 ```
 
 Brilliant! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
@@ -182,7 +182,7 @@ instead of recovering the original image:
 res = optimize.minimize(astronaut_shift_error, 0, args=(shifted2,),
                         method='Powell')
 
-print('The optimal shift for correction is %f' % res.x)
+print(f'The optimal shift for correction is {res.x}')
 ```
 
 The common solution to this problem is to smooth or downscale the images, which
@@ -343,10 +343,9 @@ def align(reference, target, cost=cost_mse):
         p = res.x
 
         # print current level, overwriting each time (like a progress bar)
-        print('Level: %i, Angle: %.2f, Offset: (%.1f, %.1f), Cost: %.2f' %
-              (n, np.rad2deg(res.x[0]),
-               res.x[1] * 2**n, res.x[2] * 2**n,
-               res.fun), end='\r')
+        print(f'Level: {n}, Angle: {np.rad2deg(res.x[0]) :.3}, '
+              f'Offset: ({res.x[1] * 2**n :.3}, {res.x[2] * 2**n :.3}), '
+              f'Cost: {res.fun :.3}', end='\r')
 
     print('')  # newline when alignment complete
     return make_rigid_transform(p)
