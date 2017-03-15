@@ -1,8 +1,5 @@
 # Big Data in Little Laptop with Toolz
 
-**Code by Matt Rocklin.**
-**Nominated by Juan Nunez-Iglesias.**
-
 Whenever I think too hard about streaming data analysis, my head hurts.
 
 You have probably already done some streaming, perhaps without thinking about it in these terms.
