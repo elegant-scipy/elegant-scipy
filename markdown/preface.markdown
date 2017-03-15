@@ -235,7 +235,7 @@ Given the divided state of the community, many developers now write code that is
 
 New learners should use Python 3.
 It is the future of the language, and there is no sense in adding to the dead weight of Python 2 code littering the interwebs (including much from your authors!).
-In Elegant SciPy, we use Python 3.5.
+In Elegant SciPy, we use Python 3.6.
 
 If you *must* use Python 2, you can make most of the code in this book
 compatible with Python 2 by using a built-in compatibility module called
@@ -432,7 +432,7 @@ It may seem annoying to join yet another mailing list, but we highly recommend i
 
 ## Installing Python
 
-Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the required SciPy packages installed.
+Throughout this book we’re going to assume that you have Python 3.6 (or later) and have all the required SciPy packages installed.
 We list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
 The easiest way to get all of these components is to install conda, a tool for managing python environments (http://conda.pydata.org/miniconda.html).
 You can then pass that environment.yml to conda to install the right versions of everything in one go.

@@ -564,7 +564,7 @@ The direct link to the data is:
 Let's start by getting a list of rows out of the file. An elegant pattern from
 Tony Yu [^file-url] enables us to open a remote URL as a local file.
 It uses a
-[context manager](https://docs.python.org/3.5/library/contextlib.html#contextlib.contextmanager)
+[context manager](https://docs.python.org/3.6/library/contextlib.html#contextlib.contextmanager)
 to download a remote file to a local temporary file.
 (Your operating system provides Python with a place to put temporary files.)
 
