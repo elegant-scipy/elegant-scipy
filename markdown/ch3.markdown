@@ -340,9 +340,9 @@ is much greater in this version than when using the simple difference filter.
 
 > **A note about filtering** {.callout}
 >
-> This operation is called filtering because, in physical electrical
-> circuits, many of these operations are implemented by hardware that
-> lets certain kinds of current through, but not others; these components
+> This operation is called filtering because, in physical electrical circuits,
+> many of these operations are implemented by hardware that allows certain
+> kinds of current through, while blocking others; these hardware components
 > are called filters. For example, a common filter that removes high-frequency
 > voltage fluctuations from a current is called a *low-pass filter*.
 
