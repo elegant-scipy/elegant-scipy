@@ -246,7 +246,7 @@ we encourage all users to upgrade as soon as possible (Python 2.x is
 now in maintenance only mode until 2020), as we hope to see most
 issues addressed as the 3.x series matures.
 
-In Elegant SciPy, we use **Python 3.5**.
+In Elegant SciPy, we use **Python 3.6**.
 
 For more reading, see Ed Schofield's resource, [python-future.org](python-future.org),
 and Nick Coghlan's book-length guide to the transition ([http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html](http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html)).
@@ -426,7 +426,7 @@ It may seem annoying to join yet another mailing list, but we highly recommend i
 
 ## Installing Python
 
-Throughout this book we’re going to assume that you have Python 3.5 (or later) and have all the required SciPy packages installed.
+Throughout this book we’re going to assume that you have Python 3.6 (or later) and have all the required SciPy packages installed.
 We list all of the requirements and the versions we used in the **environment.yml** file packaged with the data for this book.
 The easiest way to get all of these components is to install conda, a tool for managing python environments (http://conda.pydata.org/miniconda.html).
 You can then pass that environment.yml to conda to install the right versions of everything in one go.

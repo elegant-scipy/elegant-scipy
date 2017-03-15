@@ -8,7 +8,7 @@
 >
 > — Robert M Pirsig, Zen and the Art of Motorcycle Maintenance
 
-Hanging a picture on the wall, it is sometimes hard to get it
+When hanging a picture on the wall, it is sometimes difficult to get it
 straight.  You make an adjustment, step back, evaluate the picture's
 horizontality, and repeat.  This is a process of *optimization*: we're
 changing the orientation of the portrait until it satisfies our
@@ -36,7 +36,7 @@ in any valley, with mountains surrounding you, how do you know whether
 you are in the lowest valley, or whether this valley just seems low because it is
 surrounded by particularly tall mountains?  In optimization parlance: how
 do you know whether you are trapped in a *local
-minimum*?  Most of the optimization algorithms available make some
+minimum*?  Most optimization algorithms make some
 attempt to address the issue[^line_search].
 
 [^line_search]: Optimization algorithms handle this issue in various
@@ -153,7 +153,7 @@ def astronaut_shift_error(shift, image):
 res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
                         method='Powell')
 
-print('The optimal shift for correction is: %f' % res.x)
+print(f'The optimal shift for correction is: {res.x}')
 ```
 
 Brilliant! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
@@ -182,7 +182,7 @@ instead of recovering the original image:
 res = optimize.minimize(astronaut_shift_error, 0, args=(shifted2,),
                         method='Powell')
 
-print('The optimal shift for correction is %f' % res.x)
+print(f'The optimal shift for correction is {res.x}')
 ```
 
 The common solution to this problem is to smooth or downscale the images, which
@@ -342,12 +342,12 @@ def align(reference, target, cost=cost_mse):
         res = optimize.minimize(cost, p, args=(ref, tgt), method='Powell')
         p = res.x
 
-        print('Pyramid level %i' % n)
-        print('Angle:', np.rad2deg(res.x[0]))
-        print('Offset:', res.x[1:] * 2 ** n)
-        print('Cost function:', res.fun)
-        print('')
+        # print current level, overwriting each time (like a progress bar)
+        print(f'Level: {n}, Angle: {np.rad2deg(res.x[0]) :.3}, '
+              f'Offset: ({res.x[1] * 2**n :.3}, {res.x[2] * 2**n :.3}), '
+              f'Cost: {res.fun :.3}', end='\r')
 
+    print('')  # newline when alignment complete
     return make_rigid_transform(p)
 ```
 
@@ -445,12 +445,13 @@ def align(reference, target, cost=cost_mse, nlevels=7, method='Powell'):
         else:
             res = optimize.minimize(cost, p, args=(ref, tgt), method='Powell')
         p = res.x
-        print('Pyramid level %i' % n)
-        print('Angle:', np.rad2deg(res.x[0]))
-        print('Offset:', res.x[1:] * 2 ** n)
-        print('Cost function:', res.fun)
-        print('')
+        # print current level, overwriting each time (like a progress bar)
+        print('Level: %i, Angle: %.2f, Offset: (%.1f, %.1f), Cost: %.2f' %
+              (n, np.rad2deg(res.x[0]),
+               res.x[1] * 2**n, res.x[2] * 2**n,
+               res.fun), end='\r')
 
+    print('')  # newline when alignment complete
     return make_rigid_transform(p)
 ```
 
