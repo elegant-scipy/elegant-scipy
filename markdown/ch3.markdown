@@ -848,7 +848,7 @@ ydata : M-length sequence
 ```
 
 It looks like we just need to provide a function that takes in a data point,
-and some parameters, and gives the predicted value. In our case, we want the
+and some parameters, and returns the predicted value. In our case, we want the
 cumulative remaining frequency, $f(d)$ to be proportional to $d^{-\gamma}$.
 That means we need $f(d) = \alpha d^{-gamma}$:
 
