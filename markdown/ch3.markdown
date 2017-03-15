@@ -812,7 +812,7 @@ ax.set_ylim(0.002, 1.0)
 ```
 
 There you have it: a reproduction of a scientific analysis, using SciPy. We are
-missing the line fit... But that's what exercises are for.
+missing the line fit.... But that's what exercises are for.
 
 <!-- exercise begin -->
 
