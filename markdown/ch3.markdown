@@ -605,11 +605,11 @@ plt.imshow(sobel_mag)
 
 ## Graphs and the NetworkX library
 
-Graphs are a natural representation for a bewildering variety of data. Pages on
-the world wide web, for example, can comprise nodes, while links between those
-pages can be, well, links. Or, in so-called *transcription networks*, nodes
-represent genes and edges connect genes that have a direct influence on each
-other's expression.
+Graphs are a natural representation for an astonishing variety of data. Pages
+on the world wide web, for example, can comprise nodes, while links between
+those pages can be, well, links. Or, in biology, so-called *transcription
+networks* have nodes represent genes and edges connect genes that have a direct
+influence on each other's expression.
 
 > **Note: graphs and networks {.callout}**
 >
