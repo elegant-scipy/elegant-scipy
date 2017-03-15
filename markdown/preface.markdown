@@ -165,12 +165,16 @@ scientific computing.
 In your Python travels, you may have already heard a few rumblings about which version of Python is better.
 You may have wondered why it's not just the latest version.
 
-At the end of 2008, the Python core developers released Python 3.0, a
-major update to Python with better Unicode (international) text
-handling, type consistency, and streaming data handling, among other
-improvements.  But in most cases, Python 2.6 or 2.7 code cannot be interpreted by Python
-3.x without at least some modification (although the changes are
-typically not too invasive).
+At the end of 2008, the Python core developers released Python 3.0 and, as
+Douglas Adams observed tongue-in-cheek about the creation of the Universe in
+The Hitchiker's Guide to the Galaxy, "this has made a lot of people very angry
+and been widely regarded as a bad move".
+
+Python 3 is a major update to the language with better Unicode (international)
+text handling, type consistency, and streaming data handling, among other
+improvements.  But, in most cases, Python 2.6 or 2.7 code cannot be
+interpreted by Python 3.x without at least some modification (although the
+changes are typically not too invasive).
 
 There is always a tension between the march of progress and backwards
 compatibility.  In this case, the Python core team decided that a
@@ -194,7 +198,7 @@ print >>sys.stderr, "fatal error"  # Python 2
 print("fatal error", file=sys.stderr)  # Python 3
 ```
 
-That change certainly seems worthwhile; and what is going on in the
+That change certainly seems worthwhile; what is going on in the
 Python 2 version anyway?  The authors don't rightly know.
 
 Another change is the way Python 3 treats integer division, which is the way most humans treat division.
