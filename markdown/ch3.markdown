@@ -1,18 +1,16 @@
 # Networks of Image Regions with ndimage
 
-**Code by Vighnesh Birodkar.**
-**Nominated by Juan Nunez-Iglesias.**
-
-This chapter gets a special mention because it inspired the whole book.
-Vighnesh Birodkar wrote this code snippet as an undergraduate while participating in
-Google Summer of Code (GSoC) 2014.
-When I saw this bit of code, it blew me away, and over a year later, I still
-haven't seen anything like it.
-For the purposes of this book, it touches on many aspects of scientific Python.
-By the time you're done with this chapter, you should be able to process arrays
-of *any* dimension, rather than thinking of them only as 1D lists or 2D tables.
-More than that, you'll understand the basics of image filtering and network
-processing.
+> **The origins of Elegant SciPy {.callout}**
+>
+> (A note from Juan.)  
+> This chapter gets a special mention because it inspired the whole book.
+> Vighnesh Birodkar wrote this code snippet as an undergraduate while
+> participating in Google Summer of Code (GSoC) 2014.  When I saw this bit of
+> code, it blew me away. For the purposes of this book, it touches on many
+> aspects of scientific Python.  By the time you're done with this chapter, you
+> should be able to process arrays of *any* dimension, rather than thinking of
+> them only as 1D lists or 2D tables.  More than that, you'll understand the
+> basics of image filtering and network processing.
 
 You probably know that digital images are made up of *pixels*. These are
 the light signal *sampled on a regular grid*. When computing
@@ -58,15 +56,15 @@ There are a few things going on here: images being represented as numpy arrays,
 regions into a graph (network) using the NetworkX library. We'll go over these
 in turn.
 
-## Images are numpy arrays
+## Images are just numpy arrays
 
 In the previous chapter, we saw that numpy arrays can efficiently represent
 tabular data, and are a convenient way to perform computations on it.
 It turns out that arrays are equally adept at representing images.
 
 Here's how to create an image of white noise using just numpy, and display it
-with matplotlib. First, we import the necessary packages, and use the `matplotlib
-inline` IPython magic to make our images appear below the code:
+with matplotlib. First, we import the necessary packages, and use the
+`matplotlib inline` IPython magic to make our images appear below the code:
 
 ```python
 # Make plots appear inline, set custom plotting style
@@ -75,15 +73,10 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-```python
-import numpy as np
-import matplotlib as mpl
-from matplotlib import cm  # colormap module
-```
-
 Finally, "make some noise" and display it as an image:
 
 ```python
+import numpy as np
 random_image = np.random.rand(500, 500)
 plt.imshow(random_image);
 # Note ; suppresses the output (i.e. the plotting object text)
@@ -270,7 +263,7 @@ shows a different feature of the signal.
 Now, think of what happens when the kernel is (1, 0, -1), the difference
 filter, for a signal `s`. At any position `i`, the convolution result is
 `1*s[i+1] + 0*s[i] - 1*s[i-1]`, that is, `s[i+1] - s[i-1]`.
-Thus, when adjacent values are identical, the convolution gives 0, but when
+Thus, when the values adjacent to `s[i]` are identical, the convolution gives 0, but when
 `s[i+1] > s[i-1]` (the signal is increasing), it gives a positive value, and,
 conversely, when `s[i+1] < s[i-1]`, it gives a negative value. You can think
 of this as an estimate of the derivative of the input function.
@@ -345,17 +338,19 @@ plt.plot(sdsig);
 Although it still looks wobbly, the *signal-to-noise ratio* (SNR),
 is much greater in this version than when using the simple difference filter.
 
-(Note: this operation is called filtering because, in physical electrical
-circuits, many of these operations are implemented by hardware that
-lets certain kinds of current through, but not others; these components
-are called filters. For example, a common filter that removes high-frequency
-voltage fluctuations from a current is called a *low-pass filter*.)
+> **A note about filtering** {.callout}
+>
+> This operation is called filtering because, in physical electrical circuits,
+> many of these operations are implemented by hardware that allows certain
+> kinds of current through, while blocking others; these hardware components
+> are called filters. For example, a common filter that removes high-frequency
+> voltage fluctuations from a current is called a *low-pass filter*.
 
 ## Filtering images (2D filters)
 
-Now that you've seen filtering in 1D, I hope you'll find it straightforward
-to extend these concepts to 2D. Here's a 2D difference filter finding the
-edges in the coins image:
+Now that you've seen filtering in 1D, we hope you'll find it straightforward to
+extend these concepts to 2D signals, a.k.a. images. Here's a 2D difference
+filter for finding the edges in the coins image:
 
 ```python
 coins = coins.astype(float) / 255  # prevents overflow errors
@@ -446,7 +441,7 @@ coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
 plt.imshow(coins_sobel, cmap=plt.cm.viridis);
 ```
 
-## Generic filters
+## Generic filters: arbitrary functions of neighborhood values
 
 In addition to dot-products, implemented by `ndi.convolve`, SciPy lets you
 define a filter that is an *arbitrary function* of the points in a neighborhood,
@@ -470,7 +465,7 @@ plt.imshow(tax_rate_map)
 plt.colorbar();
 ```
 
-Now lets step back for a moment and put what we've learnt so far together to tackle a few exercises.
+### Exercises: generic filters
 
 <!-- exercise begin -->
 
@@ -505,19 +500,70 @@ Can you implement the Game of Life using `ndi.generic_filter`?
 
 **Solution:**
 
-Code by: Nicolas Rougier (@rougier)
+Nicolas Rougier (@rougier) provides a NumPy-only solution on his 100 NumPy
+Exercises page (Exercise #79):
 
-This is the game of life (cellular automata) in 10 lines of python with numpy.
-The code is available from http://www.labri.fr/perso/nrougier/teaching/numpy.100/ (last question).
-(code explanations is available from http://www.labri.fr/perso/nrougier/teaching/numpy/numpy.html)
+```python
+def next_generation(Z):
+    N = (Z[0:-2,0:-2] + Z[0:-2,1:-1] + Z[0:-2,2:] +
+         Z[1:-1,0:-2]                + Z[1:-1,2:] +
+         Z[2:  ,0:-2] + Z[2:  ,1:-1] + Z[2:  ,2:])
 
-**Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
-in-degree survival function to a power-law,
-$f(d) \sim d^{-\gamma}, d > d_0$,
-for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
-to include that line.
+    # Apply rules
+    birth = (N==3) & (Z[1:-1,1:-1]==0)
+    survive = ((N==2) | (N==3)) & (Z[1:-1,1:-1]==1)
+    Z[...] = 0
+    Z[1:-1,1:-1][birth | survive] = 1
+    return Z
+```
+
+Then we can start a board with:
+
+```python
+random_board = np.random.randint(0, 2, size=(50, 50))
+n_generations = 100
+for generation in range(n_generations):
+    random_board = next_generation(random_board)
+```
+
+Using generic filter makes it even easier:
+
+```python
+def nextgen_filter(values):
+    center = values[len(values) // 2]
+    neighbors_count = np.sum(values) - center
+    if neighbors_count == 3 or (center and neighbors_count == 2):
+        return 1.
+    else:
+        return 0.
+
+def next_generation(board):
+    return ndi.generic_filter(board, nextgen_filter,
+                              size=3, mode='constant')
+```
+
+The nice thing is that some formulations of the Game of Life use what's known
+as a *toroidal board*, which means that the left and right ends "wrap around"
+and connect to each other, as well as the top and bottom ends. With
+`generic_filter`, it's trivial to modify our solution to incorporate this:
+
+```python
+def next_generation_toroidal(board):
+    return ndi.generic_filter(board, nextgen_filter,
+                              size=3, mode='wrap')
+```
+
+We can now simulate this toroidal board for a few generations:
+
+```python
+random_board = np.random.randint(0, 2, size=(50, 50))
+n_generations = 100
+for generation in range(n_generations):
+    random_board = next_generation_toroidal(random_board)
+```
 
 <!-- solution end -->
+
 <!-- exercise end -->
 
 <!-- exercise begin -->
@@ -528,26 +574,58 @@ Above, we saw how we can combine the output of two different filters, the
 horizontal Sobel filter, and the vertical one. Can you write a function that
 does this in a single pass using `ndi.generic_filter`?
 
+<!-- solution begin -->
+
+```python
+hsobel = np.array([[ 1,  2,  1],
+                   [ 0,  0,  0],
+                   [-1, -2, -1]])
+
+vsobel = hsobel.T
+
+hsobel_r = np.ravel(hsobel)
+vsobel_r = np.ravel(vsobel)
+
+def sobel_magnitude_filter(values):
+    h_edge = values @ hsobel_r
+    v_edge = values @ vsobel_r
+    return np.hypot(h_edge, v_edge)
+```
+
+Now we can try it out on the coins image:
+
+```python
+sobel_mag = ndi.generic_filter(coins, sobel_magnitude_filter, size=3)
+plt.imshow(sobel_mag)
+```
+
+<!-- solution end -->
+
 <!-- exercise end -->
 
 ## Graphs and the NetworkX library
 
+Graphs are a natural representation for an astonishing variety of data. Pages
+on the world wide web, for example, can comprise nodes, while links between
+those pages can be, well, links. Or, in biology, so-called *transcription
+networks* have nodes represent genes and edges connect genes that have a direct
+influence on each other's expression.
+
+> **Note: graphs and networks {.callout}**
+>
+> In this context, the term "graph" is synonymous with "network", not with
+> "plot". Mathematicians and computer scientists invented slightly different
+> words to discuss these: graph = network, vertex = node, edge = link = arc. As
+> most people do, we will be using these terms interchangeably.
+>
+> You might be slightly more familiar with the network terminology: a network
+> consists of *nodes* and *links* between the nodes. Equivalently, a graph
+> consists of *vertices* and *edges* between the vertices. In NetworkX, you
+> have `Graph` objects consisting of `nodes` and `edges` between the nodes, and
+> this is probably the most common usage.
+
 To introduce you to graphs, we will reproduce some results from the paper
-["Structural properties of the *Caenorhabditis elegans* neuronal network"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Varshney *et al*, 2011.
-Note that in this context the term "graph" is synonymous with "network", but not with "plot".
-Mathematicians and computer scientists invented slightly different words to discuss these:
-graph = network, vertex = node, and edge = link.
-As most people do, we will be using these terms interchangeably.
-
-You might be slightly more familiar with the network terminology: a network consists of
-*nodes* and *links* between the nodes. Equivalently, a graph consists of *vertices* and
-*edges* between the vertices. In NetworkX, you have `Graph` objects consisting of
-`nodes` and `edges` between the nodes. Oh well.
-
-Graphs are a natural representation for a bewildering variety of data. Pages on the world
-wide web, for example, can comprise nodes, while links between those pages can be,
-well, links. Or, in so-called *transcription networks*, nodes represent genes and edges
-connect genes that have a direct influence on each other's expression.
+["Structural properties of the *Caenorhabditis elegans* neuronal network"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Lav Varshney *et al*, 2011.
 
 In our example, we will represent neurons in the nematode worm's nervous system as
 nodes, and place an edge between two nodes when a neuron makes a synapse with
@@ -557,7 +635,7 @@ because every worm (of this species) has the same number of neurons (302), and t
 connections between them are all known. This has resulted in the fantastic Openworm
 project [^openworm], which I encourage you to follow.
 
-You can download the neuronal dataset in Excel format (yuck) from the WormAtlas
+You can download the neuronal dataset in Excel format from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
 The direct link to the data is:
 [http://www.wormatlas.org/images/NeuronConnect.xls](http://www.wormatlas.org/images/NeuronConnect.xls)
@@ -687,7 +765,7 @@ In a neuronal circuit, you can think of the strongly connected component
 as the "brain" of the circuit, where the processing happens, while nodes
 upstream of it are inputs, and nodes downstream are outputs.
 
-> **Box**
+> **Cycles in neuronal networks {.callout}**
 >
 > The idea of cyclical neuronal circuits dates back to the 1950s. Here's a
 > lovely paragraph about this idea from an article in *Nautilus*,
@@ -724,38 +802,114 @@ survival = 1 - cumfreq
 Then, plot using Matplotlib:
 
 ```python
-plt.loglog(np.arange(1, len(survival) + 1), survival)
-plt.xlabel('in-degree distribution')
-plt.ylabel('fraction of neurons with higher in-degree distribution')
-plt.scatter(avg_in_degree, 0.0022, marker='v')
-plt.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
-plt.ylim(0.002, 1.0)
-plt.show()
+fig, ax = plt.subplots()
+ax.loglog(np.arange(1, len(survival) + 1), survival)
+ax.set_xlabel('in-degree distribution')
+ax.set_ylabel('fraction of neurons with higher in-degree distribution')
+ax.scatter(avg_in_degree, 0.0022, marker='v')
+ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
+ax.set_ylim(0.002, 1.0)
 ```
+
+There you have it: a reproduction of a scientific analysis, using SciPy. We are
+missing the line fit.... But that's what exercises are for.
 
 <!-- exercise begin -->
 
-**Exercise:** Use `scipy.optimize.curve_fit` to fit the tail of the
+### Exercise: Complete Figure 6B from the paper
+
+This exercise is a bit of a preview for chapter 7 (optimization):
+use `scipy.optimize.curve_fit` to fit the tail of the
 in-degree survival function to a power-law,
 $f(d) \sim d^{-\gamma}, d > d_0$,
 for $d_0 = 10$ (the red line in Figure 6B of the paper), and modify the plot
 to include that line.
 
+<!-- solution begin -->
+
+**Solution:** Let's look at the start of the docstring for `curve_fit`:
+
+```
+Use non-linear least squares to fit a function, f, to data.
+
+Assumes ``ydata = f(xdata, *params) + eps``
+
+Parameters
+----------
+f : callable
+    The model function, f(x, ...).  It must take the independent
+    variable as the first argument and the parameters to fit as
+    separate remaining arguments.
+xdata : An M-length sequence or an (k,M)-shaped array
+    for functions with k predictors.
+    The independent variable where the data is measured.
+ydata : M-length sequence
+    The dependent data --- nominally f(xdata, ...)
+```
+
+It looks like we just need to provide a function that takes in a data point,
+and some parameters, and returns the predicted value. In our case, we want the
+cumulative remaining frequency, $f(d)$ to be proportional to $d^{-\gamma}$.
+That means we need $f(d) = \alpha d^{-gamma}$:
+
+```python
+def fraction_higher(degree, alpha, gamma):
+    return alpha * degree ** (-gamma)
+```
+
+Then, we need our x and y data to fit, *for $d > 10$*:
+
+```python
+x = 1 + np.arange(len(survival))
+valid = x > 10
+x = x[valid]
+y = survival[valid]
+```
+
+We can now use `curve_fit` to obtain fit parameters:
+
+```python
+from scipy.optimize import curve_fit
+
+alpha_fit, gamma_fit = curve_fit(fraction_higher, x, y)[0]
+```
+
+Let's plot the results to see how we did:
+
+```python
+y_fit = fraction_higher(x, alpha_fit, gamma_fit)
+
+fig, ax = plt.subplots()
+ax.loglog(np.arange(1, len(survival) + 1), survival)
+ax.set_xlabel('in-degree distribution')
+ax.set_ylabel('fraction of neurons with higher in-degree distribution')
+ax.scatter(avg_in_degree, 0.0022, marker='v')
+ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
+ax.set_ylim(0.002, 1.0)
+ax.loglog(x, y_fit, c='red')
+```
+
+Voilà! A full Figure 6B, fit and all!
+
+<!-- solution end -->
+
 <!-- exercise end -->
+
+You now should have a fundamental understanding of graphs as a scientific
+abstraction, and how to easily manipulate and analyse them using Python and
+NetworkX. Now, we move on to a particular kind of graph used in image
+processing and computer vision.
 
 ## Region adjacency graphs
 
-I hope that the previous section gave you an idea of the power of graphs as a scientific
-abstraction, and also how Python makes it easy to manipulate and analyse
-them. Now we will study a special kind of graph, the region adjacency
-graph, or RAG. This is a representation of an image that is useful for *segmentation*,
-the division of images into meaningful regions (or *segments*). If you've seen
-Terminator 2, you've seen segmentation:
+A Region Adjacency Graph (RAG) is a representation of an image that is useful
+for *segmentation*: the division of images into meaningful regions (or
+*segments*). If you've seen Terminator 2, you've seen segmentation:
 
 ![Terminator vision](https://raw.githubusercontent.com/scikit-image/skimage-tutorials/master/2014-scipy/images/terminator-vision.png)
 
 Segmentation is one of those problems that humans do trivially, all the time,
-without thinking, whereas computers have a really hard time of it. To
+without thinking, whereas computers have a hard time of it. To
 understand this difficulty, look at this image:
 
 ![Face (Eileen Collins)](http://i.imgur.com/ky5qwIS.png)
@@ -803,18 +957,19 @@ While you see a face, a computer only sees a bunch of numbers:
     28666688888888888868668668688886665548
 ```
 
-(Yes, your visual system is tuned enough to find faces that it sees the
-face even in this blob of numbers! But I hope you get my point. Also, check
-out the "Faces In Things" Tumblr.)
+Our visual system is so optimized to spot faces that you might see the
+face even in this blob of numbers! But we hope our point is made. Also,
+you might want to look for the "Faces In Things" Tumblr, which demonstrates
+the face-finding optimization of our visual systems far more humorously.
 
-So the challenge is to make sense of those numbers, and where the
+At any rate, the challenge is to make sense of those numbers, and where the
 boundaries lie that divide the different parts of the image. A popular
 approach is to find small regions (called superpixels) that
 you're *sure* belong in the same segment, and then merge those according
 to some more sophisticated rule.
 
 As a simple example, suppose you want to segment out the tiger in this
-picture, from the Berkeley Segmentation DataSet (BSDS) [^bsds-tiger]:
+picture, from the Berkeley Segmentation Dataset (BSDS) [^bsds-tiger]:
 
 ![BSDS-108073 tiger](http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg)
 
@@ -837,8 +992,8 @@ from skimage import color
 io.imshow(color.label2rgb(seg, tiger));
 ```
 
-This shows that the tiger has been split in three parts, with the rest of the image
-in the remaining segments.
+This shows that the body of the tiger has been split in three parts, with the
+rest of the image in the remaining segments.
 
 A region adjacency graph (RAG) is a graph in which every node represents one
 of the above regions, and an edge connects two nodes when they touch. For a
@@ -868,11 +1023,11 @@ two nodes.
 The figure also shows the magic of thinking of segmentations as graphs: you can
 see that edges between nodes within the tiger and those outside of it are darker
 (higher-valued) than edges within the same object. Thus, if we can cut the
-graph along those edges, we will get our segmentation! (Yes, I have chosen an easy
+graph along those edges, we will get our segmentation. We have chosen an easy
 example for color-based segmentation, but the same principles hold true for
-graphs with more complicated pairwise relationships!)
+graphs with more complicated pairwise relationships.
 
-## Elegant ndimage
+## Elegant ndimage: how to build graphs from image regions
 
 All the pieces are in place: you know about numpy arrays, image filtering,
 generic filters, graphs, and region adjacency graphs. Let's build one to pluck
@@ -970,24 +1125,22 @@ def build_rag(labels, image):
     return g
 ```
 
-There's a few things to notice here:
+Here's a few reasons why we think this is a brilliant piece of code:
 
-- we return "0.0" from the filter function because `generic_filter` requires
+- `ndi.generic_filter` iterates over array elements *with their neighbors*.
+  (Use `numpy.ndindex` to simply iterate over array indices.)
+- We return "0.0" from the filter function because `generic_filter` requires
   the filter function to return a float. However, we will ignore the filter
   output, and only use it for its "side effect" of adding edges to the graph.
-- the loops are not nested several levels deep. This makes the code more
+- The loops are not nested several levels deep. This makes the code more
   compact, easier to take in in one go.
-- the code works identically for 1D, 2D, 3D, or even 8D images!
-- if we want to add support for diagonal connectivity, we just need to
+- The code works identically for 1D, 2D, 3D, or even 8D images!
+- If we want to add support for diagonal connectivity, we just need to
   change the `connectivity` parameter to `ndi.generate_binary_structure`
-- `ndi.generic_filter` iterates over array elements *with their neighbors*;
-  use `numpy.ndindex` to simply iterate over array indices.
-
-Overall, I think this is just a brilliant piece of code.
 
 ## Putting it all together: mean color segmentation
 
-Now, we can use it to segment the tiger in the image above:
+Now, we can use everything we've learned to segment the tiger in the image above:
 
 ```python
 g = build_rag(seg, tiger)
@@ -1024,10 +1177,9 @@ plt.imshow(color.label2rgb(segmented, tiger));
 Oops! Looks like the cat lost its tail!
 
 Still, we think that's a nice demonstration of the capabilities of RAGs...
-And the beauty with which SciPy and NetworkX make it feasible!
-
+And the beauty with which SciPy and NetworkX make it feasible.
 Many of these functions are available in the scikit-image library. If you
-are interested in image analysis, check it out!
+are interested in image analysis, look it up!
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 
