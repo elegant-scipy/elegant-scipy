@@ -349,7 +349,7 @@ is much greater in this version than when using the simple difference filter.
 ## Filtering images (2D filters)
 
 Now that you've seen filtering in 1D, we hope you'll find it straightforward to
-extend these concepts to 2D signals, a.k.a. images. Here's a 2D difference
+extend these concepts to 2D signals, such as images. Here's a 2D difference
 filter for finding the edges in the coins image:
 
 ```python
