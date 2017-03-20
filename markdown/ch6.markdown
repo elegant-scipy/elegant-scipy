@@ -22,7 +22,21 @@ a capital letter, while vectors and scalar values are lowercase. Since we're
 going to be dealing with quite a few matrices and vectors, following the
 linear algbrea converton helps to keep them straight. Therefore, variables
 that represent matrices will start with a capital letter, while vectors and
-numbers will start with lowercase.
+numbers will start with lowercase:
+
+```python
+import numpy as np
+
+m, n = (5, 6)  # scalars
+M = np.ones((m, n))  # a matrix
+v = np.random.random((n,))  # a vector
+w = M @ v  # another vector
+```
+
+In mathematical notation, the vectors would typically be written in boldface,
+as in $\mathbf{v}$ and $\mathbf{w}$, while the scalars would not, as in $m$ and
+$n$.  In Python code, we can't make that distinction, so we will rely instead
+on context to keep scalars and vectors straight.
 
 ## Laplacian matrix of a graph
 
