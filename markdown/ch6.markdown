@@ -52,7 +52,7 @@ matrix $A$, then $A_{i, j} = 1$ if and only if the edge $(i, j)$ is in $G$. We
 can then use linear algebra techniques to study this matrix, often with
 striking results.
 
-The degree of a node is defined as the number of edges touching it.  For
+The *degree* of a node is defined as the number of edges touching it.  For
 example, if a node is connected to five other nodes in a graph, its degree
 is 5. (Later, we will differentiate between out-degree and in-degree, when edges
 have a "from" and "to".) In matrix terms, the degree corresponds to the *sum*
