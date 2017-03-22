@@ -538,14 +538,19 @@ clusters = fcluster(yc, threshold_distance, 'distance')
 plot_cluster_survival_curves(clusters, data_table.columns, patients)
 ```
 
-The clustering of gene expression profiles has identified a higher-risk subtype of melanoma, which constitutes the majority of patients.
-This is indeed only the latest study to show such a result, with others identifying subtypes of leukemia (blood cancer), gut cancer, and more.
-Although the above clustering technique is quite fragile, there are other ways to explore this dataset and similar ones that are more robust.
+The clustering of gene expression profiles appears to have identified a
+higher-risk subtype of melanoma, which constitutes the majority of patients.
+The TCGA study backs this claim up with a more robust clustering and
+statistical testing.  This is indeed only the latest study to show such a
+result, with others identifying subtypes of leukemia (blood cancer), gut
+cancer, and more.  Although the above clustering technique is quite fragile,
+there are other ways to explore this dataset and similar ones that are more
+robust.
 
 <!-- exercise begin -->
 **Exercise:** Do our clusters do a better job of predicting survival than the original clusters in the paper? What about UV signature?
 
-Plot survival curves using the original­ clusters and UV signature columns of the patient data. How do they compare to our clusters?
+Plot survival curves using the original clusters and UV signature columns of the patient data. How do they compare to our clusters?
 <!-- exercise end -->
 
 <!-- exercise begin -->
