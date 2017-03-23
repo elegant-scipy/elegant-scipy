@@ -22,7 +22,21 @@ a capital letter, while vectors and scalar values are lowercase. Since we're
 going to be dealing with quite a few matrices and vectors, following the
 linear algbrea converton helps to keep them straight. Therefore, variables
 that represent matrices will start with a capital letter, while vectors and
-numbers will start with lowercase.
+numbers will start with lowercase:
+
+```python
+import numpy as np
+
+m, n = (5, 6)  # scalars
+M = np.ones((m, n))  # a matrix
+v = np.random.random((n,))  # a vector
+w = M @ v  # another vector
+```
+
+In mathematical notation, the vectors would typically be written in boldface,
+as in $\mathbf{v}$ and $\mathbf{w}$, while the scalars would not, as in $m$ and
+$n$.  In Python code, we can't make that distinction, so we will rely instead
+on context to keep scalars and vectors straight.
 
 ## Laplacian matrix of a graph
 
@@ -48,11 +62,11 @@ analysis, based on linear algebra. It turns out that we can think of a graph, $G
 as an *adjacency matrix*, in which we number the nodes of the graph from $0$
 to $n-1$, and place a 1 in row $i$, column $j$ of the matrix whenever there is
 an edge from node $i$ to node $j$. In other words, if we call the adjacency
-matrix $A$, then $A_{i, j} = 1$ if and only if the link $(i, j)$ is in $G$. We can
-then use linear algebra techniques to study this matrix, often with striking
-results.
+matrix $A$, then $A_{i, j} = 1$ if and only if the edge $(i, j)$ is in $G$. We
+can then use linear algebra techniques to study this matrix, often with
+striking results.
 
-The degree of a node is defined as the number of edges touching it.  For
+The *degree* of a node is defined as the number of edges touching it.  For
 example, if a node is connected to five other nodes in a graph, its degree
 is 5. (Later, we will differentiate between out-degree and in-degree, when edges
 have a "from" and "to".) In matrix terms, the degree corresponds to the *sum*
@@ -134,14 +148,14 @@ R rotates both the x and y axes, but not the z-axis.
 <!-- exercise end -->
 
 Back to the Laplacian. A common problem in network analysis is visualization.
-How do you draw nodes and links in such a way that you don't get a complete
+How do you draw nodes and edges in such a way that you don't get a complete
 mess such as this one?
 
 ![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
 
 **Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
 
-One way is to put nodes that share many links close together. It turns out
+One way is to put nodes that share many edges close together. It turns out
 that this can be done by using the second-smallest eigenvalue of the Laplacian
 matrix, and its corresponding eigenvector, which is so important it has its
 own name: the
@@ -397,7 +411,7 @@ if x[vc2_index] < 0:
     x = -x
 ```
 
-Now it's just a matter of drawing the nodes and the links. We color them
+Now it's just a matter of drawing the nodes and the edges. We color them
 according to the type stored in `neuron_types`, using the appealing and
 functional "colorblind"
 [colorbrewer palette](http://chrisalbon.com/python/seaborn_color_palettes.html):
@@ -453,7 +467,7 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
                 horizontalalignment='left', verticalalignment='center',
                 fontsize=6, zorder=2)
 
-    # plot links
+    # plot edges
     pre, post = np.nonzero(conn_matrix)
     for src, dst in zip(pre, post):
         ax.plot(x_coords[[src, dst]], y_coords[[src, dst]],
@@ -746,7 +760,7 @@ with. We've saved one of these, from the St Marks National Wildlife Refuge in
 Florida, in the Graph Markup Language format. The web was
 [described](http://www.sciencedirect.com/science/article/pii/S0304380099000228)
 in 1999 by Robert R. Christian and Joseph J. Luczovich. In the dataset, a
-node $i$ has a link to node $j$ if species $i$ eats species $j$.
+node $i$ has an edge to node $j$ if species $i$ eats species $j$.
 
 We'll start by loading in the data, which NetworkX knows how to read trivially:
 
@@ -766,8 +780,8 @@ Adj = nx.to_scipy_sparse_matrix(stmarks, dtype=np.float64)
 ```
 
 From the adjacency matrix, we can derive a *transition probability* matrix,
-where every link is replaced by a *probability* of 1 over the number of
-outgoing links from that species. In the food web, it might make more sense
+where every edge is replaced by a *probability* of 1 over the number of
+outgoing edges from that species. In the food web, it might make more sense
 to call this a lunch probability matrix.
 
 The total number of species in our matrix is going to be used a lot, so let's
