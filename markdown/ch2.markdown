@@ -43,18 +43,21 @@ def quantile_norm(X):
     quantiles = np.mean(np.sort(X, axis=0), axis=1)
 
     # compute the column-wise ranks. Each observation is replaced with its
-    # rank in that column: the smallest observation is replaced by 0, the
-    # second-smallest by 1, ..., and the largest by M, the number of rows.
-    ranks = stats.mstats.rankdata(X, axis=0).astype(int) - 1
+    # rank in that column: the smallest observation is replaced by 1, the
+    # second-smallest by 2, ..., and the largest by M, the number of rows.
+    ranks = np.apply_along_axis(stats.rankdata, 0, X)
+
+    # convert ranks to integer indices from 0 to M-1
+    rank_indices = ranks.astype(int) - 1
 
     # index the quantiles for each rank with the ranks matrix
-    Xn = quantiles[ranks]
+    Xn = quantiles[rank_indices]
 
     return(Xn)
 ```
 
 Due to the kind of variability of gene expression count data, it is common practice to log-transform the data before quantile-normalizing.
-Thus, we write an additional helper function to transform to log and back:
+Thus, we write an additional helper function to transform to log:
 
 ```python
 def quantile_norm_log(X):
@@ -113,26 +116,32 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-```python
-def plot_col_density(data, xlabel=None):
-    """For each column (individual) produce a density plot over all rows (genes).
+Next, we write a plotting function that makes use of scipy's `gaussian_kde` function to plot smooth distributions:
 
-    data : 2d nparray
-    xlabel : x axis label
-    """
+```python
+from scipy import stats
+
+def plot_col_density(data):
+    """For each column, produce a density plot over all rows."""
 
     # Use Gaussian smoothing to estimate the density
-    density_per_col = [stats.kde.gaussian_kde(col) for col in data.T]
+    density_per_col = [stats.gaussian_kde(col) for col in data.T]
     x = np.linspace(np.min(data), np.max(data), 100)
 
     fig, ax = plt.subplots()
     for density in density_per_col:
         ax.plot(x, density(x))
-    ax.set_xlabel(xlabel)
+    ax.set_xlabel('Data values (per column)')
+    ax.set_ylabel('Density')
+```
 
+Now, we can use that function to plot the distributions of the raw data,
+before we have done any normalization:
+
+```python
 # Before normalization
 log_counts = np.log(counts + 1)
-plot_col_density(log_counts, xlabel="Log count distribution for each individual")
+plot_col_density(log_counts)
 ```
 
 We can see that while the distributions of counts are broadly similar,
@@ -181,32 +190,36 @@ def quantile_norm(X):
     Xn : 2D array of float, shape (M, N)
         The normalized data.
     """
-    # log-transform the data
-    logX = np.log2(X + 1)
-
     # compute the quantiles
-    log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
+    quantiles = np.mean(np.sort(X, axis=0), axis=1)
 
-    # compute the column-wise ranks
-    ranks = stats.mstats.rankdata(X, axis=0).astype(int) - 1
-    # alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
+    # compute the column-wise ranks. Each observation is replaced with its
+    # rank in that column: the smallest observation is replaced by 1, the
+    # second-smallest by 2, ..., and the largest by M, the number of rows.
+    ranks = np.apply_along_axis(stats.rankdata, 0, X)
+
+    # convert ranks to integer indices from 0 to M-1
+    rank_indices = ranks.astype(int) - 1
 
     # index the quantiles for each rank with the ranks matrix
-    logXn = log_quantiles[ranks]
+    Xn = quantiles[rank_indices]
 
-    # convert the data back to counts (casting to int is optional)
-    Xn = np.round(2**logXn - 1).astype(int)
     return(Xn)
+
+
+def quantile_norm_log(X):
+    logX = np.log(X + 1)
+    logXn = quantile_norm(logX)
+    return logXn
 ```
 
 Now, let's see what our distributions look like after quantile normalization.
 
 ```python
 # After normalization
-log_quant_norm_counts = np.log(quantile_norm(counts)+1)
+log_counts_normalized = quantile_norm_log(counts)
 
-plot_col_density(log_quant_norm_counts,
-                    xlabel="Log count distribution for each individual")
+plot_col_density(log_counts_normalized)
 ```
 
 As you might expect, the distributions now look virtually identical!
