@@ -70,10 +70,15 @@ Together, these two functions illustrate many of the things that make NumPy powe
 
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
 - Arrays allow the expression of many numerical operations at once. In the
-  first line of `quantile_norm_log`, we take $\log(x + 1)$ for every value in the array.
+  first line of `quantile_norm_log`, we take $\log(x + 1)$ for every value $x$ in the array $X$.
 - Arrays can be operated on along *axes*. In the first line of `quantile_norm`, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
-- Arrays underpin the scientific Python ecosystem. The `scipy.stats.mstats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
-- Arrays support many kinds of data manipulation through *fancy indexing*: `Xn = quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
+- Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
+- Even functions that don't have an `axis=` keyword can be made to operate
+  along axees by NumPy's `apply_along_axis` function.
+- Arrays support many kinds of data manipulation through *fancy indexing*:
+  `Xn = quantiles[ranks]`. This is possibly the trickiest part of NumPy, but
+  also among the most useful. We will explore it further in the text that
+  follows.
 
 ## Get the data
 
