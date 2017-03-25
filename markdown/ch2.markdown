@@ -574,6 +574,7 @@ there are other ways to explore this dataset and similar ones that are more
 robust.
 
 <!-- exercise begin -->
+
 **Exercise:** Do our clusters do a better job of predicting survival than the original clusters in the paper? What about UV signature?
 
 Plot survival curves using the original clusters and UV signature columns of the patient data. How do they compare to our clusters?
