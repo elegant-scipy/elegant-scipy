@@ -95,19 +95,18 @@ import pandas as pd
 
 # Import TCGA melanoma data
 filename = 'data/counts.txt'
-with open(filename, 'rt') as f:
-    data_table = pd.read_csv(f, index_col=0) # Parse file with pandas
+data_table = pd.read_csv(filename, index_col=0) # Parse file with pandas
 
 print(data_table.iloc[:5, :5])
 ```
 
-Looking at the first 5 rows and columns of `data_table` you we can see that the
-columns are the samples and the rows are the genes.
+Looking at the rows and columns of `data_table`, we can see that the
+columns are the samples, and the rows are the genes.
 Now let's put our counts in an ndarray.
 
 ```python
 # 2D ndarray containing expression counts for each gene in each individual
-counts = np.asarray(data_table, dtype=int)
+counts = data_table.values
 ```
 
 Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
