@@ -113,6 +113,8 @@ Now, let's get a feel for our counts data by plotting the distribution of counts
 We will use a Gaussian kernel to smooth out bumps in our data so we can get a
 better idea of the overall shape.
 
+First, as usual, we set our plotting style:
+
 ```python
 # Make plots appear inline, set custom plotting style
 %matplotlib inline
@@ -227,8 +229,11 @@ plot_col_density(log_counts_normalized)
 ```
 
 As you might expect, the distributions now look virtually identical!
+(The different left tails of the distribution have to do with different
+numbers of ties for low count values — 0, 1, 2, ... — in the different
+columns of the data.)
 
-Now that we have normalized our counts, we can start using our gene expression data to predict mortality
+Now that we have normalized our counts, we can start using our gene expression data to predict mortality.
 
 ## Biclustering the counts data
 
