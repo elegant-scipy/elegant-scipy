@@ -9,7 +9,10 @@ For example, Bolstad and colleagues [showed](https://doi.org/10.1093/bioinformat
 
 Over the course of the chapter, we will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
 
-Our implementation of quantile normalization uses NumPy and SciPy effectively to produce a function that is fast, efficient, and elegant:
+Our implementation of quantile normalization uses NumPy and SciPy effectively to produce a function that is fast, efficient, and elegant. Quantile normalization involves three steps:
+- sort the values along each column,
+- find the average of each resulting row, and
+- replace each column quantile with the quantile of the average column.
 
 ```python
 import numpy as np
@@ -141,20 +144,15 @@ That is, the changes are likely due to differences in the way we processed each 
 rather than due to biological variation.
 So we will try to normalize out these global differences between individuals.
 
-To do this, we will be performing quantile normalization.
-The idea is that we assume all our samples should have a similar distribution,
-so any differences in the shape are due to some technical variation.
-We can fix this by forcing all the samples to have the same distribution.
-More formally, given an expression matrix (microarray data, read counts, etc) of
-ngenes by nsamples, quantile normalization ensures all samples have the same spread
-of data (by construction). It involves:
-
-- (optionally) log-transforming the data
-- sorting all the data points column-wise
-- averaging the rows and
-- replacing each column quantile with the quantile of the average column.
+To do this normalization, we will perform quantile normalization, as described
+at the start of the chapter.  The idea is that all our samples should have a
+similar distribution, so any differences in the shape should be due to some
+technical variation.  More formally, given an expression matrix (microarray
+data, read counts, etc) of shape `(n_genes, n_samples)`, quantile normalization
+ensures that all samples have the same spread of data (by construction).
 
 With NumPy and SciPy, this can be done easily and efficiently.
+To recap, here is our quantile normalization implementation, which we introduced at the beginning of the chapter.
 
 Let's assume we've read in the input matrix as X:
 
@@ -169,10 +167,9 @@ def quantile_norm(X):
     by N samples, quantile normalization ensures all samples have the same
     spread of data (by construction).
 
-    The input data is log-transformed, then the data across each row are
-    averaged to obtain an average column. Each column quantile is replaced
-    with the corresponding quantile of the average column.
-    The data is then transformed back to counts.
+    The data across each row are averaged to obtain an average column. Each
+    column quantile is replaced with the corresponding quantile of the average
+    column.
 
     Parameters
     ----------
