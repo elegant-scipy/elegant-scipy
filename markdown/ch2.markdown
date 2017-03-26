@@ -571,7 +571,7 @@ statistical testing.  This is indeed only the latest study to show such a
 result, with others identifying subtypes of leukemia (blood cancer), gut
 cancer, and more.  Although the above clustering technique is quite fragile,
 there are other ways to explore this dataset and similar ones that are more
-robust.
+robust [^paper].
 
 <!-- exercise begin -->
 
@@ -582,7 +582,7 @@ Plot survival curves using the original clusters and UV signature columns of the
 
 <!-- exercise begin -->
 
-**Exercise:** We leave you the exercise of implementing the approach described in the paper:
+**Exercise:** We leave you the exercise of implementing the approach described in the paper[^paper]:
 
 1. Take bootstrap samples (random choice with replacement) of the genes used to cluster the samples;
 2. For each sample, produce a hierarchical clustering;
@@ -595,3 +595,7 @@ Thus, these samples can be considered to robustly cluster together.
 *Hint: use `np.random.choice` with `replacement=True` to create bootstrap samples of row indices.*
 
 <!-- exercise end -->
+
+[^paper]: The Cancer Genome Atlas Network. (2015) Genomic Classification of
+          Cutaneous Melanoma. Cell 161:1681-1696.
+          http://dx.doi.org/10.1016/j.cell.2015.05.044
