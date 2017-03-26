@@ -122,7 +122,7 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-Next, we write a plotting function that makes use of scipy's `gaussian_kde` function to plot smooth distributions:
+Next, we write a plotting function that makes use of SciPy's `gaussian_kde` function to plot smooth distributions:
 
 ```python
 from scipy import stats
