@@ -95,7 +95,7 @@ import pandas as pd
 
 # Import TCGA melanoma data
 filename = 'data/counts.txt'
-data_table = pd.read_csv(filename, index_col=0) # Parse file with pandas
+data_table = pd.read_csv(filename, index_col=0)  # Parse file with pandas
 
 print(data_table.iloc[:5, :5])
 ```
