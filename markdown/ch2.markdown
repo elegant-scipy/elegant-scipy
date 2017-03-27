@@ -1,13 +1,18 @@
 # Quantile normalization with NumPy and SciPy
 
-Our use case is using gene expression data to predict mortality in skin cancer patients. We will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this  [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
-
-The code we will work to understand is an implementation of [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
-This requires a strong assumption: if the data are not distributed according to a bell curve, we just make it fit!
-But it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
+In this chapter, we will continue to analyze the gene expression data from Chapter 1, but with a slightly different purpose: we want to use each patient's *gene expression profile* (the full vector of their gene expression measurements) to predict their expected survival.
+In order to use full profiles, we need a stronger normalization than what Chapter 1's RPKM provides.
+We will instead perform [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
+This method enforces a strong assumption: if the data are not distributed according to a desired shape, we just make it fit!
+This might feel a bit like cheating, but it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
 For example, Bolstad and colleagues [showed](https://doi.org/10.1093/bioinformatics/19.2.185) that it performs admirably in recovering known expression levels in microarray data.
 
-Using NumPy indexing tricks and the `scipy.stats.mstats.rankdata` function, quantile normalization in Python is fast, efficient, and elegant.
+Over the course of the chapter, we will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
+
+Our implementation of quantile normalization uses NumPy and SciPy effectively to produce a function that is fast, efficient, and elegant. Quantile normalization involves three steps:
+- sort the values along each column,
+- find the average of each resulting row, and
+- replace each column quantile with the quantile of the average column.
 
 ```python
 import numpy as np
@@ -20,10 +25,9 @@ def quantile_norm(X):
     by N samples, quantile normalization ensures all samples have the same
     spread of data (by construction).
 
-    The input data is log-transformed, then the data across each row are
-    averaged to obtain an average column. Each column quantile is replaced
-    with the corresponding quantile of the average column.
-    The data is then transformed back to counts.
+    The data across each row are averaged to obtain an average column. Each
+    column quantile is replaced with the corresponding quantile of the average
+    column.
 
     Parameters
     ----------
@@ -35,32 +39,46 @@ def quantile_norm(X):
     Xn : 2D array of float, shape (M, N)
         The normalized data.
     """
-    # log-transform the data
-    logX = np.log2(X + 1)
-
     # compute the quantiles
-    log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
+    quantiles = np.mean(np.sort(X, axis=0), axis=1)
 
     # compute the column-wise ranks. Each observation is replaced with its
-    # rank in that column: the smallest observation is replaced by 0, the
-    # second-smallest by 1, ..., and the largest by M, the number of rows.
-    ranks = stats.mstats.rankdata(X, axis=0).astype(int) - 1
+    # rank in that column: the smallest observation is replaced by 1, the
+    # second-smallest by 2, ..., and the largest by M, the number of rows.
+    ranks = np.apply_along_axis(stats.rankdata, 0, X)
+
+    # convert ranks to integer indices from 0 to M-1
+    rank_indices = ranks.astype(int) - 1
 
     # index the quantiles for each rank with the ranks matrix
-    logXn = log_quantiles[ranks]
+    Xn = quantiles[rank_indices]
 
-    # convert the data back to counts (casting to int is optional)
-    Xn = np.round(2**logXn - 1).astype(int)
     return(Xn)
 ```
 
-We'll unpack that example throughout the chapter, but for now note that it illustrates many of the things that make NumPy powerful (you will remember the first three of these moves from chapter 1):
+Due to the kind of variability of gene expression count data, it is common practice to log-transform the data before quantile-normalizing.
+Thus, we write an additional helper function to transform to log:
+
+```python
+def quantile_norm_log(X):
+    logX = np.log(X + 1)
+    logXn = quantile_norm(logX)
+    return logXn
+```
+
+Together, these two functions illustrate many of the things that make NumPy powerful (you will remember the first three of these moves from chapter 1):
 
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
-- Arrays allow the expression of many numerical operations at once. In the first line of the function, we take $\log(x + 1)$ for every value in the array.
-- Arrays can be operated on along *axes*. In the second line, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
-- Arrays underpin the scientific Python ecosystem. The `scipy.stats.mstats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
-- Arrays support many kinds of data manipulation through *fancy indexing*: `logXn = log_quantiles[ranks]`. This is possibly the trickiest part of NumPy, but also the most useful. We will explore it further in the text that follows.
+- Arrays allow the expression of many numerical operations at once. In the
+  first line of `quantile_norm_log`, we take $\log(x + 1)$ for every value $x$ in the array $X$.
+- Arrays can be operated on along *axes*. In the first line of `quantile_norm`, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
+- Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
+- Even functions that don't have an `axis=` keyword can be made to operate
+  along axees by NumPy's `apply_along_axis` function.
+- Arrays support many kinds of data manipulation through *fancy indexing*:
+  `Xn = quantiles[ranks]`. This is possibly the trickiest part of NumPy, but
+  also among the most useful. We will explore it further in the text that
+  follows.
 
 ## Get the data
 
@@ -77,24 +95,25 @@ import pandas as pd
 
 # Import TCGA melanoma data
 filename = 'data/counts.txt'
-with open(filename, 'rt') as f:
-    data_table = pd.read_csv(f, index_col=0) # Parse file with pandas
+data_table = pd.read_csv(filename, index_col=0)  # Parse file with pandas
 
 print(data_table.iloc[:5, :5])
 ```
 
-Looking at the first 5 rows and columns of `data_table` you we can see that the
-columns are the samples and the rows are the genes.
+Looking at the rows and columns of `data_table`, we can see that the
+columns are the samples, and the rows are the genes.
 Now let's put our counts in an ndarray.
 
 ```python
 # 2D ndarray containing expression counts for each gene in each individual
-counts = np.asarray(data_table, dtype=int)
+counts = data_table.values
 ```
 
 Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
 We will use a Gaussian kernel to smooth out bumps in our data so we can get a
 better idea of the overall shape.
+
+First, as usual, we set our plotting style:
 
 ```python
 # Make plots appear inline, set custom plotting style
@@ -103,26 +122,32 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-```python
-def plot_col_density(data, xlabel=None):
-    """For each column (individual) produce a density plot over all rows (genes).
+Next, we write a plotting function that makes use of SciPy's `gaussian_kde` function to plot smooth distributions:
 
-    data : 2d nparray
-    xlabel : x axis label
-    """
+```python
+from scipy import stats
+
+def plot_col_density(data):
+    """For each column, produce a density plot over all rows."""
 
     # Use Gaussian smoothing to estimate the density
-    density_per_col = [stats.kde.gaussian_kde(col) for col in data.T]
+    density_per_col = [stats.gaussian_kde(col) for col in data.T]
     x = np.linspace(np.min(data), np.max(data), 100)
 
     fig, ax = plt.subplots()
     for density in density_per_col:
         ax.plot(x, density(x))
-    ax.set_xlabel(xlabel)
+    ax.set_xlabel('Data values (per column)')
+    ax.set_ylabel('Density')
+```
 
+Now, we can use that function to plot the distributions of the raw data,
+before we have done any normalization:
+
+```python
 # Before normalization
 log_counts = np.log(counts + 1)
-plot_col_density(log_counts, xlabel="Log count distribution for each individual")
+plot_col_density(log_counts)
 ```
 
 We can see that while the distributions of counts are broadly similar,
@@ -134,20 +159,15 @@ That is, the changes are likely due to differences in the way we processed each 
 rather than due to biological variation.
 So we will try to normalize out these global differences between individuals.
 
-To do this, we will be performing quantile normalization.
-The idea is that we assume all our samples should have a similar distribution,
-so any differences in the shape are due to some technical variation.
-We can fix this by forcing all the samples to have the same distribution.
-More formally, given an expression matrix (microarray data, read counts, etc) of
-ngenes by nsamples, quantile normalization ensures all samples have the same spread
-of data (by construction). It involves:
-
-- (optionally) log-transforming the data
-- sorting all the data points column-wise
-- averaging the rows and
-- replacing each column quantile with the quantile of the average column.
+To do this normalization, we will perform quantile normalization, as described
+at the start of the chapter.  The idea is that all our samples should have a
+similar distribution, so any differences in the shape should be due to some
+technical variation.  More formally, given an expression matrix (microarray
+data, read counts, etc) of shape `(n_genes, n_samples)`, quantile normalization
+ensures that all samples have the same spread of data (by construction).
 
 With NumPy and SciPy, this can be done easily and efficiently.
+To recap, here is our quantile normalization implementation, which we introduced at the beginning of the chapter.
 
 Let's assume we've read in the input matrix as X:
 
@@ -162,10 +182,9 @@ def quantile_norm(X):
     by N samples, quantile normalization ensures all samples have the same
     spread of data (by construction).
 
-    The input data is log-transformed, then the data across each row are
-    averaged to obtain an average column. Each column quantile is replaced
-    with the corresponding quantile of the average column.
-    The data is then transformed back to counts.
+    The data across each row are averaged to obtain an average column. Each
+    column quantile is replaced with the corresponding quantile of the average
+    column.
 
     Parameters
     ----------
@@ -177,37 +196,44 @@ def quantile_norm(X):
     Xn : 2D array of float, shape (M, N)
         The normalized data.
     """
-    # log-transform the data
-    logX = np.log2(X + 1)
-
     # compute the quantiles
-    log_quantiles = np.mean(np.sort(logX, axis=0), axis=1)
+    quantiles = np.mean(np.sort(X, axis=0), axis=1)
 
-    # compute the column-wise ranks
-    ranks = stats.mstats.rankdata(X, axis=0).astype(int) - 1
-    # alternative: ranks = np.argsort(np.argsort(X, axis=0), axis=0)
+    # compute the column-wise ranks. Each observation is replaced with its
+    # rank in that column: the smallest observation is replaced by 1, the
+    # second-smallest by 2, ..., and the largest by M, the number of rows.
+    ranks = np.apply_along_axis(stats.rankdata, 0, X)
+
+    # convert ranks to integer indices from 0 to M-1
+    rank_indices = ranks.astype(int) - 1
 
     # index the quantiles for each rank with the ranks matrix
-    logXn = log_quantiles[ranks]
+    Xn = quantiles[rank_indices]
 
-    # convert the data back to counts (casting to int is optional)
-    Xn = np.round(2**logXn - 1).astype(int)
     return(Xn)
+
+
+def quantile_norm_log(X):
+    logX = np.log(X + 1)
+    logXn = quantile_norm(logX)
+    return logXn
 ```
 
 Now, let's see what our distributions look like after quantile normalization.
 
 ```python
 # After normalization
-log_quant_norm_counts = np.log(quantile_norm(counts)+1)
+log_counts_normalized = quantile_norm_log(counts)
 
-plot_col_density(log_quant_norm_counts,
-                    xlabel="Log count distribution for each individual")
+plot_col_density(log_counts_normalized)
 ```
 
 As you might expect, the distributions now look virtually identical!
+(The different left tails of the distribution have to do with different
+numbers of ties for low count values — 0, 1, 2, ... — in the different
+columns of the data.)
 
-Now that we have normalized our counts, we can start using our gene expression data to predict mortality
+Now that we have normalized our counts, we can start using our gene expression data to predict mortality.
 
 ## Biclustering the counts data
 
@@ -538,19 +564,25 @@ clusters = fcluster(yc, threshold_distance, 'distance')
 plot_cluster_survival_curves(clusters, data_table.columns, patients)
 ```
 
-The clustering of gene expression profiles has identified a higher-risk subtype of melanoma, which constitutes the majority of patients.
-This is indeed only the latest study to show such a result, with others identifying subtypes of leukemia (blood cancer), gut cancer, and more.
-Although the above clustering technique is quite fragile, there are other ways to explore this dataset and similar ones that are more robust.
+The clustering of gene expression profiles appears to have identified a
+higher-risk subtype of melanoma, which constitutes the majority of patients.
+The TCGA study backs this claim up with a more robust clustering and
+statistical testing.  This is indeed only the latest study to show such a
+result, with others identifying subtypes of leukemia (blood cancer), gut
+cancer, and more.  Although the above clustering technique is quite fragile,
+there are other ways to explore this dataset and similar ones that are more
+robust [^paper].
 
 <!-- exercise begin -->
+
 **Exercise:** Do our clusters do a better job of predicting survival than the original clusters in the paper? What about UV signature?
 
-Plot survival curves using the original­ clusters and UV signature columns of the patient data. How do they compare to our clusters?
+Plot survival curves using the original clusters and UV signature columns of the patient data. How do they compare to our clusters?
 <!-- exercise end -->
 
 <!-- exercise begin -->
 
-**Exercise:** We leave you the exercise of implementing the approach described in the paper:
+**Exercise:** We leave you the exercise of implementing the approach described in the paper[^paper]:
 
 1. Take bootstrap samples (random choice with replacement) of the genes used to cluster the samples;
 2. For each sample, produce a hierarchical clustering;
@@ -563,3 +595,7 @@ Thus, these samples can be considered to robustly cluster together.
 *Hint: use `np.random.choice` with `replacement=True` to create bootstrap samples of row indices.*
 
 <!-- exercise end -->
+
+[^paper]: The Cancer Genome Atlas Network. (2015) Genomic Classification of
+          Cutaneous Melanoma. Cell 161:1681-1696.
+          http://dx.doi.org/10.1016/j.cell.2015.05.044
