@@ -36,7 +36,7 @@ def variation_of_information(x, y):
     return float(hygx + hxgy)
 ```
 
-> **Python 3.5 pro-tip!**
+> **Python 3.5 pro-tip! {.callout}**
 >
 > The `@` symbols in the above paragraph represent the *matrix multiplication*
 > operator, and were introduced in Python 3.5 in 2015. This is one of the most
@@ -50,7 +50,7 @@ def variation_of_information(x, y):
 >
 > `hygx = -px.T.dot(xlogx(Px_inv.dot(Pxy)).sum(axis=1))`
 >
-> Yuck! By using the `@` operator to stay closer to mathematical notation, we
+> By using the `@` operator to stay closer to mathematical notation, we
 > can avoid implementation errors and produce code that is much easier to read.
 >
 > Actually, SciPy's authors knew this long before the `@` operator was
