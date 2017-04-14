@@ -73,6 +73,7 @@ def variation_of_information(x, y):
 >
 > Python 3.5's `@` operator gives us the best of both worlds!
 
+## Contingency matrices
 
 But let's start simple and work our way up to segmentations.
 
@@ -258,6 +259,8 @@ format to hold n-dimensional array data.
 For sparse matrices, there are actually a wide array of possible formats, and
 the "right" format depends on the problem you want to solve.
 
+### COO (COOrdinate) format
+
 Perhaps the most intuitive is the coordinate, or COO, format.
 This uses three 1D arrays to represent a 2D matrix $A$.
 Each of these arrays has length equal to the number of nonzero values in $A$,
@@ -329,7 +332,7 @@ s2 = np.array([[0, 0, 6, 0, 0],
 
 <!-- solution begin -->
 
-We first list the non-zero elements of the array, left-to-right and
+**Solution:** We first list the non-zero elements of the array, left-to-right and
 top-to-bottom, as if reading a book:
 
 ```python
@@ -378,6 +381,8 @@ However, you can look at your COO representation above to help you identify
 redundant information:
 Notice all those repeated `1`s?
 
+### CSR (Compressed Sparse Row) format
+
 If we use COO to enumerate the nonzero entries row-by-row, rather than in
 arbitrary order (which the format allows), we end up with many consecutive,
 repeated values in the `row` array.
@@ -385,8 +390,8 @@ These can be compressed by indicating the *indices* in `col` where the next row
 starts, rather than repeatedly writing the row index.
 This is the basis for the *compressed sparse row* or *CSR* format.
 
-Let's work through the example above.  In CSR format, the `col` and `data`
-arrays are unchanged (but `col` is renamed to `indices`).  However, the `row`
+Let's work through the example above. In CSR format, the `col` and `data`
+arrays are unchanged (but `col` is renamed to `indices`). However, the `row`
 array, instead of indicating the rows, indicates *where* in `col` each row
 begins, and is renamed to `indptr`, for "index pointer".
 
@@ -825,7 +830,7 @@ computed, applying it repeatedly is extremely fast, thanks to sparse matrix
 algebra.
 
 So now that we've seen a "standard" use of SciPy's sparse matrices, let's have
-a look at the out-of-the-box use that inspired this chapter!
+a look at the out-of-the-box use that inspired this chapter.
 
 ## Back to contingency matrices
 
@@ -973,6 +978,8 @@ to the following question: on average, for a random pixel, if we are given its
 segment ID in one segmentation, how much more *information* do we need to
 determine its ID in the other segmentation?
 
+## Information theory in brief
+
 In order to answer this question, we'll need a quick primer on information
 theory. We need to be brief but if you want more information (heh), you should
 look at Christopher Olah's stellar blog post,
@@ -1116,10 +1123,9 @@ month.) Which one is greater? (*Hint:* the probabilities in the table are
 the conditional probabilities of rain given month.)
 
 ```python
-prains = [25, 27, 24, 18, 14, 11, 7, 8, 10, 15, 18, 23]
-prains = [p / 100 for p in prains]
-pshine = [1 - p for p in prains]
-p_rain_g_month = np.array((prains, pshine)).T
+prains = np.array([25, 27, 24, 18, 14, 11, 7, 8, 10, 15, 18, 23]) / 100
+pshine = 1 - prains
+p_rain_g_month = np.column_stack([prains, pshine])
 # replace 'None' below with expression for non-conditional contingency
 # table. Hint: the values in the table must sum to 1.
 p_rain_month = None
@@ -1167,6 +1173,8 @@ Together, these two values define the variation of information (VI):
 $$
 VI(A, B) = H(A | B) + H(B | A)
 $$
+
+## Information theory applied to segmentation
 
 Back in the image segmentation context, "days" become "pixels", and "rain" and "month"
 become "label in automated segmentation ($S$)" and "label ground truth ($T$)".
@@ -1306,6 +1314,8 @@ H_ga = np.sum(np.sum(xlog1x(cont / p_as[:, np.newaxis]), axis=1) * p_as)
 H_ga
 ```
 
+### Converting NumPy array code to use sparse matrices
+
 We used numpy arrays and broadcasting in the above examples, which, as we've
 seen many times, is a powerful way to analyze data in Python.
 However, for segmentations of complex images, possibly containing thousands of
@@ -1352,19 +1362,6 @@ def variation_of_information(x, y):
 
     # return the sum of these
     return float(hygx + hxgy)
-
-
-    # Compute the inverse diagonal matrices, which will help
-    # compute the conditional probabilities
-    px_inv = sparse.diags(invert_nonzero(px))
-    py_inv = sparse.diags(invert_nonzero(py))
-
-    # Finally, compute the entropies
-    hygx = px @ xlog1x(px_inv @ pxy).sum(axis=1)
-    hxgy = xlog1x(pxy @ py_inv).sum(axis=0) @ py
-
-    # return their sum
-    return float(hygx + hxgy)
 ```
 
 We can check that this gives the right value (1) for the VI of our toy `aseg`
@@ -1378,6 +1375,8 @@ You can see how we use three types of sparse matrices (COO, CSR, and diagonal)
 to efficiently solve the entropy calculation in the case of sparse contingency
 matrices, where NumPy would be inefficient.
 (Indeed, this whole approach was inspired by a Python `MemoryError`!)
+
+### Using variation of information
 
 To finish, let's demonstrate the use of VI to estimate the best possible
 automated segmentation of an image.
