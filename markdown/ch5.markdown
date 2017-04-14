@@ -1383,7 +1383,7 @@ plt.imshow(tiger);
 
 In order to check our image segmentation, we're going to need a ground truth.
 It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
-Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it.
+Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it [^bsds].
 Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
 It's worth noting that there is quite substantial variation between the segmentations performed by humans.
 If you look through the [various tiger segmentations](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html), you will see that some humans are more pedantic than others about tracing around the reeds, while others consider the reflections to be objects worth segmenting out from the rest of the water.
@@ -1537,7 +1537,9 @@ plt.imshow(color.label2rgb(auto_seg, tiger));
 
 **Exercise:** Segmentation in practice
 
-Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/) [^bsds].
 Using the mean or median of those thresholds, then go and segment a new image. Did you get a reasonable segmentation?
 
 <!-- exercise end -->
+
+[^bsds]: P. Arbelaez, M. Maire, C. Fowlkes and J. Malik. IEEE TPAMI, Vol. 33, No. 5, pp. 898-916, May 2011.
