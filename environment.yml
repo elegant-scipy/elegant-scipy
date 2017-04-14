@@ -8,7 +8,7 @@ dependencies:
 - pandas=0.19*
 - scipy=0.19*
 - scikit-learn=0.18*
-- scikit-image=0.12*
+- scikit-image=0.13*
 - networkx=1.11*
 - xlrd=1.0*
 - jupyter=1.0*
