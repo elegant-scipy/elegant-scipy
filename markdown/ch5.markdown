@@ -1,9 +1,5 @@
 # Contingency tables using sparse coordinate matrices
 
-**Code by Juan Nunez-Iglesias,**
-**with suggestions by Jaime Frio and Warren Weckesser.**
-**Nominated by Andreas Mueller.**
-
 Many real-world matrices are *sparse*, which means that most of their values are zero.
 
 Using numpy arrays to manipulate sparse matrices wastes a lot of time and energy multiplying many, many values by 0.
@@ -13,11 +9,12 @@ In addition to helping solve these "canonical" sparse matrix problems, `sparse` 
 One such problem is the comparison of image segmentations.
 (Review chapter 3 for a definition of segmentation.)
 
-The code sample motivating this chapter uses sparse matrices twice:
-once to compute a *contingency matrix* that counts the correspondence of labels
-between two segmentations, and again to use that contingency matrix to compute
-the *variation of information*, which measures the differences between
-segmentations.
+The code sample motivating this chapter uses sparse matrices twice: First, we
+use code nominated by Andreas Mueller to compute a *contingency matrix* that
+counts the correspondence of labels between two segmentations. Then, with
+suggestions from Jaime Fernández del Río and Warren Weckesser, we use that
+contingency matrix to compute the *variation of information*, which measures
+the differences between segmentations.
 
 ```python
 def variation_of_information(x, y):
