@@ -19,20 +19,24 @@ the differences between segmentations.
 ```python
 def variation_of_information(x, y):
     # compute contingency matrix, aka joint probability matrix
-    Pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
+    n = x.size
+    Pxy = sparse.coo_matrix((np.full(n, 1/n), (x.ravel(), y.ravel())),
                             dtype=float).tocsr()
-    Pxy.data /= np.sum(Pxy.data)
 
-    # compute marginal probabilities, converting to array
-    px = Pxy.sum(axis=1).A.ravel()
-    py = Pxy.sum(axis=0).A.ravel()
+    # compute marginal probabilities, converting to 1D array
+    px = np.ravel(Pxy.sum(axis=1))
+    py = np.ravel(Pxy.sum(axis=0))
 
     # use sparse matrix linear algebra to compute VI
-    Px_inv = sparse.diags(invert_nonzero(px).T, [0])
-    Py_inv = sparse.diags(invert_nonzero(py), [0])
-    hygx = -px.T @ xlogx(Px_inv @ Pxy).sum(axis=1)
-    hxgy = -xlogx(Pxy @ Py_inv).sum(axis=0) @ py.T
+    # first, compute the inverse diagonal matrices
+    Px_inv = sparse.diags(invert_nonzero(px))
+    Py_inv = sparse.diags(invert_nonzero(py))
 
+    # then, compute the entropies
+    hygx = -px @ xlogx(Px_inv @ Pxy).sum(axis=1)
+    hxgy = -xlogx(Pxy @ Py_inv).sum(axis=0) @ py
+
+    # return the sum of these
     return float(hygx + hxgy)
 ```
 
@@ -44,11 +48,11 @@ def variation_of_information(x, y):
 > the programming of linear algebra algorithms using code that remains very
 > close to the original mathematics. Compare the above:
 >
-> `hygx = -px.T @ xlogx(Px_inv @ Pxy).sum(axis=1)`
+> `hygx = -px @ xlogx(Px_inv @ Pxy).sum(axis=1)`
 >
 > with the equivalent Python 2 code:
 >
-> `hygx = -px.T.dot(xlogx(Px_inv.dot(Pxy)).sum(axis=1))`
+> `hygx = -px.dot(xlogx(Px_inv.dot(Pxy)).sum(axis=1))`
 >
 > By using the `@` operator to stay closer to mathematical notation, we
 > can avoid implementation errors and produce code that is much easier to read.
@@ -58,7 +62,7 @@ def variation_of_information(x, y):
 > `*` operator when the inputs are SciPy matrices. Available in Python
 > 2.7, it lets us produce nice, readable code like the above:
 >
-> `hygx = -px.T * xlog(Px_inv * Pxy).sum(axis=1)`
+> `hygx = -px * xlog(Px_inv * Pxy).sum(axis=1)`
 >
 > But there is a huge catch: this code will behave differently when `px` or
 > `Px_inv` are SciPy matrices than when they are not! If `Px_inv` and `Pxy` are
@@ -1328,17 +1332,27 @@ def invert_nonzero(arr):
 
 
 def variation_of_information(x, y):
-
-    # Compute the joint probability matrix
-    ones = np.broadcast_to(1., x.size)
-    pxy = sparse.coo_matrix((ones, (x.ravel(), y.ravel())),
+    # compute contingency matrix, aka joint probability matrix
+    n = x.size
+    Pxy = sparse.coo_matrix((np.full(n, 1/n), (x.ravel(), y.ravel())),
                             dtype=float).tocsr()
-    pxy.data /= np.sum(pxy.data)
 
-    # Compute the marginals
-    # Use .A.ravel() to make them 1D arrays instead of flat matrices
-    px = pxy.sum(axis=1).A.ravel()
-    py = pxy.sum(axis=0).A.ravel()
+    # compute marginal probabilities, converting to 1D array
+    px = np.ravel(Pxy.sum(axis=1))
+    py = np.ravel(Pxy.sum(axis=0))
+
+    # use sparse matrix linear algebra to compute VI
+    # first, compute the inverse diagonal matrices
+    Px_inv = sparse.diags(invert_nonzero(px))
+    Py_inv = sparse.diags(invert_nonzero(py))
+
+    # then, compute the entropies
+    hygx = -px @ xlogx(Px_inv @ Pxy).sum(axis=1)
+    hxgy = -xlogx(Pxy @ Py_inv).sum(axis=0) @ py
+
+    # return the sum of these
+    return float(hygx + hxgy)
+
 
     # Compute the inverse diagonal matrices, which will help
     # compute the conditional probabilities
@@ -1516,7 +1530,7 @@ def vi_at_threshold(seg, tiger, human_seg, threshold):
     auto_seg = RAG_segmentation(seg, tiger, threshold)
     return variation_of_information(auto_seg, human_seg)
 
-thresholds = range(0,110,10)
+thresholds = range(0, 110, 10)
 vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold)
                     for threshold in thresholds]
 ```
