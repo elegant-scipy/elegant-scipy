@@ -127,11 +127,11 @@ confusion_matrix(pred, gt)
 ```
 
 <!-- exercise begin -->
-**Question:** Why did we call this inefficient?
+**Exercise:** Why did we call this inefficient?
 
 <!-- solution begin -->
 
-**Answer:** From chapter 1, you recall that `arr == k` creates an array of
+**Solution:** From chapter 1, you recall that `arr == k` creates an array of
 Boolean (`True` or `False`) values of the same size as `arr`. This, as you
 might expect, requires a full pass over `arr`. Therefore, in the above
 solution, we make a full pass over each of `pred` and `gt` for every
@@ -156,7 +156,7 @@ def confusion_matrix1(pred, gt):
 
 <!-- solution begin -->
 
-We offer two solutions here, although many are possible.
+**Solution:** We offer two solutions here, although many are possible.
 
 Our first solution uses Python's built-in `zip` function to pair together
 labels from `pred` and `gt`.
