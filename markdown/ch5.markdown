@@ -33,8 +33,8 @@ def variation_of_information(x, y):
     Py_inv = sparse.diags(invert_nonzero(py))
 
     # then, compute the entropies
-    hygx = -px @ xlogx(Px_inv @ Pxy).sum(axis=1)
-    hxgy = -xlogx(Pxy @ Py_inv).sum(axis=0) @ py
+    hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)
+    hxgy = xlog1x(Pxy @ Py_inv).sum(axis=0) @ py
 
     # return the sum of these
     return float(hygx + hxgy)
@@ -48,11 +48,11 @@ def variation_of_information(x, y):
 > the programming of linear algebra algorithms using code that remains very
 > close to the original mathematics. Compare the above:
 >
-> `hygx = -px @ xlogx(Px_inv @ Pxy).sum(axis=1)`
+> `hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)`
 >
 > with the equivalent Python 2 code:
 >
-> `hygx = -px.dot(xlogx(Px_inv.dot(Pxy)).sum(axis=1))`
+> `hygx = px.dot(xlog1x(Px_inv.dot(Pxy)).sum(axis=1))`
 >
 > By using the `@` operator to stay closer to mathematical notation, we
 > can avoid implementation errors and produce code that is much easier to read.
@@ -1279,11 +1279,11 @@ def xlog1x(arr_or_mat):
     """
     out = arr_or_mat.copy()
     if isinstance(out, sparse.spmatrix):
-        arr = out.data
+        arr = -out.data
     else:
-        arr = out
+        arr = -out
     nz = np.nonzero(arr)
-    arr[nz] *= np.log2(1/arr[nz])
+    arr[nz] *= np.log2(arr[nz])
     return out
 ```
 
@@ -1357,8 +1357,8 @@ def variation_of_information(x, y):
     Py_inv = sparse.diags(invert_nonzero(py))
 
     # then, compute the entropies
-    hygx = -px @ xlogx(Px_inv @ Pxy).sum(axis=1)
-    hxgy = -xlogx(Pxy @ Py_inv).sum(axis=0) @ py
+    hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)
+    hxgy = xlog1x(Pxy @ Py_inv).sum(axis=0) @ py
 
     # return the sum of these
     return float(hygx + hxgy)
