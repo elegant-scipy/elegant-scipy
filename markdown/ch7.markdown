@@ -129,8 +129,8 @@ value otherwise. With this cost function, we can check whether two images are al
 ```python
 ncol = astronaut.shape[1]
 
-# Cover a distance of 90% of the length in columns
-# One value per percentage point
+# Cover a distance of 90% of the length in columns,
+# with one value per percentage point
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
 mse_costs = []
 
@@ -150,29 +150,50 @@ to search for optimal parameters:
 ```python
 from scipy import optimize
 
-shifted1 = ndi.shift(astronaut, (0, 50))
-
 def astronaut_shift_error(shift, image):
     corrected = ndi.shift(image, (0, shift))
     return mse(astronaut, corrected)
 
-res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
+res = optimize.minimize(astronaut_shift_error, 0, args=(shifted,),
                         method='Powell')
 
 print(f'The optimal shift for correction is: {res.x}')
 ```
 
-Brilliant! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
+It worked! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
 `optimize.minimize` function has given us the correct amount of shift (-50) to
 get it back to its original state.
 
-Unfortunately, this brings us to the principal difficulty of this kind of
+It turns out, however, that this was the simplest kind of optimization, and
+this brings us to the principal difficulty of this kind of
 alignment: sometimes, the MSE has to get worse before it gets better.
+
+Let's look again at shifting images, starting with the unmodified image:
+
+```python
+ncol = astronaut.shape[1]
+
+# Cover a distance of 90% of the length in columns,
+# with one value per percentage point
+shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
+mse_costs = []
+
+for shift in shifts:
+    shifted1 = ndi.shift(astronaut, (0, shift))
+    mse_costs.append(mse(astronaut, shifted1))
+
+fig, ax = plt.subplots()
+ax.plot(shifts, mse_costs)
+ax.set_xlabel('Shift')
+ax.set_ylabel('MSE');
+```
+
 Starting at zero shift, have a look at the MSE value as the shift becomes
 increasingly negative: it increases consistently until around -300
 pixels of shift, where it starts to decrease again! Only slightly, but it
-decreases nonetheless. There's a local minimum at around -400, before it 
-increases again. Because optimization methods only have access to "nearby"
+decreases nonetheless. The MSE bottoms out at around -400, before it
+increases again. This is called a *local minimum*.
+Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
 direction, the `minimize` process will move that way regardless. So, if we
 start by an image shifted by -340 pixels:
@@ -181,7 +202,7 @@ start by an image shifted by -340 pixels:
 shifted2 = ndi.shift(astronaut, (0, -340))
 ```
 
-`minimize` will shift it by a further 40 pixels or so to find a local minimum,
+`minimize` will shift it by a further 40 pixels or so,
 instead of recovering the original image:
 
 ```python
@@ -203,8 +224,8 @@ astronaut_smooth = filters.gaussian(astronaut, sigma=20)
 mse_costs_smooth = []
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
 for shift in shifts:
-    shifted = ndi.shift(astronaut_smooth, (0, shift))
-    mse_costs_smooth.append(mse(astronaut_smooth, shifted))
+    shifted3 = ndi.shift(astronaut_smooth, (0, shift))
+    mse_costs_smooth.append(mse(astronaut_smooth, shifted3))
 
 fig, ax = plt.subplots()
 ax.plot(shifts, mse_costs, label='original')
