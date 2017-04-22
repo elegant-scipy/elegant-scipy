@@ -76,7 +76,8 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
 	tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
 	tools/footnote_fixer.py $@.md > $@.footnoted && cp $@.footnoted /tmp && mv $@.footnoted $@.md ; \
-	htmlbook -c -s $@.md -o $@ -t "$$TITLE" ; \
+	htmlbook -c -s $@.md -o $@ -t "$$TITLE"
+	
 	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
 	
 	htmlbook -s $@.md -o $@
