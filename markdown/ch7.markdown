@@ -534,16 +534,18 @@ problematic case in which the `minimize` function got stuck.
 ## "What is best?": Choosing the right objective function
 
 At this point, we have a working registration approach, which is most
-excellent. But it turns out that we've only solved the
-easiest of registration problems: images of the same *modality*. This means
-that we expect bright pixels in the reference image to match up to bright
-pixels in the test image. We now move on to aligning different color channels
-of the same image, where we can no longer rely on the channels having the same
-modality. This task has historical significance: between 1909 and
-1915, the photographer Sergei Mikhailovich Prokudin-Gorskii produced color
-photographs of the Russian empire before color photography had been invented.
-He did this by taking three different monochrome pictures of a scene, each
-with a different color filter placed in front of the lens.
+excellent. But it turns out that we've only solved the easiest of registration
+problems: aligning images of the same *modality*. This means that we expect
+bright pixels in the reference image to match up to bright pixels in the test
+image.
+
+We now move on to aligning different color channels of the same image,
+where we can no longer rely on the channels having the same modality. This task
+has historical significance: between 1909 and 1915, the photographer Sergei
+Mikhailovich Prokudin-Gorskii produced color photographs of the Russian empire
+before color photography had been invented. He did this by taking three
+different monochrome pictures of a scene, each with a different color filter
+placed in front of the lens.
 
 Aligning bright pixels together, as the MSE implicitly does, won't work in
 this case. Take, for example, these three pictures of a stained glass window
@@ -717,7 +719,7 @@ for ax in (ax0, ax1):
 What a glorious image! Realize that this artifact was created before color
 photography existed! Notice God's pearly white robes, John's white beard,
 and the white pages of the book held by Prochorus, his scribe — all of which
-were missing from the MSE-based alignment, but look wonderfully clear using NMI!
+were missing from the MSE-based alignment, but look wonderfully clear using NMI.
 Notice also the realistic gold of the candlesticks in the foreground.
 
 We've illustrated the two key concepts in function optimization in this
