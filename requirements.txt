@@ -1,10 +1,10 @@
 jupyter
 ipython
 notedown>=1.4
-numpy
-scipy
+numpy>=1.11
+scipy>=0.17
 matplotlib>=2.0.0
-scikit-image
+scikit-image>=0.13
 toolz
 networkx
 xlrd
