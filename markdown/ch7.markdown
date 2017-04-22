@@ -164,8 +164,8 @@ It worked! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
 `optimize.minimize` function has given us the correct amount of shift (-50) to
 get it back to its original state.
 
-It turns out, however, that this was the simplest kind of optimization, and
-this brings us to the principal difficulty of this kind of
+It turns out, however, that this was a particularly easy optimization problem, 
+which brings us to the principal difficulty of this kind of
 alignment: sometimes, the MSE has to get worse before it gets better.
 
 Let's look again at shifting images, starting with the unmodified image:
