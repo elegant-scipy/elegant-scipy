@@ -436,17 +436,34 @@ stuck in local minima, little bumps on the road to success, as we saw above
 with the shift-only alignment. They can therefore be quite sensitive to the
 starting parameters.
 
+## Avoiding local minima with basin hopping
+
+A 1997 algorithm devised by David Wales and Jonathan Doyle [^basinhop], called
+*basin-hopping*, attempts to avoid local minima by trying an optimization from
+some initial parameters, then moving away from the found local minimum in a
+random direction, and optimizing again. By choosing an appropriate step size
+for these random moves, the algorithm can avoid falling into the same local
+minimum twice, and thus explore a much larger area of the parameter space than
+simple gradient-based optimization methods.
+
+We leave it as an exercise to incorporate SciPy's implementation of basin-hopping
+into our alignment function. You'll need it for later parts of the chapter, so
+feel free to peek at the solution at the end of the book if you're stuck.
+
+[^basinhop]: David J. Wales and Jonathan P.K. Doyle (1997). Global Optimization
+             by Basin-Hopping and the Lowest Energy Structures of Lennard-Jones
+             Clusters Containing up to 110 Atoms.
+             **Journal of Physical Chemistry 101(28):5111–5116**
+             DOI: 10.1021/jp970984n
+
 <!-- exercise begin -->
 
 **Exercise:** Try incorporating the `scipy.optimize.basinhopping` function
 into the `align` function, which has explicit strategies to avoid local minima.
 
-*Hint:* limit using basinhopping to just the top levels of the pyramid, as it is a slower
-optimization approach, and could take rather long to run at full image
+*Hint:* limit using basin-hopping to just the top levels of the pyramid, as it is
+a slower optimization approach, and could take rather long to run at full image
 resolution.
-
-*Note:* you need the solution to this exercise for subsequent alignments, so
-look it up in the solutions if you are having trouble getting it to work.
 
 <!-- solution begin -->
 
