@@ -61,6 +61,8 @@ to be given and those that automatically estimate it.  Some only
 search for parameters in a given area (*constrained optimization*),
 and others examine the entire parameter space.
 
+## Optimization in SciPy: `scipy.optimize`
+
 In the rest of this chapter, we are going to use SciPy's `optimize` module to
 align two images. Applications of image alignment or *registration* include
 panorama stitching, combination of multi-modal brain scans, super-resolution
@@ -85,7 +87,9 @@ whether jiggling it in one direction or another reduces their
 dissimilarity.  By doing this repeatedly, we can try to find the
 correct alignment.
 
-You'll remember our astronaut - Eileen Collins - from chapter 3.
+### An example: computing optimal image shift
+
+You'll remember our astronaut — Eileen Collins — from chapter 3.
 We will be shifting this image by 50 pixels to the right then comparing it back
 to the original until we
 find the shift that best matches. Obviously this is a silly thing to do, as we
@@ -125,12 +129,14 @@ value otherwise. With this cost function, we can check whether two images are al
 ```python
 ncol = astronaut.shape[1]
 
+# Cover a distance of 90% of the length in columns,
+# with one value per percentage point
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
 mse_costs = []
 
 for shift in shifts:
-    shifted = ndi.shift(astronaut, (0, shift))
-    mse_costs.append(mse(astronaut, shifted))
+    shifted_back = ndi.shift(shifted, (0, shift))
+    mse_costs.append(mse(astronaut, shifted_back))
 
 fig, ax = plt.subplots()
 ax.plot(shifts, mse_costs)
@@ -144,29 +150,50 @@ to search for optimal parameters:
 ```python
 from scipy import optimize
 
-shifted1 = ndi.shift(astronaut, (0, 50))
-
 def astronaut_shift_error(shift, image):
     corrected = ndi.shift(image, (0, shift))
     return mse(astronaut, corrected)
 
-res = optimize.minimize(astronaut_shift_error, 0, args=(shifted1,),
+res = optimize.minimize(astronaut_shift_error, 0, args=(shifted,),
                         method='Powell')
 
 print(f'The optimal shift for correction is: {res.x}')
 ```
 
-Brilliant! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
+It worked! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
 `optimize.minimize` function has given us the correct amount of shift (-50) to
 get it back to its original state.
 
-Unfortunately, this brings us to the principal difficulty of this kind of
+It turns out, however, that this was a particularly easy optimization problem, 
+which brings us to the principal difficulty of this kind of
 alignment: sometimes, the MSE has to get worse before it gets better.
+
+Let's look again at shifting images, starting with the unmodified image:
+
+```python
+ncol = astronaut.shape[1]
+
+# Cover a distance of 90% of the length in columns,
+# with one value per percentage point
+shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
+mse_costs = []
+
+for shift in shifts:
+    shifted1 = ndi.shift(astronaut, (0, shift))
+    mse_costs.append(mse(astronaut, shifted1))
+
+fig, ax = plt.subplots()
+ax.plot(shifts, mse_costs)
+ax.set_xlabel('Shift')
+ax.set_ylabel('MSE');
+```
+
 Starting at zero shift, have a look at the MSE value as the shift becomes
 increasingly negative: it increases consistently until around -300
 pixels of shift, where it starts to decrease again! Only slightly, but it
-decreases nonetheless. There's a local minimum at around -400, before it 
-increases again. Because optimization methods only have access to "nearby"
+decreases nonetheless. The MSE bottoms out at around -400, before it
+increases again. This is called a *local minimum*.
+Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
 direction, the `minimize` process will move that way regardless. So, if we
 start by an image shifted by -340 pixels:
@@ -175,7 +202,7 @@ start by an image shifted by -340 pixels:
 shifted2 = ndi.shift(astronaut, (0, -340))
 ```
 
-`minimize` will shift it by a further 40 pixels or so to find a local minimum,
+`minimize` will shift it by a further 40 pixels or so,
 instead of recovering the original image:
 
 ```python
@@ -197,8 +224,8 @@ astronaut_smooth = filters.gaussian(astronaut, sigma=20)
 mse_costs_smooth = []
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
 for shift in shifts:
-    shifted = ndi.shift(astronaut_smooth, (0, shift))
-    mse_costs_smooth.append(mse(astronaut_smooth, shifted))
+    shifted3 = ndi.shift(astronaut_smooth, (0, shift))
+    mse_costs_smooth.append(mse(astronaut_smooth, shifted3))
 
 fig, ax = plt.subplots()
 ax.plot(shifts, mse_costs, label='original')
@@ -278,6 +305,8 @@ ax.set_ylabel('MSE');
 As you can see, at the highest level of the pyramid, that bump at a shift of
 about -325 disappears. We can therefore get an approximate alignment at that
 level, then pop down to the lower levels to refine that alignment.
+
+## Image registration with `optimize`
 
 Let's automate that, and try with a "real" alignment, with three parameters:
 rotation, translation in the row dimension, and translation in the
@@ -401,23 +430,40 @@ for ax in (ax0, ax1, ax2):
 
 ```
 
-Oops! Even though we started closer to the original image, we failed to
+Even though we started closer to the original image, we failed to
 recover the correct rotation. This is because optimization techniques can get
 stuck in local minima, little bumps on the road to success, as we saw above
 with the shift-only alignment. They can therefore be quite sensitive to the
 starting parameters.
+
+## Avoiding local minima with basin hopping
+
+A 1997 algorithm devised by David Wales and Jonathan Doyle [^basinhop], called
+*basin-hopping*, attempts to avoid local minima by trying an optimization from
+some initial parameters, then moving away from the found local minimum in a
+random direction, and optimizing again. By choosing an appropriate step size
+for these random moves, the algorithm can avoid falling into the same local
+minimum twice, and thus explore a much larger area of the parameter space than
+simple gradient-based optimization methods.
+
+We leave it as an exercise to incorporate SciPy's implementation of basin-hopping
+into our alignment function. You'll need it for later parts of the chapter, so
+feel free to peek at the solution at the end of the book if you're stuck.
+
+[^basinhop]: David J. Wales and Jonathan P.K. Doyle (1997). Global Optimization
+             by Basin-Hopping and the Lowest Energy Structures of Lennard-Jones
+             Clusters Containing up to 110 Atoms.
+             **Journal of Physical Chemistry 101(28):5111–5116**
+             DOI: 10.1021/jp970984n
 
 <!-- exercise begin -->
 
 **Exercise:** Try incorporating the `scipy.optimize.basinhopping` function
 into the `align` function, which has explicit strategies to avoid local minima.
 
-*Hint:* limit using basinhopping to just the top levels of the pyramid, as it is a slower
-optimization approach, and could take rather long to run at full image
+*Hint:* limit using basin-hopping to just the top levels of the pyramid, as it is
+a slower optimization approach, and could take rather long to run at full image
 resolution.
-
-*Note:* you need the solution to this exercise for subsequent alignments, so
-look it up in the solutions if you are having trouble getting it to work.
 
 <!-- solution begin -->
 
@@ -440,16 +486,15 @@ def align(reference, target, cost=cost_mse, nlevels=7, method='Powell'):
         if method.upper() == 'BH':
             res = optimize.basinhopping(cost, p,
                                         minimizer_kwargs={'args': (ref, tgt)})
-            if n <= 4:
+            if n <= 4:  # avoid basin-hopping in lower levels
                 method = 'Powell'
         else:
             res = optimize.minimize(cost, p, args=(ref, tgt), method='Powell')
         p = res.x
         # print current level, overwriting each time (like a progress bar)
-        print('Level: %i, Angle: %.2f, Offset: (%.1f, %.1f), Cost: %.2f' %
-              (n, np.rad2deg(res.x[0]),
-               res.x[1] * 2**n, res.x[2] * 2**n,
-               res.fun), end='\r')
+        print(f'Level: {n}, Angle: {np.rad2deg(res.x[0]) :.3}, '
+              f'Offset: ({res.x[1] * 2**n :.3}, {res.x[2] * 2**n :.3}), '
+              f'Cost: {res.fun :.3}', end='\r')
 
     print('')  # newline when alignment complete
     return make_rigid_transform(p)
@@ -479,23 +524,28 @@ for ax in (ax0, ax1, ax2):
     ax.axis('off')
 ```
 
-Boom! Consider that basin *hopped!*
+Success! Basin-hopping was able to recover the correct alignment, even in the
+problematic case in which the `minimize` function got stuck.
 
 <!-- solution end -->
 
 <!-- exercise end -->
 
+## "What is best?": Choosing the right objective function
+
 At this point, we have a working registration approach, which is most
-excellent. But it turns out that we've only solved the
-easiest of registration problems: images of the same *modality*. This means
-that we expect bright pixels in the reference image to match up to bright
-pixels in the test image. We now move on to aligning different color channels
-of the same image, where we can no longer rely on the channels having the same
-modality. This task has historical significance: between 1909 and
-1915, the photographer Sergei Mikhailovich Prokudin-Gorskii produced color
-photographs of the Russian empire before color photography had been invented.
-He did this by taking three different monochrome pictures of a scene, each
-with a different color filter placed in front of the lens.
+excellent. But it turns out that we've only solved the easiest of registration
+problems: aligning images of the same *modality*. This means that we expect
+bright pixels in the reference image to match up to bright pixels in the test
+image.
+
+We now move on to aligning different color channels of the same image,
+where we can no longer rely on the channels having the same modality. This task
+has historical significance: between 1909 and 1915, the photographer Sergei
+Mikhailovich Prokudin-Gorskii produced color photographs of the Russian empire
+before color photography had been invented. He did this by taking three
+different monochrome pictures of a scene, each with a different color filter
+placed in front of the lens.
 
 Aligning bright pixels together, as the MSE implicitly does, won't work in
 this case. Take, for example, these three pictures of a stained glass window
@@ -669,7 +719,7 @@ for ax in (ax0, ax1):
 What a glorious image! Realize that this artifact was created before color
 photography existed! Notice God's pearly white robes, John's white beard,
 and the white pages of the book held by Prochorus, his scribe — all of which
-were missing from the MSE-based alignment, but look wonderfully clear using NMI!
+were missing from the MSE-based alignment, but look wonderfully clear using NMI.
 Notice also the realistic gold of the candlesticks in the foreground.
 
 We've illustrated the two key concepts in function optimization in this
