@@ -486,16 +486,15 @@ def align(reference, target, cost=cost_mse, nlevels=7, method='Powell'):
         if method.upper() == 'BH':
             res = optimize.basinhopping(cost, p,
                                         minimizer_kwargs={'args': (ref, tgt)})
-            if n <= 4:
+            if n <= 4:  # avoid basin-hopping in lower levels
                 method = 'Powell'
         else:
             res = optimize.minimize(cost, p, args=(ref, tgt), method='Powell')
         p = res.x
         # print current level, overwriting each time (like a progress bar)
-        print('Level: %i, Angle: %.2f, Offset: (%.1f, %.1f), Cost: %.2f' %
-              (n, np.rad2deg(res.x[0]),
-               res.x[1] * 2**n, res.x[2] * 2**n,
-               res.fun), end='\r')
+        print(f'Level: {n}, Angle: {np.rad2deg(res.x[0]) :.3}, '
+              f'Offset: ({res.x[1] * 2**n :.3}, {res.x[2] * 2**n :.3}), '
+              f'Cost: {res.fun :.3}', end='\r')
 
     print('')  # newline when alignment complete
     return make_rigid_transform(p)
