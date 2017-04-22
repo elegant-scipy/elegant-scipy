@@ -306,6 +306,8 @@ As you can see, at the highest level of the pyramid, that bump at a shift of
 about -325 disappears. We can therefore get an approximate alignment at that
 level, then pop down to the lower levels to refine that alignment.
 
+## Image registration with `optimize`
+
 Let's automate that, and try with a "real" alignment, with three parameters:
 rotation, translation in the row dimension, and translation in the
 column dimension. This is called a "*rigid* registration" because there are no
@@ -428,7 +430,7 @@ for ax in (ax0, ax1, ax2):
 
 ```
 
-Oops! Even though we started closer to the original image, we failed to
+Even though we started closer to the original image, we failed to
 recover the correct rotation. This is because optimization techniques can get
 stuck in local minima, little bumps on the road to success, as we saw above
 with the shift-only alignment. They can therefore be quite sensitive to the
@@ -506,11 +508,14 @@ for ax in (ax0, ax1, ax2):
     ax.axis('off')
 ```
 
-Boom! Consider that basin *hopped!*
+Success! Basin-hopping was able to recover the correct alignment, even in the
+problematic case in which the `minimize` function got stuck.
 
 <!-- solution end -->
 
 <!-- exercise end -->
+
+## "What is best?": Choosing the right objective function
 
 At this point, we have a working registration approach, which is most
 excellent. But it turns out that we've only solved the
