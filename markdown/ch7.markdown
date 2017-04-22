@@ -129,12 +129,14 @@ value otherwise. With this cost function, we can check whether two images are al
 ```python
 ncol = astronaut.shape[1]
 
+# Cover a distance of 90% of the length in columns
+# One value per percentage point
 shifts = np.linspace(-0.9 * ncol, 0.9 * ncol, 181)
 mse_costs = []
 
 for shift in shifts:
-    shifted = ndi.shift(astronaut, (0, shift))
-    mse_costs.append(mse(astronaut, shifted))
+    shifted_back = ndi.shift(shifted, (0, shift))
+    mse_costs.append(mse(astronaut, shifted_back))
 
 fig, ax = plt.subplots()
 ax.plot(shifts, mse_costs)
