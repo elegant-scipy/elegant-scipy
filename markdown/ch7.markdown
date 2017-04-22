@@ -89,7 +89,7 @@ correct alignment.
 
 ### An example: computing optimal image shift
 
-You'll remember our astronaut - Eileen Collins - from chapter 3.
+You'll remember our astronaut — Eileen Collins — from chapter 3.
 We will be shifting this image by 50 pixels to the right then comparing it back
 to the original until we
 find the shift that best matches. Obviously this is a silly thing to do, as we
