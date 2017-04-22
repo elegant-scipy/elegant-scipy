@@ -1,9 +1,5 @@
 # Contingency tables using sparse coordinate matrices
 
-**Code by Juan Nunez-Iglesias,**
-**with suggestions by Jaime Frio and Warren Weckesser.**
-**Nominated by Andreas Mueller.**
-
 Many real-world matrices are *sparse*, which means that most of their values are zero.
 
 Using numpy arrays to manipulate sparse matrices wastes a lot of time and energy multiplying many, many values by 0.
@@ -13,33 +9,38 @@ In addition to helping solve these "canonical" sparse matrix problems, `sparse` 
 One such problem is the comparison of image segmentations.
 (Review chapter 3 for a definition of segmentation.)
 
-The code sample motivating this chapter uses sparse matrices twice:
-once to compute a *contingency matrix* that counts the correspondence of labels
-between two segmentations, and again to use that contingency matrix to compute
-the *variation of information*, which measures the differences between
-segmentations.
+The code sample motivating this chapter uses sparse matrices twice: First, we
+use code nominated by Andreas Mueller to compute a *contingency matrix* that
+counts the correspondence of labels between two segmentations. Then, with
+suggestions from Jaime Fernández del Río and Warren Weckesser, we use that
+contingency matrix to compute the *variation of information*, which measures
+the differences between segmentations.
 
 ```python
 def variation_of_information(x, y):
     # compute contingency matrix, aka joint probability matrix
-    Pxy = sparse.coo_matrix((np.ones(x.size), (x.ravel(), y.ravel())),
+    n = x.size
+    Pxy = sparse.coo_matrix((np.full(n, 1/n), (x.ravel(), y.ravel())),
                             dtype=float).tocsr()
-    Pxy.data /= np.sum(Pxy.data)
 
-    # compute marginal probabilities, converting to array
-    px = Pxy.sum(axis=1).A.ravel()
-    py = Pxy.sum(axis=0).A.ravel()
+    # compute marginal probabilities, converting to 1D array
+    px = np.ravel(Pxy.sum(axis=1))
+    py = np.ravel(Pxy.sum(axis=0))
 
     # use sparse matrix linear algebra to compute VI
-    Px_inv = sparse.diags(invert_nonzero(px).T, [0])
-    Py_inv = sparse.diags(invert_nonzero(py), [0])
-    hygx = -px.T @ xlogx(Px_inv @ Pxy).sum(axis=1)
-    hxgy = -xlogx(Pxy @ Py_inv).sum(axis=0) @ py.T
+    # first, compute the inverse diagonal matrices
+    Px_inv = sparse.diags(invert_nonzero(px))
+    Py_inv = sparse.diags(invert_nonzero(py))
 
+    # then, compute the entropies
+    hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)
+    hxgy = xlog1x(Pxy @ Py_inv).sum(axis=0) @ py
+
+    # return the sum of these
     return float(hygx + hxgy)
 ```
 
-> **Python 3.5 pro-tip!**
+> **Python 3.5 pro-tip! {.callout}**
 >
 > The `@` symbols in the above paragraph represent the *matrix multiplication*
 > operator, and were introduced in Python 3.5 in 2015. This is one of the most
@@ -47,13 +48,13 @@ def variation_of_information(x, y):
 > the programming of linear algebra algorithms using code that remains very
 > close to the original mathematics. Compare the above:
 >
-> `hygx = -px.T @ xlogx(Px_inv @ Pxy).sum(axis=1)`
+> `hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)`
 >
 > with the equivalent Python 2 code:
 >
-> `hygx = -px.T.dot(xlogx(Px_inv.dot(Pxy)).sum(axis=1))`
+> `hygx = px.dot(xlog1x(Px_inv.dot(Pxy)).sum(axis=1))`
 >
-> Yuck! By using the `@` operator to stay closer to mathematical notation, we
+> By using the `@` operator to stay closer to mathematical notation, we
 > can avoid implementation errors and produce code that is much easier to read.
 >
 > Actually, SciPy's authors knew this long before the `@` operator was
@@ -61,7 +62,7 @@ def variation_of_information(x, y):
 > `*` operator when the inputs are SciPy matrices. Available in Python
 > 2.7, it lets us produce nice, readable code like the above:
 >
-> `hygx = -px.T * xlog(Px_inv * Pxy).sum(axis=1)`
+> `hygx = -px * xlog(Px_inv * Pxy).sum(axis=1)`
 >
 > But there is a huge catch: this code will behave differently when `px` or
 > `Px_inv` are SciPy matrices than when they are not! If `Px_inv` and `Pxy` are
@@ -72,6 +73,7 @@ def variation_of_information(x, y):
 >
 > Python 3.5's `@` operator gives us the best of both worlds!
 
+## Contingency matrices
 
 But let's start simple and work our way up to segmentations.
 
@@ -130,11 +132,11 @@ confusion_matrix(pred, gt)
 ```
 
 <!-- exercise begin -->
-**Question:** Why did we call this inefficient?
+**Exercise:** Why did we call this inefficient?
 
 <!-- solution begin -->
 
-**Answer:** From chapter 1, you recall that `arr == k` creates an array of
+**Solution:** From chapter 1, you recall that `arr == k` creates an array of
 Boolean (`True` or `False`) values of the same size as `arr`. This, as you
 might expect, requires a full pass over `arr`. Therefore, in the above
 solution, we make a full pass over each of `pred` and `gt` for every
@@ -159,7 +161,7 @@ def confusion_matrix1(pred, gt):
 
 <!-- solution begin -->
 
-We offer two solutions here, although many are possible.
+**Solution:** We offer two solutions here, although many are possible.
 
 Our first solution uses Python's built-in `zip` function to pair together
 labels from `pred` and `gt`.
@@ -257,6 +259,8 @@ format to hold n-dimensional array data.
 For sparse matrices, there are actually a wide array of possible formats, and
 the "right" format depends on the problem you want to solve.
 
+### COO (COOrdinate) format
+
 Perhaps the most intuitive is the coordinate, or COO, format.
 This uses three 1D arrays to represent a 2D matrix $A$.
 Each of these arrays has length equal to the number of nonzero values in $A$,
@@ -328,7 +332,7 @@ s2 = np.array([[0, 0, 6, 0, 0],
 
 <!-- solution begin -->
 
-We first list the non-zero elements of the array, left-to-right and
+**Solution:** We first list the non-zero elements of the array, left-to-right and
 top-to-bottom, as if reading a book:
 
 ```python
@@ -377,6 +381,8 @@ However, you can look at your COO representation above to help you identify
 redundant information:
 Notice all those repeated `1`s?
 
+### CSR (Compressed Sparse Row) format
+
 If we use COO to enumerate the nonzero entries row-by-row, rather than in
 arbitrary order (which the format allows), we end up with many consecutive,
 repeated values in the `row` array.
@@ -384,8 +390,8 @@ These can be compressed by indicating the *indices* in `col` where the next row
 starts, rather than repeatedly writing the row index.
 This is the basis for the *compressed sparse row* or *CSR* format.
 
-Let's work through the example above.  In CSR format, the `col` and `data`
-arrays are unchanged (but `col` is renamed to `indices`).  However, the `row`
+Let's work through the example above. In CSR format, the `col` and `data`
+arrays are unchanged (but `col` is renamed to `indices`). However, the `row`
 array, instead of indicating the rows, indicates *where* in `col` each row
 begins, and is renamed to `indptr`, for "index pointer".
 
@@ -824,7 +830,7 @@ computed, applying it repeatedly is extremely fast, thanks to sparse matrix
 algebra.
 
 So now that we've seen a "standard" use of SciPy's sparse matrices, let's have
-a look at the out-of-the-box use that inspired this chapter!
+a look at the out-of-the-box use that inspired this chapter.
 
 ## Back to contingency matrices
 
@@ -972,6 +978,8 @@ to the following question: on average, for a random pixel, if we are given its
 segment ID in one segmentation, how much more *information* do we need to
 determine its ID in the other segmentation?
 
+## Information theory in brief
+
 In order to answer this question, we'll need a quick primer on information
 theory. We need to be brief but if you want more information (heh), you should
 look at Christopher Olah's stellar blog post,
@@ -1115,10 +1123,9 @@ month.) Which one is greater? (*Hint:* the probabilities in the table are
 the conditional probabilities of rain given month.)
 
 ```python
-prains = [25, 27, 24, 18, 14, 11, 7, 8, 10, 15, 18, 23]
-prains = [p / 100 for p in prains]
-pshine = [1 - p for p in prains]
-p_rain_g_month = np.array((prains, pshine)).T
+prains = np.array([25, 27, 24, 18, 14, 11, 7, 8, 10, 15, 18, 23]) / 100
+pshine = 1 - prains
+p_rain_g_month = np.column_stack([prains, pshine])
 # replace 'None' below with expression for non-conditional contingency
 # table. Hint: the values in the table must sum to 1.
 p_rain_month = None
@@ -1166,6 +1173,8 @@ Together, these two values define the variation of information (VI):
 $$
 VI(A, B) = H(A | B) + H(B | A)
 $$
+
+## Information theory applied to segmentation
 
 Back in the image segmentation context, "days" become "pixels", and "rain" and "month"
 become "label in automated segmentation ($S$)" and "label ground truth ($T$)".
@@ -1270,11 +1279,11 @@ def xlog1x(arr_or_mat):
     """
     out = arr_or_mat.copy()
     if isinstance(out, sparse.spmatrix):
-        arr = out.data
+        arr = -out.data
     else:
-        arr = out
+        arr = -out
     nz = np.nonzero(arr)
-    arr[nz] *= np.log2(1/arr[nz])
+    arr[nz] *= np.log2(arr[nz])
     return out
 ```
 
@@ -1305,6 +1314,8 @@ H_ga = np.sum(np.sum(xlog1x(cont / p_as[:, np.newaxis]), axis=1) * p_as)
 H_ga
 ```
 
+### Converting NumPy array code to use sparse matrices
+
 We used numpy arrays and broadcasting in the above examples, which, as we've
 seen many times, is a powerful way to analyze data in Python.
 However, for segmentations of complex images, possibly containing thousands of
@@ -1331,28 +1342,25 @@ def invert_nonzero(arr):
 
 
 def variation_of_information(x, y):
-
-    # Compute the joint probability matrix
-    ones = np.broadcast_to(1., x.size)
-    pxy = sparse.coo_matrix((ones, (x.ravel(), y.ravel())),
+    # compute contingency matrix, aka joint probability matrix
+    n = x.size
+    Pxy = sparse.coo_matrix((np.full(n, 1/n), (x.ravel(), y.ravel())),
                             dtype=float).tocsr()
-    pxy.data /= np.sum(pxy.data)
 
-    # Compute the marginals
-    # Use .A.ravel() to make them 1D arrays instead of flat matrices
-    px = pxy.sum(axis=1).A.ravel()
-    py = pxy.sum(axis=0).A.ravel()
+    # compute marginal probabilities, converting to 1D array
+    px = np.ravel(Pxy.sum(axis=1))
+    py = np.ravel(Pxy.sum(axis=0))
 
-    # Compute the inverse diagonal matrices, which will help
-    # compute the conditional probabilities
-    px_inv = sparse.diags(invert_nonzero(px))
-    py_inv = sparse.diags(invert_nonzero(py))
+    # use sparse matrix linear algebra to compute VI
+    # first, compute the inverse diagonal matrices
+    Px_inv = sparse.diags(invert_nonzero(px))
+    Py_inv = sparse.diags(invert_nonzero(py))
 
-    # Finally, compute the entropies
-    hygx = px @ xlog1x(px_inv @ pxy).sum(axis=1)
-    hxgy = xlog1x(pxy @ py_inv).sum(axis=0) @ py
+    # then, compute the entropies
+    hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)
+    hxgy = xlog1x(Pxy @ Py_inv).sum(axis=0) @ py
 
-    # return their sum
+    # return the sum of these
     return float(hygx + hxgy)
 ```
 
@@ -1367,6 +1375,8 @@ You can see how we use three types of sparse matrices (COO, CSR, and diagonal)
 to efficiently solve the entropy calculation in the case of sparse contingency
 matrices, where NumPy would be inefficient.
 (Indeed, this whole approach was inspired by a Python `MemoryError`!)
+
+### Using variation of information
 
 To finish, let's demonstrate the use of VI to estimate the best possible
 automated segmentation of an image.
@@ -1386,7 +1396,7 @@ plt.imshow(tiger);
 
 In order to check our image segmentation, we're going to need a ground truth.
 It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
-Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it.
+Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it [^bsds].
 Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
 It's worth noting that there is quite substantial variation between the segmentations performed by humans.
 If you look through the [various tiger segmentations](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html), you will see that some humans are more pedantic than others about tracing around the reeds, while others consider the reflections to be objects worth segmenting out from the rest of the water.
@@ -1519,7 +1529,7 @@ def vi_at_threshold(seg, tiger, human_seg, threshold):
     auto_seg = RAG_segmentation(seg, tiger, threshold)
     return variation_of_information(auto_seg, human_seg)
 
-thresholds = range(0,110,10)
+thresholds = range(0, 110, 10)
 vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold)
                     for threshold in thresholds]
 ```
@@ -1540,7 +1550,9 @@ plt.imshow(color.label2rgb(auto_seg, tiger));
 
 **Exercise:** Segmentation in practice
 
-Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
+Try finding the best threshold for a selection of other images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/) [^bsds].
 Using the mean or median of those thresholds, then go and segment a new image. Did you get a reasonable segmentation?
 
 <!-- exercise end -->
+
+[^bsds]: P. Arbelaez, M. Maire, C. Fowlkes and J. Malik. IEEE TPAMI, Vol. 33, No. 5, pp. 898-916, May 2011.
