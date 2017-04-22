@@ -61,6 +61,8 @@ to be given and those that automatically estimate it.  Some only
 search for parameters in a given area (*constrained optimization*),
 and others examine the entire parameter space.
 
+## Optimization in SciPy: `scipy.optimize`
+
 In the rest of this chapter, we are going to use SciPy's `optimize` module to
 align two images. Applications of image alignment or *registration* include
 panorama stitching, combination of multi-modal brain scans, super-resolution
@@ -84,6 +86,8 @@ Our optimization function will "jiggle" one of the images, and see
 whether jiggling it in one direction or another reduces their
 dissimilarity.  By doing this repeatedly, we can try to find the
 correct alignment.
+
+### An example: computing optimal image shift
 
 You'll remember our astronaut - Eileen Collins - from chapter 3.
 We will be shifting this image by 50 pixels to the right then comparing it back
