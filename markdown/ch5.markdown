@@ -801,8 +801,8 @@ plt.imshow(apply_transform(image, tf));
 
 As mentioned above, this sparse linear operator approach to image
 transformation is extremely fast.
-Let's measure how it performs in comparison to ndimage. To make the comparison
-fair, we need to tell ndimage that we want linear interpolation with `order=1`,
+Let's measure how it performs in comparison to `ndimage`. To make the comparison
+fair, we need to tell `ndimage` that we want linear interpolation with `order=1`,
 and that we want to ignore pixels outside of the original shape, with
 `reshape=False`.
 
