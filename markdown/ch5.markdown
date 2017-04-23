@@ -1389,7 +1389,7 @@ tiger = io.imread(url)
 plt.imshow(tiger);
 ```
 
-In order to check our image segmentation, we're going to need a ground truth.
+In order to check our image segmentation, we're going to need ground truth.
 It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
 Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it [^bsds].
 Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
