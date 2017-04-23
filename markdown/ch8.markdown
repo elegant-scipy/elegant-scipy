@@ -523,6 +523,8 @@ def genome(file_pattern):
                    c.filter(is_nucleotide))
 ```
 
+## Back to counting k-mers
+
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
 We can now observe the frequency of different k-mers:
 
@@ -531,7 +533,7 @@ counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
 
-> **tips {.callout}**
+> **Tips for working with streams {.callout}**
 >  - (list of list -> list) with tz.concat
 >  - don’t get caught out:
 >     * iterators get consumed.
@@ -539,10 +541,12 @@ So if you make a generator object and do some processing on it, and then a later
 The original is already gone.
 >     * iterators are lazy. You need to force evaluation sometimes.
 >  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
-Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
+     Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
+     You can also insert `map(do(print))` (`map` and `do` are from
+     `toolz.curried`) at any point in a stream to print each element while it
+     streams through.
 
 <!-- exercise begin -->
-
 
 **Exercise:**
 The scikit-learn library has an IncrementalPCA class, which allows you to run
@@ -555,13 +559,14 @@ Then, use the function to compute the PCA of the `iris` machine learning
 dataset, which is in `data/iris.csv`. (You can also access it from the
 `datasets` module of scikit-learn.)
 
-**Hint:** The `IncrementalPCA` class is in `sklearn.decomposition`, and
+*Hint:* The `IncrementalPCA` class is in `sklearn.decomposition`, and
 requires a *batch size* greater than 1 to train the model. Look at the
 `toolz.curried.partition` function for how to create a stream of batches from a
 stream of data points.
 
 <!-- solution begin -->
 
+**Solution:**
 First, we write the function to train the model. The function should take in a
 stream of samples and output a PCA model, which can *transform* new samples by
 projecting them from the original n-dimensional space to the principal
@@ -628,7 +633,7 @@ plt.scatter(*components2.T);
 ```
 
 The difference, of course, is that streaming PCA can scale to extremely large
-datasets!
+datasets.
 
 <!-- solution end -->
 
@@ -780,14 +785,12 @@ previously unseen DNA sequence.
 
 <!-- exercise begin -->
 
-**Challenge:** add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive. Yes, unzip can be streamed, too!
+*Challenge:* add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive. Yes, unzip can be streamed, too!
 
-**Hint:** The `tarfile` package, part of Python's standard library, allows you
+*Hint:* The `tarfile` package, part of Python's standard library, allows you
 to open tar files (even compressed ones) as if they were normal files.
 
 <!-- exercise end -->
-
-## Conclusions
 
 We hope to have shown you at least a hint that streaming in Python can be easy when you use a few abstractions, like the ones Toolz provides.
 
