@@ -1041,7 +1041,7 @@ For example: what is the entropy of rain *given* that you know the month?
 This is written as:
 
 $$
-H(R | M) = \sum_{m = 1...12}{p(m)H(R | M = m)}
+H(R | M) = \sum_{m = 1}^{12}{p(m)H(R | M = m)}
 $$
 
 and
@@ -1051,7 +1051,9 @@ $$
 H(R | M=m) &= {p_{r|m}\log_2\left(\frac{1}{p_{r|m}}\right) +
                p_{s|m}\log_2\left(\frac{1}{p_{s|m}}\right)} \\
            &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_m}{p_{rm}}\right) +
-               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)}
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)} \\
+           &= {-\frac{p_{rm}}{p_m}\log_2\left(\frac{p_rm}{p_{m}}\right) -
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_sm}{p_{m}}\right)}
 \end{aligned}
 $$
 
@@ -1088,13 +1090,13 @@ The conditional entropy of rain given month is then:
 
 $$
 \begin{aligned}
-H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(1/0.25) +
-                               0.75 \log_2(1/0.75) \right) +
-           \frac{1}{12} \left( 0.27 \log_2(1/0.27) +
-                               0.73 \log_2(1/0.73) \right) +
-           ... +
-           \frac{1}{12} \left( 0.23 \log_2(1/0.23) +
-                               0.77 \log_2(1/0.77) \right) \\
+H(R|M) & = -\frac{1}{12} \left( 0.25 \log_2(0.25) +
+                                0.75 \log_2(0.75) \right) -
+           \frac{1}{12} \left( 0.27 \log_2(0.27) +
+                               0.73 \log_2(0.73) \right) -
+           ... -
+           \frac{1}{12} \left( 0.23 \log_2(0.23) +
+                               0.77 \log_2(0.77) \right) \\
        & \approx 0.626 \textrm{ bits}
 \end{aligned}
 $$
