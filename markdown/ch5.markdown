@@ -572,14 +572,12 @@ were head of the NumPy Agency for Space Affairs and had to rotate
 millions of images streaming in from the newly launched Jupyter
 Orbiter?
 
-Of course, one option would be to rewrite all your code in C++, but
-let's presume you have diligently read Scott Meyers' excellent books
-and are deeply convinced that you will never write bug free C++ under
-pressure.  While options like Cython, Numba, or Julia are available,
-we'd like to show you a quick workaround using SciPy's sparse
-matrices.
+In such cases, you want to squeeze every ounce of performance from your
+computer. It turns out that we can do a lot better than even the optimized C
+code in SciPy's `ndimage` if we are repeatedly applying the *same*
+transformation.
 
-We'll use the following image as a test:
+We'll use the following image from scikit-image as example data:
 
 ```python
 # Make plots appear inline, set custom plotting style
