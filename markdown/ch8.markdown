@@ -1,6 +1,18 @@
 # Big Data in Little Laptop with Toolz
 
-Whenever I think too hard about streaming data analysis, my head hurts.
+> GRACIE: A knife? The guy's twelve feet tall!
+> JACK: Seven. Hey, don't worry, I think I can handle him.
+>
+> — Jack Burton, Big Trouble in Little China
+
+Although streaming is not really a SciPy feature, it is a way of writing code
+that is critical to efficiently processing the large datasets that we see in
+science. The Python language contains some very nice primitives for streaming
+data processing, and these can be combined with Matt Rocklin's Toolz library to
+generate gorgeous, concise code that is extremely memory-efficient. In this
+chapter, we will show you how to apply streaming concepts to make your SciPy
+code fast, memory-efficient, and elegant, enabling you to handle much larger
+datasets than can fit in your computer's RAM.
 
 You have probably already done some streaming, perhaps without thinking about it in these terms.
 The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
@@ -18,22 +30,23 @@ print(sum_of_means)
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
 But things can quickly get out of hand when your code becomes more sophisticated.
 
-In traditional programming models, you pass your data to a function, the function processes the data, and then returns the result.
-Done.
+In the most commonly-used programming models, you pass your data to a function,
+the function processes the data, and then returns the result. Done. (This
+includes most of this book!)
 
-But in streaming programs, a function processes *some* of the data, returns the processed chunk, then, while downstream functions are dealing with that chunk, the function receives a bit more, and so on...
-All these things are going on at the same time!
-How can one keep them straight?
+But in streaming programs, a function processes *some* of the data, returns the
+processed chunk, then, while downstream functions are dealing with that chunk,
+the function receives a bit more, and so on...  All these things are going on
+at the same time!  How can one keep them straight?
 
-For many years, I didn't.
-But Matt Rocklin's blog posts on this topic really opened my eyes to the utility and elegance of streaming data analysis, to the point that it was impossible to contemplate writing this book without including a chapter on it.
-Although streaming is not really a SciPy feature, it is a way of writing code that is critical to efficiently processing the large datasets that we see in science.
-The Python language contains some very nice primitives for streaming data processing, and these can be combined with Matt's Toolz library to generate gorgeous, concise code that is extremely memory-efficient.
-We will show you how to apply streaming concepts to make your SciPy code fast and and elegant.
+We too found this difficult to do, until we found the `toolz` library.
+Its constructs make streaming programs so elegant to write that
+it was impossible to contemplate writing this book without including a chapter
+about it.
 
-Let me clarify what I mean by "streaming" and why you might want to do it.
-Suppose you have some data in a CSV text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
-The most common way to do this would be to use NumPy to load the values, compute the log function for all values in the full matrix, and then take the mean over the 1st axis:
+Let us clarify what we mean by "streaming" and why you might want to do it.
+Suppose you have some data in a text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
+The common way to do this would be to use NumPy to load the values, compute the log function for all values in the full matrix, and then take the mean over the 1st axis:
 
 ```python
 import numpy as np
