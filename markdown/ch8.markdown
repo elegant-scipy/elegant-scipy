@@ -120,7 +120,7 @@ def tsv_line_to_array(line):
     lst = [float(elem) for elem in line.rstrip().split('\t')]
     return np.array(lst)
 
-def readtsv_verbose(filename):
+def readtsv(filename):
     print('starting readtsv')
     with open(filename) as fin:
         for i, line in enumerate(fin):
@@ -128,21 +128,21 @@ def readtsv_verbose(filename):
             yield tsv_line_to_array(line)
     print('finished readtsv')
 
-def add1_verbose(arrays_iter):
+def add1(arrays_iter):
     print('starting adding 1')
     for i, arr in enumerate(arrays_iter):
         print('adding 1 to line {}'.format(i))
         yield arr + 1
     print('finished adding 1')
 
-def log_verbose(arrays_iter):
+def log(arrays_iter):
     print('starting log')
     for i, arr in enumerate(arrays_iter):
         print('taking log of array {}'.format(i))
         yield np.log(arr)
     print('finished log')
 
-def running_mean_verbose(arrays_iter):
+def running_mean(arrays_iter):
     print('starting running mean')
     for i, arr in enumerate(arrays_iter):
         if i == 0:
@@ -158,18 +158,18 @@ Let's see it in action for a small sample file:
 ```python
 fin = 'data/expr.tsv'
 print('Creating lines iterator')
-lines = readtsv_verbose(fin)
+lines = readtsv(fin)
 print('Creating loglines iterator')
-loglines = log_verbose(add1_verbose(lines))
+loglines = log(add1(lines))
 print('Computing mean')
-mean = running_mean_verbose(loglines)
+mean = running_mean(loglines)
 print('the mean log-row is: {}'.format(mean))
 ```
 
-Note a few things:
+Note:
 
 - None of the computation is run when creating the lines and loglines iterators. This is because iterators are *lazy*, meaning they are not evaluated (or *consumed*) until a result is needed.
-- When the computation is finally triggered, by the call to `running_mean_verbose`, it jumps back and forth between all the functions, as various computations are performed on each line, before moving on to the next line.
+- When the computation is finally triggered, by the call to `running_mean`, it jumps back and forth between all the functions, as various computations are performed on each line, before moving on to the next line.
 
 ## Introducing the Toolz streaming library
 
@@ -253,11 +253,10 @@ As a simple example, let's rewrite our running mean using `pipe`:
 ```python
 import toolz as tz
 filename = 'data/expr.tsv'
-mean = tz.pipe(filename, readtsv_verbose,
-               add1_verbose, log_verbose, running_mean_verbose)
+mean = tz.pipe(filename, readtsv, add1, log, running_mean)
 
 # This is equivalent to nesting the functions like this:
-# running_mean_verbose(log_verbose(add1_verbose(readtsv_verbose(filename))))
+# running_mean(log(add1(readtsv(filename))))
 ```
 
 What was originally multiple lines, or an unwieldy mess of parentheses, is now a clean description of the sequential transformations of the input data.
