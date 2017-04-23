@@ -386,7 +386,7 @@ print(tz.sliding_window.__doc__)
 ```
 
 Additionally, the *frequencies* function counts the appearance of individual items in a data stream!
-Together with pipe, we can now count k-mers in a single function call (though we will still use our original FASTA parsing function):
+Together with pipe, we can now count k-mers in a single function call:
 
 ```python
 from toolz import curried as c
@@ -399,25 +399,34 @@ counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
                  tz.frequencies)
 ```
 
-We neglected to discuss the *curried* part of this approach.
+## Currying: the spice of streaming
+
+Earlier, we briefly used a *curried* version of the `map` function, which
+applies a given function to each element in a sequence. Now that we've mixed a
+few more curried calls in there, it's time share with you what it means!
+Currying is not named after the spice blend (though it does spice up your code).
+It is named for Haskell Curry, the mathematician who invented the concept.
+Haskell Curry is also the namesake of the Haskell programming language — in which
+*all* functions are curried!
 
 "Currying" means *partially* evaluating a function and returning another, "smaller" function.
 Normally in Python if you don't give a function all of its required arguments then it will throw a fit.
 In contrast, a curried function can just take *some* of those arguments.
 If the curried function doesn't get enough arguments, it returns a new function that takes the leftover arguments.
-Once that second function is called with the remaining arguments it can perform the original task.
+Once that second function is called with the remaining arguments, it can perform the original task.
 Another word for currying is partial evaluation.
 In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
 
-Currying is not named after the spice blend (though it does spice up your code).
-It is named for Haskell Curry, the mathematician who invented the concept.
-Haskell Curry is also the namesake of the Haskell programming language, which has functions curried by default!
+So, while the function call `map(np.log, numbers_list)` applies the `np.log`
+function to all of the numbers in `numbers_list` (returning a sequence of the
+logged numbers), the call `toolz.curried.map(np.log)` returns a *function* that
+takes in a sequence of numbers and returns a sequence of logged numbers.
 
 It turns out that having a function that already knows about some of the arguments is perfect for streaming!
 We've seen a hint of how powerful currying and pipes can be together in the
-above code snippet, but we will elaborate further in what follows.
+above code snippet.
 
-Currying can be a bit of a mind-bend when you first start, so let's make our own curried function to see how it works.
+But currying can be a bit of a mind-bend when you first start, so we'll try it with some simple examples to demonstrate how it works.
 Let's start by writing a simple, non-curried function:
 
 ```python
@@ -453,17 +462,17 @@ Now let's leave out the second variable.
 add_curried(2)
 ```
 
-It returned a function. Yay!
+As we expected, it returned a function. Yay!
 Now let's see if we can use that returned function as expected.
 
 ```python
-partial_sum = add_curried(2)
-partial_sum(5)
+add2 = add_curried(2)
+add2(5)
 ```
 
-Now that worked, but add_curried was a reasonably hard function to read.
-Future me will probably have trouble remembering how I wrote that code.
-Luckily, Toolz has some syntactic sugar to help us out.
+Now, that worked, but `add_curried` was a reasonably hard function to read.
+Future us will probably have trouble remembering how we wrote that code.
+Luckily, Toolz has the, well, tools to help us out.
 
 ```python
 import toolz as tz
