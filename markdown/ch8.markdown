@@ -52,19 +52,20 @@ The common way to do this would be to use NumPy to load the values, compute the 
 import numpy as np
 expr = np.loadtxt('data/expr.tsv')
 logexpr = np.log(expr + 1)
-np.mean(logexpr, axis=1)
+np.mean(logexpr, axis=0)
 ```
 
 This works, and it follows a reassuringly familiar input-output model of computation.
 But it's a pretty inefficient way to go about it!
 We load the full matrix into memory (1), then make a copy with 1 added to each value (2), then make another copy to compute the log (3), before finally passing it on to `np.mean`.
 That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance in memory.
-It's clear that for any kind of "big data" operation, this approach won't work.
+For any kind of "big data" operation, this approach won't work.
 
 Python's creators knew this, and created the "yield" keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
 "Yield" is a rather nice name for it: the function *yields* control to the next function, waiting to resume processing the data until all the downstream steps have processed that data point.
 
-As I mentioned above, trying to think too hard about the flow of control in this paradigm is a surefire way to experience headaches, nausea, and other side effects.
+## Streaming with `yield`
+
 An awesome feature of Python is that it abstracts this complexity away, allowing you to focus on the analysis functionality.
 Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream.
 
@@ -82,22 +83,19 @@ def log_all_streaming(input_stream):
         yield np.log(elem)
 ```
 
+Let's check that we get the same result with both methods:
+
 ```python
 # We set the random seed so we will get consistent results
 np.random.seed(seed=7)
 # Set print options to show only 3 significant digits
 np.set_printoptions(precision=3, suppress=True)
-```
 
-```python
 arr = np.random.rand(1000) + 0.5
 result_batch = sum(log_all_standard(arr))
-print(result_batch)
-```
-
-```python
+print('Batch result: ', result_batch)
 result_stream = sum(log_all_streaming(arr))
-print(result_stream)
+print('Stream result: ', result_stream)
 ```
 
 The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
