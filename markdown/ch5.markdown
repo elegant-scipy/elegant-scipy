@@ -1402,7 +1402,9 @@ But to be clear, we really have no single ground truth!
 from scipy import ndimage as ndi
 from skimage import color
 
-human_seg_url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
+human_seg_url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/'
+                 'vision/bsds/BSDS300/html/images/human/normal/'
+                 'outline/color/1122/108073.jpg')
 boundaries = io.imread(human_seg_url)
 plt.imshow(boundaries);
 ```
