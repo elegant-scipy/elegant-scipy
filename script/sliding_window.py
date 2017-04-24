@@ -1,5 +1,3 @@
-import seaborn as sbn
-sbn.set_style('white')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
