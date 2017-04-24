@@ -65,8 +65,9 @@ Python's creators knew this, and created the "yield" keyword, which enables a fu
 
 ## Streaming with `yield`
 
+The flow of control described above can be rather hard to follow.
 An awesome feature of Python is that it abstracts this complexity away, allowing you to focus on the analysis functionality.
-Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream.
+Here's one way to think about it: for every processing function that would normally take a list (a collection of data) and transform that list, you can rewrite that function as taking a *stream* and *yielding* the result of every element of that stream.
 
 Here's an example where we take the log of each element in a list, using either a standard data-copying method or a streaming method:
 
