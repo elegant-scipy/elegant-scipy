@@ -17,6 +17,11 @@ build:
           mv /data/* ./data
           make zip
 
+    - script:
+        name: build HTMLBook
+        code: |
+          make htmlbook
+
 deploy:
   steps:
     - script:
