@@ -433,24 +433,12 @@ print('The CSR and NumPy arrays are equal: ',
 The ability to store large, sparse matrices, and perform computations on them,
 is incredibly powerful!
 
-The combination of sparsity and linear algebra abounds. For example,
+The combination of sparsity and linear algebra abounds. As just one example,
 one can think of the entire web as a large, sparse, $N \times N$ matrix.
 Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
 By normalizing this matrix and solving for its dominant eigenvector,
 one obtains the so-called PageRank—one of the numbers Google uses to
 order your search results. (You can read more about this in the next chapter!)
-
-As another example, we can represent the human brain as a large $m \times m$
-graph, where there are $m$ nodes (positions) in which you
-measure activity using an MRI scanner.  After a while of measuring,
-correlations can be calculated and entered into a matrix $C_{ij}$.
-Thresholding this matrix produces a sparse matrix of ones and zeros. 
-The eigenvector corresponding to the second-smallest eigenvalue of this matrix
-partitions the $m$ brain areas into subgroups, which, it turns out,
-correspond to functional regions of the brain [^Newman]!
-
-[^Newman]: Newman MEJ (2006). Modularity and community structure in networks.
-           PNAS 103(23):8577-8582. DOI:10.1073/pnas.0601602103
 
 <div class="landscape">
 <table style="font-size: 50%;">
@@ -1389,7 +1377,7 @@ tiger = io.imread(url)
 plt.imshow(tiger);
 ```
 
-In order to check our image segmentation, we're going to need ground truth.
+In order to check our image segmentation, we're going to need some ground truth.
 It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
 Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it [^bsds].
 Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
