@@ -14,15 +14,13 @@ RUN pip2 install --upgrade pip && pip2 install gsutil
 
 # Make sure Python 3.6 is the default
 RUN ln -sf /usr/bin/python3.6 /usr/bin/python && \
+    ln -sf /usr/bin/python3.6 /usr/bin/python3 && \
     curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py && \
     python /tmp/get-pip.py
 
 # Install dependencies not included in Debian
-RUN pip install --upgrade pip pyzmq setuptools cython numpy scipy \
-                          jupyter notedown>=1.4 toolz networkx \
-                          xlrd seaborn sympy ipykernel && \
+RUN pip install --upgrade pip ipykernel && \
     python -m ipykernel install --user
-RUN pip install scikit-image  # Separate step, since numpy, Cython needed
 
 # Install dependencies for HTMLBook build
 RUN ln -s /usr/bin/nodejs /usr/bin/node && \
