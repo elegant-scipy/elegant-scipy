@@ -63,10 +63,9 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	jupyter nbconvert --to html $< --stdout > $@
 	tools/html_image_embedder.py $@ > $@.embed && mv $@.embed $@
 
-OReilly_HTMLBook:
-	git submodule init && git submodule update
-
 $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
+	git submodule update --init --recursive
+	
 	mkdir -p $(BUILD_HTMLBOOK)/downloaded
 	ln -sf $(PWD)/figures $(BUILD_HTMLBOOK)/figures
 	ln -sf $(PWD)/images $(BUILD_HTMLBOOK)/images
@@ -135,7 +134,7 @@ zip: all
 	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
-htmlbook: OReilly_HTMLBook build_dirs $(addsuffix .html, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
+htmlbook: build_dirs $(addsuffix .html, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
 	${SED_I} 's/data-type="chapter"/data-type="preface"/' htmlbook/preface.html
 
 # clean: remove intermediate products (IPython notebooks)
