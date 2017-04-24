@@ -34,7 +34,7 @@ def is_caption(node):
     if isinstance(node, bs4.Comment):
         return node.strip().startswith('caption')
 
-regexp = re.compile('text="(.*?)"')
+regexp = re.compile('.*text="(.*?)"')
 
 comments = soup.find_all(string=is_caption)
 for comment in comments:
@@ -45,14 +45,16 @@ for comment in comments:
         # Find the output image div and wrap it inside a figure
         # tag
         for tag in comment.previous_elements:
-            if (tag.name == 'div' and
-                'output_png' in str(tag.get('class'))):
-
+            if tag.name == 'img':
                 figure_tag = soup.new_tag('figure')
                 figure_caption = soup.new_tag('figcaption')
                 figure_caption.string = caption
                 figure_tag.append(figure_caption)
 
                 wrap(tag, figure_tag)
+
+                break
+        else:
+            raise RuntimeError('Could not find output block for caption: {}'.format(caption))
 
 print(soup)
