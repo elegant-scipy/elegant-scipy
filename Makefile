@@ -63,10 +63,9 @@ $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css
 	jupyter nbconvert --to html $< --stdout > $@
 	tools/html_image_embedder.py $@ > $@.embed && mv $@.embed $@
 
-OReilly_HTMLBook:
-	git submodule init && git submodule update
-
 $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
+	git submodule update --init --recursive
+	
 	mkdir -p $(BUILD_HTMLBOOK)/downloaded
 	ln -sf $(PWD)/figures $(BUILD_HTMLBOOK)/figures
 	ln -sf $(PWD)/images $(BUILD_HTMLBOOK)/images
@@ -74,8 +73,9 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
 	
 	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
-	tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
-	tools/footnote_fixer.py $@.md > $@.footnoted && cp $@.footnoted /tmp && mv $@.footnoted $@.md ; \
+	echo Chapter: $$TITLE ;\
+	PYTHONIOENCODING="utf_8" tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
+	PYTHONIOENCODING="utf_8" tools/footnote_fixer.py $@.md > $@.footnoted && cp $@.footnoted /tmp && mv $@.footnoted $@.md ; \
 	htmlbook -c -s $@.md -o $@ -t "$$TITLE"
 	
 	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
@@ -83,11 +83,14 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	htmlbook -s $@.md -o $@
 	rm $@.md
 	
-	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
-	tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
-	tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
+	PYTHONIOENCODING="utf_8" tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
+	PYTHONIOENCODING="utf_8" tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
+	PYTHONIOENCODING="utf_8" tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
+	
 	cp $@ /tmp
-	tools/wrap_figure.py $@ > $@.figures && mv $@.figures $@
+	
+	PYTHONIOENCODING="utf_8" tools/wrap_figure.py $@ > $@.figures && mv $@.figures $@
+	PYTHONIOENCODING="utf_8" tools/caption_crunch.py $@ > $@.captions && mv $@.captions $@
 	
 	${SED_I} 's/..\/figures/.\/figures/' $@
 	${SED_I} 's/..\/images/.\/images/' $@
@@ -133,7 +136,8 @@ zip: all
 	ln -s $$ES_DIR/html $$TMP_DIR/ ; \
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
-htmlbook: OReilly_HTMLBook build_dirs $(addsuffix .html, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
+htmlbook: build_dirs $(addsuffix .html, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
+	${SED_I} 's/data-type="chapter"/data-type="preface"/' htmlbook/preface.html
 
 # clean: remove intermediate products (IPython notebooks)
 clean:

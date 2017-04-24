@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Unpack remote PNGs and JPGs from HTML documents.

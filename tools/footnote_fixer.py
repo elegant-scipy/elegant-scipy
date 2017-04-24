@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Footnotes to HTMLBook
@@ -34,7 +34,7 @@ def footnote_index(match):
 
     return ''
 
-data = re.sub('^\[\^(.*?)\]: (.*?)\n\n', footnote_index,
+data = re.sub('^\[\^(.*?)\]: (.*?)\n(\Z|\n)', footnote_index,
               data, flags=re.DOTALL|re.MULTILINE)
 
 

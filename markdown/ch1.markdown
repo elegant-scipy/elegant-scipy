@@ -523,6 +523,8 @@ print('Count statistics:\n  min:  {0}\n  mean: {1}\n  max: {2}'
               np.max(total_counts)))
 ```
 
+<!-- caption text="Counts distribution" -->
+
 We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
 This means that a different number of RNAseq reads were generated for each individual.
 We say that these individuals have different library sizes.
