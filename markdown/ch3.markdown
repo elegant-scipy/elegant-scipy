@@ -2,7 +2,8 @@
 
 > **The origins of Elegant SciPy {.callout}**
 >
-> (A note from Juan.)  
+> *(A note from Juan.)*
+>
 > This chapter gets a special mention because it inspired the whole book.
 > Vighnesh Birodkar wrote this code snippet as an undergraduate while
 > participating in Google Summer of Code (GSoC) 2014.  When I saw this bit of
