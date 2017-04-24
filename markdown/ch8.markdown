@@ -1,6 +1,17 @@
 # Big Data in Little Laptop with Toolz
 
-Whenever I think too hard about streaming data analysis, my head hurts.
+> GRACIE: A knife? The guy's twelve feet tall!
+> JACK: Seven. Hey, don't worry, I think I can handle him.
+>
+> — Jack Burton, Big Trouble in Little China
+
+Although streaming is not a SciPy feature per se, it is a way of processing data
+that is critical to efficiently processing the large datasets that we see in
+science. The Python language contains some useful primitives for streaming
+data processing, and these can be combined with Matt Rocklin's Toolz library to
+generate elegant, concise code that is extremely memory-efficient. In this
+chapter, we will show you how to apply these streaming concepts to enable you to
+handle much larger datasets than can fit in your computer's RAM.
 
 You have probably already done some streaming, perhaps without thinking about it in these terms.
 The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
@@ -18,42 +29,45 @@ print(sum_of_means)
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
 But things can quickly get out of hand when your code becomes more sophisticated.
 
-In traditional programming models, you pass your data to a function, the function processes the data, and then returns the result.
-Done.
+In the most commonly used programming models, you pass your data to a function,
+the function processes the data, and then returns the result. Done. (This
+includes most of this book!)
 
-But in streaming programs, a function processes *some* of the data, returns the processed chunk, then, while downstream functions are dealing with that chunk, the function receives a bit more, and so on...
-All these things are going on at the same time!
-How can one keep them straight?
+But in streaming programs, a function processes *some* of the data, returns the
+processed chunk, then, while downstream functions are dealing with that chunk,
+the function receives a bit more, and so on...  All these things are going on
+at the same time!  How can one keep them straight?
 
-For many years, I didn't.
-But Matt Rocklin's blog posts on this topic really opened my eyes to the utility and elegance of streaming data analysis, to the point that it was impossible to contemplate writing this book without including a chapter on it.
-Although streaming is not really a SciPy feature, it is a way of writing code that is critical to efficiently processing the large datasets that we see in science.
-The Python language contains some very nice primitives for streaming data processing, and these can be combined with Matt's Toolz library to generate gorgeous, concise code that is extremely memory-efficient.
-We will show you how to apply streaming concepts to make your SciPy code fast and and elegant.
+We too found this difficult to do, until we found the `toolz` library.
+Its constructs make streaming programs so elegant to write that
+it was impossible to contemplate writing this book without including a chapter
+about it.
 
-Let me clarify what I mean by "streaming" and why you might want to do it.
-Suppose you have some data in a CSV text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
-The most common way to do this would be to use NumPy to load the values, compute the log function for all values in the full matrix, and then take the mean over the 1st axis:
+Let us clarify what we mean by "streaming" and why you might want to do it.
+Suppose you have some data in a text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
+The common way to do this would be to use NumPy to load the values, compute the log function for all values in the full matrix, and then take the mean over the 1st axis:
 
 ```python
 import numpy as np
 expr = np.loadtxt('data/expr.tsv')
 logexpr = np.log(expr + 1)
-np.mean(logexpr, axis=1)
+np.mean(logexpr, axis=0)
 ```
 
 This works, and it follows a reassuringly familiar input-output model of computation.
 But it's a pretty inefficient way to go about it!
 We load the full matrix into memory (1), then make a copy with 1 added to each value (2), then make another copy to compute the log (3), before finally passing it on to `np.mean`.
 That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance in memory.
-It's clear that for any kind of "big data" operation, this approach won't work.
+For any kind of "big data" operation, this approach won't work.
 
 Python's creators knew this, and created the "yield" keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
 "Yield" is a rather nice name for it: the function *yields* control to the next function, waiting to resume processing the data until all the downstream steps have processed that data point.
 
-As I mentioned above, trying to think too hard about the flow of control in this paradigm is a surefire way to experience headaches, nausea, and other side effects.
+## Streaming with `yield`
+
+The flow of control described above can be rather hard to follow.
 An awesome feature of Python is that it abstracts this complexity away, allowing you to focus on the analysis functionality.
-Here's how I think about it: for every processing function that would normally take a list (a collection of data) and transform that list, simply rewrite that function as taking a *stream* and *yielding* the result of every element of that stream.
+Here's one way to think about it: for every processing function that would normally take a list (a collection of data) and transform that list, you can rewrite that function as taking a *stream* and *yielding* the result of every element of that stream.
 
 Here's an example where we take the log of each element in a list, using either a standard data-copying method or a streaming method:
 
@@ -69,22 +83,19 @@ def log_all_streaming(input_stream):
         yield np.log(elem)
 ```
 
+Let's check that we get the same result with both methods:
+
 ```python
 # We set the random seed so we will get consistent results
 np.random.seed(seed=7)
 # Set print options to show only 3 significant digits
 np.set_printoptions(precision=3, suppress=True)
-```
 
-```python
 arr = np.random.rand(1000) + 0.5
 result_batch = sum(log_all_standard(arr))
-print(result_batch)
-```
-
-```python
+print('Batch result: ', result_batch)
 result_stream = sum(log_all_streaming(arr))
-print(result_stream)
+print('Stream result: ', result_stream)
 ```
 
 The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
@@ -109,7 +120,7 @@ def tsv_line_to_array(line):
     lst = [float(elem) for elem in line.rstrip().split('\t')]
     return np.array(lst)
 
-def readtsv_verbose(filename):
+def readtsv(filename):
     print('starting readtsv')
     with open(filename) as fin:
         for i, line in enumerate(fin):
@@ -117,21 +128,21 @@ def readtsv_verbose(filename):
             yield tsv_line_to_array(line)
     print('finished readtsv')
 
-def add1_verbose(arrays_iter):
+def add1(arrays_iter):
     print('starting adding 1')
     for i, arr in enumerate(arrays_iter):
         print('adding 1 to line {}'.format(i))
         yield arr + 1
     print('finished adding 1')
 
-def log_verbose(arrays_iter):
+def log(arrays_iter):
     print('starting log')
     for i, arr in enumerate(arrays_iter):
         print('taking log of array {}'.format(i))
         yield np.log(arr)
     print('finished log')
 
-def running_mean_verbose(arrays_iter):
+def running_mean(arrays_iter):
     print('starting running mean')
     for i, arr in enumerate(arrays_iter):
         if i == 0:
@@ -147,18 +158,18 @@ Let's see it in action for a small sample file:
 ```python
 fin = 'data/expr.tsv'
 print('Creating lines iterator')
-lines = readtsv_verbose(fin)
+lines = readtsv(fin)
 print('Creating loglines iterator')
-loglines = log_verbose(add1_verbose(lines))
+loglines = log(add1(lines))
 print('Computing mean')
-mean = running_mean_verbose(loglines)
+mean = running_mean(loglines)
 print('the mean log-row is: {}'.format(mean))
 ```
 
-Note a few things:
+Note:
 
 - None of the computation is run when creating the lines and loglines iterators. This is because iterators are *lazy*, meaning they are not evaluated (or *consumed*) until a result is needed.
-- When the computation is finally triggered, by the call to `running_mean_verbose`, it jumps back and forth between all the functions, as various computations are performed on each line, before moving on to the next line.
+- When the computation is finally triggered, by the call to `running_mean`, it jumps back and forth between all the functions, as various computations are performed on each line, before moving on to the next line.
 
 ## Introducing the Toolz streaming library
 
@@ -242,11 +253,10 @@ As a simple example, let's rewrite our running mean using `pipe`:
 ```python
 import toolz as tz
 filename = 'data/expr.tsv'
-mean = tz.pipe(filename, readtsv_verbose,
-               add1_verbose, log_verbose, running_mean_verbose)
+mean = tz.pipe(filename, readtsv, add1, log, running_mean)
 
 # This is equivalent to nesting the functions like this:
-# running_mean_verbose(log_verbose(add1_verbose(readtsv_verbose(filename))))
+# running_mean(log(add1(readtsv(filename))))
 ```
 
 What was originally multiple lines, or an unwieldy mess of parentheses, is now a clean description of the sequential transformations of the input data.
@@ -376,7 +386,7 @@ print(tz.sliding_window.__doc__)
 ```
 
 Additionally, the *frequencies* function counts the appearance of individual items in a data stream!
-Together with pipe, we can now count k-mers in a single function call (though we will still use our original FASTA parsing function):
+Together with pipe, we can now count k-mers in a single function call:
 
 ```python
 from toolz import curried as c
@@ -389,25 +399,34 @@ counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
                  tz.frequencies)
 ```
 
-We neglected to discuss the *curried* part of this approach.
+## Currying: the spice of streaming
+
+Earlier, we briefly used a *curried* version of the `map` function, which
+applies a given function to each element in a sequence. Now that we've mixed a
+few more curried calls in there, it's time share with you what it means!
+Currying is not named after the spice blend (though it does spice up your code).
+It is named for Haskell Curry, the mathematician who invented the concept.
+Haskell Curry is also the namesake of the Haskell programming language — in which
+*all* functions are curried!
 
 "Currying" means *partially* evaluating a function and returning another, "smaller" function.
 Normally in Python if you don't give a function all of its required arguments then it will throw a fit.
 In contrast, a curried function can just take *some* of those arguments.
 If the curried function doesn't get enough arguments, it returns a new function that takes the leftover arguments.
-Once that second function is called with the remaining arguments it can perform the original task.
+Once that second function is called with the remaining arguments, it can perform the original task.
 Another word for currying is partial evaluation.
 In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
 
-Currying is not named after the spice blend (though it does spice up your code).
-It is named for Haskell Curry, the mathematician who invented the concept.
-Haskell Curry is also the namesake of the Haskell programming language, which has functions curried by default!
+So, while the function call `map(np.log, numbers_list)` applies the `np.log`
+function to all of the numbers in `numbers_list` (returning a sequence of the
+logged numbers), the call `toolz.curried.map(np.log)` returns a *function* that
+takes in a sequence of numbers and returns a sequence of logged numbers.
 
 It turns out that having a function that already knows about some of the arguments is perfect for streaming!
 We've seen a hint of how powerful currying and pipes can be together in the
-above code snippet, but we will elaborate further in what follows.
+above code snippet.
 
-Currying can be a bit of a mind-bend when you first start, so let's make our own curried function to see how it works.
+But currying can be a bit of a mind-bend when you first start, so we'll try it with some simple examples to demonstrate how it works.
 Let's start by writing a simple, non-curried function:
 
 ```python
@@ -443,17 +462,17 @@ Now let's leave out the second variable.
 add_curried(2)
 ```
 
-It returned a function. Yay!
+As we expected, it returned a function. Yay!
 Now let's see if we can use that returned function as expected.
 
 ```python
-partial_sum = add_curried(2)
-partial_sum(5)
+add2 = add_curried(2)
+add2(5)
 ```
 
-Now that worked, but add_curried was a reasonably hard function to read.
-Future me will probably have trouble remembering how I wrote that code.
-Luckily, Toolz has some syntactic sugar to help us out.
+Now, that worked, but `add_curried` was a reasonably hard function to read.
+Future us will probably have trouble remembering how we wrote that code.
+Luckily, Toolz has the, well, tools to help us out.
 
 ```python
 import toolz as tz
@@ -504,6 +523,8 @@ def genome(file_pattern):
                    c.filter(is_nucleotide))
 ```
 
+## Back to counting k-mers
+
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
 We can now observe the frequency of different k-mers:
 
@@ -512,7 +533,7 @@ counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
 
-> **tips {.callout}**
+> **Tips for working with streams {.callout}**
 >  - (list of list -> list) with tz.concat
 >  - don’t get caught out:
 >     * iterators get consumed.
@@ -520,10 +541,12 @@ So if you make a generator object and do some processing on it, and then a later
 The original is already gone.
 >     * iterators are lazy. You need to force evaluation sometimes.
 >  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
-Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
+     Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
+     You can also insert `map(do(print))` (`map` and `do` are from
+     `toolz.curried`) at any point in a stream to print each element while it
+     streams through.
 
 <!-- exercise begin -->
-
 
 **Exercise:**
 The scikit-learn library has an IncrementalPCA class, which allows you to run
@@ -536,13 +559,14 @@ Then, use the function to compute the PCA of the `iris` machine learning
 dataset, which is in `data/iris.csv`. (You can also access it from the
 `datasets` module of scikit-learn.)
 
-**Hint:** The `IncrementalPCA` class is in `sklearn.decomposition`, and
+*Hint:* The `IncrementalPCA` class is in `sklearn.decomposition`, and
 requires a *batch size* greater than 1 to train the model. Look at the
 `toolz.curried.partition` function for how to create a stream of batches from a
 stream of data points.
 
 <!-- solution begin -->
 
+**Solution:**
 First, we write the function to train the model. The function should take in a
 stream of samples and output a PCA model, which can *transform* new samples by
 projecting them from the original n-dimensional space to the principal
@@ -609,7 +633,7 @@ plt.scatter(*components2.T);
 ```
 
 The difference, of course, is that streaming PCA can scale to extremely large
-datasets!
+datasets.
 
 <!-- solution end -->
 
@@ -761,14 +785,12 @@ previously unseen DNA sequence.
 
 <!-- exercise begin -->
 
-**Challenge:** add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive. Yes, unzip can be streamed, too!
+*Challenge:* add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive. Yes, unzip can be streamed, too!
 
-**Hint:** The `tarfile` package, part of Python's standard library, allows you
+*Hint:* The `tarfile` package, part of Python's standard library, allows you
 to open tar files (even compressed ones) as if they were normal files.
 
 <!-- exercise end -->
-
-## Conclusions
 
 We hope to have shown you at least a hint that streaming in Python can be easy when you use a few abstractions, like the ones Toolz provides.
 
