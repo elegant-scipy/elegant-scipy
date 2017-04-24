@@ -74,6 +74,7 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	jupyter nbconvert --to=mdoutput --output="$(notdir $@)" --output-dir=$(BUILD_HTMLBOOK) $<
 	
 	TITLE=`cat $@.md | grep -e '^# ' | head -n 1 | sed 's/^# //'` ; \
+	echo Chapter: $$TITLE ;\
 	tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
 	tools/footnote_fixer.py $@.md > $@.footnoted && cp $@.footnoted /tmp && mv $@.footnoted $@.md ; \
 	htmlbook -c -s $@.md -o $@ -t "$$TITLE"
