@@ -136,6 +136,7 @@ zip: all
 	cd $$TMP_DIR/.. ; zip -r $$ES_DIR/$$STAMP.zip ./$$STAMP
 
 htmlbook: OReilly_HTMLBook build_dirs $(addsuffix .html, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
+	${SED_I} 's/data-type="chapter"/data-type="preface"/' htmlbook/preface.html
 
 # clean: remove intermediate products (IPython notebooks)
 clean:
