@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get install -y python3.6 python3.6-dev curl zip \
                        libffi-dev libssl-dev npm git \
                        python-pip python-pkg-resources python-setuptools \
-                       libffi-dev libssl-dev libxml2-utils && \
+                       libffi-dev libssl-dev libxml2-utils blahtexml && \
     rm -rf /var/lib/apt/lists/*
 
 # gsutil is installed to deploy the book to Google Cloud Storage
