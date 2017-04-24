@@ -9,7 +9,8 @@ build:
           echo "pip version $(pip --version) running"
 
     - pip-install:
-        extra_args: "-r requirements.txt"
+        pip_commands: "pip3"
+        extra_args: ""
 
     - script:
         name: build book
