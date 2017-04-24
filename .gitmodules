@@ -1,6 +1,3 @@
-[submodule "HTMLBook"]
-	path = OReilly_HTMLBook
-	url = git@github.com:oreillymedia/HTMLBook
 [submodule "OReilly_HTMLBook"]
 	path = OReilly_HTMLBook
 	url = git@github.com:oreillymedia/HTMLBook
