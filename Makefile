@@ -88,6 +88,7 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
 	cp $@ /tmp
 	tools/wrap_figure.py $@ > $@.figures && mv $@.figures $@
+	tools/caption_crunch.py $@ > $@.captions && mv $@.captions $@
 	
 	${SED_I} 's/..\/figures/.\/figures/' $@
 	${SED_I} 's/..\/images/.\/images/' $@
