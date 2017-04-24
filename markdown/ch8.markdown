@@ -5,14 +5,13 @@
 >
 > — Jack Burton, Big Trouble in Little China
 
-Although streaming is not really a SciPy feature, it is a way of writing code
+Although streaming is not a SciPy feature per se, it is a way of processing data
 that is critical to efficiently processing the large datasets that we see in
-science. The Python language contains some very nice primitives for streaming
+science. The Python language contains some useful primitives for streaming
 data processing, and these can be combined with Matt Rocklin's Toolz library to
-generate gorgeous, concise code that is extremely memory-efficient. In this
-chapter, we will show you how to apply streaming concepts to make your SciPy
-code fast, memory-efficient, and elegant, enabling you to handle much larger
-datasets than can fit in your computer's RAM.
+generate elegant, concise code that is extremely memory-efficient. In this
+chapter, we will show you how to apply these streaming concepts to enable you to
+handle much larger datasets than can fit in your computer's RAM.
 
 You have probably already done some streaming, perhaps without thinking about it in these terms.
 The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
@@ -30,7 +29,7 @@ print(sum_of_means)
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
 But things can quickly get out of hand when your code becomes more sophisticated.
 
-In the most commonly-used programming models, you pass your data to a function,
+In the most commonly used programming models, you pass your data to a function,
 the function processes the data, and then returns the result. Done. (This
 includes most of this book!)
 
