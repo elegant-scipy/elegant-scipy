@@ -285,28 +285,32 @@ print(L @ v3)
 ```
 
 As mentioned above, the Fiedler vector is the vector corresponding to the
-second-smallest eigenvalue of $L$. Plotting the eigenvalues tells us which one
+second-smallest eigenvalue of $L$. Sorting the eigenvalues tells us which one
 is the second-smallest:
 
 ```python
-print(eigvals)
-plt.plot(eigvals, '-o');
+plt.plot(np.sort(eigvals), linestyle='-', marker='o');
 ```
+<!-- caption text="Eigenvalues of $L$" -->
 
-It's the second eigenvalue. The Fiedler vector is thus the second eigenvector.
+It's the first non-zero eigenvalue, close to 0.4. The Fiedler vector is the
+corresponding eigenvector:
 
 ```python
 f = Eigvecs[:, np.argsort(eigvals)[1]]
-plt.plot(f, '-o');
+plt.plot(f, linestyle='-', marker='o');
 ```
+<!-- caption text="Fiedler vector of $L$" -->
 
-It's pretty remarkable: by looking at the *sign* of the Fiedler vector, we can
-separate the nodes into the two groups we identified in the drawing!
+It's pretty remarkable: by looking at the *sign* of the elements of the Fiedler
+vector, we can separate the nodes into the two groups we identified in the
+drawing!
 
 ```python
-colors = ['orange' if eigval > 0 else 'gray' for eigval in f]
+colors = ['orange' if eigv > 0 else 'gray' for eigv in f]
 nx.draw(g, pos=layout, with_labels=True, node_color=colors)
 ```
+<!-- caption text="Nodes colored by their sign in the Fiedler vector of $L$" -->
 
 ## Laplacians with brain data
 
