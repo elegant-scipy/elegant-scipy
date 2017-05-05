@@ -267,20 +267,21 @@ eigvals, Eigvecs = np.linalg.eigh(L)
 ```
 
 You can verify that the values returned satisfy the definition of eigenvalues
-and eigenvectors. For example, the third eigenvalue is 3:
+and eigenvectors. For example, one of the eigenvalues is 3:
 
 ```python
-eigvals[2]
+np.any(np.isclose(eigvals, 3))
 ```
 
-And we can check that multiplying the matrix $L$ by the second eigenvector does
-indeed multiply the vector by 3:
+And we can check that multiplying the matrix $L$ by the corresponding eigenvector
+does indeed multiply the vector by 3:
 
 ```python
-v2 = Eigvecs[:, 2]
+idx_lambda3 = np.argmin(np.abs(eigvals - 3))[0]
+v3 = Eigvecs[:, idx_lambda3]
 
-print(v2)
-print(L @ v2)
+print(v3)
+print(L @ v3)
 ```
 
 As mentioned above, the Fiedler vector is the vector corresponding to the
