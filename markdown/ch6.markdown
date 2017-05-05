@@ -190,8 +190,8 @@ How do you draw nodes and edges in such a way that you don't get a complete
 mess such as this one?
 
 ![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
+<!-- caption text="Visualization of wikipedia structure. Created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License)." -->
 
-**Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
 
 One way is to put nodes that share many edges close together. It turns out
 that this can be done by using the second-smallest eigenvalue of the Laplacian
@@ -212,7 +212,8 @@ A = np.array([[0, 1, 1, 0, 0, 0],
               [0, 0, 0, 1, 1, 0]], dtype=float)
 ```
 
-We can use NetworkX to draw this network:
+We can use NetworkX to draw this network. First, we initialize matplotlib as
+usual:
 
 ```python
 # Make plots appear inline, set custom plotting style
@@ -221,6 +222,8 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
+Now, we can plot it:
+
 ```python
 import networkx as nx
 g = nx.from_numpy_matrix(A)
@@ -228,6 +231,8 @@ layout = nx.spring_layout(g, pos=nx.circular_layout(g))
 nx.draw(g, pos=layout,
         with_labels=True, node_color='white')
 ```
+<--! caption text="A simple network plotted with NetworkX" -->
+
 
 You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
 Can the Fiedler vector tell us this? First, we must compute the degree matrix
