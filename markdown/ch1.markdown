@@ -154,16 +154,16 @@ A 1-dimesional array is roughly equivalent to a Python list:
 ```python
 import numpy as np
 
-one_d_array = np.array([1,2,3,4])
-print(one_d_array)
-print(type(one_d_array))
+array1d = np.array([1,2,3,4])
+print(array1d)
+print(type(array1d))
 ```
 
 Arrays have particular attributes and methods, that you can access by placing a dot after the array name.
 For example, you can get the array's *shape*:
 
 ```python
-print(one_d_array.shape)
+print(array1d.shape)
 ```
 
 Here, it's just a tuple with a single number.
@@ -173,8 +173,8 @@ That will work, but it doesn't extend to *two-dimensional* arrays.
 This is what we use to represent our mini gene expression table from above:
 
 ```python
-two_d_array = np.array(expression_data)
-print(two_d_array.shape)
+array2d = np.array(expression_data)
+print(array2d.shape)
 ```
 
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
@@ -184,7 +184,7 @@ Now you can see that the `shape` attribute generalises `len` to account for the 
 Arrays have other attributes, such as `ndim`, the number of dimensions:
 
 ```python
-print(two_d_array.ndim)
+print(array2d.ndim)
 ```
 
 You'll become familiar with all of these as you start to use NumPy more for your own data analysis.
