@@ -6,7 +6,7 @@
 > with the question "What is best?", a question which cuts deeply rather than
 > broadly, a question whose answers tend to move the silt downstream.
 >
-> — Robert M Pirsig, Zen and the Art of Motorcycle Maintenance
+> — Robert M Pirsig, *Zen and the Art of Motorcycle Maintenance*
 
 When hanging a picture on the wall, it is sometimes difficult to get it
 straight.  You make an adjustment, step back, evaluate the picture's
