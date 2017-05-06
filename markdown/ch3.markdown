@@ -1,5 +1,15 @@
 # Networks of Image Regions with ndimage
 
+> "Tyger Tyger, burning bright,
+>
+> In the forests of the night;
+>
+> What immortal hand or eye,
+>
+> Could frame thy fearful symmetry?"
+>
+> -- William Blake, *The Tyger,*
+
 > **The origins of Elegant SciPy {.callout}**
 >
 > *(A note from Juan.)*
