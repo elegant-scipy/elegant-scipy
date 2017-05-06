@@ -145,9 +145,13 @@ This is precisely the problem solved by the *NumPy array*.
 ## NumPy N-dimensional arrays
 
 One of the key NumPy data types is the N-dimensional array (ndarray, or just array).
-Arrays must be homogeneous; all items in an array must be the same type.
-In our case we will need to store integers.
+Ndarrays underpin lots of awesome data manipulation techniques in SciPy.
+In particular, we're going to explore vectorization and broadcasting,
+techniques that allow us to write powerful, elegant code to manipulate our data.
 
+First, let's get our heads around the the ndarray.
+These arrays must be homogeneous; all items in an array must be the same type.
+In our case we will need to store integers.
 Ndarrays are called N-dimensional because they can have any number of dimensions.
 A 1-dimesional array is roughly equivalent to a Python list:
 
@@ -296,8 +300,7 @@ Now, we have added together each element in `x` to its corresponding element in 
 
 Both of these operations are simple and, we hope, intuitive examples of vectorization.
 NumPy also makes them very fast, much faster than iterating over the arrays manually.
-(Feel free to play with this yourself using the `%%timeit` IPython magic.)
-
+(Feel free to play with this yourself using the `%%timeit` IPython magic we saw earlier.)
 
 ### Broadcasting
 
@@ -359,12 +362,12 @@ It allows us to express complex operations concisely and efficiently.
 ## Exploring a gene expression data set
 
 The data set that we'll be using is an RNAseq experiment of skin cancer samples from The Cancer Genome Atlas (TCGA) project (http://cancergenome.nih.gov/).
+We've already cleaned and sorted the data for you, so you can just use `data/counts.txt`
+in the book repository.
 In Chapter 2 we will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 But first we need to get our heads around the biases in our data, and think about how we could improve it.
 
-### Downloading the data
-
-[Links to data!]
+### Reading in the data with Pandas
 
 We're first going to use Pandas to read in the table of counts.
 Pandas is a Python library for data manipulation and analysis,
@@ -464,6 +467,9 @@ As expected, they now match up nicely!
 ## Normalization
 
 Before we do any kind of analysis with our data, it is important to take a look at it and determine if we need to normalize it first.
+By normalize, we mean that we want to bring all our data onto the same scale so we can make a fair comparison.
+We will consider two types of normalization commonly applied to expression data: between samples and between genes.
+For example, when we consider differences between groups of patients, we want to know that they vary due to some biological difference, not just something technical.
 
 ### Between samples
 
@@ -484,9 +490,9 @@ import warnings
 warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
 
-> **Tip: A quick note on plotting {.callout}**
+> **A quick note on plotting {.callout}**
 >
-> As a short aside, the code above does a few neat things to make our plots
+> The code above does a few neat things to make our plots
 > prettier. First, `%matplotlib inline` is a Jupyter notebook
 > [magic command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
 > that simply makes all plots appear in the notebook rather than pop up a new
@@ -535,6 +541,10 @@ print('Count statistics:\n  min:  {0}\n  mean: {1}\n  max: {2}'
 We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
 This means that a different number of RNAseq reads were generated for each individual.
 We say that these individuals have different library sizes.
+
+#### Normalizing library size between samples
+
+Let's take a closer look at ranges of gene expression for each individual, so when we apply our normalization we can see it in action.
 
 ```python
 # Subset data for plotting
@@ -617,6 +627,8 @@ Much better!
 Also notice how we used broadcasting twice there.
 Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
 
+Finally, let's compare our normalized data, to the raw data.
+
 ```python
 import itertools as it
 from collections import defaultdict
@@ -688,9 +700,12 @@ plt.show()
 
 You can see that the normalized distributions are a little bit more similar
 once we have taken library size (the sum of those distributions) into account.
+Now we are comparing like with like between the samples!
+But what about difference between the genes?
 
 ### Between genes
 
+We can also get into some strife when trying to compare different genes.
 The number of counts for a gene, is related to the gene length.
 Let's say we have gene A and gene B.
 Gene B is twice as long as gene A.
@@ -699,6 +714,7 @@ Therefore you would expect that gene B would have about twice as many counts as 
 Remember, that when we do an RNAseq experiment, we are fragmenting the transcript, and sampling reads from that pool of fragments.
 The counts are the number of reads from that gene in a given sample.
 So if a gene is twice as long, we are twice as likely to sample it.
+If we want to compare between genes we will have to do some more normalization.
 
 ![Relationship between counts and gene length](../figures/gene_length_counts.png)
 
@@ -869,8 +885,8 @@ But what happens when we need to divide a 2D array by a 1D array?
 #### Broadcasting rules
 
 Broadcasting allows calculations between ndarrays that have differing shapes.
-
-If the input arrays do not have the same number of dimensions,
+Numpy uses broadcasting rules to make these manipulations a little easier.
+For example, if the input arrays do not have the same number of dimensions,
 then then an additional dimension is added to the start of the first array,
 with a value of 1.
 Once the two arrays have the same number of dimensions,
@@ -1009,7 +1025,9 @@ def rpkm(counts, lengths):
 counts_rpkm = rpkm(counts, gene_lengths)
 ```
 
-Let's see the normalization's effect in action. First, as a reminder, here's
+#### RPKM between gene normalization
+
+Let's see the RPKM normalization's effect in action. First, as a reminder, here's
 the distribution of mean log counts as a function of gene length:
 
 ```python
