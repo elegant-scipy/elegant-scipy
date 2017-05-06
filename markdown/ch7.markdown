@@ -52,6 +52,11 @@ attempt to address the issue[^line_search].
                 search a wider area.
 
 ![Optimization Comparison](../figures/generated/optimization_comparison.png)
+<!-- caption text="Comparison of optimization pathways taken by different
+optimization algorithms on the Rosenbrock function (top). Powell's method
+performs a line search along the first dimension before doing gradient descent.
+The conjugate gradient (CG) method, on the other hand, performs gradient
+descent from the starting point." -->
 
 There are many different optimization algorithms to choose from (see
 figure).  You get to choose whether your cost function takes a scalar
@@ -93,8 +98,8 @@ You'll remember our astronaut — Eileen Collins — from chapter 3.
 We will be shifting this image by 50 pixels to the right then comparing it back
 to the original until we
 find the shift that best matches. Obviously this is a silly thing to do, as we
-know the original orientation, but this way we know the truth. Here's the
-original and shifted image.
+know the original position, but this way we know the truth, and we can check
+how our algorithm is doing. Here's the original and shifted image.
 
 ```python
 from skimage import data, color
@@ -109,6 +114,7 @@ axes[0].set_title('Original')
 axes[1].imshow(shifted)
 axes[1].set_title('Shifted');
 ```
+<!-- caption text="Horizontally shifting an image" -->
 
 For the optimization algorithm to do its work, we need some way of
 defining "dissimilarity"—i.e., the cost function.  The easiest way to do this is to
@@ -143,6 +149,8 @@ ax.plot(shifts, mse_costs)
 ax.set_xlabel('Shift')
 ax.set_ylabel('MSE');
 ```
+<!-- caption text="Mean squared error as a function of horizontal shift of the
+transformed image" -->
 
 With the cost function defined, we can ask `scipy.optimize.minimize`
 to search for optimal parameters:
@@ -187,6 +195,8 @@ ax.plot(shifts, mse_costs)
 ax.set_xlabel('Shift')
 ax.set_ylabel('MSE');
 ```
+<!-- caption text="Mean squared error as a function of shift from the original
+image" -->
 
 Starting at zero shift, have a look at the MSE value as the shift becomes
 increasingly negative: it increases consistently until around -300
@@ -234,6 +244,7 @@ ax.legend(loc='lower right')
 ax.set_xlabel('Shift')
 ax.set_ylabel('MSE');
 ```
+<!-- caption text="Effect of smoothing on MSE" -->
 
 As you can see, with some rather extreme smoothing, the "funnel" of
 the error function becomes wider, and less bumpy. Rather than smoothing the
