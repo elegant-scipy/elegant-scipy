@@ -267,22 +267,22 @@ Because $L$ is symmetric, we can use the `np.linalg.eigh` function to compute
 the eigenvalues and eigenvectors:
 
 ```python
-eigvals, Eigvecs = np.linalg.eigh(L)
+val, Vec = np.linalg.eigh(L)
 ```
 
 You can verify that the values returned satisfy the definition of eigenvalues
 and eigenvectors. For example, one of the eigenvalues is 3:
 
 ```python
-np.any(np.isclose(eigvals, 3))
+np.any(np.isclose(val, 3))
 ```
 
 And we can check that multiplying the matrix $L$ by the corresponding eigenvector
 does indeed multiply the vector by 3:
 
 ```python
-idx_lambda3 = np.argmin(np.abs(eigvals - 3))[0]
-v3 = Eigvecs[:, idx_lambda3]
+idx_lambda3 = np.argmin(np.abs(val - 3))
+v3 = Vec[:, idx_lambda3]
 
 print(v3)
 print(L @ v3)
@@ -293,7 +293,7 @@ second-smallest eigenvalue of $L$. Sorting the eigenvalues tells us which one
 is the second-smallest:
 
 ```python
-plt.plot(np.sort(eigvals), linestyle='-', marker='o');
+plt.plot(np.sort(val), linestyle='-', marker='o');
 ```
 <!-- caption text="Eigenvalues of $L$" -->
 
@@ -301,7 +301,7 @@ It's the first non-zero eigenvalue, close to 0.4. The Fiedler vector is the
 corresponding eigenvector:
 
 ```python
-f = Eigvecs[:, np.argsort(eigvals)[1]]
+f = Vec[:, np.argsort(val)[1]]
 plt.plot(f, linestyle='-', marker='o');
 ```
 <!-- caption text="Fiedler vector of $L$" -->
