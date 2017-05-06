@@ -2,7 +2,7 @@
 
 > No one can be told what the matrix is. You have to see it for yourself.
 >
-> — Morpheus, The Matrix
+> — Morpheus, *The Matrix*
 
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
 will feature an elegant *method*. We
