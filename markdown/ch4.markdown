@@ -33,10 +33,10 @@
 
 # Frequency and the fast Fourier transform
 
-> "If you want to find the secrets of the universe, think in terms of energy,
-> frequency and vibration."
+> If you want to find the secrets of the universe, think in terms of energy,
+> frequency and vibration.
 >
-> -- Nikola Tesla
+> — Nikola Tesla
 
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
 

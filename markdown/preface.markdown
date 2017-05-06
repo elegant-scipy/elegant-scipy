@@ -1,8 +1,8 @@
 # Preface
 
-> "Unlike the stereotypical wedding dress, it was—to use a technical term—elegant, like a computer algorithm that achieves an impressive outcome with just a few lines of code."
+> Unlike the stereotypical wedding dress, it was—to use a technical term—elegant, like a computer algorithm that achieves an impressive outcome with just a few lines of code.
 
-> -- Graeme Simsion, *The Rosie Effect*
+> — Graeme Simsion, *The Rosie Effect*
 
 Welcome to Elegant SciPy.
 We’re going to spend rather a lot of time focusing on the “SciPy” bit of the title, so let’s take a moment to reflect on the "Elegant" bit.
