@@ -235,7 +235,7 @@ layout = nx.spring_layout(g, pos=nx.circular_layout(g))
 nx.draw(g, pos=layout,
         with_labels=True, node_color='white')
 ```
-<--! caption text="A simple network plotted with NetworkX" -->
+<!-- caption text="A simple network plotted with NetworkX" -->
 
 
 You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
