@@ -517,9 +517,10 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
 
     # plot edges
     pre, post = np.nonzero(conn_matrix)
-    for src, dst in zip(pre, post):
-        ax.plot(x_coords[[src, dst]], y_coords[[src, dst]],
-                c=(0.85, 0.85, 0.85), lw=0.2, alpha=0.5, zorder=0)
+    links = np.array([[x_coords[pre], x_coords[post]],
+                      [y_coords[pre], y_coords[post]]]).T
+    ax.add_collection(LineCollection(links, color='silver',
+                                     lw=2, alpha=0.5, zorder=0))
 
     ax.legend(scatterpoints=3)
     plt.show()
