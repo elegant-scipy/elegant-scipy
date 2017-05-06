@@ -1,5 +1,9 @@
 # Linear algebra in SciPy
 
+> No one can be told what the matrix is. You have to see it for yourself.
+>
+> — Morpheus, The Matrix
+
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
 will feature an elegant *method*. We
 want to highlight the linear algebra packages available in SciPy, which form
@@ -879,6 +883,12 @@ In our food web, this causes problems, because the bottom of the food chain,
 what the authors call *detritus* (basically sea sludge), doesn't actually *eat*
 anything (the Circle of Life notwithstanding), so you can't reach other species
 from it.
+
+> *Young Simba:* But, Dad, don't we eat the antelope?
+>
+> *Mufasa:* Yes, Simba, but let me explain. When we die, our bodies become the
+> grass, and the antelope eat the grass. And so we are all connected in the
+> great Circle of Life.
 
 To deal with this, the PageRank algorithm uses a so-called "damping
 factor", usually taken to be 0.85. This means that 85% of the time, the
