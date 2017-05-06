@@ -889,6 +889,8 @@ from it.
 > *Mufasa:* Yes, Simba, but let me explain. When we die, our bodies become the
 > grass, and the antelope eat the grass. And so we are all connected in the
 > great Circle of Life.
+>
+> — *The Lion King*
 
 To deal with this, the PageRank algorithm uses a so-called "damping
 factor", usually taken to be 0.85. This means that 85% of the time, the
