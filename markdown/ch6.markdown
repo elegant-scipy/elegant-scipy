@@ -402,7 +402,7 @@ In order to obtain the degree-normalized Laplacian, $Q$, we need the inverse
 square root of the $D$ matrix:
 
 ```python
-Dinv2 = np.diag(degrees ** (-.5))
+Dinv2 = np.diag(1 / np.sqrt(degrees))
 Q = Dinv2 @ L @ Dinv2
 ```
 
@@ -411,27 +411,27 @@ highly-connected neurons remain close: the eigenvector of $Q$ corresponding to
 its second-smallest eigenvalue, normalized by the degrees:
 
 ```python
-eigvals, eigvecs = linalg.eig(Q)
+val, Vec = linalg.eig(Q)
 ```
 
 Note from the documentation of `numpy.linalg.eig`:
 
 > "The eigenvalues are not necessarily ordered."
 
-Although the documentation in SciPy's `eig` lacks this warning
-(disappointingly, we must add), it remains true in this case. We must therefore
-sort the eigenvalues and the corresponding eigenvector columns ourselves:
+Although the documentation in SciPy's `eig` lacks this warning, it remains true
+in this case. We must therefore sort the eigenvalues and the corresponding
+eigenvector columns ourselves:
 
 ```python
-smallest_first = np.argsort(eigvals)
-eigvals = eigvals[smallest_first]
-eigvecs = eigvecs[:, smallest_first]
+smallest_first = np.argsort(val)
+val = val[smallest_first]
+Vec = Vec[:, smallest_first]
 ```
 
 Now we can find the eigenvector we need to compute the affinity coordinates:
 
 ```python
-x = Dinv2 @ eigvecs[:, 1]
+x = Dinv2 @ Vec[:, 1]
 ```
 
 (The reasons for using this vector are too long to explain here, but appear in
@@ -447,14 +447,14 @@ because $Mv = \lambda v$ implies $M(\alpha v) = \lambda (\alpha v)$.
 So, it is
 arbitrary whether a software package returns $v$ or $-v$ when asked for the
 eigenvectors of $M$. In order to make sure we reproduce the layout from the
-Varshney et al. paper, we must make sure that the vector is pointing in the
+Varshney *et al.* paper, we must make sure that the vector is pointing in the
 same direction as theirs, rather than the opposite direction. We do this by
 choosing an arbitrary neuron from their Figure 2, and checking the sign of `x`
 at that position. We then reverse it if it doesn't match its sign in Figure 2
 of the paper.
 
 ```python
-vc2_index = np.flatnonzero(neuron_ids == 'VC02')[0]
+vc2_index = np.argwhere(neuron_ids == 'VC02')
 if x[vc2_index] < 0:
     x = -x
 ```
