@@ -3,7 +3,7 @@
 > GRACIE: A knife? The guy's twelve feet tall!
 > JACK: Seven. Hey, don't worry, I think I can handle him.
 >
-> — Jack Burton, Big Trouble in Little China
+> — Jack Burton, *Big Trouble in Little China*
 
 Streaming is not a SciPy feature per se, but rather an approach which
 allows us to efficiently process large datasets, like those often

@@ -1,5 +1,10 @@
 # Quantile normalization with NumPy and SciPy
 
+> Distress not yourself if you cannot at first understand the deeper mysteries
+> of Spaceland. By degrees they will dawn upon you.
+>
+> — Edwin A. Abbott, *Flatland: A Romance of Many Dimensions*
+
 In this chapter, we will continue to analyze the gene expression data from Chapter 1, but with a slightly different purpose: we want to use each patient's *gene expression profile* (the full vector of their gene expression measurements) to predict their expected survival.
 In order to use full profiles, we need a stronger normalization than what Chapter 1's RPKM provides.
 We will instead perform [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.

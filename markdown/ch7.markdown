@@ -6,7 +6,7 @@
 > with the question "What is best?", a question which cuts deeply rather than
 > broadly, a question whose answers tend to move the silt downstream.
 >
-> — Robert M Pirsig, Zen and the Art of Motorcycle Maintenance
+> — Robert M Pirsig, *Zen and the Art of Motorcycle Maintenance*
 
 When hanging a picture on the wall, it is sometimes difficult to get it
 straight.  You make an adjustment, step back, evaluate the picture's
@@ -164,7 +164,7 @@ It worked! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
 `optimize.minimize` function has given us the correct amount of shift (-50) to
 get it back to its original state.
 
-It turns out, however, that this was a particularly easy optimization problem, 
+It turns out, however, that this was a particularly easy optimization problem,
 which brings us to the principal difficulty of this kind of
 alignment: sometimes, the MSE has to get worse before it gets better.
 

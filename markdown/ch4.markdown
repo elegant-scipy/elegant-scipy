@@ -33,6 +33,11 @@
 
 # Frequency and the fast Fourier transform
 
+> If you want to find the secrets of the universe, think in terms of energy,
+> frequency and vibration.
+>
+> — Nikola Tesla
+
 *This chapter was written in collaboration with SW's father, PW van der Walt.*
 
 This chapter will depart slightly from the format of the rest of the
@@ -1106,31 +1111,31 @@ signals. The FFT is the tool that will do this for us.
 > a function $x(t)$ of time (or another variable, depending on the
 > application) into a sequence of $N$ complex numbers $X_{k}$ by the
 > summation
-> 
+>
 > $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
 > N-1.\label{eq:Forward DFT}$$
-> 
+>
 > With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
 > sample values $x_{n}$ through the summation
-> 
+>
 > $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
 > kn/N}.\label{eq:Inverse DFT}$$
-> 
+>
 > Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
 > equation shows that the DFT has decomposed the sequence $x_{n}$ into a
 > complex discrete Fourier series with coefficients $X_{k}$. Comparing
 > the DFT with a continuous complex Fourier series
-> 
+>
 > $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
 > Fourier series}$$
-> 
+>
 > the DFT is a *finite *series with $N$ terms defined at the equally
 > spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
 > in the interval $[0,2\pi)$,
 > i.e. *including* $0$  and *excluding* $3\pi$.
 > This automatically normalizes the DFT so that time does
 > not appear explicitly in the forward or inverse transform.
-> 
+>
 > If the original function $x(t)$ is limited in frequency to less than
 > half of the sampling frequency (the so-called *Nyquist frequency*),
 > interpolation between sample values produced by the inverse DFT will
@@ -1140,13 +1145,13 @@ signals. The FFT is the tool that will do this for us.
 > imply that there are *no* methods that can do such a
 > reconstruction—see, e.g., compressed sensing, or finite rate of
 > innovation sampling.
-> 
+>
 > The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
 > discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
 > the complex plane. The function $e^{j2\pi kn/N}=w^{kn}$ encircles the
 > origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
 > sinusoid for which $n=1$.
-> 
+>
 > The way in which we defined the DFT leads to a few subtleties
 > when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
 > for increasing values of $k$ in Fig. ([fig:wkn values])
@@ -1164,7 +1169,7 @@ signals. The FFT is the tool that will do this for us.
 > positive or a negative frequency. This component of the DFT represents
 > the Nyquist Frequency, i.e. half of the sampling frequency, and is
 > useful to orientate oneself when looking at DFT graphics.
-> 
+>
 > The FFT in turn is simply a special and highly efficient algorithm for
 > calculating the DFT. Whereas a straightforward calculation of the DFT
 > takes of the order of $N^{2}$ calculations to compute, the FFT
@@ -1173,7 +1178,7 @@ signals. The FFT is the tool that will do this for us.
 > and was included in a list of the top $10$ algorithms of the $20^{th}$
 > century by the IEEE journal Computing in Science & Engineering in the
 > year $2000$.
-> 
+>
 > ![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
 
 [^odd_N]: We leave it as an exercise for the reader to picture the
