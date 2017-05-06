@@ -533,8 +533,9 @@ Now, let's use that function to plot the neurons:
 plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(16, 9))
+                figsize=(12, 8))
 ```
+<!-- caption text="Spectral layout of the neurons of a nematode worm" -->
 
 There you are: a worm brain!
 As discussed in the original paper, you can see the top-down processing from
@@ -553,16 +554,19 @@ we use the normalized third eigenvector of Q, just like we did with x. (And we
 invert it if necessary, just like we did with x!)
 
 ```python
-y = Dinv2 @ eigvecs[:, 2]
-asjl_index = np.flatnonzero(neuron_ids == 'ASJL')[0]
+y = Dinv2 @ Vec[:, 2]
+asjl_index = np.argwhere(neuron_ids == 'ASJL')
 if y[asjl_index] < 0:
     y = -y
 
 plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(16, 9))
+                figsize=(12, 8))
 ```
+<!-- caption text="Spectral layout of the neurons of a nematode worm, using two
+spectral dimensions" -->
+
 <!-- solution end -->
 
 <!-- exercise end -->
@@ -682,16 +686,16 @@ eigenvalues, and `k` to specify that we need the 3 smallest:
 ```python
 
 Qs = Dsinv2 @ Ls @ Dsinv2
-eigvals, eigvecs = sparse.linalg.eigsh(Qs, k=3, which='SM')
-sorted_indices = np.argsort(eigvals)
-eigvecs = eigvecs[:, sorted_indices]
+vals, Vecs = sparse.linalg.eigsh(Qs, k=3, which='SM')
+sorted_indices = np.argsort(vals)
+Vecs = Vecs[:, sorted_indices]
 ```
 
 Finally, we normalize the eigenvectors to get the x and y coordinates
 (and flip these if necessary):
 
 ```python
-_dsinv, x, y = (Dsinv2 @ eigvecs).T
+_dsinv, x, y = (Dsinv2 @ Vecs).T
 if x[vc2_index] < 0:
     x = -x
 if y[asjl_index] < 0:
@@ -706,13 +710,15 @@ We can now reproduce the above plots!
 plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(16, 9))
+                figsize=(12, 8))
 
 plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(16, 9))
+                figsize=(12, 8))
 ```
+<!-- caption text="Spectral layout of a nematode brain, computed using sparse
+matrices" -->
 
 <!-- solution end -->
 
@@ -750,7 +756,7 @@ plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
 > 
 > - **Survey of recent Krylov methods**, Jack Dongarra,
 >   http://www.netlib.org/linalg/html_templates/node50.html
->
+
 
 ## PageRank: linear algebra for reputation and importance
 
