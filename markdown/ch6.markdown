@@ -985,9 +985,9 @@ eigenvalue, and that this is its *largest* eigenvalue. (The corresponding
 eigenvector is the PageRank vector.) What this means is that, whenever we
 multiply *any* vector by $M$, its component pointing towards this major
 eigenvector stays the same, while *all other components shrink* by a
-multiplicative factor! The consequence is that if we multiply some random
+multiplicative factor. The consequence is that if we multiply some random
 starting vector by $M$ repeatedly, we should eventually get the PageRank
-vector.
+vector!
 
 SciPy makes this very efficient with its sparse matrix module:
 
@@ -1008,7 +1008,7 @@ def power(Trans, damping=0.85, max_iter=int(1e5)):
 <!-- exercise begin -->
 
 **Exercise:** In the above iteration, note that `Trans` is *not*
-column-stochastic, so the vector gets shrunk at each iteration. In order to
+column-stochastic, so the $r$ vector gets shrunk at each iteration. In order to
 make the matrix stochastic, we have to replace every zero-column by a column of
 all $1/n$. This is too expensive, but computing the iteration is cheaper. How
 can you modify the code above to ensure that $r$ remains a probability vector
@@ -1017,8 +1017,8 @@ throughout?
 <!-- solution begin -->
 
 **Solution:** In order to have a stochastic matrix, all columns of the
-transition matrix must sum to 1. This is not satisfied when a package doesn't
-have any dependencies: that column will consist of all zeroes. Replacing all
+transition matrix must sum to 1. This is not satisfied when a species isn't
+eaten by any others: that column will consist of all zeroes. Replacing all
 those columns by $1/n \boldsymbol{1}$, however, would be expensive.
 
 The key is to realise that *every row* will contribute the *same amount* to the
