@@ -641,7 +641,7 @@ stores diagonal and off-diagonal matrices.
 
 ```python
 degrees = np.ravel(Cs.sum(axis=0))
-Ds = sparse.diags(degrees, 0)
+Ds = sparse.diags(degrees)
 ```
 
 Getting the Laplacian is straightforward:
