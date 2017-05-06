@@ -470,6 +470,7 @@ functional "colorblind"
 
 ```python
 from matplotlib.colors import ListedColormap
+from matplotlib.collections import LineCollection
 
 
 def plot_connectome(x_coords, y_coords, conn_matrix, *,
