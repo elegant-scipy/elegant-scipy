@@ -1,5 +1,9 @@
 # Linear algebra in SciPy
 
+> No one can be told what the matrix is. You have to see it for yourself.
+>
+> — Morpheus, *The Matrix*
+
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
 will feature an elegant *method*. We
 want to highlight the linear algebra packages available in SciPy, which form
@@ -117,15 +121,23 @@ by $\theta$ degrees around the z-axis.
 
 1. For $\theta = 45^\circ$, verify (by testing on a few arbitrary
    vectors) that $R$ rotates these vectors around the z axis.
+   Remember that matrix multiplication in Python is denoted with `@`.
 
-2. Now, verify that multiplying by $R$ leaves the vector
+2. What does the matrix $S = RR$ do? Verify this in Python.
+
+3. Verify that multiplying by $R$ leaves the vector
    $\left[ 0\, 0\, 1\right]^T$ unchanged.  In other words, $R p = 1
    p$, which means $p$ is an eigenvector of $R$ with eigenvalue 1.
-   Remember that matrix multiplication in Python is denoted with `@`.
+
+4. Use `np.linalg.eig` to find the eigenvalues and eigenvectors of $R$, and
+   verify that $\left[0, 0, 1\right]^T$ is indeed among them, and that it
+   corresponds to the eigenvalue 1.
 
 <!-- solution begin -->
 
 **Solution:**
+
+Part 1:
 
 ```python
 import numpy as np
@@ -135,13 +147,43 @@ R = np.array([[np.cos(theta), -np.sin(theta), 0],
               [np.sin(theta),  np.cos(theta), 0],
               [            0,              0, 1]])
 
-print("R @ x-axis:", R @ [1, 0, 0])
-print("R @ y-axis:", R @ [0, 1, 0])
-print("R @ z-axis:", R @ [0, 0, 1])
+print("R times the x-axis:", R @ [1, 0, 0])
+print("R times the y-axis:", R @ [0, 1, 0])
+print("R times a 45 degree vector:", R @ [1, 1, 0])
+```
 
+Part 2:
+
+Since multiplying a vector by $R$ rotates it 45 degrees, multiplying the result
+by $R$ again should result in the original vector being rotated 90 degrees.
+Matrix multiplication is associative, which means that $R(Rv) = (RR)v$, so
+$S = RR$ should rotate vectors by 90 degrees around the z-axis.
+
+```python
+S = R @ R
+S @ [1, 0, 0]
+```
+
+Part 3:
+
+```python
+print("R @ z-axis:", R @ [0, 0, 1])
 ```
 
 R rotates both the x and y axes, but not the z-axis.
+
+Part 4:
+
+Looking at the documentation of `eig`, we see that it returns two values:
+a 1D array of eigenvalues, and a 2D array where each column contains the
+eigenvector corresponding to each eigenvalue.
+
+```python
+np.linalg.eig(R)
+```
+
+In addition to some complex-valued eigenvalues and vectors, we see the value 1
+associated with the vector $\left[0, 0, 1\right]^T$.
 
 <!-- solution end -->
 
@@ -152,8 +194,8 @@ How do you draw nodes and edges in such a way that you don't get a complete
 mess such as this one?
 
 ![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
+<!-- caption text="Visualization of wikipedia structure. Created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License)." -->
 
-**Graph created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License).**
 
 One way is to put nodes that share many edges close together. It turns out
 that this can be done by using the second-smallest eigenvalue of the Laplacian
@@ -174,7 +216,8 @@ A = np.array([[0, 1, 1, 0, 0, 0],
               [0, 0, 0, 1, 1, 0]], dtype=float)
 ```
 
-We can use NetworkX to draw this network:
+We can use NetworkX to draw this network. First, we initialize matplotlib as
+usual:
 
 ```python
 # Make plots appear inline, set custom plotting style
@@ -183,6 +226,8 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
+Now, we can plot it:
+
 ```python
 import networkx as nx
 g = nx.from_numpy_matrix(A)
@@ -190,6 +235,8 @@ layout = nx.spring_layout(g, pos=nx.circular_layout(g))
 nx.draw(g, pos=layout,
         with_labels=True, node_color='white')
 ```
+<!-- caption text="A simple network plotted with NetworkX" -->
+
 
 You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
 Can the Fiedler vector tell us this? First, we must compute the degree matrix
@@ -220,49 +267,54 @@ Because $L$ is symmetric, we can use the `np.linalg.eigh` function to compute
 the eigenvalues and eigenvectors:
 
 ```python
-eigvals, Eigvecs = np.linalg.eigh(L)
+val, Vec = np.linalg.eigh(L)
 ```
 
 You can verify that the values returned satisfy the definition of eigenvalues
-and eigenvectors. For example, the third eigenvalue is 3:
+and eigenvectors. For example, one of the eigenvalues is 3:
 
 ```python
-eigvals[2]
+np.any(np.isclose(val, 3))
 ```
 
-And we can check that multiplying the matrix $L$ by the second eigenvector does
-indeed multiply the vector by 3:
+And we can check that multiplying the matrix $L$ by the corresponding eigenvector
+does indeed multiply the vector by 3:
 
 ```python
-v2 = Eigvecs[:, 2]
+idx_lambda3 = np.argmin(np.abs(val - 3))
+v3 = Vec[:, idx_lambda3]
 
-print(v2)
-print(L @ v2)
+print(v3)
+print(L @ v3)
 ```
 
 As mentioned above, the Fiedler vector is the vector corresponding to the
-second-smallest eigenvalue of $L$. Plotting the eigenvalues tells us which one
+second-smallest eigenvalue of $L$. Sorting the eigenvalues tells us which one
 is the second-smallest:
 
 ```python
-print(eigvals)
-plt.plot(eigvals, '-o');
+plt.plot(np.sort(val), linestyle='-', marker='o');
 ```
+<!-- caption text="Eigenvalues of $L$" -->
 
-It's the second eigenvalue. The Fiedler vector is thus the second eigenvector.
+It's the first non-zero eigenvalue, close to 0.4. The Fiedler vector is the
+corresponding eigenvector:
 
 ```python
-f = Eigvecs[:, np.argsort(eigvals)[1]]
-plt.plot(f, '-o');
+f = Vec[:, np.argsort(val)[1]]
+plt.plot(f, linestyle='-', marker='o');
 ```
+<!-- caption text="Fiedler vector of $L$" -->
 
-It's pretty remarkable: by looking at the *sign* of the Fiedler vector, we can
-separate the nodes into the two groups we identified in the drawing!
+It's pretty remarkable: by looking at the *sign* of the elements of the Fiedler
+vector, we can separate the nodes into the two groups we identified in the
+drawing!
 
 ```python
-colors = ['orange' if eigval > 0 else 'gray' for eigval in f]
+colors = ['orange' if eigv > 0 else 'gray' for eigv in f]
 nx.draw(g, pos=layout, with_labels=True, node_color=colors)
 ```
+<!-- caption text="Nodes colored by their sign in the Fiedler vector of $L$" -->
 
 ## Laplacians with brain data
 
@@ -354,7 +406,7 @@ In order to obtain the degree-normalized Laplacian, $Q$, we need the inverse
 square root of the $D$ matrix:
 
 ```python
-Dinv2 = np.diag(degrees ** (-.5))
+Dinv2 = np.diag(1 / np.sqrt(degrees))
 Q = Dinv2 @ L @ Dinv2
 ```
 
@@ -363,27 +415,27 @@ highly-connected neurons remain close: the eigenvector of $Q$ corresponding to
 its second-smallest eigenvalue, normalized by the degrees:
 
 ```python
-eigvals, eigvecs = linalg.eig(Q)
+val, Vec = linalg.eig(Q)
 ```
 
 Note from the documentation of `numpy.linalg.eig`:
 
 > "The eigenvalues are not necessarily ordered."
 
-Although the documentation in SciPy's `eig` lacks this warning
-(disappointingly, we must add), it remains true in this case. We must therefore
-sort the eigenvalues and the corresponding eigenvector columns ourselves:
+Although the documentation in SciPy's `eig` lacks this warning, it remains true
+in this case. We must therefore sort the eigenvalues and the corresponding
+eigenvector columns ourselves:
 
 ```python
-smallest_first = np.argsort(eigvals)
-eigvals = eigvals[smallest_first]
-eigvecs = eigvecs[:, smallest_first]
+smallest_first = np.argsort(val)
+val = val[smallest_first]
+Vec = Vec[:, smallest_first]
 ```
 
 Now we can find the eigenvector we need to compute the affinity coordinates:
 
 ```python
-x = Dinv2 @ eigvecs[:, 1]
+x = Dinv2 @ Vec[:, 1]
 ```
 
 (The reasons for using this vector are too long to explain here, but appear in
@@ -399,14 +451,14 @@ because $Mv = \lambda v$ implies $M(\alpha v) = \lambda (\alpha v)$.
 So, it is
 arbitrary whether a software package returns $v$ or $-v$ when asked for the
 eigenvectors of $M$. In order to make sure we reproduce the layout from the
-Varshney et al. paper, we must make sure that the vector is pointing in the
+Varshney *et al.* paper, we must make sure that the vector is pointing in the
 same direction as theirs, rather than the opposite direction. We do this by
 choosing an arbitrary neuron from their Figure 2, and checking the sign of `x`
 at that position. We then reverse it if it doesn't match its sign in Figure 2
 of the paper.
 
 ```python
-vc2_index = np.flatnonzero(neuron_ids == 'VC02')[0]
+vc2_index = np.argwhere(neuron_ids == 'VC02')
 if x[vc2_index] < 0:
     x = -x
 ```
@@ -418,6 +470,7 @@ functional "colorblind"
 
 ```python
 from matplotlib.colors import ListedColormap
+from matplotlib.collections import LineCollection
 
 
 def plot_connectome(x_coords, y_coords, conn_matrix, *,
@@ -469,9 +522,10 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
 
     # plot edges
     pre, post = np.nonzero(conn_matrix)
-    for src, dst in zip(pre, post):
-        ax.plot(x_coords[[src, dst]], y_coords[[src, dst]],
-                c=(0.85, 0.85, 0.85), lw=0.2, alpha=0.5, zorder=0)
+    links = np.array([[x_coords[pre], x_coords[post]],
+                      [y_coords[pre], y_coords[post]]]).T
+    ax.add_collection(LineCollection(links, color='silver',
+                                     lw=2, alpha=0.5, zorder=0))
 
     ax.legend(scatterpoints=3)
     plt.show()
@@ -484,8 +538,9 @@ Now, let's use that function to plot the neurons:
 plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(16, 9))
+                figsize=(12, 8))
 ```
+<!-- caption text="Spectral layout of the neurons of a nematode worm" -->
 
 There you are: a worm brain!
 As discussed in the original paper, you can see the top-down processing from
@@ -504,16 +559,19 @@ we use the normalized third eigenvector of Q, just like we did with x. (And we
 invert it if necessary, just like we did with x!)
 
 ```python
-y = Dinv2 @ eigvecs[:, 2]
-asjl_index = np.flatnonzero(neuron_ids == 'ASJL')[0]
+y = Dinv2 @ Vec[:, 2]
+asjl_index = np.argwhere(neuron_ids == 'ASJL')
 if y[asjl_index] < 0:
     y = -y
 
 plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(16, 9))
+                figsize=(12, 8))
 ```
+<!-- caption text="Spectral layout of the neurons of a nematode worm, using two
+spectral dimensions" -->
+
 <!-- solution end -->
 
 <!-- exercise end -->
@@ -588,7 +646,7 @@ stores diagonal and off-diagonal matrices.
 
 ```python
 degrees = np.ravel(Cs.sum(axis=0))
-Ds = sparse.diags(degrees, 0)
+Ds = sparse.diags(degrees)
 ```
 
 Getting the Laplacian is straightforward:
@@ -633,16 +691,16 @@ eigenvalues, and `k` to specify that we need the 3 smallest:
 ```python
 
 Qs = Dsinv2 @ Ls @ Dsinv2
-eigvals, eigvecs = sparse.linalg.eigsh(Qs, k=3, which='SM')
-sorted_indices = np.argsort(eigvals)
-eigvecs = eigvecs[:, sorted_indices]
+vals, Vecs = sparse.linalg.eigsh(Qs, k=3, which='SM')
+sorted_indices = np.argsort(vals)
+Vecs = Vecs[:, sorted_indices]
 ```
 
 Finally, we normalize the eigenvectors to get the x and y coordinates
 (and flip these if necessary):
 
 ```python
-_dsinv, x, y = (Dsinv2 @ eigvecs).T
+_dsinv, x, y = (Dsinv2 @ Vecs).T
 if x[vc2_index] < 0:
     x = -x
 if y[asjl_index] < 0:
@@ -657,13 +715,15 @@ We can now reproduce the above plots!
 plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(16, 9))
+                figsize=(12, 8))
 
 plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(16, 9))
+                figsize=(12, 8))
 ```
+<!-- caption text="Spectral layout of a nematode brain, computed using sparse
+matrices" -->
 
 <!-- solution end -->
 
@@ -701,7 +761,7 @@ plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
 > 
 > - **Survey of recent Krylov methods**, Jack Dongarra,
 >   http://www.netlib.org/linalg/html_templates/node50.html
->
+
 
 ## PageRank: linear algebra for reputation and importance
 
@@ -825,6 +885,14 @@ what the authors call *detritus* (basically sea sludge), doesn't actually *eat*
 anything (the Circle of Life notwithstanding), so you can't reach other species
 from it.
 
+> *Young Simba:* But, Dad, don't we eat the antelope?
+>
+> *Mufasa:* Yes, Simba, but let me explain. When we die, our bodies become the
+> grass, and the antelope eat the grass. And so we are all connected in the
+> great Circle of Life.
+>
+> — *The Lion King*
+
 To deal with this, the PageRank algorithm uses a so-called "damping
 factor", usually taken to be 0.85. This means that 85% of the time, the
 algorithm follows a link at random, but for the other 15%, it randomly jumps to
@@ -920,14 +988,14 @@ eigenvalue, and that this is its *largest* eigenvalue. (The corresponding
 eigenvector is the PageRank vector.) What this means is that, whenever we
 multiply *any* vector by $M$, its component pointing towards this major
 eigenvector stays the same, while *all other components shrink* by a
-multiplicative factor! The consequence is that if we multiply some random
+multiplicative factor. The consequence is that if we multiply some random
 starting vector by $M$ repeatedly, we should eventually get the PageRank
-vector.
+vector!
 
 SciPy makes this very efficient with its sparse matrix module:
 
 ```python
-def power(Trans, damping=0.85, max_iter=int(1e5)):
+def power(Trans, damping=0.85, max_iter=10**5):
     n = Trans.shape[0]
     r0 = np.full(n, 1/n)
     r = r0
@@ -943,7 +1011,7 @@ def power(Trans, damping=0.85, max_iter=int(1e5)):
 <!-- exercise begin -->
 
 **Exercise:** In the above iteration, note that `Trans` is *not*
-column-stochastic, so the vector gets shrunk at each iteration. In order to
+column-stochastic, so the $r$ vector gets shrunk at each iteration. In order to
 make the matrix stochastic, we have to replace every zero-column by a column of
 all $1/n$. This is too expensive, but computing the iteration is cheaper. How
 can you modify the code above to ensure that $r$ remains a probability vector
@@ -952,8 +1020,8 @@ throughout?
 <!-- solution begin -->
 
 **Solution:** In order to have a stochastic matrix, all columns of the
-transition matrix must sum to 1. This is not satisfied when a package doesn't
-have any dependencies: that column will consist of all zeroes. Replacing all
+transition matrix must sum to 1. This is not satisfied when a species isn't
+eaten by any others: that column will consist of all zeroes. Replacing all
 those columns by $1/n \boldsymbol{1}$, however, would be expensive.
 
 The key is to realise that *every row* will contribute the *same amount* to the
@@ -965,12 +1033,10 @@ vector containing $1/n$ for positions corresponding to dangling nodes, and zero
 elswhere, with the vector $r$ for the current iteration.
 
 ```python
-def power2(Trans, damping=0.85, max_iter=int(1e5)):
+def power2(Trans, damping=0.85, max_iter=10**5):
     n = Trans.shape[0]
-    is_dangling = np.ravel(Trans.sum(axis=0) == 0)
-    dangling = np.zeros(n)
-    dangling[is_dangling] = 1 / n
-    r0 = np.full(n, 1 / n)
+    dangling = (1/n) * np.ravel(Trans.sum(axis=0) == 0)
+    r0 = np.full(n, 1/n)
     r = r0
     for _ in range(max_iter):
         rnext = (damping * (Trans @ r + dangling @ r) +
