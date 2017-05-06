@@ -992,7 +992,7 @@ vector!
 SciPy makes this very efficient with its sparse matrix module:
 
 ```python
-def power(Trans, damping=0.85, max_iter=int(1e5)):
+def power(Trans, damping=0.85, max_iter=10**5):
     n = Trans.shape[0]
     r0 = np.full(n, 1/n)
     r = r0
@@ -1030,12 +1030,10 @@ vector containing $1/n$ for positions corresponding to dangling nodes, and zero
 elswhere, with the vector $r$ for the current iteration.
 
 ```python
-def power2(Trans, damping=0.85, max_iter=int(1e5)):
+def power2(Trans, damping=0.85, max_iter=10**5):
     n = Trans.shape[0]
-    is_dangling = np.ravel(Trans.sum(axis=0) == 0)
-    dangling = np.zeros(n)
-    dangling[is_dangling] = 1 / n
-    r0 = np.full(n, 1 / n)
+    dangling = (1/n) * np.ravel(Trans.sum(axis=0) == 0)
+    r0 = np.full(n, 1/n)
     r = r0
     for _ in range(max_iter):
         rnext = (damping * (Trans @ r + dangling @ r) +
