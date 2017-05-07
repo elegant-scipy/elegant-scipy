@@ -785,8 +785,10 @@ def plot_model(model, labels, figure=None):
     im = ax.imshow(model, cmap='magma');
     axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.8])
     plt.colorbar(im, cax=axcolor)
-    ax.set_xticklabels(labels)
-    ax.set_yticklabels(labels)
+    for axis in [ax.xaxis, ax.yaxis]:
+        axis.set_ticks(range(8))
+        axis.set_ticks_position('none')
+        axis.set_ticklabels(labels)
     return ax
 
 plot_model(model, labels=' ACGTacgt');
