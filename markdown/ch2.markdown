@@ -117,6 +117,8 @@ Now let's put our counts in an ndarray.
 counts = data_table.values
 ```
 
+## Gene expression distribution differences between individuals
+
 Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
 We will use a Gaussian kernel to smooth out bumps in our data so we can get a
 better idea of the overall shape.
@@ -157,6 +159,7 @@ before we have done any normalization:
 log_counts = np.log(counts + 1)
 plot_col_density(log_counts)
 ```
+<!-- caption text="Density of gene expression counts for each individual (log scale)" -->
 
 We can see that while the distributions of counts are broadly similar,
 some individuals have flatter distributions and a few are pushed right over to the left.
@@ -235,6 +238,7 @@ log_counts_normalized = quantile_norm_log(counts)
 
 plot_col_density(log_counts_normalized)
 ```
+<!-- caption text="Density of gene expression counts for each individual after quantile normalization (log scale)" -->
 
 As you might expect, the distributions now look virtually identical!
 (The different left tails of the distribution have to do with different
@@ -245,9 +249,12 @@ Now that we have normalized our counts, we can start using our gene expression d
 
 ## Biclustering the counts data
 
+
+Clustering the samples tells us which samples have similar gene expression profiles, which may indicate similar characteristics of the samples on other scales.
 Now that the data are normalized, we can cluster the genes (rows) and samples (columns) of the expression matrix.
 Clustering the rows tells us which genes' expression values are linked, which is an indication that they work together in the process being studied.
-Clustering the samples tells us which samples have similar gene expression profiles, which may indicate similar characteristics of the samples on other scales.
+*Biclustering* means that we are simultaneously clustering both the rows and columns of our data.
+By clustering along the rows we find out with genes are working together, and by clustering along the columns we find out which samples are similar.
 
 Because clustering can be an expensive operation, we will limit our analysis to the 1,500 genes that are most variable, since these will account for most of the correlation signal in either dimension.
 
@@ -273,9 +280,7 @@ def most_variable_rows(data, *, n=1500):
     return variable_data
 ```
 
-Next, we need a function to *bicluster* the data.
-This means clustering along both the rows (to find out with genes are working together) and the columns (to find out which samples are similar).
-
+Next, we need a function to bicluster the data.
 Normally, you would use a sophisticated clustering algorithm from the [scikit-learn](http://scikit-learn.org) library for this.
 In our case, we want to use hierarchical clustering for simplicity and ease of display.
 The SciPy library happens to have a perfectly good hierarchical clustering module, though it requires a bit of wrangling to get your head around its interface.
@@ -430,6 +435,7 @@ yr, yc = bicluster(counts_var, linkage_method='ward',
                    distance_metric='euclidean')
 plot_bicluster(counts_var, yr, yc)
 ```
+<!-- caption text="This heatmap shows the level of gene expression across all samples and genes. The color indicates the expression level. The rows and columns are grouped by our clusters. We can see our gene clusters along the y-axis and sample clusters across the top of the x-axis" -->
 
 ## Predicting survival
 
@@ -571,6 +577,7 @@ clusters = fcluster(yc, threshold_distance, 'distance')
 
 plot_cluster_survival_curves(clusters, data_table.columns, patients)
 ```
+<!-- caption text="Survival curves for patients clustered using gene expression data" -->
 
 The clustering of gene expression profiles appears to have identified a
 higher-risk subtype of melanoma, which constitutes the majority of patients.
