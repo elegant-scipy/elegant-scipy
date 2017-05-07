@@ -76,7 +76,7 @@ There are four kinds of bases, abbreviated to A, C, G, and T, constituting an al
 
 ![The chemical structure of DNA](https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg)
 
-*Image by Madeleine Price Ball, used under the terms of the CC0 public domain license*
+<!-- caption text="The chemical structure of DNA. Image by Madeleine Price Ball, used under the terms of the CC0 public domain license" -->
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
@@ -90,6 +90,8 @@ As you will see below, it often doesn't matter, because we are using mRNA levels
 
 ![Central Dogma of Molecular Biology](../figures/central_dogma.png)
 
+<!-- caption text="Central Dogma of Molecular Biology" -->
+
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of
 that DNA into RNA: in different cells, different parts of the DNA are processed
@@ -98,6 +100,8 @@ next, differential expression can distinguish different kinds of cancer.
 
 ![Gene expression](../figures/differential_gene_expression.png)
 
+<!-- caption text="Gene expression" -->
+
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
 RNA is extracted from a tissue sample, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
@@ -105,6 +109,8 @@ We measure millions of reads and then based on their sequence we count how many 
 We’ll be starting directly from this count data.
 
 ![RNAseq](../figures/RNAseq.png)
+
+<!-- caption text="RNA sequencing (RNAseq)" -->
 
 Here's an example of what this gene expression data looks like.
 
@@ -184,6 +190,8 @@ print(array2d.shape)
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
 
 ![multi-dimensional array diagram](../figures/NumPy_ndarrays.png)
+
+<!-- caption text="Visualizing NumPy's ndarrays in one, two and three dimensions." -->
 
 Arrays have other attributes, such as `ndim`, the number of dimensions:
 
@@ -536,7 +544,7 @@ print('Count statistics:\n  min:  {0}\n  mean: {1}\n  max: {2}'
               np.max(total_counts)))
 ```
 
-<!-- caption text="Counts distribution" -->
+<!-- caption text="Density plot of gene expression counts per individual using KDE smoothing." -->
 
 We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
 This means that a different number of RNAseq reads were generated for each individual.
@@ -584,6 +592,8 @@ reduce_xaxis_labels(ax, 2)
 plt.show()
 ```
 
+<!-- caption text="Boxplot of gene expression counts per individual" -->
+
 There are obviously a lot of outliers at the high expression end of the scale and a lot of variation between individuals, but pretty hard to see because everything is clustered around zero.
 So let's do log(n + 1) of our data so it's a bit easier to look at.
 Both the log function and the n + 1 step can be done using broadcasting to simplify our code and speed things up.
@@ -600,6 +610,8 @@ reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
+
+<!-- caption text="Boxplot of gene expression counts per individual (log scale)" -->
 
 Now let's see what happens when we normalize by library size.
 
@@ -622,6 +634,8 @@ reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
+
+<!-- caption text="Boxplot of library normalized gene expression counts per individual (log scale)" -->
 
 Much better!
 Also notice how we used broadcasting twice there.
@@ -698,6 +712,8 @@ ax.set_ylabel('log gene expression counts')
 plt.show()
 ```
 
+<!-- caption text="Comparing raw and library normalized gene expression counts in three samples (log scale)" -->
+
 You can see that the normalized distributions are a little bit more similar
 once we have taken library size (the sum of those distributions) into account.
 Now we are comparing like with like between the samples!
@@ -717,6 +733,8 @@ So if a gene is twice as long, we are twice as likely to sample it.
 If we want to compare between genes we will have to do some more normalization.
 
 ![Relationship between counts and gene length](../figures/gene_length_counts.png)
+
+<!-- caption text="Relationship between counts and gene length" -->
 
 Let's see if the relationship between gene length and counts plays out in our data set.
 
@@ -812,6 +830,8 @@ log_gene_lengths = np.log(gene_lengths)
 ```python
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
+
+<!-- caption text="The relationship between gene length and average expression (log scale)" -->
 
 We can see that the longer a gene is, the higher its measure counts! As
 explained above, this is an artifact of the technique, not a biological signal!
@@ -953,7 +973,7 @@ Now that our dimensions match or are equal to 1, we can broadcast.
 C_tmp = C_tmp / L
 ```
 
-Finally we need to normalize by the libaray size,
+Finally we need to normalize by the library size,
 the total number of counts for that column.
 Remember that we have already calculated N.
 
@@ -1038,6 +1058,8 @@ log_gene_lengths = np.log(gene_lengths)
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
+<!-- caption text="The relationship between gene length and average expression before RPKM normalization (log scale)" -->
+
 Now, the same plot with the RPKM-normalized values:
 
 ```python
@@ -1047,6 +1069,8 @@ log_gene_lengths = np.log(gene_lengths)
 
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
+
+<!-- caption text="The relationship between gene length and average expression after RPKM normalization (log scale)" -->
 
 You can see that the mean expression counts have flattened quite a bit,
 especially for genes larger than about 3,000 base pairs.
@@ -1074,6 +1098,8 @@ ax.set_ylabel('log gene expression counts over all samples')
 plt.show()
 ```
 
+<!-- caption text="Comparing expression of two genes before RPKM normalization." -->
+
 If we look just at the raw counts, it looks like the longer Gene B is expressed
 slightly more than Gene A.
 But, after RPKM normalization, a different picture emerges:
@@ -1086,6 +1112,8 @@ ax.set_xlabel('Genes')
 ax.set_ylabel('log RPKM gene expression counts over all samples')
 plt.show()
 ```
+
+<!-- caption text="Comparing expression of two genes after RPKM normalization." -->
 
 Now it looks like gene A is actually expressed at a much higher level than gene B.
 This is because RPKM includes normalization for gene length, so we can now directly compare between genes of different lengths.
