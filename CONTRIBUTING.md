@@ -12,5 +12,5 @@
 
 - Lines cannot have trailing spaces
 
-- Use `<img>` tags directly, instead of the markdown syntax:
-  `![caption](image.png)`
+- Do not combine markdown images, i.e., `![caption](image.png)`,
+  with our caption cruncher.  Use `<img>` tags directly.
