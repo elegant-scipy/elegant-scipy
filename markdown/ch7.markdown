@@ -52,6 +52,11 @@ attempt to address the issue[^line_search].
                 search a wider area.
 
 ![Optimization Comparison](../figures/generated/optimization_comparison.png)
+<!-- caption text="Comparison of optimization pathways taken by different
+optimization algorithms on the Rosenbrock function (top). Powell's method
+performs a line search along the first dimension before doing gradient descent.
+The conjugate gradient (CG) method, on the other hand, performs gradient
+descent from the starting point." -->
 
 There are many different optimization algorithms to choose from (see
 figure).  You get to choose whether your cost function takes a scalar
@@ -93,8 +98,8 @@ You'll remember our astronaut — Eileen Collins — from chapter 3.
 We will be shifting this image by 50 pixels to the right then comparing it back
 to the original until we
 find the shift that best matches. Obviously this is a silly thing to do, as we
-know the original orientation, but this way we know the truth. Here's the
-original and shifted image.
+know the original position, but this way we know the truth, and we can check
+how our algorithm is doing. Here's the original and shifted image.
 
 ```python
 from skimage import data, color
@@ -109,6 +114,7 @@ axes[0].set_title('Original')
 axes[1].imshow(shifted)
 axes[1].set_title('Shifted');
 ```
+<!-- caption text="Horizontally shifting an image" -->
 
 For the optimization algorithm to do its work, we need some way of
 defining "dissimilarity"—i.e., the cost function.  The easiest way to do this is to
@@ -143,6 +149,8 @@ ax.plot(shifts, mse_costs)
 ax.set_xlabel('Shift')
 ax.set_ylabel('MSE');
 ```
+<!-- caption text="Mean squared error as a function of horizontal shift of the
+transformed image" -->
 
 With the cost function defined, we can ask `scipy.optimize.minimize`
 to search for optimal parameters:
@@ -187,6 +195,8 @@ ax.plot(shifts, mse_costs)
 ax.set_xlabel('Shift')
 ax.set_ylabel('MSE');
 ```
+<!-- caption text="Mean squared error as a function of shift from the original
+image" -->
 
 Starting at zero shift, have a look at the MSE value as the shift becomes
 increasingly negative: it increases consistently until around -300
@@ -234,6 +244,7 @@ ax.legend(loc='lower right')
 ax.set_xlabel('Shift')
 ax.set_ylabel('MSE');
 ```
+<!-- caption text="Effect of smoothing on MSE" -->
 
 As you can see, with some rather extreme smoothing, the "funnel" of
 the error function becomes wider, and less bumpy. Rather than smoothing the
@@ -246,7 +257,6 @@ approximate alignment, and then progressively refine the alignment
 with sharper images.
 
 ```python
-
 def downsample2x(image):
     offsets = [((s + 1) % 2) / 2 for s in image.shape]
     slices = [slice(offset, end, 2)
@@ -301,6 +311,8 @@ ax.legend(loc='lower right', frameon=True, framealpha=0.9)
 ax.set_xlabel('Shift')
 ax.set_ylabel('MSE');
 ```
+<!-- caption text="Mean squared error of shift at various levels of a Gaussian
+pyramid" -->
 
 As you can see, at the highest level of the pyramid, that bump at a shift of
 about -325 disappears. We can therefore get an approximate alignment at that
@@ -336,6 +348,7 @@ axes[0].set_title('Original')
 axes[1].imshow(rotated)
 axes[1].set_title('Rotated');
 ```
+<!-- caption text="Another transformation: rotation" -->
 
 Next, we need a cost function. This is just MSE, but SciPy requires a specific
 format: the first argument needs to be the *parameter vector*, which it is
@@ -404,6 +417,7 @@ ax2.set_title('Registered')
 for ax in (ax0, ax1, ax2):
     ax.axis('off')
 ```
+<!-- caption text="Optimization used to recover image alignment" -->
 
 We're feeling pretty good now. But our choice of parameters actually masked
 the difficulty of optimization: Let's see what happens with a rotation of
@@ -427,8 +441,8 @@ ax2.imshow(corrected)
 ax2.set_title('Registered')
 for ax in (ax0, ax1, ax2):
     ax.axis('off')
-
 ```
+<!-- caption text="Failed optimization" -->
 
 Even though we started closer to the original image, we failed to
 recover the correct rotation. This is because optimization techniques can get
@@ -523,6 +537,7 @@ ax2.set_title('Registered')
 for ax in (ax0, ax1, ax2):
     ax.axis('off')
 ```
+<!-- caption text="Image alignment using basin-hopping" -->
 
 Success! Basin-hopping was able to recover the correct alignment, even in the
 problematic case in which the `minimize` function got stuck.
@@ -559,6 +574,8 @@ fig, ax = plt.subplots()
 ax.imshow(stained_glass)
 ax.axis('off')
 ```
+<!-- caption text="A Prokudin-Gorskii plate: three photos of the same stained
+glass window, taken with three different filters" -->
 
 Take a look at St John's robes: they look pitch black in one image, gray in
 another, and bright white in the third! This would result in a terrible MSE
@@ -580,6 +597,7 @@ for ax, image, name in zip(axes, channels, channel_names):
     ax.axis('off')
     ax.set_title(name)
 ```
+<!-- caption text="Splitting the plate into different channels" -->
 
 First, we overlay all three images to verify that the alignment indeed needs to
 be fine-tuned between the three channels:
@@ -591,6 +609,8 @@ fig, ax = plt.subplots()
 ax.imshow(original)
 ax.axis('off')
 ```
+<!-- caption text="Naive overlay of Prokudin-Gorskii channels results in color
+halos" -->
 
 You can see by the color "halos" around objects in the image that the colors
 are close to alignment, but not quite. Let's try to align them in the same
@@ -616,6 +636,8 @@ ax1.set_title('Corrected')
 for ax in (ax0, ax1):
     ax.axis('off')
 ```
+<!-- caption text="MSE-based alignment reduces but does not eliminate the color
+halos" -->
 
 The alignment is a little bit better than with the raw images, because the red
 and the green channels are correctly aligned, probably thanks to the giant
@@ -715,6 +737,8 @@ ax1.set_title('Corrected')
 for ax in (ax0, ax1):
     ax.axis('off')
 ```
+<!-- caption text="Prokudin-Gorskii channels aligned with normalized mutual
+information" -->
 
 What a glorious image! Realize that this artifact was created before color
 photography existed! Notice God's pearly white robes, John's white beard,
