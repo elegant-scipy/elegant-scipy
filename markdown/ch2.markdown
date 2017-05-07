@@ -117,6 +117,8 @@ Now let's put our counts in an ndarray.
 counts = data_table.values
 ```
 
+## Gene expression distribution differences between individuals
+
 Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
 We will use a Gaussian kernel to smooth out bumps in our data so we can get a
 better idea of the overall shape.
@@ -249,9 +251,12 @@ Now that we have normalized our counts, we can start using our gene expression d
 
 ## Biclustering the counts data
 
+
+Clustering the samples tells us which samples have similar gene expression profiles, which may indicate similar characteristics of the samples on other scales.
 Now that the data are normalized, we can cluster the genes (rows) and samples (columns) of the expression matrix.
 Clustering the rows tells us which genes' expression values are linked, which is an indication that they work together in the process being studied.
-Clustering the samples tells us which samples have similar gene expression profiles, which may indicate similar characteristics of the samples on other scales.
+*Biclustering* means that we are simultaneously clustering both the rows and columns of our data.
+By clustering along the rows we find out with genes are working together, and by clustering along the columns we find out which samples are similar.
 
 Because clustering can be an expensive operation, we will limit our analysis to the 1,500 genes that are most variable, since these will account for most of the correlation signal in either dimension.
 
@@ -277,9 +282,7 @@ def most_variable_rows(data, *, n=1500):
     return variable_data
 ```
 
-Next, we need a function to *bicluster* the data.
-This means clustering along both the rows (to find out with genes are working together) and the columns (to find out which samples are similar).
-
+Next, we need a function to bicluster the data.
 Normally, you would use a sophisticated clustering algorithm from the [scikit-learn](http://scikit-learn.org) library for this.
 In our case, we want to use hierarchical clustering for simplicity and ease of display.
 The SciPy library happens to have a perfectly good hierarchical clustering module, though it requires a bit of wrangling to get your head around its interface.
