@@ -625,7 +625,7 @@ We can now plot the components:
 
 ```python
 iris_types = np.loadtxt('data/iris-target.csv')
-plt.scatter(*components.T, c=iris_types);
+plt.scatter(*components.T, c=iris_types, cmap='viridis');
 ```
 <!-- caption text="Principal components of iris dataset computed with streaming
 PCA" -->
@@ -636,7 +636,7 @@ PCA:
 ```python
 iris = np.loadtxt('data/iris.csv', delimiter=',')
 components2 = decomposition.PCA(n_components=2).fit_transform(iris)
-plt.scatter(*components2.T, c=iris_types);
+plt.scatter(*components2.T, c=iris_types, cmap='viridis');
 ```
 <!-- caption text="Principal components of iris dataset computed with normal
 PCA" -->
