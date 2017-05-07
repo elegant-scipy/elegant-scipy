@@ -559,7 +559,9 @@ use.
 Make a function that can take a stream of data samples and perform PCA.
 Then, use the function to compute the PCA of the `iris` machine learning
 dataset, which is in `data/iris.csv`. (You can also access it from the
-`datasets` module of scikit-learn.)
+`datasets` module of scikit-learn, using `datasets.load_iris()`.) Optionally,
+you can color the points with the species number, found in
+`data/iris-target.csv`.
 
 *Hint:* The `IncrementalPCA` class is in `sklearn.decomposition`, and
 requires a *batch size* greater than 1 to train the model. Look at the
@@ -622,7 +624,8 @@ print(components.shape)
 We can now plot the components:
 
 ```python
-plt.scatter(*components.T);
+iris_types = np.loadtxt('data/iris-target.csv')
+plt.scatter(*components.T, c=iris_types);
 ```
 <!-- caption text="Principal components of iris dataset computed with streaming
 PCA" -->
@@ -633,7 +636,7 @@ PCA:
 ```python
 iris = np.loadtxt('data/iris.csv', delimiter=',')
 components2 = decomposition.PCA(n_components=2).fit_transform(iris)
-plt.scatter(*components2.T);
+plt.scatter(*components2.T, c=iris_types);
 ```
 <!-- caption text="Principal components of iris dataset computed with normal
 PCA" -->
