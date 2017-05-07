@@ -75,7 +75,6 @@ This molecule has a repetitive backbone on which lie chemical groups called *bas
 There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
 
 ![The chemical structure of DNA](https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg)
-
 <!-- caption text="The chemical structure of DNA. Image by Madeleine Price Ball, used under the terms of the CC0 public domain license" -->
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
@@ -89,7 +88,6 @@ Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
 ![Central Dogma of Molecular Biology](../figures/central_dogma.png)
-
 <!-- caption text="Central Dogma of Molecular Biology" -->
 
 It's important to note that the DNA in every cell of your body is identical.
@@ -99,7 +97,6 @@ into downstream molecules. Similarly, as we shall see in this chapter and the
 next, differential expression can distinguish different kinds of cancer.
 
 ![Gene expression](../figures/differential_gene_expression.png)
-
 <!-- caption text="Gene expression" -->
 
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
@@ -109,7 +106,6 @@ We measure millions of reads and then based on their sequence we count how many 
 We’ll be starting directly from this count data.
 
 ![RNAseq](../figures/RNAseq.png)
-
 <!-- caption text="RNA sequencing (RNAseq)" -->
 
 Here's an example of what this gene expression data looks like.
@@ -159,7 +155,7 @@ First, let's get our heads around the the ndarray.
 These arrays must be homogeneous; all items in an array must be the same type.
 In our case we will need to store integers.
 Ndarrays are called N-dimensional because they can have any number of dimensions.
-A 1-dimesional array is roughly equivalent to a Python list:
+A 1-dimensional array is roughly equivalent to a Python list:
 
 ```python
 import numpy as np
@@ -190,8 +186,7 @@ print(array2d.shape)
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
 
 ![multi-dimensional array diagram](../figures/NumPy_ndarrays.png)
-
-<!-- caption text="Visualizing NumPy's ndarrays in one, two and three dimensions." -->
+<!-- caption text="Visualizing NumPy's ndarrays in one, two and three dimensions" -->
 
 Arrays have other attributes, such as `ndim`, the number of dimensions:
 
@@ -543,8 +538,7 @@ print('Count statistics:\n  min:  {0}\n  mean: {1}\n  max: {2}'
               np.mean(total_counts),
               np.max(total_counts)))
 ```
-
-<!-- caption text="Density plot of gene expression counts per individual using KDE smoothing." -->
+<!-- caption text="Density plot of gene expression counts per individual using KDE smoothing" -->
 
 We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
 This means that a different number of RNAseq reads were generated for each individual.
@@ -591,7 +585,6 @@ reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
-
 <!-- caption text="Boxplot of gene expression counts per individual" -->
 
 There are obviously a lot of outliers at the high expression end of the scale and a lot of variation between individuals, but pretty hard to see because everything is clustered around zero.
@@ -610,7 +603,6 @@ reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
-
 <!-- caption text="Boxplot of gene expression counts per individual (log scale)" -->
 
 Now let's see what happens when we normalize by library size.
@@ -634,7 +626,6 @@ reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
-
 <!-- caption text="Boxplot of library normalized gene expression counts per individual (log scale)" -->
 
 Much better!
@@ -711,7 +702,6 @@ ax.set_ylabel('log gene expression counts')
 
 plt.show()
 ```
-
 <!-- caption text="Comparing raw and library normalized gene expression counts in three samples (log scale)" -->
 
 You can see that the normalized distributions are a little bit more similar
@@ -733,7 +723,6 @@ So if a gene is twice as long, we are twice as likely to sample it.
 If we want to compare between genes we will have to do some more normalization.
 
 ![Relationship between counts and gene length](../figures/gene_length_counts.png)
-
 <!-- caption text="Relationship between counts and gene length" -->
 
 Let's see if the relationship between gene length and counts plays out in our data set.
@@ -830,7 +819,6 @@ log_gene_lengths = np.log(gene_lengths)
 ```python
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
-
 <!-- caption text="The relationship between gene length and average expression (log scale)" -->
 
 We can see that the longer a gene is, the higher its measure counts! As
@@ -1057,7 +1045,6 @@ log_gene_lengths = np.log(gene_lengths)
 
 binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
-
 <!-- caption text="The relationship between gene length and average expression before RPKM normalization (log scale)" -->
 
 Now, the same plot with the RPKM-normalized values:
@@ -1097,8 +1084,7 @@ ax.set_xlabel('Genes')
 ax.set_ylabel('log gene expression counts over all samples')
 plt.show()
 ```
-
-<!-- caption text="Comparing expression of two genes before RPKM normalization." -->
+<!-- caption text="Comparing expression of two genes before RPKM normalization" -->
 
 If we look just at the raw counts, it looks like the longer Gene B is expressed
 slightly more than Gene A.
@@ -1112,8 +1098,7 @@ ax.set_xlabel('Genes')
 ax.set_ylabel('log RPKM gene expression counts over all samples')
 plt.show()
 ```
-
-<!-- caption text="Comparing expression of two genes after RPKM normalization." -->
+<!-- caption text="Comparing expression of two genes after RPKM normalization" -->
 
 Now it looks like gene A is actually expressed at a much higher level than gene B.
 This is because RPKM includes normalization for gene length, so we can now directly compare between genes of different lengths.
