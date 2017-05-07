@@ -779,15 +779,19 @@ print(model)
 It's probably clearer to look at the result as an image:
 
 ```python
-fig = plt.figure()
-ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-im = ax.imshow(model, cmap='magma');
-axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.8])
-plt.colorbar(im, cax=axcolor)
-ax.set_xticklabels(' ACGTacgt');
-ax.set_yticklabels(' ACGTacgt');
+def plot_model(model, labels, figure=None):
+    fig = figure or plt.figure()
+    ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+    im = ax.imshow(model, cmap='magma');
+    axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.8])
+    plt.colorbar(im, cax=axcolor)
+    ax.set_xticklabels(labels)
+    ax.set_yticklabels(labels)
+    return ax
+
+plot_model(model, labels=' ACGTacgt');
 ```
-<!-- caption text="Transisition probability matrix for genetic sequence in the
+<!-- caption text="Transition probability matrix for genetic sequence in the
 *Drosophila melanogaster* genome" -->
 
 Notice how the G-A and G-C transitions are different between the repeat and
@@ -796,10 +800,59 @@ previously unseen DNA sequence.
 
 <!-- exercise begin -->
 
-*Challenge:* add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive. Yes, unzip can be streamed, too!
+**Exercise:** add a step to the start of the pipe to unzip the data so you don't
+have to keep a decompressed version on your hard drive. The Drosophila genome,
+for example, takes less than a third of the space on disk when compressed with
+gzip. And yes, unzipping can be streamed, too!
 
-*Hint:* The `tarfile` package, part of Python's standard library, allows you
-to open tar files (even compressed ones) as if they were normal files.
+*Hint:* The `gzip` package, part of Python's standard library, allows you
+to open `.gz` files as if they were normal files.
+
+<!-- solution begin -->
+
+**Solution:** We can replace `open` in the original `genome` code with a
+curried version of `gzip.open`. The default mode of `gzip`'s `open` function is
+`rb` (**r**ead **b**ytes), instead of `rt` for Python's built-in `open`
+(**r**ead **t**ext), so we have to provide it.
+
+```python
+import gzip
+
+gzopen = tz.curry(gzip.open)
+
+
+def genome_gz(file_pattern):
+    """Stream a genome, letter by letter, from a list of FASTA filenames."""
+    return tz.pipe(file_pattern, glob, sorted,  # Filenames
+                   c.map(gzopen(mode='rt')),  # lines
+                   # concatenate lines from all files:
+                   tz.concat,
+                   # drop header from each sequence
+                   c.filter(is_sequence),
+                   # concatenate characters from all lines
+                   tz.concat,
+                   # discard newlines and 'N'
+                   c.filter(is_nucleotide))
+```
+
+You can try this out with the compressed drosophila genome file:
+
+```python
+dm = 'data/dm6.fa.gz'
+model = tz.pipe(dm, genome_gz, c.take(1000000), markov)
+plot_model(model, labels=' ACGTacgt')
+```
+
+If you want to have a single `genome` function, you could write a custom `open`
+function that decides from filename or from trying and failing whether a file
+is a gzip file.
+
+Similarly, if you have a `.tar.gz` full of FASTA files, you can use Python's
+`tarfile` module instead of `glob` to read each file individually. The only
+caveat is that you will have to use the `bytes.decode` function to decode each
+line, as `tarfile` returns them as bytes, not as text.
+
+<!-- solution end -->
 
 <!-- exercise end -->
 
