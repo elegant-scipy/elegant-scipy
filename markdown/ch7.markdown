@@ -257,7 +257,6 @@ approximate alignment, and then progressively refine the alignment
 with sharper images.
 
 ```python
-
 def downsample2x(image):
     offsets = [((s + 1) % 2) / 2 for s in image.shape]
     slices = [slice(offset, end, 2)
@@ -312,6 +311,8 @@ ax.legend(loc='lower right', frameon=True, framealpha=0.9)
 ax.set_xlabel('Shift')
 ax.set_ylabel('MSE');
 ```
+<!-- caption text="Mean squared error of shift at various levels of a Gaussian
+pyramid" -->
 
 As you can see, at the highest level of the pyramid, that bump at a shift of
 about -325 disappears. We can therefore get an approximate alignment at that
@@ -347,6 +348,7 @@ axes[0].set_title('Original')
 axes[1].imshow(rotated)
 axes[1].set_title('Rotated');
 ```
+<!-- caption text="Another transformation: rotation" -->
 
 Next, we need a cost function. This is just MSE, but SciPy requires a specific
 format: the first argument needs to be the *parameter vector*, which it is
@@ -415,6 +417,7 @@ ax2.set_title('Registered')
 for ax in (ax0, ax1, ax2):
     ax.axis('off')
 ```
+<!-- caption text="Optimization used to recover image alignment" -->
 
 We're feeling pretty good now. But our choice of parameters actually masked
 the difficulty of optimization: Let's see what happens with a rotation of
@@ -438,8 +441,8 @@ ax2.imshow(corrected)
 ax2.set_title('Registered')
 for ax in (ax0, ax1, ax2):
     ax.axis('off')
-
 ```
+<!-- caption text="Failed optimization" -->
 
 Even though we started closer to the original image, we failed to
 recover the correct rotation. This is because optimization techniques can get
@@ -534,6 +537,7 @@ ax2.set_title('Registered')
 for ax in (ax0, ax1, ax2):
     ax.axis('off')
 ```
+<!-- caption text="Image alignment using basin-hopping" -->
 
 Success! Basin-hopping was able to recover the correct alignment, even in the
 problematic case in which the `minimize` function got stuck.
