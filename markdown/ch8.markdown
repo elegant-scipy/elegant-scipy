@@ -372,6 +372,7 @@ def integer_histogram(counts, normed=True, xlim=[], ylim=[],
 counts_arr = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts_arr, xlim=(-1, 250))
 ```
+<!-- caption text="Histogram of k-mer counts" -->
 
 Notice the nice distribution of k-mer frequencies, along with a big bump of k-mers (at the left of the plot) that appear only once.
 Such low frequency k-mers are likely to be errors.
@@ -623,6 +624,8 @@ We can now plot the components:
 ```python
 plt.scatter(*components.T);
 ```
+<!-- caption text="Principal components of iris dataset computed with streaming
+PCA" -->
 
 You can verify that this gives (approximately) the same result as a standard
 PCA:
@@ -632,6 +635,8 @@ iris = np.loadtxt('data/iris.csv', delimiter=',')
 components2 = decomposition.PCA(n_components=2).fit_transform(iris)
 plt.scatter(*components2.T);
 ```
+<!-- caption text="Principal components of iris dataset computed with normal
+PCA" -->
 
 The difference, of course, is that streaming PCA can scale to extremely large
 datasets.
@@ -779,6 +784,8 @@ plt.colorbar(im, cax=axcolor)
 ax.set_xticklabels(' ACGTacgt');
 ax.set_yticklabels(' ACGTacgt');
 ```
+<!-- caption text="Transisition probability matrix for genetic sequence in the
+*Drosophila melanogaster* genome" -->
 
 Notice how the G-A and G-C transitions are different between the repeat and
 non-repeat parts of the genome. This information can be used to classify
