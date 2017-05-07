@@ -158,6 +158,8 @@ log_counts = np.log(counts + 1)
 plot_col_density(log_counts)
 ```
 
+<!-- caption text="Density of gene expression counts for each individual (log scale)" -->
+
 We can see that while the distributions of counts are broadly similar,
 some individuals have flatter distributions and a few are pushed right over to the left.
 When doing our analysis of the counts data later in this chapter, we will be assuming
@@ -235,6 +237,8 @@ log_counts_normalized = quantile_norm_log(counts)
 
 plot_col_density(log_counts_normalized)
 ```
+
+<!-- caption text="Density of gene expression counts for each individual after quantile normalization (log scale)" -->
 
 As you might expect, the distributions now look virtually identical!
 (The different left tails of the distribution have to do with different
@@ -431,6 +435,8 @@ yr, yc = bicluster(counts_var, linkage_method='ward',
 plot_bicluster(counts_var, yr, yc)
 ```
 
+<!-- caption text="This heatmap shows the level of gene expression across all samples and genes. The color indicates the expression level. The rows and columns are grouped by our clusters. We can see our gene clusters along the y-axis and sample clusters across the top of the x-axis." -->
+
 ## Predicting survival
 
 We can see that the sample data naturally falls into at least 2 clusters.
@@ -571,6 +577,8 @@ clusters = fcluster(yc, threshold_distance, 'distance')
 
 plot_cluster_survival_curves(clusters, data_table.columns, patients)
 ```
+
+<!-- caption text="Survival curves for patients clustered using gene expression data." -->
 
 The clustering of gene expression profiles appears to have identified a
 higher-risk subtype of melanoma, which constitutes the majority of patients.
