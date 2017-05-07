@@ -856,7 +856,8 @@ line, as `tarfile` returns them as bytes, not as text.
 
 <!-- exercise end -->
 
-We hope to have shown you at least a hint that streaming in Python can be easy when you use a few abstractions, like the ones Toolz provides.
+We hope to have shown you at least a hint that streaming in Python can be easy
+when you use a few abstractions, like the ones Toolz provides.
 
 Streaming can make you more productive, because big data takes linearly longer
 than small data. In batch analysis, big data can take forever to run, because
@@ -872,5 +873,5 @@ from the beginning. Your future self will thank you.
 Doing it later is harder, and results in things like this:
 
 ![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg)
-
-(Comic by Manu Cornet, used with permission.)
+<!-- caption text="TODOs in history. Comic by Manu Cornet, used with
+permission" -->
