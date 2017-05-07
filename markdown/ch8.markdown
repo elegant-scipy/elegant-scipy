@@ -534,6 +534,7 @@ We can now observe the frequency of different k-mers:
 counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
+<!-- caption text="Histogram of k-mer counts" -->
 
 > **Tips for working with streams {.callout}**
 >  - (list of list -> list) with tz.concat
