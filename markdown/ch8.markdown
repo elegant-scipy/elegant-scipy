@@ -1,6 +1,6 @@
 # Big Data in Little Laptop with Toolz
 
-> GRACIE: A knife? The guy's twelve feet tall!
+> GRACIE: A knife? The guy's twelve feet tall!  
 > JACK: Seven. Hey, don't worry, I think I can handle him.
 >
 > — Jack Burton, *Big Trouble in Little China*
@@ -372,6 +372,7 @@ def integer_histogram(counts, normed=True, xlim=[], ylim=[],
 counts_arr = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts_arr, xlim=(-1, 250))
 ```
+<!-- caption text="Histogram of k-mer counts" -->
 
 Notice the nice distribution of k-mer frequencies, along with a big bump of k-mers (at the left of the plot) that appear only once.
 Such low frequency k-mers are likely to be errors.
@@ -533,6 +534,7 @@ We can now observe the frequency of different k-mers:
 counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
+<!-- caption text="Histogram of k-mer counts" -->
 
 > **Tips for working with streams {.callout}**
 >  - (list of list -> list) with tz.concat
@@ -558,7 +560,9 @@ use.
 Make a function that can take a stream of data samples and perform PCA.
 Then, use the function to compute the PCA of the `iris` machine learning
 dataset, which is in `data/iris.csv`. (You can also access it from the
-`datasets` module of scikit-learn.)
+`datasets` module of scikit-learn, using `datasets.load_iris()`.) Optionally,
+you can color the points with the species number, found in
+`data/iris-target.csv`.
 
 *Hint:* The `IncrementalPCA` class is in `sklearn.decomposition`, and
 requires a *batch size* greater than 1 to train the model. Look at the
@@ -621,8 +625,11 @@ print(components.shape)
 We can now plot the components:
 
 ```python
-plt.scatter(*components.T);
+iris_types = np.loadtxt('data/iris-target.csv')
+plt.scatter(*components.T, c=iris_types, cmap='viridis');
 ```
+<!-- caption text="Principal components of iris dataset computed with streaming
+PCA" -->
 
 You can verify that this gives (approximately) the same result as a standard
 PCA:
@@ -630,8 +637,10 @@ PCA:
 ```python
 iris = np.loadtxt('data/iris.csv', delimiter=',')
 components2 = decomposition.PCA(n_components=2).fit_transform(iris)
-plt.scatter(*components2.T);
+plt.scatter(*components2.T, c=iris_types, cmap='viridis');
 ```
+<!-- caption text="Principal components of iris dataset computed with normal
+PCA" -->
 
 The difference, of course, is that streaming PCA can scale to extremely large
 datasets.
@@ -771,14 +780,22 @@ print(model)
 It's probably clearer to look at the result as an image:
 
 ```python
-fig = plt.figure()
-ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
-im = ax.imshow(model, cmap='magma');
-axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.8])
-plt.colorbar(im, cax=axcolor)
-ax.set_xticklabels(' ACGTacgt');
-ax.set_yticklabels(' ACGTacgt');
+def plot_model(model, labels, figure=None):
+    fig = figure or plt.figure()
+    ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
+    im = ax.imshow(model, cmap='magma');
+    axcolor = fig.add_axes([0.91, 0.1, 0.02, 0.8])
+    plt.colorbar(im, cax=axcolor)
+    for axis in [ax.xaxis, ax.yaxis]:
+        axis.set_ticks(range(8))
+        axis.set_ticks_position('none')
+        axis.set_ticklabels(labels)
+    return ax
+
+plot_model(model, labels=' ACGTacgt');
 ```
+<!-- caption text="Transition probability matrix for genetic sequence in the
+*Drosophila melanogaster* genome" -->
 
 Notice how the G-A and G-C transitions are different between the repeat and
 non-repeat parts of the genome. This information can be used to classify
@@ -786,14 +803,64 @@ previously unseen DNA sequence.
 
 <!-- exercise begin -->
 
-*Challenge:* add a step to the start of the pipe to unzip the data so you don't have to keep a decompressed version on your hard drive. Yes, unzip can be streamed, too!
+**Exercise:** add a step to the start of the pipe to unzip the data so you don't
+have to keep a decompressed version on your hard drive. The Drosophila genome,
+for example, takes less than a third of the space on disk when compressed with
+gzip. And yes, unzipping can be streamed, too!
 
-*Hint:* The `tarfile` package, part of Python's standard library, allows you
-to open tar files (even compressed ones) as if they were normal files.
+*Hint:* The `gzip` package, part of Python's standard library, allows you
+to open `.gz` files as if they were normal files.
+
+<!-- solution begin -->
+
+**Solution:** We can replace `open` in the original `genome` code with a
+curried version of `gzip.open`. The default mode of `gzip`'s `open` function is
+`rb` (**r**ead **b**ytes), instead of `rt` for Python's built-in `open`
+(**r**ead **t**ext), so we have to provide it.
+
+```python
+import gzip
+
+gzopen = tz.curry(gzip.open)
+
+
+def genome_gz(file_pattern):
+    """Stream a genome, letter by letter, from a list of FASTA filenames."""
+    return tz.pipe(file_pattern, glob, sorted,  # Filenames
+                   c.map(gzopen(mode='rt')),  # lines
+                   # concatenate lines from all files:
+                   tz.concat,
+                   # drop header from each sequence
+                   c.filter(is_sequence),
+                   # concatenate characters from all lines
+                   tz.concat,
+                   # discard newlines and 'N'
+                   c.filter(is_nucleotide))
+```
+
+You can try this out with the compressed drosophila genome file:
+
+```python
+dm = 'data/dm6.fa.gz'
+model = tz.pipe(dm, genome_gz, c.take(1000000), markov)
+plot_model(model, labels=' ACGTacgt')
+```
+
+If you want to have a single `genome` function, you could write a custom `open`
+function that decides from filename or from trying and failing whether a file
+is a gzip file.
+
+Similarly, if you have a `.tar.gz` full of FASTA files, you can use Python's
+`tarfile` module instead of `glob` to read each file individually. The only
+caveat is that you will have to use the `bytes.decode` function to decode each
+line, as `tarfile` returns them as bytes, not as text.
+
+<!-- solution end -->
 
 <!-- exercise end -->
 
-We hope to have shown you at least a hint that streaming in Python can be easy when you use a few abstractions, like the ones Toolz provides.
+We hope to have shown you at least a hint that streaming in Python can be easy
+when you use a few abstractions, like the ones Toolz provides.
 
 Streaming can make you more productive, because big data takes linearly longer
 than small data. In batch analysis, big data can take forever to run, because
@@ -809,5 +876,5 @@ from the beginning. Your future self will thank you.
 Doing it later is harder, and results in things like this:
 
 ![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg)
-
-(Comic by Manu Cornet, used with permission.)
+<!-- caption text="TODOs in history. Comic by Manu Cornet, used with
+permission" -->
