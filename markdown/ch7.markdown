@@ -574,6 +574,8 @@ fig, ax = plt.subplots()
 ax.imshow(stained_glass)
 ax.axis('off')
 ```
+<!-- caption text="A Prokudin-Gorskii plate: three photos of the same stained
+glass window, taken with three different filters" -->
 
 Take a look at St John's robes: they look pitch black in one image, gray in
 another, and bright white in the third! This would result in a terrible MSE
@@ -595,6 +597,7 @@ for ax, image, name in zip(axes, channels, channel_names):
     ax.axis('off')
     ax.set_title(name)
 ```
+<!-- caption text="Splitting the plate into different channels" -->
 
 First, we overlay all three images to verify that the alignment indeed needs to
 be fine-tuned between the three channels:
@@ -606,6 +609,8 @@ fig, ax = plt.subplots()
 ax.imshow(original)
 ax.axis('off')
 ```
+<!-- caption text="Naive overlay of Prokudin-Gorskii channels results in color
+halos" -->
 
 You can see by the color "halos" around objects in the image that the colors
 are close to alignment, but not quite. Let's try to align them in the same
@@ -631,6 +636,8 @@ ax1.set_title('Corrected')
 for ax in (ax0, ax1):
     ax.axis('off')
 ```
+<!-- caption text="MSE-based alignment reduces but does not eliminate the color
+halos" -->
 
 The alignment is a little bit better than with the raw images, because the red
 and the green channels are correctly aligned, probably thanks to the giant
@@ -730,6 +737,8 @@ ax1.set_title('Corrected')
 for ax in (ax0, ax1):
     ax.axis('off')
 ```
+<!-- caption text="Prokudin-Gorskii channels aligned with normalized mutual
+information" -->
 
 What a glorious image! Realize that this artifact was created before color
 photography existed! Notice God's pearly white robes, John's white beard,
