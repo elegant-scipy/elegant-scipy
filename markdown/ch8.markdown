@@ -1,6 +1,6 @@
 # Big Data in Little Laptop with Toolz
 
-> GRACIE: A knife? The guy's twelve feet tall!  
+> GRACIE: A knife? The guy's twelve feet tall!
 > JACK: Seven. Hey, don't worry, I think I can handle him.
 >
 > — Jack Burton, *Big Trouble in Little China*
@@ -875,6 +875,6 @@ analysis, think about whether you can do it streaming. If you can, just do it
 from the beginning. Your future self will thank you.
 Doing it later is harder, and results in things like this:
 
-![To-do](https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg)
+<img src="https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg" alt="TODO"/>
 <!-- caption text="TODOs in history. Comic by Manu Cornet, used with
 permission" -->
