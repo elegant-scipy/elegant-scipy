@@ -77,12 +77,14 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	PYTHONIOENCODING="utf_8" tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
 	PYTHONIOENCODING="utf_8" tools/footnote_fixer.py $@.md > $@.footnoted && cp $@.footnoted /tmp && mv $@.footnoted $@.md ; \
 	htmlbook -c -s $@.md -o $@ -t "$$TITLE"
+	PYTHONIOENCODING="utf_8" tools/strip_jupyter_style.py $@ > $@.unstyled && mv $@.unstyled $@ ; \
 	
 	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
 	
 	htmlbook -s $@.md -o $@
 	rm $@.md
 	
+	PYTHONIOENCODING="utf_8" tools/strip_jupyter_style.py $@ > $@.unstyled && mv $@.unstyled $@ ; \
 	PYTHONIOENCODING="utf_8" tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	PYTHONIOENCODING="utf_8" tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	PYTHONIOENCODING="utf_8" tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
