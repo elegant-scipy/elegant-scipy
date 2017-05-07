@@ -1,6 +1,6 @@
 # Big Data in Little Laptop with Toolz
 
-> GRACIE: A knife? The guy's twelve feet tall!
+> GRACIE: A knife? The guy's twelve feet tall!  
 > JACK: Seven. Hey, don't worry, I think I can handle him.
 >
 > — Jack Burton, *Big Trouble in Little China*
