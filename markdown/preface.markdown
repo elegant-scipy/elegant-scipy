@@ -449,5 +449,3 @@ Along the way we are going to explore some real-world scientific problems that S
 This book is also a glimpse into a welcoming, collaborative scientific coding community that wants you to join in.
 
 Welcome to Elegant SciPy.
-
-Now, let's write some code!
