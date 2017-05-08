@@ -90,6 +90,7 @@ plt.imshow(random_image);
 # Note ; suppresses the output (i.e. the plotting object text)
 # from being displayed inline in the Jupyter notebook.
 ```
+<!-- caption text="Image displayed by matplotlib's `imshow`" -->
 
 This `imshow` function displays a numpy array as an image. The converse is also true: an image
 can be considered as a numpy array. For this example we use the scikit-image
@@ -99,7 +100,7 @@ Here is a PNG image from the scikit-image repository. It is a black and white
 (sometimes called "grayscale") picture of some ancient Roman coins from
 Pompeii, obtained from the Brooklyn Museum [^coins-source]:
 
-![Coins](https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png)
+![Coins image from the Brooklyn Museum](https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png)
 
 Here is the coin image loaded with scikit-image:
 
@@ -110,6 +111,7 @@ coins = io.imread(url_coins)
 print("Type:", type(coins), "Shape:", coins.shape, "Data type:", coins.dtype)
 plt.imshow(coins);
 ```
+<!-- caption text="Array corresponding to coins image, displayed with matplotlib" -->
 
 A grayscale image can be represented as a *2-dimensional array*, with each array
 element containing the grayscale intensity at that position. So, **an image is
@@ -126,6 +128,7 @@ astro = io.imread(url_astronaut)
 print("Type:", type(astro), "Shape:", astro.shape, "Data type:", astro.dtype)
 plt.imshow(astro);
 ```
+<!-- caption text="Image of astronaut Eileen Collins" -->
 
 This image is *just numpy arrays*. Adding a green square to the image is easy
 once you realize this, using simple numpy slicing:
@@ -135,6 +138,7 @@ astro_sq = np.copy(astro)
 astro_sq[50:100, 50:100] = [0, 255, 0]  # red, green, blue
 plt.imshow(astro_sq);
 ```
+<!-- caption text="Modified image of Eileen Collins" -->
 
 You can also use a boolean *mask*, an array of `True` or `False` values.
 We saw these in Chapter 2 as a way to select rows of a table. In this case, we
@@ -147,6 +151,7 @@ sq_mask[50:100, 50:100] = True
 astro_sq[sq_mask] = [0, 255, 0]
 plt.imshow(astro_sq);
 ```
+<!-- caption text="Another modified image of Eileen Collins" -->
 
 <!-- exercise begin -->
 
@@ -208,6 +213,7 @@ def overlay_grid(image, spacing=128):
 
 plt.imshow(overlay_grid(astro, 128));
 ```
+<!-- caption text="Astronaut image overlaid with a grid" -->
 
 Note that we used `-1` to mean the last value of the axis, as is standard in
 Python indexing. You can omit this value, but the meaning is slightly
@@ -239,6 +245,7 @@ fig, ax = plt.subplots()
 ax.plot(sig);
 ax.set_ylim(-0.1, 1.1);
 ```
+<!-- caption text="Step signal" -->
 
 To find *when* the light is turned on, you can *delay* it by 1ms, then
 *subtract* the original from the delayed signal. This way, when the signal is
@@ -258,6 +265,7 @@ ax.plot(sigon)
 ax.set_ylim(-0.1, 1.1)
 print('Signal on at:', 1 + np.flatnonzero(sigon)[0], 'ms')
 ```
+<!-- caption text="Shifted difference of a step signal" -->
 
 (Here we have used NumPy's `flatnonzero` function to get the first index where
 the `sigon` array is not equal to 0.)
@@ -289,6 +297,7 @@ from scipy import ndimage as ndi
 dsig = ndi.convolve(sig, diff)
 plt.plot(dsig);
 ```
+<!-- caption text="Result of convolving a difference filter with a step signal" -->
 
 Signals are usually *noisy* though, not perfect as above:
 
@@ -296,12 +305,14 @@ Signals are usually *noisy* though, not perfect as above:
 sig = sig + np.random.normal(0, 0.3, size=sig.shape)
 plt.plot(sig);
 ```
+<!-- caption text="Step signal corrupted by noise" -->
 
 The plain difference filter can amplify that noise:
 
 ```python
 plt.plot(ndi.convolve(sig, diff));
 ```
+<!-- caption text="Difference filtering of a noisy signal" -->
 
 In such cases, you can add smoothing to the filter. The most common form of
 smoothing is *Gaussian* smoothing, which takes the weighted average of
@@ -332,6 +343,7 @@ is usually much smaller than the data.
 smooth_diff = ndi.convolve(gaussian_kernel(25, 3), diff)
 plt.plot(smooth_diff);
 ```
+<!-- caption text="Smoothed difference filter" -->
 
 This smoothed difference filter looks for an edge in the central position,
 but also for that difference to continue. This continuation happens in the case
@@ -342,6 +354,7 @@ edge, but not in "spurious" edges caused by noise. Check out the result:
 sdsig = ndi.convolve(sig, smooth_diff)
 plt.plot(sdsig);
 ```
+<!-- caption text="Smoothed difference filter applied to a noisy signal" -->
 
 Although it still looks wobbly, the *signal-to-noise ratio* (SNR),
 is much greater in this version than when using the simple difference filter.
@@ -366,6 +379,7 @@ diff2d = np.array([[0, 1, 0], [1, 0, -1], [0, -1, 0]])
 coins_edges = ndi.convolve(coins, diff2d)
 io.imshow(coins_edges);
 ```
+<!-- caption text="Result of a 2D difference filter applied to the coins image" -->
 
 The principle is the same as the 1D filter: at every point in the image, place the
 filter, compute the dot-product of the filter's values with the image values, and
@@ -426,9 +440,8 @@ def reduce_xaxis_labels(ax, factor):
     plt.setp(ax.xaxis.get_ticklabels(), visible=False)
     for label in ax.xaxis.get_ticklabels()[::factor]:
         label.set_visible(True)
-```
 
-```python
+
 coins_h = ndi.convolve(coins, hsobel)
 coins_v = ndi.convolve(coins, vsobel)
 
@@ -439,6 +452,7 @@ for ax in axes:
     reduce_xaxis_labels(ax, 2)
 
 ```
+<!-- caption text="Directional Sobel filters applied to the coins image" -->
 
 And finally, just like the Pythagorean theorem, you can argue that the edge
 magnitude in *any* direction is equal to the square root of the sum of squares
@@ -448,6 +462,7 @@ of the horizontal and vertical components:
 coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
 plt.imshow(coins_sobel, cmap=plt.cm.viridis);
 ```
+<!-- caption text="Sobel gradient magnitude of the coins image" -->
 
 ## Generic filters: arbitrary functions of neighborhood values
 
@@ -472,6 +487,7 @@ tax_rate_map = ndi.generic_filter(house_price_map, tax, footprint=footprint)
 plt.imshow(tax_rate_map)
 plt.colorbar();
 ```
+<!-- caption text="Generic filter applied to a random image" -->
 
 ### Exercises: generic filters
 
@@ -604,8 +620,9 @@ Now we can try it out on the coins image:
 
 ```python
 sobel_mag = ndi.generic_filter(coins, sobel_magnitude_filter, size=3)
-plt.imshow(sobel_mag)
+plt.imshow(sobel_mag);
 ```
+<!-- caption text="Sobel magnitude implemented by `generic_filter`" -->
 
 <!-- solution end -->
 
