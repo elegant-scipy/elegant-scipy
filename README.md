@@ -109,9 +109,13 @@ $ make zip
 
 ## Building HTMLBook
 
-To export to HTMLBook, install
-[htmlbook.js](https://www.npmjs.com/package/htmlbook) and then run `make
-htmlbook`.
+Install:
+- npm: `brew install npm` (macOS) or `sudo apt-get install npm`
+  (Ubuntu/Debian)
+- htmlbook: `npm install -g htmlbook`
+- blahtexml: `brew install blahtexml` or `sudo apt-get install blahtexml`
+
+Then run `make htmlbook`.
 
 The results can be checked in to
 
