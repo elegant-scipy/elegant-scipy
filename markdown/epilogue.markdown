@@ -1,5 +1,9 @@
 # Epilogue
 
+> Quality means doing it right when no one is looking.
+>
+> — Henry Ford
+
 ## Where to next?
 - Parts of the SciPy Ecosystem we haven't covered
 - Other books/websites/resources
