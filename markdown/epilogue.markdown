@@ -68,6 +68,7 @@ the process here, but there are many books and resources out there to help you:
 So, you are not starved for help on this topic!
 
 What we would like to you is to encourage you to do this as often as you can,
+not only because you will help make these libraries better for all, but also
 because it is one of the best ways to develop your coding abilities. With every
 pull request you submit, you will get feedback about your code, helping you to
 improve. You'll also become more familiar with the GitHub contributing process
