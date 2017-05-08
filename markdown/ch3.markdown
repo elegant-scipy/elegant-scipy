@@ -1,8 +1,8 @@
 # Networks of Image Regions with ndimage
 
-> Tyger Tyger, burning bright,
-> In the forests of the night;
-> What immortal hand or eye,
+> Tyger Tyger, burning bright,<br/>
+> In the forests of the night;<br/>
+> What immortal hand or eye,<br/>
 > Could frame thy fearful symmetry?
 >
 > — William Blake, *The Tyger*
