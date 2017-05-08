@@ -591,6 +591,7 @@ from skimage import data
 image = data.camera()
 plt.imshow(image);
 ```
+<!-- caption text="Test image of a cameraman" -->
 
 As a test operation, we'll be rotating the image by 30 degrees. We begin
 by defining the transformation matrix, $H$ which, when multiplied with a
@@ -635,6 +636,7 @@ interpolation (see figure), calculate their values. It does this using just
 matrix multiplication on the image values, and thus is extremely fast.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg"/>
+<!-- caption text="Diagram explaining bilinear interpolation" -->
 
 Let's look at the function that builds our sparse operator:
 
@@ -732,6 +734,7 @@ tf = homography(H, image.shape)
 out = apply_transform(image, tf)
 plt.imshow(out);
 ```
+<!-- caption text="Rotated cameraman image" -->
 
 There's that rotation!
 
@@ -794,6 +797,7 @@ We can test that this works:
 tf = transform_rotate_about_center(image.shape, 30)
 plt.imshow(apply_transform(image, tf));
 ```
+<!-- caption text="Cameraman image rotated about its center" -->
 
 <!-- solution end -->
 
@@ -1250,6 +1254,7 @@ and results in a `nan` (not a number) value:
 print('The log of 0 is: ', np.log2(0))
 print('0 times the log of 0 is: ', 0 * np.log2(0))
 ```
+
 Therefore, we have to use numpy indexing to mask out the 0 values.
 Additionally, we'll need a slightly different strategy depending on whether the
 input is a numpy array or a SciPy sparse matrix.
@@ -1388,6 +1393,8 @@ tiger = io.imread(url)
 
 plt.imshow(tiger);
 ```
+<!-- caption text="BSDS tiger image, number 108073" -->
+
 
 In order to check our image segmentation, we're going to need some ground truth.
 It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
@@ -1408,6 +1415,8 @@ human_seg_url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/'
 boundaries = io.imread(human_seg_url)
 plt.imshow(boundaries);
 ```
+<!-- caption text="Human segmentations of the tiger image" -->
+
 
 Overlaying the tiger image with the human segmentation, we can see that (unsurprisingly) this person does a pretty good job of finding the tiger.
 They have also segmented out the river bank, and a tuft of reeds.
@@ -1417,6 +1426,8 @@ Nice job, human #1122!
 human_seg = ndi.label(boundaries > 100)[0]
 plt.imshow(color.label2rgb(human_seg, tiger));
 ```
+<!-- caption text="Human segmentation of the tiger image, overlaid" -->
+
 
 Now, let's grab our image segmentation code from chapter 3, and see how well a Python does at recognizing a tiger!
 
@@ -1463,6 +1474,7 @@ seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
                         enforce_connectivity=True, sigma=3)
 plt.imshow(color.label2rgb(seg, tiger));
 ```
+<!-- caption text="Baseline SLIC segmentation of the tiger image" -->
 
 In chapter 3, we set the graph threshold at 80 and sort of hand-waved over the whole thing.
 Now we're going to have a closer look at how this threshold impacts our segmentation accuracy.
@@ -1494,11 +1506,13 @@ Let's try a few thresholds and see what happens:
 auto_seg_10 = RAG_segmentation(seg, tiger, threshold=10)
 plt.imshow(color.label2rgb(auto_seg_10, tiger));
 ```
+<!-- caption text="Tiger RAG-based segmentation at threshold 10" -->
 
 ```python
 auto_seg_40 = RAG_segmentation(seg, tiger, threshold=40)
 plt.imshow(color.label2rgb(auto_seg_40, tiger));
 ```
+<!-- caption text="Tiger RAG-based segmentation at threshold 40" -->
 
 Actually, in chapter 3 we did the segmentation a bunch of times with different thresholds and then (because we're human, so we can) picked one that produced a good segmentation.
 This is a completely unsatisfying way to program image segmentation.
@@ -1534,6 +1548,7 @@ vi_per_threshold = [vi_at_threshold(seg, tiger, human_seg, threshold)
 ```python
 plt.plot(thresholds, vi_per_threshold);
 ```
+<!-- caption text="Segmentation VI as a function of threshold" -->
 
 Unsurprisingly, it turns out that eyeballing it and picking threshold=80, did give us one of the best segmentations.
 But now we have a way to automate this process for any image!
@@ -1542,6 +1557,7 @@ But now we have a way to automate this process for any image!
 auto_seg = RAG_segmentation(seg, tiger, threshold=80)
 plt.imshow(color.label2rgb(auto_seg, tiger));
 ```
+<!-- caption text="Optimal tiger segmentation based on the VI curve" -->
 
 <!-- exercise begin -->
 
