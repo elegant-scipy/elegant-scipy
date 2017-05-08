@@ -4,12 +4,17 @@
 >
 > — Henry Ford
 
-Our main goal with this book was promoting elegant uses of the NumPy and SciPy
-libraries, and, we hope, inspiring in you the feeling that quality code is
-something worth striving for, while teaching you how to do effective scientific
-analysis with SciPy.
+Our main goal with this book was to promote elegant uses of the NumPy and SciPy
+libraries. While teaching you how to do effective scientific analysis with SciPy,
+We hope to have inspired in you the feeling that quality code is something
+worth striving for.
 
 ## Where to next?
+
+Now that you know enough SciPy to analyze whatever data gets thrown your way,
+how do you move forward? We said when we started that we couldn't hope to cover
+all there is to know about the library and all its offshoots. Before we part ways,
+we want to point you to the many resources available to help you.
 
 ### Mailing lists
 
@@ -21,7 +26,8 @@ them regularly.
 And when you do get stuck in your own work, don't be afraid to seek help there! We
 are a friendly bunch! The *main* requirement when seeking help is to show that
 you've tried a bit of problem solving yourself, and to provide others with a
-minimal script to demonstrate your problem and how you've tried to fix it.
+minimal script and enough sample data to demonstrate your problem and how you've
+tried to fix it.
 
 - **No:** "I need to generate a big array of random Gaussians. Can someone
   help?"
@@ -49,8 +55,10 @@ developers of that library, and that it will (hopefully) be fixed in the next
 version. By the way, this advice also applies to "bugs" in the documentation:
 if something in a library's documentation isn't clear to you, file an issue!
 
-Even better than filing an issue is *submitting a pull request*. We can't cover
-the process here, but there are many books and resources out there to help you:
+Even better than filing an issue is *submitting a pull request*. A pull request
+improving a library's documentation is a great way to dip your toes in open
+source! We can't cover the process here, but there are many books and resources
+out there to help you:
 - Anthony Scopatz and Katy Huff's [Effective Computation in
   Physics](http://shop.oreilly.com/product/0636920033424.do) covers git and
   GitHub, among many other topics in scientific computation.
@@ -67,7 +75,7 @@ the process here, but there are many books and resources out there to help you:
 
 So, you are not starved for help on this topic!
 
-What we would like to you is to encourage you to do this as often as you can,
+We encourage you to contribute to the SciPy ecosystem as often as you can,
 not only because you will help make these libraries better for all, but also
 because it is one of the best ways to develop your coding abilities. With every
 pull request you submit, you will get feedback about your code, helping you to
@@ -83,10 +91,11 @@ city every two years. Finally, the more general PyCon conference happens in the
 US but also has offshoots around the world, such as PyCon-AU in Australia, which
 has a "Science and Data" miniconference the day before the main conference.
 
-In all these cases, *stay for the sprints* at the end of the conference. A coding
-sprint is an intense session of team coding, and it is a fantastic opportunity to
-learn the process of contributing to open source, regardless of your skill level.
-It is how one of your authors (Juan) started in their open source journey.
+Whichever conference you choose, *stay for the sprints* at the end of the
+conference. A coding sprint is an intense session of team coding, and it is a
+fantastic opportunity to learn the process of contributing to open source,
+regardless of your skill level.  It is how one of your authors (Juan) started
+in their open source journey.
 
 ## Beyond SciPy
 
@@ -110,29 +119,35 @@ imported into Python. By providing some type annotations to Python variables,
 the compiled C code can end up being a hundred or even a thousand times faster
 than comparable Python code. Cython is now an industry standard and is used in
 NumPy, SciPy, and many related libraries (such as scikit-image) to provide fast
-algorithms in array-based code.  Kurt Smith has written the simply-titled
+algorithms in array-based code. Kurt Smith has written the simply-titled
 [Cython](http://shop.oreilly.com/product/0636920033431.do) to teach you the
 fundamentals of this language.
 
 An often easier-to-use alternative to Cython is Numba, a just-in-time compiler
-(JIT) for array-based Python. In Numba code, you don't need to annotate types:
-Numba will infer them when a function is first called. Instead, you simply need
-to make sure that you only use basic types (integers, floats, etc), and arrays,
-rather than more complicated Python objects. In these cases, Numba can compile
-the Python code down to very efficient code and gain orders of magnitude speedups.
+(JIT) for array-based Python. JITs wait for a function to be executed once, at
+which point they can infer the types of all the function arguments and output,
+and compile the code into a highly efficient form for those specific types. In
+Numba code, you don't need to annotate types: Numba will infer them when a
+function is first called. Instead, you simply need to make sure that you only
+use basic types (integers, floats, etc), and arrays, rather than more
+complicated Python objects. In these cases, Numba can compile the Python code
+down to very efficient code and speed up computations by orders of magnitude.
 
 Numba is still very young, but it is already very useful. Importantly, it shows
 what is possible by Python JITs, which are set to become more commonplace: Python
 3.6 added features to make it easier to use new JITs (the Pyjion JIT is based on
 these). You can see some examples of Numba use, including how to combine it with
-SciPy, in Juan's blog at https://ilovesymposia.com/tag/numba/.
+SciPy, in Juan's blog at https://ilovesymposia.com/tag/numba/. And Numba,
+naturally, has its own very active and friendly mailing list.
+
 
 ## Contributing to this book
 
 The source of this book is itself hosted on GitHub at
 https://github.com/elegant-scipy/elegant-scipy (also at http://elegant-scipy.org).
 Just as if you were contributing to any other open source project, you can raise
-issues or submit pull requests if you find bugs or typos.
+issues or submit pull requests if you find bugs or typos — and we would very much
+appreciate it if you did!
 
 We used some of the best code we could find to illustrate the various parts of
 the SciPy and NumPy libraries. If you have a better example, please raise an issue
@@ -145,7 +160,8 @@ us a line if you want to chat about the book! The individual authors are
 [@hdashnow](https://twitter.com/hdashnow).
 
 We particularly want to hear about it if you use any of the ideas or code in this
-book to advance your scientific research! That's the point of SciPy!
+book to advance your scientific research. That's the point of SciPy!
 
 In the meantime, we hope you enjoyed this book and found it useful. If so, tell
-all your friends, and leave us a review! ;)
+all your friends, and come say hi on the mailing lists, at a conference, on
+GitHub, and on Twitter! Thanks for reading.
