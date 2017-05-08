@@ -430,32 +430,27 @@ print('The CSR and NumPy arrays are equal: ',
       np.all(s2 == csr.A))
 ```
 
-The ability to store large, sparse matrices is incredibly powerful!
-The combination of sparsity and linear algebra abounds.  For example,
+The ability to store large, sparse matrices, and perform computations on them,
+is incredibly powerful!
+
+The combination of sparsity and linear algebra abounds. For example,
 one can think of the entire web as a large, sparse, $N \times N$ matrix.
 Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
 By normalizing this matrix and solving for its dominant eigenvector,
 one obtains the so-called PageRank—one of the numbers Google uses to
 order your search results. (You can read more about this in the next chapter!)
 
-Now, consider studying the human brain, and represent it as a large $M
-\times M$ graph, where there are $M$ nodes (positions) in which you
+As another example, we can represent the human brain as a large $m \times m$
+graph, where there are $m$ nodes (positions) in which you
 measure activity using an MRI scanner.  After a while of measuring,
 correlations can be calculated and entered into a matrix $C_{ij}$.
-The matrix is thresholded (which makes it sparse and fills it with
-ones and zeros), representing an adjacency matrix.  The dominant
-eigenvector of this matrix is then calculated.  The sign of each entry
-in the (length $M$) eigenvector groups the nodes into two sub-groups
-(see Newman (2006), Modularity and community structure in networks,
-https://doi.org/10.1073/pnas.0601602103).  Rinse and repeat to
-form more and more and more sub-groups [^submod].  It turns out that
-these subgroups, or communities, tell us a lot about functional
-regions of the brain!
+Thresholding this matrix produces a sparse matrix of ones and zeros. 
+The eigenvector corresponding to the second-smallest eigenvalue of this matrix
+partitions the $m$ brain areas into subgroups, which, it turns out,
+are often related to functional regions of the brain [^Newman]!
 
-[^submod]: One has to be careful when subdividing the network into
-           more than one group.  The graph under analysis remains the
-           original, *not* the previously split result.  A correct
-           approach is explained in detail in Newman (2006).
+[^Newman]: Newman MEJ (2006). Modularity and community structure in networks.
+           PNAS 103(23):8577-8582. DOI:10.1073/pnas.0601602103
 
 <div class="landscape">
 <table style="font-size: 50%;">
@@ -577,14 +572,12 @@ were head of the NumPy Agency for Space Affairs and had to rotate
 millions of images streaming in from the newly launched Jupyter
 Orbiter?
 
-Of course, one option would be to rewrite all your code in C++, but
-let's presume you have diligently read Scott Meyers' excellent books
-and are deeply convinced that you will never write bug free C++ under
-pressure.  While options like Cython, Numba, or Julia are available,
-we'd like to show you a quick workaround using SciPy's sparse
-matrices.
+In such cases, you want to squeeze every ounce of performance from your
+computer. It turns out that we can do a lot better than even the optimized C
+code in SciPy's `ndimage` if we are repeatedly applying the *same*
+transformation.
 
-We'll use the following image as a test:
+We'll use the following image from scikit-image as example data:
 
 ```python
 # Make plots appear inline, set custom plotting style
@@ -808,8 +801,8 @@ plt.imshow(apply_transform(image, tf));
 
 As mentioned above, this sparse linear operator approach to image
 transformation is extremely fast.
-Let's measure how it performs in comparison to ndimage. To make the comparison
-fair, we need to tell ndimage that we want linear interpolation with `order=1`,
+Let's measure how it performs in comparison to `ndimage`. To make the comparison
+fair, we need to tell `ndimage` that we want linear interpolation with `order=1`,
 and that we want to ignore pixels outside of the original shape, with
 `reshape=False`.
 
@@ -1048,7 +1041,7 @@ For example: what is the entropy of rain *given* that you know the month?
 This is written as:
 
 $$
-H(R | M) = \sum_{m = 1...12}{p(m)H(R | M = m)}
+H(R | M) = \sum_{m = 1}^{12}{p(m)H(R | M = m)}
 $$
 
 and
@@ -1058,7 +1051,9 @@ $$
 H(R | M=m) &= {p_{r|m}\log_2\left(\frac{1}{p_{r|m}}\right) +
                p_{s|m}\log_2\left(\frac{1}{p_{s|m}}\right)} \\
            &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_m}{p_{rm}}\right) +
-               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)}
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)} \\
+           &= {-\frac{p_{rm}}{p_m}\log_2\left(\frac{p_rm}{p_{m}}\right) -
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_sm}{p_{m}}\right)}
 \end{aligned}
 $$
 
@@ -1095,13 +1090,13 @@ The conditional entropy of rain given month is then:
 
 $$
 \begin{aligned}
-H(R|M) & = \frac{1}{12} \left( 0.25 \log_2(1/0.25) +
-                               0.75 \log_2(1/0.75) \right) +
-           \frac{1}{12} \left( 0.27 \log_2(1/0.27) +
-                               0.73 \log_2(1/0.73) \right) +
-           ... +
-           \frac{1}{12} \left( 0.23 \log_2(1/0.23) +
-                               0.77 \log_2(1/0.77) \right) \\
+H(R|M) & = -\frac{1}{12} \left( 0.25 \log_2(0.25) +
+                                0.75 \log_2(0.75) \right) -
+           \frac{1}{12} \left( 0.27 \log_2(0.27) +
+                               0.73 \log_2(0.73) \right) -
+           ... -
+           \frac{1}{12} \left( 0.23 \log_2(0.23) +
+                               0.77 \log_2(0.77) \right) \\
        & \approx 0.626 \textrm{ bits}
 \end{aligned}
 $$
@@ -1394,7 +1389,7 @@ tiger = io.imread(url)
 plt.imshow(tiger);
 ```
 
-In order to check our image segmentation, we're going to need a ground truth.
+In order to check our image segmentation, we're going to need some ground truth.
 It turns out that humans are awesome at detecting tigers (natural selection for the win!), so all we need to do is ask a human to find the tiger.
 Luckily, researchers at Berkeley have already asked dozens of humans to look at this image and manually segment it [^bsds].
 Let's grab one of the segmentation images from the [Berkeley Segmentation Dataset and Benchmark](https://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/).
@@ -1407,7 +1402,9 @@ But to be clear, we really have no single ground truth!
 from scipy import ndimage as ndi
 from skimage import color
 
-human_seg_url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/human/normal/outline/color/1122/108073.jpg'
+human_seg_url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/'
+                 'vision/bsds/BSDS300/html/images/human/normal/'
+                 'outline/color/1122/108073.jpg')
 boundaries = io.imread(human_seg_url)
 plt.imshow(boundaries);
 ```
