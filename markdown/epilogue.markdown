@@ -104,3 +104,9 @@ us a line if you want to chat about the book! The individual authors are
 [@jnuneziglesias](https://twitter.com/jnuneziglesias),
 [@stefanvdwalt](https://twitter.com/stefanvdwalt), and
 [@hdashnow](https://twitter.com/hdashnow).
+
+We particularly want to hear about it if you use any of the ideas or code in this
+book to advance your scientific research! That's the point of SciPy!
+
+In the meantime, we hope you enjoyed this book and found it useful. If so, tell
+all your friends, and leave us a review! ;)
