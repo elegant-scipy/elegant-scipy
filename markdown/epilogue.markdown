@@ -88,29 +88,6 @@ sprint is an intense session of team coding, and it is a fantastic opportunity t
 learn the process of contributing to open source, regardless of your skill level.
 It is how one of your authors (Juan) started in their open source journey.
 
-## Contributing to this book
-
-The source of this book is itself hosted on GitHub at
-https://github.com/elegant-scipy/elegant-scipy (also at http://elegant-scipy.org).
-Just as if you were contributing to any other open source project, you can raise
-issues or submit pull requests if you find bugs or typos.
-
-We used some of the best code we could find to illustrate the various parts of
-the SciPy and NumPy libraries. If you have a better example, please raise an issue
-in the repo! We would love to include it in future editions.
-
-We are also on Twitter, at [@elegantscipy](https://twitter.com/elegantscipy). Drop
-us a line if you want to chat about the book! The individual authors are
-[@jnuneziglesias](https://twitter.com/jnuneziglesias),
-[@stefanvdwalt](https://twitter.com/stefanvdwalt), and
-[@hdashnow](https://twitter.com/hdashnow).
-
-We particularly want to hear about it if you use any of the ideas or code in this
-book to advance your scientific research! That's the point of SciPy!
-
-In the meantime, we hope you enjoyed this book and found it useful. If so, tell
-all your friends, and leave us a review! ;)
-
 ## Beyond SciPy
 
 The SciPy library is written not just in Python, but also in highly optimized C
@@ -149,3 +126,26 @@ what is possible by Python JITs, which are set to become more commonplace: Pytho
 3.6 added features to make it easier to use new JITs (the Pyjion JIT is based on
 these). You can see some examples of Numba use, including how to combine it with
 SciPy, in Juan's blog at https://ilovesymposia.com/tag/numba/.
+
+## Contributing to this book
+
+The source of this book is itself hosted on GitHub at
+https://github.com/elegant-scipy/elegant-scipy (also at http://elegant-scipy.org).
+Just as if you were contributing to any other open source project, you can raise
+issues or submit pull requests if you find bugs or typos.
+
+We used some of the best code we could find to illustrate the various parts of
+the SciPy and NumPy libraries. If you have a better example, please raise an issue
+in the repo! We would love to include it in future editions.
+
+We are also on Twitter, at [@elegantscipy](https://twitter.com/elegantscipy). Drop
+us a line if you want to chat about the book! The individual authors are
+[@jnuneziglesias](https://twitter.com/jnuneziglesias),
+[@stefanvdwalt](https://twitter.com/stefanvdwalt), and
+[@hdashnow](https://twitter.com/hdashnow).
+
+We particularly want to hear about it if you use any of the ideas or code in this
+book to advance your scientific research! That's the point of SciPy!
+
+In the meantime, we hope you enjoyed this book and found it useful. If so, tell
+all your friends, and leave us a review! ;)
