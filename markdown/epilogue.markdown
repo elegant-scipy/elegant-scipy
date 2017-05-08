@@ -10,6 +10,29 @@ something worth striving for, while teaching you how to do effective scientific
 analysis with SciPy.
 
 ## Where to next?
+
+We mentioned in the preface that SciPy is a community. A great way to continue
+learning is to subscribe to the main mailing lists for NumPy, SciPy, pandas,
+matplotlib, scikit-image, and other libraries you might be interested in, and read
+them regularly.
+
+And when you do get stuck in your own work, don't be afraid to seek help there! We
+are a friendly bunch! The *main* requirement when seeking help is to show that
+you've tried a bit of problem solving yourself, and to provide others with a
+minimal script to demonstrate your problem and how you've tried to fix it.
+
+- **No:** "I need to generate a big array of random Gaussians. Can someone
+  help?"
+- **No:** "I have this huge library at https://github.com/ron_obvious, if you
+  look in the statistics library, there's a part that really needs random
+  Gaussians, can someone take a look???"
+- **Yes:** "I've been trying to generate a big list of random Gaussians like
+  so: `gauss = [np.random.randn()] * 10**5`. But when I compute `np.mean(gauss)`,
+  it's hardly ever as close to 0 as I expect. What am I doing wrong? The full
+  script ready for copy-paste is below.
+
+
+
 - Parts of the SciPy Ecosystem we haven't covered
 - Other books/websites/resources
 - Conferences (and their recorded sessions - links)
