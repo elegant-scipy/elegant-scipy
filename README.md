@@ -125,6 +125,6 @@ and built at https://atlas.oreilly.com/oreillymedia/elegant-scipy
 
 ## Building with Docker
 
-0. Switch to the directory containing this file
-1. [Install docker-machine](https://docs.docker.com/machine/install-machine/)
+0. Install [Docker](https://www.docker.com/community-edition#/download)
+1. Switch to the directory containing this file
 2. Run `docker-compose up`
