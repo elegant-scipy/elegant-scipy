@@ -3,7 +3,7 @@
 > I like sparseness. There's something about that minimalist feel that can make
 > something have an immediate impact and make it unique.
 >
-> — Britt Daniel
+> — Britt Daniel, lead singer of *Spoon*.
 
 Many real-world matrices are *sparse*, which means that most of their values are zero.
 
