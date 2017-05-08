@@ -88,34 +88,19 @@ sprint is an intense session of team coding, and it is a fantastic opportunity t
 learn the process of contributing to open source, regardless of your skill level.
 It is how one of your authors (Juan) started in their open source journey.
 
+## Contributing to this book
 
-## Contributing to the SciPy ecosystem
-Why contribute?
-Promises from preface:
-We will help you get started in GitHub land
-Later in Elegant SciPy we will show you how to contribute your new skills to the GitHub-hosted projects that comprise most of the scientific Python ecosystem.
+The source of this book is itself hosted on GitHub at
+https://github.com/elegant-scipy/elegant-scipy (also at http://elegant-scipy.org).
+Just as if you were contributing to any other open source project, you can raise
+issues or submit pull requests if you find bugs or typos.
 
-### Learning how to use Git and GitHub
-If you are completely new to Git, we suggest you look at a beginner tutorial first (link - software carpentry http://software-carpentry.org/lessons/).
-What you will need to know to contribute to an open source project using Git (although some of this you can pick up by doing it!)
-- Basic Git commands: clone, add, commit, push, pull, branch.
-- Git commands that will likely be useful (but are not essential to get started):
-merge, rebase, cherry-pick.
-- Common GitHub actions: forking, pull requests, issues.
+We used some of the best code we could find to illustrate the various parts of
+the SciPy and NumPy libraries. If you have a better example, please raise an issue
+in the repo! We would love to include it in future editions.
 
-Some resources for learning Git/GitHub:
-- Huff/Scopatz, Effective Computation in Physics
-- Other O'Reilly books on git/github/pull requests
-- Online tutorials
-
-### How to contribute to SciPy and related packages specifically (community rules?) and GitHub etiquette
-- When and where to raise GitHub issues
-- When to use pull requests
-
-### Testing
-
-## Open Science
-Why do open science?
-- Reminder about open source licenses (refer to introduction)
-- Open data
-- Open access and preprints
+We are also on Twitter, at [@elegantscipy](https://twitter.com/elegantscipy). Drop
+us a line if you want to chat about the book! The individual authors are
+[@jnuneziglesias](https://twitter.com/jnuneziglesias),
+[@stefanvdwalt](https://twitter.com/stefanvdwalt), and
+[@hdashnow](https://twitter.com/hdashnow).
