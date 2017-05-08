@@ -4,6 +4,11 @@
 >
 > — Henry Ford
 
+Our main goal with this book was promoting elegant uses of the NumPy and SciPy
+libraries, and, we hope, inspiring in you the feeling that quality code is
+something worth striving for, while teaching you how to do effective scientific
+analysis with SciPy.
+
 ## Where to next?
 - Parts of the SciPy Ecosystem we haven't covered
 - Other books/websites/resources
