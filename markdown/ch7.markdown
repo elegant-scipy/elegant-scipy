@@ -51,7 +51,7 @@ attempt to address the issue[^line_search].
                 confidence.  If not, we lower our confidence and
                 search a wider area.
 
-![Optimization Comparison](../figures/generated/optimization_comparison.png)
+<img src="../figures/generated/optimization_comparison.png"/>
 <!-- caption text="Comparison of optimization pathways taken by different
 optimization algorithms on the Rosenbrock function (top). Powell's method
 performs a line search along the first dimension before doing gradient descent.

@@ -87,3 +87,15 @@ h1.title {
 h2 .exercise {
     font-style: italic;
 }
+
+.dataframe thead tr:only-child th {
+    text-align: right;
+}
+
+.dataframe thead th {
+    text-align: left;
+}
+
+.dataframe tbody tr th {
+    vertical-align: top;
+}

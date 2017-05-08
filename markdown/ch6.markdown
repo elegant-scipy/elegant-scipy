@@ -193,7 +193,7 @@ Back to the Laplacian. A common problem in network analysis is visualization.
 How do you draw nodes and edges in such a way that you don't get a complete
 mess such as this one?
 
-![network hairball](https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png)
+<img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png"/>
 <!-- caption text="Visualization of wikipedia structure. Created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License)." -->
 
 

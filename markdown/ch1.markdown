@@ -74,7 +74,7 @@ The so-called [central dogma of molecular biology](https://en.wikipedia.org/wiki
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
 There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
 
-![The chemical structure of DNA](https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg)
+<img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg"/>
 <!-- caption text="The chemical structure of DNA. Image by Madeleine Price Ball, used under the terms of the CC0 public domain license" -->
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
@@ -87,7 +87,7 @@ Fortunately, expression levels of an mRNA and levels of its corresponding protei
 Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
-![Central Dogma of Molecular Biology](../figures/central_dogma.png)
+<img src="../figures/central_dogma.png"/>
 <!-- caption text="Central Dogma of Molecular Biology" -->
 
 It's important to note that the DNA in every cell of your body is identical.
@@ -96,7 +96,7 @@ that DNA into RNA: in different cells, different parts of the DNA are processed
 into downstream molecules. Similarly, as we shall see in this chapter and the
 next, differential expression can distinguish different kinds of cancer.
 
-![Gene expression](../figures/differential_gene_expression.png)
+<img src="../figures/differential_gene_expression.png"/>
 <!-- caption text="Gene expression" -->
 
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
@@ -105,7 +105,7 @@ Currently, high-throughput sequencing machines can only read short fragments (ap
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
 We’ll be starting directly from this count data.
 
-![RNAseq](../figures/RNAseq.png)
+<img src="../figures/RNAseq.png"/>
 <!-- caption text="RNA sequencing (RNAseq)" -->
 
 Here's an example of what this gene expression data looks like.
@@ -185,7 +185,7 @@ print(array2d.shape)
 
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
 
-![multi-dimensional array diagram](../figures/NumPy_ndarrays.png)
+<img src="../figures/NumPy_ndarrays.png"/>
 <!-- caption text="Visualizing NumPy's ndarrays in one, two and three dimensions" -->
 
 Arrays have other attributes, such as `ndim`, the number of dimensions:
@@ -722,7 +722,7 @@ The counts are the number of reads from that gene in a given sample.
 So if a gene is twice as long, we are twice as likely to sample it.
 If we want to compare between genes we will have to do some more normalization.
 
-![Relationship between counts and gene length](../figures/gene_length_counts.png)
+<img src="../figures/gene_length_counts.png"/>
 <!-- caption text="Relationship between counts and gene length" -->
 
 Let's see if the relationship between gene length and counts plays out in our data set.
