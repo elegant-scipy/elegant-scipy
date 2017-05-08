@@ -46,6 +46,8 @@ modest.  Instead, we want to illustrate an elegant *algorithm*, the
 Fast Fourier Transform (FFT), that is endlessly useful, implemented in
 SciPy, and works, of course, on NumPy arrays.
 
+## Overview and concepts
+
 We'll start by setting up some plotting styles and importing the usual
 suspects:
 
@@ -84,6 +86,8 @@ ax.set_xlabel('Time [s]')
 ax.set_ylabel('Signal amplitude');
 ```
 
+<!-- caption text="A simple periodic function in time" -->
+
 [^discrete]: The discrete Fourier transform operates on sampled data,
              in contrast to the standard Fourier transform which is
              defined for continuous functions.
@@ -113,6 +117,8 @@ ax.set_xlim(-f_s / 2, f_s / 2)
 ax.set_ylim(-5, 110)
 ```
 
+<!-- caption text="Frequencies that make up our periodic signal above" -->
+
 We see that the output of the FFT is a one-dimensional array of the
 same shape as the input, containing complex values.  All values are
 zero, except for two entries.  Traditionally, we visualize the
@@ -135,12 +141,14 @@ transform to demonstrate that the FFT can be applied to
 multidimensional data (not just 1D measurements) to achieve a variety
 of goals.
 
+## Illustration: a birdsong spectrogram
+
 Let's start with one of the most common applications, converting a sound signal (consisting of variations of air pressure over time) to a *spectrogram*.
 (You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
 
 ![Stereo spectrogram](../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG)
 
-(Image used with permission from the author, Sergey Gerasimuk. Source: http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html)
+<!-- caption text="The Numarc EQ2600 Stereo Equalizer (image used with permission from the author, Sergey Gerasimuk. Source: http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html)" -->
 
 Listen to the following snippet of nightingale birdsong (released under CC BY 4.0 at
 http://www.orangefreesounds.com/nightingale-sound/):
@@ -191,7 +199,9 @@ ax.set_ylabel('Amplitude [unknown]')
 plt.show()
 ```
 
-Well, that's not very satisfying, is it!  If I sent this voltage to a
+<!-- caption text="Audio waveform plot of birdsong" -->
+
+Well, that's not very satisfying, is it.  If I sent this voltage to a
 speaker, I might hear a bird chirping, but I can't very well imagine
 how it would sound like in my head.  Is there a better way of *seeing*
 what is going on?
@@ -199,7 +209,7 @@ what is going on?
 There is, and it is called the discrete Fourier transform, where
 discrete refers to the recording consisting of time-spaced sound
 measurements, in contrast to a continual recording as, e.g., on
-magnetic tape (can you even remember casettes!).  The discrete Fourier
+magnetic tape (remember casettes?).  The discrete Fourier
 transform is often computed using the *fast Fourier transform* (FFT)
 algorithm, a name informally used to refer to the DFT itself. The
 DFT tells us which frequencies or "notes" to expect in our signal.
@@ -234,7 +244,7 @@ seconds of audio.  Why we choose 1024 and not 1000 we'll explain in a
 second when we examine performance.  The slices will overlap by 100
 samples as shown here:
 
-![Sliding window](../figures/generated/sliding_window.png)
+![A sliding window operation](../figures/generated/sliding_window.png)
 
 Start by chopping up the signal into slices of 1024 samples, each
 slice overlapping the previous by 100 samples.  The resulting `slices`
@@ -301,6 +311,8 @@ ax.set_xlabel('Time [s]')
 plt.show()
 ```
 
+<!-- caption text="Birdsong spectrogram" -->
+
 Much better!  We can now see the frequencies vary over time, and it
 corresponds to the way the audio sounds.  See if you can match my
 earlier description: chee-chee-woorrrr-hee-hee cheet-wheet-hoorrr-chi
@@ -320,6 +332,8 @@ freqs, times, Sx = signal.spectrogram(audio, fs=rate, window='hanning',
 
 plt.pcolormesh(times, freqs, 10 * np.log10(Sx), cmap='viridis');
 ```
+
+<!-- caption text="SciPy built-in rendition of birdsong spectrogram" -->
 
 The only differences are that SciPy returns the spectrum magnitude
 squared (which turns measured voltage into measured energy), and
@@ -459,6 +473,8 @@ ax1.set_ylabel('Smoothness of input length\n(lower is better)')
 plt.show()
 ```
 
+<!-- caption text="FFT execution time vs smoothness for different input lengths" -->
+
 The intuition is that, for smooth numbers, the FFT can be broken up
 into many small pieces. After performing the FFT on the first piece,
 those results can be reused in subsequent computations.  This explains
@@ -488,8 +504,8 @@ another real-world problem: analyzing target detection in radar data.
 ### Frequencies and their ordering
 
 For historical reasons, most implementations return an array where
-frequencies vary from low-to-high-to-low (*SEE ALSO: Sidebox on DFT
-for further explanation of frequencies*).  E.g., when we do the real
+frequencies vary from low-to-high-to-low (see the box "Discrete
+Fourier transforms" for further explanation of frequencies).  E.g., when we do the real
 Fourier transform of a signal of all ones, an input that has no
 variation and therefore only has the slowest, constant Fourier
 component (also known as the "DC" or Direct Current component—just
@@ -550,6 +566,87 @@ than saying a real-world sine wave is produced by a combination of
 positive and negative frequencies).  We re-shuffle the spectrum using
 the `fftshift` function.
 
+> **Discrete Fourier transforms {.callout}**
+>
+> The Discrete Fourier Transform (DFT) converts a sequence of $N$
+> equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
+> a function $x(t)$ of time (or another variable, depending on the
+> application) into a sequence of $N$ complex numbers $X_{k}$ by the
+> summation
+>
+> $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
+> N-1.\label{eq:Forward DFT}$$
+>
+> With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
+> sample values $x_{n}$ through the summation
+>
+> $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
+> kn/N}.\label{eq:Inverse DFT}$$
+>
+> Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
+> equation shows that the DFT has decomposed the sequence $x_{n}$ into a
+> complex discrete Fourier series with coefficients $X_{k}$. Comparing
+> the DFT with a continuous complex Fourier series
+>
+> $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
+> Fourier series}$$
+>
+> the DFT is a *finite *series with $N$ terms defined at the equally
+> spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
+> in the interval $[0,2\pi)$,
+> i.e. *including* $0$  and *excluding* $3\pi$.
+> This automatically normalizes the DFT so that time does
+> not appear explicitly in the forward or inverse transform.
+>
+> If the original function $x(t)$ is limited in frequency to less than
+> half of the sampling frequency (the so-called *Nyquist frequency*),
+> interpolation between sample values produced by the inverse DFT will
+> usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
+> limited as such, the inverse DFT can, in general, not be used to
+> reconstruct $x(t)$ by interpolation.  Note that this limit does not
+> imply that there are *no* methods that can do such a
+> reconstruction—see, e.g., compressed sensing, or finite rate of
+> innovation sampling.
+>
+> The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
+> discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
+> the complex plane. The function $e^{j2\pi kn/N}=w^{kn}$ encircles the
+> origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
+> sinusoid for which $n=1$.
+>
+> The way in which we defined the DFT leads to a few subtleties
+> when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
+> for increasing values of $k$ in Fig. ([fig:wkn values])
+> for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from $k$
+> to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
+> the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
+> increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
+> is precisely once around the circle, the step equates to $-\frac{2\pi}{N}$,
+> i.e. in the direction of a negative
+> frequency. The components up to $N/2$ represent *positive* frequency
+> components, those above $N/2$ up to $N-1$ represent *negative*
+> frequencies with frequency. The angle increment for the component $N/2$
+> for $N$ even advances precisely halfway around the circle for
+> each increment in $k$ and can therefore be interpreted as either a
+> positive or a negative frequency. This component of the DFT represents
+> the Nyquist Frequency, i.e. half of the sampling frequency, and is
+> useful to orientate oneself when looking at DFT graphics.
+>
+> The FFT in turn is simply a special and highly efficient algorithm for
+> calculating the DFT. Whereas a straightforward calculation of the DFT
+> takes of the order of $N^{2}$ calculations to compute, the FFT
+> algorithm requires of the order $N\log N$ calculations. The FFT was
+> the key to the wide-spread use of the DFT in real-time applications
+> and was included in a list of the top $10$ algorithms of the $20^{th}$
+> century by the IEEE journal Computing in Science & Engineering in the
+> year $2000$.
+>
+> ![Unit circle samples](../figures/Unit circle samples.png)
+
+[^odd_N]: We leave it as an exercise for the reader to picture the
+          situation for $N$ odd.  In this chapter, all examples use
+          even-order DFTs.
+
 Let's examine the frequency components in a noisy image.  Note that,
 while a static image has no time-varying component, its values do vary
 across *space*.  The DFT applies equally to either case.
@@ -566,6 +663,8 @@ ax.imshow(image)
 
 print((M, N), image.dtype)
 ```
+
+<!-- caption text="A noisy image of the moon landing" -->
 
 Do not adjust your monitor!  The image you are seeing is real,
 although clearly distorted by either the measurement or transmission
@@ -595,6 +694,8 @@ ax.imshow(np.log(1 + F_magnitude), cmap='viridis',
 ax.set_title('Spectrum magnitude')
 plt.show()
 ```
+
+<!-- caption text="Spectrum of the noisy moon landing image (magnitude)" -->
 
 Note the high values around the origin (middle) of the spectrum—these
 coefficients describe the low frequencies or smooth parts of the
@@ -644,6 +745,8 @@ ax1.set_title('Reconstructed image')
 plt.show()
 ```
 
+<!-- caption text="Filtered moon landing image and its spectrum" -->
+
 ### Windowing
 
 If we examine the Fourier transform of a rectangular pulse, we see
@@ -665,6 +768,8 @@ ax1.set_ylim(-5, 55)
 plt.show()
 ```
 
+<!-- caption text="Spectrum of a rectangular pulse (magnitude)" -->
+
 In theory, you would need a combination of infinitely many sinusoids
 (frequencies) to represent any abrupt transition; the coefficients would
 typically have the same sidelobe structure as seen here for the pulse.
@@ -674,7 +779,7 @@ signal is periodic.  If the signal is not, the assumption is simply
 that, right at the end of the signal, it jumps back to its beginning
 value.  Consider the function, $x(t)$, shown here:
 
-![[fig:Periodicity anomaly]Eight samples have been taken of a given
+![Eight samples have been taken of a given
  function with effective length $T_{eff}$.  With the discrete Fourier
  transform assuming periodicity, it creates a step discontinuity
  between the first and last samples.](../figures/periodic.png)
@@ -682,7 +787,7 @@ value.  Consider the function, $x(t)$, shown here:
 We only measure the signal for a short time, labeled $T_{eff}$.  The
 Fourier transform assumes that $x(8) = x(0)$, and that the signal is
 continued as the dashed, rather than the solid line.  This introduces
-a big jump at the edge, with the expected ossilation in the spectrum:
+a big jump at the edge, with the expected oscillation in the spectrum:
 
 ```python
 t = np.linspace(0, 1, 500)
@@ -699,6 +804,8 @@ ax1.plot(fftpack.fftfreq(len(t)), np.abs(X))
 ax1.set_ylim(0, 190)
 plt.show()
 ```
+
+<!-- caption text="Spectrum oscillation due to signal edge discontinuity" -->
 
 Instead of the expected two lines, the peaks are spread out in the
 spectrum.
@@ -732,6 +839,8 @@ plt.colorbar(sm).set_label(r'Kaiser $\beta$')
 plt.show()
 ```
 
+<!-- caption text="The Kaiser window for various values of $\beta$" -->
+
 By changing the parameter $\beta$, the shape of the window can be
 changed from rectangular ($\beta=0$, no windowing) to a window that
 produces signals that smoothly increase from zero and decrease to zero
@@ -754,10 +863,10 @@ lobes ($\beta$ typically between 5 and 10) [^choosing_a_window].
 Applying the Kaiser window here, we see that the sidelobes have been
 drastically reduced, at the cost of a slight widening in the main lobe.
 
+<!--
 *For online notebook, use something like:*
 
 ```
-
 # @interact(beta=(0, 20.))
 # def window(beta):
 #    x = np.kaiser(1000, beta)
@@ -767,6 +876,7 @@ drastically reduced, at the cost of a slight widening in the main lobe.
 #    axes[1].set_xlim(2*2480, 2*2520)
 #    plt.show()
 ```
+-->
 
 The effect of windowing our previous example is noticeable:
 
@@ -779,6 +889,8 @@ plt.ylim(0, 190)
 plt.show()
 ```
 
+<!-- caption text="Spectrum of a windowed signal (magnitude)" -->
+
 ## Real-world Application: Analyzing Radar Data
 
 Linearly modulated FMCW (Frequency-Modulated Continuous-Wave) radars
@@ -787,7 +899,8 @@ provide examples of various applications of the FFT. We will use actual
 data from an FMCW radar to demonstrate one such an application: target
 detection.
 
-Roughly[^detail_fmcw], an FMCW radar works like this:
+Roughly, an FMCW radar works like this (see box "A
+simple FMCW radar system" for more detail):
 
 A signal with changing frequency is generated.  This signal is
 transmitted by an antenna, after which it travels outwards, away from the
@@ -816,6 +929,34 @@ indication of how long it took the signal to reflect back to the radar
 other by applying a low-pass filter to the signal (i.e., a filter that
 discards any high frequencies).
 
+> **A simple FMCW radar system** {.callout}
+>
+> ![The block diagram of a simple FMCW radar system](../figures/FMCW Block.png)
+>
+> A block diagram of a simple FMCW radar that uses separate
+> transmit and receive antennas is shown above. The radar consists of a waveform generator
+> that generates a sinusoidal signal of which the frequency varies
+> linearly around the required transmit frequency. The generated signal
+> is amplified to the required power level by the transmit amplifier
+> and routed to the transmit antenna via a coupler circuit where a copy
+> of the transmit signal is tapped off. The transmit antenna radiates
+> the transmit signal as an electromagnetic wave in a narrow beam
+> towards the target to be detected. When the wave encounters an object
+> that reflects electromagnetic waves, a fraction of of the energy
+> irradiating the target is reflected back to the receiver as a second
+> electromagnetic wave that propagates in the direction of the radar
+> system. When this wave encounters the receive antenna, the antenna
+> collects the energy in the wave energy impinging on it and converts
+> it to a fluctuating voltage that is fed to the mixer. The mixer
+> multiplies the received signal with a replica of the transmit signal
+> and produces a sinusoidal signal with a frequency equal to the
+> difference in frequency between the transmitted and received
+> signals. The low-pass filter ensures that the received signal is band
+> limited (i.e., does not contain frequencies that we don't care about)
+> and the receive amplifier strengthens the signal to a suitable
+> amplitude for the analog to digital converter (ADC) that feeds data
+> to the computer.
+
 To summarize, we should note that:
 
  - The data that reaches the computer consists of $N$ samples sampled
@@ -826,39 +967,6 @@ To summarize, we should note that:
    object and the distance between the target and the radar).
  - The **frequency measured** is an indication of the **distance** of the
    target object from the radar.
-
-[^detail_fmcw]: A block diagram of a simple FMCW radar that uses
-                separate transmit and receive antennas is shown in
-                Fig. [fig: block-diagram]. The radar consists of a
-                waveform generator that generates a sinusoidal signal
-                of which the frequency varies linearly around the
-                required transmit frequency. The generated signal is
-                amplified to the required power level by the transmit
-                amplifier and routed to the transmit antenna via a
-                coupler circuit where a copy of the transmit signal is
-                tapped off. The transmit antenna radiates the transmit
-                signal as an electromagnetic wave in a narrow beam
-                towards the target to be detected. When the wave
-                encounters an object that reflects electromagnetic
-                waves, a fraction of of the energy irradiating the
-                target is reflected back to the receiver as a second
-                electromagnetic wave that propagates in the direction
-                of the radar system. When this wave encounters the
-                receive antenna, the antenna collects the energy in
-                the wave energy impinging on it and converts it to a
-                fluctuating voltage that is fed to the mixer. The
-                mixer multiplies the received signal with a replica of
-                the transmit signal and produces a sinusoidal signal
-                with a frequency equal to the difference in frequency
-                between the transmitted and received signals. The
-                low-pass filter ensures that the received signal is
-                band limited (i.e., does not contain frequencies that
-                we don't care about) and the receive amplifier
-                strengthens the signal to a suitable amplitude for the
-                analog to digital converter (ADC) that feeds data to
-                the computer.
-
-![[fig: block-diagram]The block diagram of a simple FMCW radar system.](../figures/FMCW Block.png)
 
 <!--
 
@@ -914,8 +1022,8 @@ proportional to the range to the target.
 
 -->
 
-![[fig:FMCW waveform]The frequency relationships in an FMCW radar with
- linear frequency modulation.](../figures/FMCW waveform.png)
+![The frequency relationships in an FMCW radar with
+ linear frequency modulation](../figures/FMCW waveform.png)
 
 To start off, we'll generate some synthetic signals, after which we'll
 turn our focus to the output of an actual radar.
@@ -1002,8 +1110,10 @@ A real radar will rarely receive only a single echo, though. The
 simulated signal $v_\mathrm{sim}$ shows what a radar signal will look
 like with five targets at different ranges (including two close to one
 another at 154 and 159 meters), and $v_\mathrm{actual}(t)$ shows the
-output signal obtained with an actual radar. We cannot interpret these
-signals in the time domain. They make no sense at all!
+output signal obtained with an actual radar.  When multiple echoes add
+together, the result makes little intuitive sense; until, that is, we
+look at it more carefully through the lens of the discrete Fourier
+transform.
 
 <!--
 A synthetic radar signal is shown as $v_{1}(t)$ in Fig. [fig:radar time signals]
@@ -1019,8 +1129,8 @@ $R=\frac{vf_{d}}{2S}=\frac{3\times10^{8}\times6.35\times10^{3}}{2\times3.815\tim
 m.
 -->
 
-![[fig:radar time signals]Receiver output signals (a) single target
- (b) 5 targets (c) actual radar data. ](../figures/generated/radar_time_signals.png)
+![Receiver output signals: (a) single simulated target
+ (b) five simulated targets (c) actual radar data](../figures/generated/radar_time_signals.png)
 
 The real world radar data is read from a NumPy-format ``.npz`` file (a
 light-weight, cross platform and cross-version compatible storage
@@ -1104,87 +1214,6 @@ signals reflected by each of several objects.  We need to determine
 each of the constituent components of these composite radar
 signals. The FFT is the tool that will do this for us.
 
-> **Discrete Fourier transforms {.callout}**
->
-> The Discrete Fourier Transform (DFT) converts a sequence of $N$
-> equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
-> a function $x(t)$ of time (or another variable, depending on the
-> application) into a sequence of $N$ complex numbers $X_{k}$ by the
-> summation
->
-> $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
-> N-1.\label{eq:Forward DFT}$$
->
-> With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
-> sample values $x_{n}$ through the summation
->
-> $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
-> kn/N}.\label{eq:Inverse DFT}$$
->
-> Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
-> equation shows that the DFT has decomposed the sequence $x_{n}$ into a
-> complex discrete Fourier series with coefficients $X_{k}$. Comparing
-> the DFT with a continuous complex Fourier series
->
-> $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
-> Fourier series}$$
->
-> the DFT is a *finite *series with $N$ terms defined at the equally
-> spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
-> in the interval $[0,2\pi)$,
-> i.e. *including* $0$  and *excluding* $3\pi$.
-> This automatically normalizes the DFT so that time does
-> not appear explicitly in the forward or inverse transform.
->
-> If the original function $x(t)$ is limited in frequency to less than
-> half of the sampling frequency (the so-called *Nyquist frequency*),
-> interpolation between sample values produced by the inverse DFT will
-> usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
-> limited as such, the inverse DFT can, in general, not be used to
-> reconstruct $x(t)$ by interpolation.  Note that this limit does not
-> imply that there are *no* methods that can do such a
-> reconstruction—see, e.g., compressed sensing, or finite rate of
-> innovation sampling.
->
-> The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
-> discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
-> the complex plane. The function $e^{j2\pi kn/N}=w^{kn}$ encircles the
-> origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
-> sinusoid for which $n=1$.
->
-> The way in which we defined the DFT leads to a few subtleties
-> when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
-> for increasing values of $k$ in Fig. ([fig:wkn values])
-> for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from $k$
-> to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
-> the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
-> increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
-> is precisely once around the circle, the step equates to $-\frac{2\pi}{N}$,
-> i.e. in the direction of a negative
-> frequency. The components up to $N/2$ represent *positive* frequency
-> components, those above $N/2$ up to $N-1$ represent *negative*
-> frequencies with frequency. The angle increment for the component $N/2$
-> for $N$ even advances precisely halfway around the circle for
-> each increment in $k$ and can therefore be interpreted as either a
-> positive or a negative frequency. This component of the DFT represents
-> the Nyquist Frequency, i.e. half of the sampling frequency, and is
-> useful to orientate oneself when looking at DFT graphics.
->
-> The FFT in turn is simply a special and highly efficient algorithm for
-> calculating the DFT. Whereas a straightforward calculation of the DFT
-> takes of the order of $N^{2}$ calculations to compute, the FFT
-> algorithm requires of the order $N\log N$ calculations. The FFT was
-> the key to the wide-spread use of the DFT in real-time applications
-> and was included in a list of the top $10$ algorithms of the $20^{th}$
-> century by the IEEE journal Computing in Science & Engineering in the
-> year $2000$.
->
-> ![[fig:wkn values]Unit circle samples](../figures/Unit circle samples.png)
-
-[^odd_N]: We leave it as an exercise for the reader to picture the
-          situation for $N$ odd.  In this chapter, all examples use
-          even-order DFTs.
-
 ### Signal properties in the frequency domain
 
 First, we take the FFTs of our three signals and then display the
@@ -1223,6 +1252,8 @@ for ax in axes:
 
 plt.show()
 ```
+
+<!-- caption text="Range traces for: (a) single simulated target, (b) mutiple simulated targets, (c) real-world targets" --> 
 
 Suddenly, the information makes sense!
 
@@ -1313,6 +1344,8 @@ ax2.set_xlim(0, len(V_actual) // 2)
 plt.show()
 ```
 
+<!-- caption text="Logarithm of range traces" -->
+
 The observable dynamic range is much improved in these plots. For
 instance, in the real radar signal the *noise floor* of the radar has
 become visible (i.e., the level where electronic noise in the system
@@ -1371,6 +1404,8 @@ plt.show()
 
 ```
 
+<!-- caption text="Windowed signals for: (a) single simulated target, (b) multiple simulated targets, (c) real targets" -->
+
 And the corresponding FFTs (or "range traces", in radar terms):
 
 ```python
@@ -1394,6 +1429,8 @@ ax1.annotate("New, previously unseen!", (160, -35),
 plt.show()
 
 ```
+
+<!-- caption text="Range traces (spectrum) of windowed signals" -->
 
 Compare these with the earlier range traces. There is a dramatic
 lowering in side lobe level, but at a price: the peaks have changed in
@@ -1490,6 +1527,8 @@ plt.show()
 
 ```
 
+<!-- caption text="Contour plots of range traces along various axes (see diagram)" -->
+
 #### 3D visualization
 
 We can also visualize the volume in three dimensions.
@@ -1551,6 +1590,8 @@ ax.view_init(azim=-45)
 
 plt.show()
 ```
+
+<!-- caption text="3-D visualization of estimated rock slope position" -->
 
 ### Further applications of the FFT
 
