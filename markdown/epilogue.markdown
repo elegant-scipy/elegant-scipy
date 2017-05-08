@@ -110,3 +110,42 @@ book to advance your scientific research! That's the point of SciPy!
 
 In the meantime, we hope you enjoyed this book and found it useful. If so, tell
 all your friends, and leave us a review! ;)
+
+## Beyond SciPy
+
+The SciPy library is written not just in Python, but also in highly optimized C
+and Fortran code that interfaces with Python. Together with NumPy, and related
+libraries, it tries to cover most use cases that come up in scientific data
+analysis, and provides very fast functions for these. Sometimes, however, a
+scientific problem doesn't match at all with what's already in SciPy, and a pure
+Python solution is too slow to be useful. What to do then?
+
+[High-Performance Python](http://shop.oreilly.com/product/0636920028963.do),
+by Micha Gorelick and Ian Ozsvald, covers what you need to know in these
+situations: how to find where you *really* need performance, and the options
+available to get that performance. We highly recommend it.
+
+Here, we want to briefly mention two of those options that are particularly
+relevant in the SciPy world.
+
+First, Cython is a variant of Python that can be compiled to C, but then be
+imported into Python. By providing some type annotations to Python variables,
+the compiled C code can end up being a hundred or even a thousand times faster
+than comparable Python code. Cython is now an industry standard and is used in
+NumPy, SciPy, and many related libraries (such as scikit-image) to provide fast
+algorithms in array-based code.  Kurt Smith has written the simply-titled
+[Cython](http://shop.oreilly.com/product/0636920033431.do) to teach you the
+fundamentals of this language.
+
+An often easier-to-use alternative to Cython is Numba, a just-in-time compiler
+(JIT) for array-based Python. In Numba code, you don't need to annotate types:
+Numba will infer them when a function is first called. Instead, you simply need
+to make sure that you only use basic types (integers, floats, etc), and arrays,
+rather than more complicated Python objects. In these cases, Numba can compile
+the Python code down to very efficient code and gain orders of magnitude speedups.
+
+Numba is still very young, but it is already very useful. Importantly, it shows
+what is possible by Python JITs, which are set to become more commonplace: Python
+3.6 added features to make it easier to use new JITs (the Pyjion JIT is based on
+these). You can see some examples of Numba use, including how to combine it with
+SciPy, in Juan's blog at https://ilovesymposia.com/tag/numba/.
