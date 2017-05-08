@@ -797,8 +797,9 @@ ax.set_xlabel('in-degree distribution')
 ax.set_ylabel('fraction of neurons with higher in-degree distribution')
 ax.scatter(avg_in_degree, 0.0022, marker='v')
 ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
-ax.set_ylim(0.002, 1.0)
+ax.set_ylim(0.002, 1.0);
 ```
+<!-- caption text="The degree distribution of the worm connectome" -->
 
 There you have it: a reproduction of a scientific analysis, using SciPy. We are
 missing the line fit.... But that's what exercises are for.
@@ -875,8 +876,9 @@ ax.set_ylabel('fraction of neurons with higher in-degree distribution')
 ax.scatter(avg_in_degree, 0.0022, marker='v')
 ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
 ax.set_ylim(0.002, 1.0)
-ax.loglog(x, y_fit, c='red')
+ax.loglog(x, y_fit, c='red');
 ```
+<!-- caption text="Power law fit of the worm brain degree distribution" -->
 
 Voilà! A full Figure 6B, fit and all!
 
@@ -980,6 +982,7 @@ visualize the result of SLIC:
 from skimage import color
 io.imshow(color.label2rgb(seg, tiger));
 ```
+<!-- caption text="SLIC segmentation of the tiger image" -->
 
 This shows that the body of the tiger has been split in three parts, with the
 rest of the image in the remaining segments.
@@ -995,6 +998,7 @@ from skimage.future import graph
 g = graph.rag_mean_color(tiger, seg)
 graph.show_rag(seg, g, tiger);
 ```
+<!-- caption text="Region adjacency graph overlaid on the tiger image" -->
 
 Here, you can see the nodes corresponding to each segment, and the edges
 between adjacent segments. These are colored with the YlGnBu (yellow-green-blue)
@@ -1154,6 +1158,7 @@ for i, segment in enumerate(nx.connected_components(g)):
 segmented = map_array[seg]
 plt.imshow(color.label2rgb(segmented, tiger));
 ```
+<!-- caption text="A crude, but complete, segmentation of the tiger image" -->
 
 Oops! Looks like the cat lost its tail!
 
