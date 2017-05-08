@@ -666,6 +666,7 @@ The `pandas` library allows one to read an Excel table over the web, so we will
 use it here to read in the data, then feed that into NetworkX.
 
 ```python
+import pandas as pd
 connectome_url = "http://www.wormatlas.org/images/NeuronConnect.xls"
 conn = pd.read_excel(connectome_url)
 ```
