@@ -662,52 +662,15 @@ project [^openworm], which I encourage you to follow.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
-The direct link to the data is:
-[http://www.wormatlas.org/images/NeuronConnect.xls](http://www.wormatlas.org/images/NeuronConnect.xls)
-Let's start by getting a list of rows out of the file. An elegant pattern from
-Tony Yu [^file-url] enables us to open a remote URL as a local file.
-It uses a
-[context manager](https://docs.python.org/3.6/library/contextlib.html#contextlib.contextmanager)
-to download a remote file to a local temporary file.
-(Your operating system provides Python with a place to put temporary files.)
-
-The funny `@something` syntax might be new to you.
-This is a Python [decorator](https://www.python.org/dev/peps/pep-0318/), a
-function that modifies another function.
-We won't go over decorators just yet, as they are a side point here.
-In Chapter 8, we will discuss a particular decorator in more detail.
-
-We then use the `xlrd` library to read the contents of the Excel file into a
-connectivity matrix.
+The `pandas` library allows one to read an Excel table over the web, so we will
+use it here to read in the data, then feed that into NetworkX.
 
 ```python
-import os
-import xlrd  # Excel-reading library in Python
-
-from urllib.request import urlopen  # getting files from the web, Py3
-
-import tempfile
-from contextlib import contextmanager
-
-@contextmanager
-def url2filename(url):
-    base_filename, ext = os.path.splitext(url)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as f:
-        remote = urlopen(url)
-        f.write(remote.read())
-    try:
-        yield f.name
-    finally:
-        os.remove(f.name)
-
 connectome_url = "http://www.wormatlas.org/images/NeuronConnect.xls"
-
-with url2filename(connectome_url) as fin:
-    sheet = xlrd.open_workbook(fin).sheet_by_index(0)
-    conn = [sheet.row_values(i) for i in range(1, sheet.nrows)]
+conn = pd.read_excel(connectome_url)
 ```
 
-`conn` now contains a list of connections of the form:
+`conn` now contains a pandas DataFrame, with rows of the form:
 
 [Neuron1, Neuron2, connection type, strength]
 
@@ -715,7 +678,8 @@ We are only going to examine the connectome of chemical synapses, so we filter
 out other synapse types as follows:
 
 ```python
-conn_edges = [(n1, n2, {'weight': s}) for n1, n2, t, s in conn
+conn_edges = [(n1, n2, {'weight': s})
+              for n1, n2, t, s in conn.iterrows()
               if t.startswith('S')]
 ```
 
