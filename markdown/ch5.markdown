@@ -1,5 +1,10 @@
 # Contingency tables using sparse coordinate matrices
 
+> I like sparseness. There's something about that minimalist feel that can make
+> something have an immediate impact and make it unique.
+>
+> — Britt Daniel
+
 Many real-world matrices are *sparse*, which means that most of their values are zero.
 
 Using numpy arrays to manipulate sparse matrices wastes a lot of time and energy multiplying many, many values by 0.
