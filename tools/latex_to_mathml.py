@@ -42,7 +42,7 @@ def pipe(command, stdin_data):
 def latex_to_mathml(latex_str):
     mathml = pipe(['blahtexml', '--mathml'], latex_str)
     mathml = ''.join(mathml.split('\n')[1:-2])
-    mathml = mathml.replace('<mathml>', '<math xmlns="http://www.w3.org/1998/Math/MathML">')
+    mathml = mathml.replace('<mathml>', "<math xmlns='http://www.w3.org/1998/Math/MathML'>")
     mathml = mathml.replace('</mathml>', '</math>')
     mathml = mathml.replace('<markup>', '')
     mathml = mathml.replace('</markup>', '')

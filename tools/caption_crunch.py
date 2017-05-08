@@ -48,7 +48,7 @@ for comment in comments:
             if tag.name == 'img':
                 figure_tag = soup.new_tag('figure')
                 figure_caption = soup.new_tag('figcaption')
-                figure_caption.string = caption
+                figure_caption.append(bs4.BeautifulSoup(caption, 'html.parser'))
                 figure_tag.append(figure_caption)
 
                 wrap(tag, figure_tag)
