@@ -13,7 +13,7 @@ modest.  Instead, we want to illustrate an elegant *algorithm*, the
 Fast Fourier Transform (FFT), that is endlessly useful, implemented in
 SciPy, and works, of course, on NumPy arrays.
 
-## Overview and concepts
+## Introducing frequency
 
 We'll start by setting up some plotting styles and importing the usual
 suspects:
