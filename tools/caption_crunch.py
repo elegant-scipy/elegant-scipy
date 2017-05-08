@@ -34,7 +34,7 @@ def is_caption(node):
     if isinstance(node, bs4.Comment):
         return node.strip().startswith('caption')
 
-regexp = re.compile('.*text="(.*?)"')
+regexp = re.compile('.*text="(.*?)"', flags=re.DOTALL)
 
 comments = soup.find_all(string=is_caption)
 for comment in comments:
