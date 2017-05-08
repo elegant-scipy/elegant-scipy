@@ -69,7 +69,6 @@ def optimization_paths():
     fig.subplots_adjust(top = 0.9)
     fig.delaxes(axes[0, 0])
     fig.delaxes(axes[0, 2])
-    fig.suptitle('Comparison of Optimation Methods on Rosenbrock Function (top: cost function)')
 
     x, y = np.ogrid[-2:2:0.05, -1:3:0.05]
     extent = (-2, 2, -1, 3)
