@@ -52,7 +52,6 @@ ax.plot(t, x)
 ax.set_xlabel('Time [s]')
 ax.set_ylabel('Signal amplitude');
 ```
-
 <!-- caption text="A simple periodic function in time" -->
 
 [^discrete]: The discrete Fourier transform operates on sampled data,
@@ -83,7 +82,6 @@ ax.set_ylabel('Frequency Domain (Spectrum) Magnitude')
 ax.set_xlim(-f_s / 2, f_s / 2)
 ax.set_ylim(-5, 110)
 ```
-
 <!-- caption text="Frequencies that make up our periodic signal above" -->
 
 We see that the output of the FFT is a one-dimensional array of the
@@ -165,7 +163,6 @@ ax.set_xlabel('Time [s]')
 ax.set_ylabel('Amplitude [unknown]')
 plt.show()
 ```
-
 <!-- caption text="Audio waveform plot of birdsong" -->
 
 Well, that's not very satisfying, is it.  If I sent this voltage to a
@@ -277,7 +274,6 @@ ax.set_ylabel('Frequency [kHz]')
 ax.set_xlabel('Time [s]')
 plt.show()
 ```
-
 <!-- caption text="Birdsong spectrogram" -->
 
 Much better!  We can now see the frequencies vary over time, and it
@@ -299,7 +295,6 @@ freqs, times, Sx = signal.spectrogram(audio, fs=rate, window='hanning',
 
 plt.pcolormesh(times, freqs, 10 * np.log10(Sx), cmap='viridis');
 ```
-
 <!-- caption text="SciPy built-in rendition of birdsong spectrogram" -->
 
 The only differences are that SciPy returns the spectrum magnitude
@@ -439,7 +434,6 @@ ax1.set_ylabel('Smoothness of input length\n(lower is better)')
 
 plt.show()
 ```
-
 <!-- caption text="FFT execution time vs smoothness for different input lengths" -->
 
 The intuition is that, for smooth numbers, the FFT can be broken up
@@ -630,7 +624,6 @@ ax.imshow(image)
 
 print((M, N), image.dtype)
 ```
-
 <!-- caption text="A noisy image of the moon landing" -->
 
 Do not adjust your monitor!  The image you are seeing is real,
@@ -661,7 +654,6 @@ ax.imshow(np.log(1 + F_magnitude), cmap='viridis',
 ax.set_title('Spectrum magnitude')
 plt.show()
 ```
-
 <!-- caption text="Spectrum of the noisy moon landing image (magnitude)" -->
 
 Note the high values around the origin (middle) of the spectrum—these
@@ -711,7 +703,6 @@ ax1.set_title('Reconstructed image')
 
 plt.show()
 ```
-
 <!-- caption text="Filtered moon landing image and its spectrum" -->
 
 ### Windowing
@@ -734,7 +725,6 @@ ax1.plot(fftpack.fftshift(np.abs(X)))
 ax1.set_ylim(-5, 55)
 plt.show()
 ```
-
 <!-- caption text="Spectrum of a rectangular pulse (magnitude)" -->
 
 In theory, you would need a combination of infinitely many sinusoids
@@ -771,7 +761,6 @@ ax1.plot(fftpack.fftfreq(len(t)), np.abs(X))
 ax1.set_ylim(0, 190)
 plt.show()
 ```
-
 <!-- caption text="Spectrum oscillation due to signal edge discontinuity" -->
 
 Instead of the expected two lines, the peaks are spread out in the
@@ -805,7 +794,6 @@ plt.colorbar(sm).set_label(r'Kaiser $\beta$')
 
 plt.show()
 ```
-
 <!-- caption text="The Kaiser window for various values of $\beta$" -->
 
 By changing the parameter $\beta$, the shape of the window can be
@@ -855,7 +843,6 @@ plt.plot(fftpack.fftfreq(len(t)), np.abs(X_win))
 plt.ylim(0, 190)
 plt.show()
 ```
-
 <!-- caption text="Spectrum of a windowed signal (magnitude)" -->
 
 ## Real-world Application: Analyzing Radar Data
@@ -1219,7 +1206,6 @@ for ax in axes:
 
 plt.show()
 ```
-
 <!-- caption text="Range traces for: (a) single simulated target, (b) mutiple simulated targets, (c) real-world targets" --> 
 
 Suddenly, the information makes sense!
@@ -1310,7 +1296,6 @@ ax2.set_xlim(0, len(V_actual) // 2)
 
 plt.show()
 ```
-
 <!-- caption text="Logarithm of range traces" -->
 
 The observable dynamic range is much improved in these plots. For
@@ -1370,7 +1355,6 @@ axes[2].set_xlabel('Time [ms]')
 plt.show()
 
 ```
-
 <!-- caption text="Windowed signals for: (a) single simulated target, (b) multiple simulated targets, (c) real targets" -->
 
 And the corresponding FFTs (or "range traces", in radar terms):
@@ -1396,7 +1380,6 @@ ax1.annotate("New, previously unseen!", (160, -35),
 plt.show()
 
 ```
-
 <!-- caption text="Range traces (spectrum) of windowed signals" -->
 
 Compare these with the earlier range traces. There is a dramatic
@@ -1493,7 +1476,6 @@ plot_slice(axes[2], V[6, :, :], 'Elevation == 6 slice', 'Range', 'Azimuth')
 plt.show()
 
 ```
-
 <!-- caption text="Contour plots of range traces along various axes (see diagram)" -->
 
 #### 3D visualization
@@ -1557,7 +1539,6 @@ ax.view_init(azim=-45)
 
 plt.show()
 ```
-
 <!-- caption text="3-D visualization of estimated rock slope position" -->
 
 ### Further applications of the FFT
