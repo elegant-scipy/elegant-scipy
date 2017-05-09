@@ -680,7 +680,7 @@ out other synapse types as follows:
 
 ```python
 conn_edges = [(n1, n2, {'weight': s})
-              for n1, n2, t, s in conn.iterrows()
+              for n1, n2, t, s in conn.itertuples(index=False, name=None)
               if t.startswith('S')]
 ```
 
