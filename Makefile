@@ -105,7 +105,7 @@ $(BUILD_HTML)/custom.css:
 # %.ipynb: How to build an IPython notebook from a source Markdown
 #     file.
 $(BUILD_NB)/%.ipynb: %.markdown
-	 notedown --timeout 600 --match python --run $< --output $@
+	PYTHONWARNINGS="ignore" notedown --timeout 600 --match python --run $< --output $@
 
 # .SECONDARY: Ensure ipynb files are not deleted after being generated.
 NBS_ := $(addprefix $(BUILD_NB)/,$(TITLES))
