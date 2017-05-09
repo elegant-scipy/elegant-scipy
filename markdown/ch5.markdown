@@ -1574,4 +1574,12 @@ Using the mean or median of those thresholds, then go and segment a new image. D
 
 <!-- exercise end -->
 
+Sparse matrices are an efficient way of representing data with many gaps – a
+situation that occurs surprisingly often. After reading this chapter, you'll
+probably start noticing opportunities to use them all the time... And you'll
+know how.
+
+One particular situation where sparse matrices come extremely handy is in
+sparse linear algebra. Read on to the next chapter to find out more!
+
 [^bsds]: P. Arbelaez, M. Maire, C. Fowlkes and J. Malik. IEEE TPAMI, Vol. 33, No. 5, pp. 898-916, May 2011.
