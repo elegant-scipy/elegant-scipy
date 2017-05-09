@@ -236,9 +236,9 @@ For the sake of interoperability, we still recommend using English
 characters in most code, but this capability can come in handy, for
 example, in math-heavy Jupyter notebooks[^jupyter-latex-tip].
 
-[^jupyter-latex-tip]: Tip: In the Jupyter notebook, type a LaTeX symbol name
-    followed by the TAB key to have it expanded to unicode.  For
-    example, `\beta<TAB>` becomes β.
+[^jupyter-latex-tip]: Tip: In the IPython terminal or in the Jupyter notebook,
+type a LaTeX symbol name followed by the TAB key to have it expanded to
+unicode.  For example, `\beta<TAB>` becomes β.
 
 The Python 3 update also breaks a lot of existing 2.x code, and in some
 cases executes more slowly than before.  Despite these frustrations,
@@ -249,7 +249,7 @@ issues addressed as the 3.x series matures.
 In Elegant SciPy, we use **Python 3.6**.
 
 For more reading, see Ed Schofield's resource, [python-future.org](python-future.org),
-and Nick Coghlan's book-length guide to the transition ([http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html](http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html)).
+and Nick Coghlan's [book-length guide](http://python-notes.curiousefficiency.org/en/latest/python3/questions_and_answers.html) to the transition.
 
 ## SciPy Ecosystem and Community
 
@@ -328,13 +328,15 @@ For licensing in a scientific context, we recommend this blog post by Jake Vande
 http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/.
 In fact we quote Jake here, to drive home the key points of software licensing:
 
-> ...if you only take three pieces of information away from the article, let them be these:
+> ...if you only take three pieces of information away from the article, let
+> them be these:
 >
 > 1. Always license your code.  Unlicensed code is closed code, so any open license is better than none (but see #2).
 > 2. Always use a GPL-compatible license. GPL-compatible licenses ensure broad compatibility for your code, and include GPL, new BSD, MIT, and others (but see #3).
 > 3. Always use a permissive, BSD-style license. A permissive license such as new BSD or MIT is preferable to a copyleft license such as GPL or LGPL.
-
-> -- Jake VanderPlas http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/
+>
+> — Jake VanderPlas, *[The Whys and Hows of Licensing Scientific
+> Code](http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/)*
 
 All the code in this book is available under the 3-clause BSD license.
 Where we have sourced code snippets from other people, the code was generally be under a permissive open license of some variety (although not necessarily BSD).
@@ -348,15 +350,16 @@ community, for example, has adopted the GPL license.
 We've talked a little about releasing your source code under an open source license.
 This will hopefully result in huge numbers of people downloading your code, using it, fixing bugs and adding new features.
 Where will you put your code so people can find it?
-How will those bug fixes and features get back into your code? How will you keep track of all the issues and changes?
+How will those bug fixes and features get back into your code?
+How will you keep track of all the issues and changes?
 You can imagine how this could get out of control quite quickly.
 
 Enter GitHub.
 
 GitHub (https://github.com/) is a website for hosting, sharing and developing code.
 It is based on the Git version control software (http://git-scm.com/).
-We will help you get started in GitHub land, but there are some great resources
-for a more in-depth experience, such as [Introducing GitHub](http://shop.oreilly.com/product/0636920033059.do) by Peter Bell and Brent Beer.
+There are some great resources to learn to use GitHub, such as [Introducing GitHub](http://shop.oreilly.com/product/0636920033059.do) by Peter Bell and Brent Beer.
+The vast majority of projects in the SciPy ecosystem are hosted on GitHub, so it is certainly worth learning to use it!
 
 GitHub has had a massive effect on open source contributions.
 It did this by allowing users to publish code and collaborate for free.
@@ -367,9 +370,7 @@ You can even keep track of edits, contributors and other fun stats.
 There are a whole bunch of other great GitHub features, but we will leave many them for you to discover and some for you to read in later chapters.
 In essence, GitHub has democratized software development. It has substantially reduced the barrier to entry.
 
-![The impact of GitHub](https://jakevdp.github.io/figures/author_count.png)
-
-**[Used with permission of the author, Jake VanderPlas]**
+![The impact of GitHub (Used with permission of the author, Jake VanderPlas)](https://jakevdp.github.io/figures/author_count.png)
 
 ### Make your Mark on the SciPy Ecosystem
 
@@ -385,8 +386,7 @@ Any code you contribute will be reviewed by others and you will receive feedback
 As a side effect, you will learn how to use Git and GitHub, which are very useful tools for maintaining and sharing your own code.
 You may even find that interacting with the SciPy community provides you with a broader scientific network, and surprising career opportunities.
 
-Later in Elegant SciPy we will show you how to use your new skills to contribute to the GitHub-hosted projects that comprise most of the scientific Python ecosystem.
-In the meantime, we want you to think about being more than just a SciPy user.
+We want you to think about being more than just a SciPy user.
 You are joining a community, and your work will make it a better place for all scientific coders.
 
 ### A Touch of Whimsy with your Py
@@ -440,7 +440,7 @@ See the the book [GitHub repository](https://github.com/elegant-scipy/elegant-sc
 
 ### Accessing the book materials
 
-All of the code from this book is available on our GitHub repository: [https://github.com/elegant-scipy/elegant-scipy](https://github.com/elegant-scipy/elegant-scipy)
+All of the code and data from this book is available on our GitHub repository: [https://github.com/elegant-scipy/elegant-scipy](https://github.com/elegant-scipy/elegant-scipy)
 
 ## Diving in
 
@@ -449,5 +449,3 @@ Along the way we are going to explore some real-world scientific problems that S
 This book is also a glimpse into a welcoming, collaborative scientific coding community that wants you to join in.
 
 Welcome to Elegant SciPy.
-
-Now, let's write some code!
