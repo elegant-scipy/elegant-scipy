@@ -76,11 +76,11 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	echo Chapter: $$TITLE ;\
 	PYTHONIOENCODING="utf_8" tools/latex_to_mathml.py $@.md > $@.mathml && mv $@.mathml $@.md ; \
 	PYTHONIOENCODING="utf_8" tools/footnote_fixer.py $@.md > $@.footnoted && cp $@.footnoted /tmp && mv $@.footnoted $@.md ; \
-	htmlbook -c -s $@.md -o $@ -t "$$TITLE"
-	PYTHONIOENCODING="utf_8" tools/strip_jupyter_style.py $@ > $@.unstyled && mv $@.unstyled $@ ; \
+	${SED_I} 's/^<math/ <math/' $@.md ; \
+	htmlbook -c -s $@.md -o $@ -t "$$TITLE"; \
+	PYTHONIOENCODING="utf_8" tools/strip_jupyter_style.py $@ > $@.unstyled && mv $@.unstyled $@
 	
 	xmllint --schema OReilly_HTMLBook/schema/htmlbook.xsd --noout $@
-	
 	htmlbook -s $@.md -o $@
 	rm $@.md
 	
