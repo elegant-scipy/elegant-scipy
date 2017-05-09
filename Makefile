@@ -88,15 +88,15 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	PYTHONIOENCODING="utf_8" tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	PYTHONIOENCODING="utf_8" tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	PYTHONIOENCODING="utf_8" tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
-	PYTHONIOENCODING="utf_8" tools/audio_objects.py $@ > $@.audio && mv $@.audio $@
 	
 	cp $@ /tmp
 	
 	PYTHONIOENCODING="utf_8" tools/wrap_figure.py $@ > $@.figures && mv $@.figures $@
 	PYTHONIOENCODING="utf_8" tools/caption_crunch.py $@ > $@.captions && mv $@.captions $@
+	PYTHONIOENCODING="utf_8" tools/audio_objects.py $@ > $@.audio && mv $@.audio $@
 	
-	${SED_I} 's/..\/figures/.\/figures/' $@
-	${SED_I} 's/..\/images/.\/images/' $@
+	${SED_I} 's/\.\.\/figures/.\/figures/' $@
+	${SED_I} 's/\.\.\/images/.\/images/' $@
 	${SED_I} 's/data-code-language="output" data-type="programlisting"//' $@
 
 $(BUILD_HTML)/custom.css:
