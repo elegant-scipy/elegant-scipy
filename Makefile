@@ -88,6 +88,7 @@ $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
 	PYTHONIOENCODING="utf_8" tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	PYTHONIOENCODING="utf_8" tools/html_image_unpacker.py $@ > $@.unpacked && mv $@.unpacked $@
 	PYTHONIOENCODING="utf_8" tools/wrap_callouts.py $@ > $@.tagged && mv $@.tagged $@
+	PYTHONIOENCODING="utf_8" tools/audio_objects.py $@ > $@.audio && mv $@.audio $@
 	
 	cp $@ /tmp
 	
