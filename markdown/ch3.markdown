@@ -7,19 +7,6 @@
 >
 > — William Blake, *The Tyger*
 
-> **The origins of Elegant SciPy {.callout}**
->
-> *(A note from Juan.)*
->
-> This chapter gets a special mention because it inspired the whole book.
-> Vighnesh Birodkar wrote this code snippet as an undergraduate while
-> participating in Google Summer of Code (GSoC) 2014.  When I saw this bit of
-> code, it blew me away. For the purposes of this book, it touches on many
-> aspects of scientific Python.  By the time you're done with this chapter, you
-> should be able to process arrays of *any* dimension, rather than thinking of
-> them only as 1D lists or 2D tables.  More than that, you'll understand the
-> basics of image filtering and network processing.
-
 You probably know that digital images are made up of *pixels*. These are
 the light signal *sampled on a regular grid*. When computing
 on images, we often deal with objects much larger than individual pixels.
@@ -37,6 +24,19 @@ common in microscopy, materials science, and climatology, among others. But
 here we will show you how to produce a RAG in a few lines of code using
 NetworkX (a Python library to analyze graphs and networks), and
 a filter from SciPy's N-dimensional image processing submodule, `ndimage`.
+
+> **The origins of Elegant SciPy {.callout}**
+>
+> *(A note from Juan.)*
+>
+> This chapter gets a special mention because it inspired the whole book.
+> Vighnesh Birodkar wrote this code snippet as an undergraduate while
+> participating in Google Summer of Code (GSoC) 2014.  When I saw this bit of
+> code, it blew me away. For the purposes of this book, it touches on many
+> aspects of scientific Python.  By the time you're done with this chapter, you
+> should be able to process arrays of *any* dimension, rather than thinking of
+> them only as 1D lists or 2D tables.  More than that, you'll understand the
+> basics of image filtering and network processing.
 
 ```python
 import networkx as nx
