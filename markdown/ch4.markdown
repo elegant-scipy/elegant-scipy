@@ -534,21 +534,20 @@ the `fftshift` function.
 > summation
 >
 > $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
-> N-1.\label{eq:Forward DFT}$$
+> N-1.$$
 >
 > With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
 > sample values $x_{n}$ through the summation
 >
 > $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
-> kn/N}.\label{eq:Inverse DFT}$$
+> kn/N}.$$
 >
 > Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
 > equation shows that the DFT has decomposed the sequence $x_{n}$ into a
 > complex discrete Fourier series with coefficients $X_{k}$. Comparing
 > the DFT with a continuous complex Fourier series
 >
-> $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},\label{eq:Complex
-> Fourier series}$$
+> $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},$$
 >
 > the DFT is a *finite *series with $N$ terms defined at the equally
 > spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
@@ -938,7 +937,7 @@ propagation speed of electro-magnetic waves in air is ever-so-slightly
 slower than the speed of light in a vacuum) hits a target at a range $R$,
 the echo will reach the radar after a time
 
-$$t_{d}=\frac{2R}{v}.\label{eq:transit time}$$
+$$t_{d}=\frac{2R}{v}.$$
 
 Here it is collected by the receive antenna and converted to a
 sinusoidally fluctuating voltage. The received signal is a replica of
@@ -954,13 +953,13 @@ transmitted and received signals and this will be true for all targets
 after time $t_{s}$ until $t_{e}$. We conclude from
 Fig. [fig:FMCW waveform] that the frequency difference is given by
 
-$$f_{d}=S\times t_{d}=\frac{2SR}{v}\label{eq:difference frequency},$$
+$$f_{d}=S\times t_{d}=\frac{2SR}{v},$$
 
 where $T_{eff}=t_{e}-t_{s}=\frac{N}{f_{s}}$ is the effective sweep duration
 of the radar. The frequency excursion of the sweep during $T_{eff}$ is
 the effective bandwidth of the radar, given by
 
-$$B_{eff}=f_{max}-f_{1}=ST_{eff}.\label{eq:Effective bandwidth}$$
+$$B_{eff}=f_{max}-f_{1}=ST_{eff}.$$
 
 We will see that the range resolution of the radar is determined by
 the effective bandwidth.
@@ -995,7 +994,7 @@ $$ t_R = 2R / v $$
 
 Therefore, the change in frequency for a target at range $R$ will be:
 
-$$ f_{d}= t_R S = \frac{2RS}{v}\label{eq:difference frequency}$$
+$$ f_{d}= t_R S = \frac{2RS}{v}$$
 
 
 ```python
