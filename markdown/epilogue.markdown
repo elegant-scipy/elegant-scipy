@@ -6,7 +6,7 @@
 
 Our main goal with this book was to promote elegant uses of the NumPy and SciPy
 libraries. While teaching you how to do effective scientific analysis with SciPy,
-We hope to have inspired in you the feeling that quality code is something
+we hope to have inspired in you the feeling that quality code is something
 worth striving for.
 
 ## Where to next?

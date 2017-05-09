@@ -194,7 +194,7 @@ How do you draw nodes and edges in such a way that you don't get a complete
 mess such as this one?
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png"/>
-<!-- caption text="Visualization of wikipedia structure. Created by Chris Davis. [CC-BY-SA-3.0](https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License)." -->
+<!-- caption text="Visualization of wikipedia structure. Created by Chris Davis and released under CC-BY-SA-3.0 (https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License)." -->
 
 
 One way is to put nodes that share many edges close together. It turns out
@@ -1085,5 +1085,5 @@ np.corrcoef([pagerank, pagerank_power, pagerank_power2])
 ## Concluding remarks
 
 The field of linear algebra is far too broad to adequately cover in a chapter,
-but we hope that we have given you a taste of the power of it here, and of
+but this chapter gave you a glimpse into its power, and of
 the way Python, NumPy, and SciPy make its elegant algorithms accessible.
