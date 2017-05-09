@@ -1,5 +1,11 @@
 # Contingency tables using sparse coordinate matrices
 
+> I like sparseness. There's something about that minimalist feel that can make
+> something have an immediate impact and make it unique. I'll probably always
+> work with that formula. I just don't know how.
+>
+> — Britt Daniel, lead singer of *Spoon*.
+
 Many real-world matrices are *sparse*, which means that most of their values are zero.
 
 Using numpy arrays to manipulate sparse matrices wastes a lot of time and energy multiplying many, many values by 0.
@@ -1567,5 +1573,13 @@ Try finding the best threshold for a selection of other images from the [Berkele
 Using the mean or median of those thresholds, then go and segment a new image. Did you get a reasonable segmentation?
 
 <!-- exercise end -->
+
+Sparse matrices are an efficient way of representing data with many gaps – a
+situation that occurs surprisingly often. After reading this chapter, you'll
+probably start noticing opportunities to use them all the time... And you'll
+know how.
+
+One particular situation where sparse matrices come extremely handy is in
+sparse linear algebra. Read on to the next chapter to find out more!
 
 [^bsds]: P. Arbelaez, M. Maire, C. Fowlkes and J. Malik. IEEE TPAMI, Vol. 33, No. 5, pp. 898-916, May 2011.
