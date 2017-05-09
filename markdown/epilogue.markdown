@@ -162,6 +162,8 @@ us a line if you want to chat about the book! The individual authors are
 We particularly want to hear about it if you use any of the ideas or code in this
 book to advance your scientific research. That's the point of SciPy!
 
+## Until next time...
+
 In the meantime, we hope you enjoyed this book and found it useful. If so, tell
 all your friends, and come say hi on the mailing lists, at a conference, on
-GitHub, and on Twitter! Thanks for reading.
+GitHub, and on Twitter! Thanks for reading, and here's to even more Elegant SciPy!
