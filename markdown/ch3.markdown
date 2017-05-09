@@ -7,19 +7,6 @@
 >
 > — William Blake, *The Tyger*
 
-> **The origins of Elegant SciPy {.callout}**
->
-> *(A note from Juan.)*
->
-> This chapter gets a special mention because it inspired the whole book.
-> Vighnesh Birodkar wrote this code snippet as an undergraduate while
-> participating in Google Summer of Code (GSoC) 2014.  When I saw this bit of
-> code, it blew me away. For the purposes of this book, it touches on many
-> aspects of scientific Python.  By the time you're done with this chapter, you
-> should be able to process arrays of *any* dimension, rather than thinking of
-> them only as 1D lists or 2D tables.  More than that, you'll understand the
-> basics of image filtering and network processing.
-
 You probably know that digital images are made up of *pixels*. These are
 the light signal *sampled on a regular grid*. When computing
 on images, we often deal with objects much larger than individual pixels.
@@ -37,6 +24,19 @@ common in microscopy, materials science, and climatology, among others. But
 here we will show you how to produce a RAG in a few lines of code using
 NetworkX (a Python library to analyze graphs and networks), and
 a filter from SciPy's N-dimensional image processing submodule, `ndimage`.
+
+> **The origins of Elegant SciPy {.callout}**
+>
+> *(A note from Juan.)*
+>
+> This chapter gets a special mention because it inspired the whole book.
+> Vighnesh Birodkar wrote this code snippet as an undergraduate while
+> participating in Google Summer of Code (GSoC) 2014.  When I saw this bit of
+> code, it blew me away. For the purposes of this book, it touches on many
+> aspects of scientific Python.  By the time you're done with this chapter, you
+> should be able to process arrays of *any* dimension, rather than thinking of
+> them only as 1D lists or 2D tables.  More than that, you'll understand the
+> basics of image filtering and network processing.
 
 ```python
 import networkx as nx
@@ -90,6 +90,7 @@ plt.imshow(random_image);
 # Note ; suppresses the output (i.e. the plotting object text)
 # from being displayed inline in the Jupyter notebook.
 ```
+<!-- caption text="Image displayed by matplotlib's `imshow`" -->
 
 This `imshow` function displays a numpy array as an image. The converse is also true: an image
 can be considered as a numpy array. For this example we use the scikit-image
@@ -99,7 +100,7 @@ Here is a PNG image from the scikit-image repository. It is a black and white
 (sometimes called "grayscale") picture of some ancient Roman coins from
 Pompeii, obtained from the Brooklyn Museum [^coins-source]:
 
-![Coins](https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png)
+![Coins image from the Brooklyn Museum](https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png)
 
 Here is the coin image loaded with scikit-image:
 
@@ -110,6 +111,7 @@ coins = io.imread(url_coins)
 print("Type:", type(coins), "Shape:", coins.shape, "Data type:", coins.dtype)
 plt.imshow(coins);
 ```
+<!-- caption text="Array corresponding to coins image, displayed with matplotlib" -->
 
 A grayscale image can be represented as a *2-dimensional array*, with each array
 element containing the grayscale intensity at that position. So, **an image is
@@ -126,6 +128,7 @@ astro = io.imread(url_astronaut)
 print("Type:", type(astro), "Shape:", astro.shape, "Data type:", astro.dtype)
 plt.imshow(astro);
 ```
+<!-- caption text="Image of astronaut Eileen Collins" -->
 
 This image is *just numpy arrays*. Adding a green square to the image is easy
 once you realize this, using simple numpy slicing:
@@ -135,6 +138,7 @@ astro_sq = np.copy(astro)
 astro_sq[50:100, 50:100] = [0, 255, 0]  # red, green, blue
 plt.imshow(astro_sq);
 ```
+<!-- caption text="Modified image of Eileen Collins" -->
 
 You can also use a boolean *mask*, an array of `True` or `False` values.
 We saw these in Chapter 2 as a way to select rows of a table. In this case, we
@@ -147,6 +151,7 @@ sq_mask[50:100, 50:100] = True
 astro_sq[sq_mask] = [0, 255, 0]
 plt.imshow(astro_sq);
 ```
+<!-- caption text="Another modified image of Eileen Collins" -->
 
 <!-- exercise begin -->
 
@@ -208,6 +213,7 @@ def overlay_grid(image, spacing=128):
 
 plt.imshow(overlay_grid(astro, 128));
 ```
+<!-- caption text="Astronaut image overlaid with a grid" -->
 
 Note that we used `-1` to mean the last value of the axis, as is standard in
 Python indexing. You can omit this value, but the meaning is slightly
@@ -239,6 +245,7 @@ fig, ax = plt.subplots()
 ax.plot(sig);
 ax.set_ylim(-0.1, 1.1);
 ```
+<!-- caption text="Step signal" -->
 
 To find *when* the light is turned on, you can *delay* it by 1ms, then
 *subtract* the original from the delayed signal. This way, when the signal is
@@ -258,6 +265,7 @@ ax.plot(sigon)
 ax.set_ylim(-0.1, 1.1)
 print('Signal on at:', 1 + np.flatnonzero(sigon)[0], 'ms')
 ```
+<!-- caption text="Shifted difference of a step signal" -->
 
 (Here we have used NumPy's `flatnonzero` function to get the first index where
 the `sigon` array is not equal to 0.)
@@ -289,6 +297,7 @@ from scipy import ndimage as ndi
 dsig = ndi.convolve(sig, diff)
 plt.plot(dsig);
 ```
+<!-- caption text="Result of convolving a difference filter with a step signal" -->
 
 Signals are usually *noisy* though, not perfect as above:
 
@@ -296,12 +305,14 @@ Signals are usually *noisy* though, not perfect as above:
 sig = sig + np.random.normal(0, 0.3, size=sig.shape)
 plt.plot(sig);
 ```
+<!-- caption text="Step signal corrupted by noise" -->
 
 The plain difference filter can amplify that noise:
 
 ```python
 plt.plot(ndi.convolve(sig, diff));
 ```
+<!-- caption text="Difference filtering of a noisy signal" -->
 
 In such cases, you can add smoothing to the filter. The most common form of
 smoothing is *Gaussian* smoothing, which takes the weighted average of
@@ -332,6 +343,7 @@ is usually much smaller than the data.
 smooth_diff = ndi.convolve(gaussian_kernel(25, 3), diff)
 plt.plot(smooth_diff);
 ```
+<!-- caption text="Smoothed difference filter" -->
 
 This smoothed difference filter looks for an edge in the central position,
 but also for that difference to continue. This continuation happens in the case
@@ -342,6 +354,7 @@ edge, but not in "spurious" edges caused by noise. Check out the result:
 sdsig = ndi.convolve(sig, smooth_diff)
 plt.plot(sdsig);
 ```
+<!-- caption text="Smoothed difference filter applied to a noisy signal" -->
 
 Although it still looks wobbly, the *signal-to-noise ratio* (SNR),
 is much greater in this version than when using the simple difference filter.
@@ -366,6 +379,7 @@ diff2d = np.array([[0, 1, 0], [1, 0, -1], [0, -1, 0]])
 coins_edges = ndi.convolve(coins, diff2d)
 io.imshow(coins_edges);
 ```
+<!-- caption text="Result of a 2D difference filter applied to the coins image" -->
 
 The principle is the same as the 1D filter: at every point in the image, place the
 filter, compute the dot-product of the filter's values with the image values, and
@@ -426,9 +440,8 @@ def reduce_xaxis_labels(ax, factor):
     plt.setp(ax.xaxis.get_ticklabels(), visible=False)
     for label in ax.xaxis.get_ticklabels()[::factor]:
         label.set_visible(True)
-```
 
-```python
+
 coins_h = ndi.convolve(coins, hsobel)
 coins_v = ndi.convolve(coins, vsobel)
 
@@ -439,6 +452,7 @@ for ax in axes:
     reduce_xaxis_labels(ax, 2)
 
 ```
+<!-- caption text="Directional Sobel filters applied to the coins image" -->
 
 And finally, just like the Pythagorean theorem, you can argue that the edge
 magnitude in *any* direction is equal to the square root of the sum of squares
@@ -448,6 +462,7 @@ of the horizontal and vertical components:
 coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
 plt.imshow(coins_sobel, cmap=plt.cm.viridis);
 ```
+<!-- caption text="Sobel gradient magnitude of the coins image" -->
 
 ## Generic filters: arbitrary functions of neighborhood values
 
@@ -472,6 +487,7 @@ tax_rate_map = ndi.generic_filter(house_price_map, tax, footprint=footprint)
 plt.imshow(tax_rate_map)
 plt.colorbar();
 ```
+<!-- caption text="Generic filter applied to a random image" -->
 
 ### Exercises: generic filters
 
@@ -604,8 +620,9 @@ Now we can try it out on the coins image:
 
 ```python
 sobel_mag = ndi.generic_filter(coins, sobel_magnitude_filter, size=3)
-plt.imshow(sobel_mag)
+plt.imshow(sobel_mag);
 ```
+<!-- caption text="Sobel magnitude implemented by `generic_filter`" -->
 
 <!-- solution end -->
 
@@ -645,52 +662,16 @@ project [^openworm], which I encourage you to follow.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
-The direct link to the data is:
-[http://www.wormatlas.org/images/NeuronConnect.xls](http://www.wormatlas.org/images/NeuronConnect.xls)
-Let's start by getting a list of rows out of the file. An elegant pattern from
-Tony Yu [^file-url] enables us to open a remote URL as a local file.
-It uses a
-[context manager](https://docs.python.org/3.6/library/contextlib.html#contextlib.contextmanager)
-to download a remote file to a local temporary file.
-(Your operating system provides Python with a place to put temporary files.)
-
-The funny `@something` syntax might be new to you.
-This is a Python [decorator](https://www.python.org/dev/peps/pep-0318/), a
-function that modifies another function.
-We won't go over decorators just yet, as they are a side point here.
-In Chapter 8, we will discuss a particular decorator in more detail.
-
-We then use the `xlrd` library to read the contents of the Excel file into a
-connectivity matrix.
+The `pandas` library allows one to read an Excel table over the web, so we will
+use it here to read in the data, then feed that into NetworkX.
 
 ```python
-import os
-import xlrd  # Excel-reading library in Python
-
-from urllib.request import urlopen  # getting files from the web, Py3
-
-import tempfile
-from contextlib import contextmanager
-
-@contextmanager
-def url2filename(url):
-    base_filename, ext = os.path.splitext(url)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as f:
-        remote = urlopen(url)
-        f.write(remote.read())
-    try:
-        yield f.name
-    finally:
-        os.remove(f.name)
-
+import pandas as pd
 connectome_url = "http://www.wormatlas.org/images/NeuronConnect.xls"
-
-with url2filename(connectome_url) as fin:
-    sheet = xlrd.open_workbook(fin).sheet_by_index(0)
-    conn = [sheet.row_values(i) for i in range(1, sheet.nrows)]
+conn = pd.read_excel(connectome_url)
 ```
 
-`conn` now contains a list of connections of the form:
+`conn` now contains a pandas DataFrame, with rows of the form:
 
 [Neuron1, Neuron2, connection type, strength]
 
@@ -698,7 +679,8 @@ We are only going to examine the connectome of chemical synapses, so we filter
 out other synapse types as follows:
 
 ```python
-conn_edges = [(n1, n2, {'weight': s}) for n1, n2, t, s in conn
+conn_edges = [(n1, n2, {'weight': s})
+              for n1, n2, t, s in conn.itertuples(index=False, name=None)
               if t.startswith('S')]
 ```
 
@@ -816,8 +798,9 @@ ax.set_xlabel('in-degree distribution')
 ax.set_ylabel('fraction of neurons with higher in-degree distribution')
 ax.scatter(avg_in_degree, 0.0022, marker='v')
 ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
-ax.set_ylim(0.002, 1.0)
+ax.set_ylim(0.002, 1.0);
 ```
+<!-- caption text="The degree distribution of the worm connectome" -->
 
 There you have it: a reproduction of a scientific analysis, using SciPy. We are
 missing the line fit.... But that's what exercises are for.
@@ -894,8 +877,9 @@ ax.set_ylabel('fraction of neurons with higher in-degree distribution')
 ax.scatter(avg_in_degree, 0.0022, marker='v')
 ax.text(avg_in_degree - 0.5, 0.003, 'mean=%.2f' % avg_in_degree)
 ax.set_ylim(0.002, 1.0)
-ax.loglog(x, y_fit, c='red')
+ax.loglog(x, y_fit, c='red');
 ```
+<!-- caption text="Power law fit of the worm brain degree distribution" -->
 
 Voilà! A full Figure 6B, fit and all!
 
@@ -999,6 +983,7 @@ visualize the result of SLIC:
 from skimage import color
 io.imshow(color.label2rgb(seg, tiger));
 ```
+<!-- caption text="SLIC segmentation of the tiger image" -->
 
 This shows that the body of the tiger has been split in three parts, with the
 rest of the image in the remaining segments.
@@ -1014,6 +999,7 @@ from skimage.future import graph
 g = graph.rag_mean_color(tiger, seg)
 graph.show_rag(seg, g, tiger);
 ```
+<!-- caption text="Region adjacency graph overlaid on the tiger image" -->
 
 Here, you can see the nodes corresponding to each segment, and the edges
 between adjacent segments. These are colored with the YlGnBu (yellow-green-blue)
@@ -1173,6 +1159,7 @@ for i, segment in enumerate(nx.connected_components(g)):
 segmented = map_array[seg]
 plt.imshow(color.label2rgb(segmented, tiger));
 ```
+<!-- caption text="A crude, but complete, segmentation of the tiger image" -->
 
 Oops! Looks like the cat lost its tail!
 
