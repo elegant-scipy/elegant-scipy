@@ -185,7 +185,7 @@ print(array2d.shape)
 
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
 
-<img src="../figures/NumPy_ndarrays.png"/>
+<img src="../figures/NumPy_ndarrays_v2.png"/>
 <!-- caption text="Visualizing NumPy's ndarrays in one, two and three dimensions" -->
 
 Arrays have other attributes, such as `ndim`, the number of dimensions:
