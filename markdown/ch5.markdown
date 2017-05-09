@@ -1,7 +1,8 @@
 # Contingency tables using sparse coordinate matrices
 
 > I like sparseness. There's something about that minimalist feel that can make
-> something have an immediate impact and make it unique.
+> something have an immediate impact and make it unique. I'll probably always
+> work with that formula. I just don't know how.
 >
 > — Britt Daniel, lead singer of *Spoon*.
 
