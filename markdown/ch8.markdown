@@ -330,7 +330,7 @@ def is_sequence(line):
 def reads_to_kmers(reads_iter, k=7):
      for read in reads_iter:
          for start in range(0, len(read) - k):
-             yield read[start : start + k]  # note yeild, so this is a generator
+             yield read[start : start + k]  # note yield, so this is a generator
 
 def kmer_counter(kmer_iter):
     counts = {}
@@ -875,6 +875,5 @@ analysis, think about whether you can do it streaming. If you can, just do it
 from the beginning. Your future self will thank you.
 Doing it later is harder, and results in things like this:
 
-<img src="https://pbs.twimg.com/media/CDxc6HTVIAAsiFO.jpg" alt="TODO"/>
-<!-- caption text="TODOs in history. Comic by Manu Cornet, used with
-permission" -->
+![TODOs in history. Comic by Manu Cornet, http://www.bonkersworld.net/all-engineers-are-the-same/, used with permission.](http://www.bonkersworld.net/images/2012.08.15_todo.png)
+
