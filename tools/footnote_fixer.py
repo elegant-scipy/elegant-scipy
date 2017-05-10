@@ -40,7 +40,6 @@ data = re.sub('^\[\^(.*?)\]: (.*?)\n(\Z|\n)', footnote_index,
 
 def insert_footnote(fid_match):
     fid = fid_match.group(1)
-
     return '<span data-type="footnote">\n{}</span>'.format(footnotes[fid])
 
-print(re.sub('\[\^(.*?)\][^:]', insert_footnote, data))
+print(re.sub('(?<!^) ?\[\^(.*?)\]', insert_footnote, data))
