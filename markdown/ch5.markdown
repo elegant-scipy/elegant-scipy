@@ -1285,11 +1285,11 @@ def xlog1x(arr_or_mat):
     """
     out = arr_or_mat.copy()
     if isinstance(out, sparse.spmatrix):
-        arr = -out.data
+        arr = out.data
     else:
-        arr = -out
+        arr = out
     nz = np.nonzero(arr)
-    arr[nz] *= np.log2(arr[nz])
+    arr[nz] *= np.log2(1 / arr[nz])
     return out
 ```
 
