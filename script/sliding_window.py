@@ -57,6 +57,6 @@ if len(sys.argv) > 1:
 else:
     fn = '/tmp/sliding_window.png'
 
-plt.savefig(fn, dpi=600)
+plt.savefig(fn, dpi=300)
 
 #plt.show()

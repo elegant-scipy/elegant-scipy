@@ -105,5 +105,5 @@ def optimization_paths():
 
 if __name__ == '__main__':
     optimization_paths()
-    plt.savefig(fn, dpi=600)
+    plt.savefig(fn, dpi=300)
     plt.show()

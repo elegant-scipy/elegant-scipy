@@ -38,6 +38,7 @@ legend.fontsize: large
 
 figure.facecolor: 1.0
 figure.autolayout: false
+figure.dpi: 300
 savefig.dpi: 300
 
 image.interpolation: nearest
