@@ -325,7 +325,7 @@ print(y)
 ```
 
 Two shapes are compatible when, for each dimension, either is equal to
-1 (one) or they match one another.
+1 (one) or they match one another[^more_dimensions].
 
 [^more_dimensions]: We always start by comparing the last dimensions,
                     and work our way forward, ignoring excess
