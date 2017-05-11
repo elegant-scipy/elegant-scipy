@@ -70,6 +70,6 @@ ax2.grid()
 ax2.set_xlabel("Time, ms")
 ax2.set_ylabel("$v_{real}(t)$, V")
 
-plt.savefig(fn, dpi=600)
+plt.savefig(fn, dpi=300)
 
 plt.show()

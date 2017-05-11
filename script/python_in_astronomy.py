@@ -164,4 +164,4 @@ if __name__ == "__main__":
                for name, queries in languages.items()}
 
     trendlines(results, norm=True)
-    plt.savefig(fn, dpi=600)
+    plt.savefig(fn, dpi=300)
