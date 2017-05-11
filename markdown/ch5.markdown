@@ -1289,7 +1289,7 @@ def xlog1x(arr_or_mat):
     else:
         arr = out
     nz = np.nonzero(arr)
-    arr[nz] *= np.log2(1 / arr[nz])
+    arr[nz] *= -np.log2(arr[nz])
     return out
 ```
 
