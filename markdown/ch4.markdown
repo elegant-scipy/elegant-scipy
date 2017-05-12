@@ -262,7 +262,7 @@ log_{10}\left(\mathrm{amplitude ratio}\right)$.
 f, ax = plt.subplots(figsize=(10, 5))
 
 S = np.abs(spectrum)
-S = 20 * np.log10(S / S.max())
+S = 20 * np.log10(S / np.max(S))
 
 ax.imshow(S, origin='lower', cmap='viridis',
           extent=(0, L, 0, rate / 2 / 1000))
