@@ -8,7 +8,7 @@
 > — William Blake, *The Tyger*
 
 You probably know that digital images are made up of *pixels*. These are
-the light signal *sampled on a regular grid*. When computing
+*samples* of the light signal *on a regular grid*. When computing
 on images, we often deal with objects much larger than individual pixels.
 In a landscape, the sky, earth, trees, and rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
@@ -81,7 +81,7 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-Finally, "make some noise" and display it as an image:
+Then, we "make some noise" and display it as an image:
 
 ```python
 import numpy as np
@@ -272,7 +272,7 @@ the `sigon` array is not equal to 0.)
 
 It turns out that this can be accomplished by an signal processing operation
 called *convolution*. At every point of the signal, we compute the dot-product
-between the values surrounding it and a *kernel* or *filter*, which is a
+between the values surrounding that point and a *kernel* or *filter*, which is a
 predetermined vector of values. Depending on the kernel, then, the convolution
 shows a different feature of the signal.
 
@@ -658,7 +658,7 @@ another. (*Synapses* are the chemical connections through which neurons
 communicate.) The worm is an awesome example of neural connectivity analysis
 because every worm (of this species) has the same number of neurons (302), and the
 connections between them are all known. This has resulted in the fantastic Openworm
-project [^openworm], which I encourage you to follow.
+project [^openworm], which we encourage you to follow.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
@@ -1007,7 +1007,7 @@ colormap from matplotlib, according to the difference in color between the
 two nodes.
 
 The figure also shows the magic of thinking of segmentations as graphs: you can
-see that edges between nodes within the tiger and those outside of it are darker
+see that edges between nodes within the tiger and those outside of it are brighter
 (higher-valued) than edges within the same object. Thus, if we can cut the
 graph along those edges, we will get our segmentation. We have chosen an easy
 example for color-based segmentation, but the same principles hold true for
@@ -1043,7 +1043,7 @@ def build_rag(labels, image):
     return g
 ```
 
-This works, but if you want to segment a 3D image, you'll have to write a
+Whew! This works, but if you want to segment a 3D image, you'll have to write a
 different version:
 
 ```python
@@ -1111,12 +1111,12 @@ def build_rag(labels, image):
     return g
 ```
 
-Here's a few reasons why we think this is a brilliant piece of code:
+Here's a few reasons this is a brilliant piece of code:
 
 - `ndi.generic_filter` iterates over array elements *with their neighbors*.
   (Use `numpy.ndindex` to simply iterate over array indices.)
 - We return "0.0" from the filter function because `generic_filter` requires
-  the filter function to return a float. However, we will ignore the filter
+  the filter function to return a float. However, we will ignore the filter's
   output, and only use it for its "side effect" of adding edges to the graph.
 - The loops are not nested several levels deep. This makes the code more
   compact, easier to take in in one go.
