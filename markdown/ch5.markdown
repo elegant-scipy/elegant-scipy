@@ -1206,15 +1206,15 @@ $$
 Here's a simple example:
 
 ```python
-aseg = np.array([[0, 1],
-                 [2, 3]], int)
+S = np.array([[0, 1],
+              [2, 3]], int)
 
-gt = np.array([[0, 1],
-               [0, 1]], int)
+T = np.array([[0, 1],
+              [0, 1]], int)
 ```
 
-Here we have two segmentations of a four-pixel image: `as` and `gt`. `as`
-puts every pixel in its own segment, while `gt` puts the left two pixels in
+Here we have two segmentations of a four-pixel image: `S` and `T`. `S`
+puts every pixel in its own segment, while `T` puts the left two pixels in
 segment 0 and the right two pixels in segment 1.
 Now, we make a contingency table of the pixel labels, just as we did with
 the spam prediction labels.
@@ -1223,18 +1223,18 @@ the 1D arrays of predictions.
 In fact, this doesn't matter:
 remember that numpy arrays are actually linear (1D) chunks of data with some
 shape and other metadata attached.
-We can ignore the shape by using the arrays' `.ravel()` method:
+As we mentioned before, we can ignore the shape by using the arrays' `.ravel()` method:
 
 ```python
-aseg.ravel()
+S.ravel()
 ```
 
 Now we can just make the contingency table in the same way as when we were
 predicting spam:
 
 ```python
-cont = sparse.coo_matrix((np.broadcast_to(1., aseg.size),
-                          (aseg.ravel(), gt.ravel())))
+cont = sparse.coo_matrix((np.broadcast_to(1., S.size),
+                          (S.ravel(), T.ravel())))
 cont = cont.toarray()
 cont
 ```
@@ -1247,11 +1247,11 @@ cont /= np.sum(cont)
 ```
 
 Finally, we can use this table to compute the probabilities of labels in *either*
-`aseg` or `gt`, using the axis-wise sums:
+`S` or `T`, using the axis-wise sums:
 
 ```python
-p_as = np.sum(cont, axis=1)
-p_gt = np.sum(cont, axis=0)
+p_S = np.sum(cont, axis=1)
+p_T = np.sum(cont, axis=0)
 ```
 
 There is a small kink in writing Python code to compute entropy:
@@ -1311,15 +1311,15 @@ xlog1x(mat).A
 So, the conditional entropy of $S$ given $T$:
 
 ```python
-H_ag = np.sum(np.sum(xlog1x(cont / p_gt), axis=0) * p_gt)
-H_ag
+H_ST = np.sum(np.sum(xlog1x(cont / p_T), axis=0) * p_T)
+H_ST
 ```
 
 And the converse:
 
 ```python
-H_ga = np.sum(np.sum(xlog1x(cont / p_as[:, np.newaxis]), axis=1) * p_as)
-H_ga
+H_TS = np.sum(np.sum(xlog1x(cont / p_S[:, np.newaxis]), axis=1) * p_S)
+H_TS
 ```
 
 ### Converting NumPy array code to use sparse matrices
@@ -1374,11 +1374,11 @@ def variation_of_information(x, y):
     return float(hygx + hxgy)
 ```
 
-We can check that this gives the right value (1) for the VI of our toy `aseg`
-and `gt`:
+We can check that this gives the right value (1) for the VI of our toy `S`
+and `T`:
 
 ```python
-variation_of_information(aseg, gt)
+variation_of_information(S, T)
 ```
 
 You can see how we use three types of sparse matrices (COO, CSR, and diagonal)
