@@ -788,7 +788,7 @@ def plot_model(model, labels, figure=None):
         axis.set_ticklabels(labels)
     return ax
 
-plot_model(model, labels=' ACGTacgt');
+plot_model(model, labels='ACGTacgt');
 ```
 <!-- caption text="Transition probability matrix for genetic sequence in the
 *Drosophila melanogaster* genome" -->
