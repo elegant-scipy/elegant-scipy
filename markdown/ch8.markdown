@@ -860,7 +860,7 @@ You can try this out with the compressed drosophila genome file:
 ```python
 dm = 'data/dm6.fa.gz'
 model = tz.pipe(dm, genome_gz, c.take(10**7), markov)
-plot_model(model, labels=' ACGTacgt')
+plot_model(model, labels='ACGTacgt')
 ```
 
 If you want to have a single `genome` function, you could write a custom `open`
