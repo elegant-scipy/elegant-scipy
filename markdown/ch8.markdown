@@ -814,7 +814,7 @@ plot_model(model, labels='ACGTacgt');
 <!-- caption text="Transition probability matrix for genetic sequence in the
 *Drosophila melanogaster* genome" -->
 
-Notice how the G-A and G-C transitions are different between the repeat and
+Notice how the C-A and G-C transitions are different between the repeat and
 non-repeat parts of the genome. This information can be used to classify
 previously unseen DNA sequence.
 
