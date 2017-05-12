@@ -922,7 +922,7 @@ after which a next frequency sweep occurs.
 
 This signal is radiated by a directional transmit antenna. When the
 wave with propagation velocity $v\approx300\times10^{6}$ m/s (the
-propagation speed of electro-magnetic waves in air is ever-so-slightly
+propagation speed of electromagnetic waves in air is ever-so-slightly
 slower than the speed of light in a vacuum) hits a target at a range $R$,
 the echo will reach the radar after a time
 
@@ -1248,7 +1248,7 @@ before with the spectrogram:
 
 ```python
 c = 3e8  # Approximately the speed of light and of
-         # electro-magnetic waves in air
+         # electromagnetic waves in air
 
 fig, (ax0, ax1,ax2) = plt.subplots(3, 1, figsize=(15, 7))
 
