@@ -255,8 +255,8 @@ The spectrum can contain both very large and very small values.
 Taking the log compresses the range significantly.
 
 Here we do a log plot of the ratio of the signal divided by the maximum signal.
-The specific unit used for the radio is the decibel, $20
-log_10(\mathrm{amplitude ratio})$.
+The specific unit used for the ratio is the decibel, $20
+log_{10}\left(\mathrm{amplitude ratio}\right)$.
 
 ```python
 f, ax = plt.subplots(figsize=(10, 5))
@@ -536,8 +536,7 @@ the `fftshift` function.
 > With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
 > sample values $x_{n}$ through the summation
 >
-> $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
-> kn/N}.$$
+> $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi kn/N}.$$
 >
 > Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
 > equation shows that the DFT has decomposed the sequence $x_{n}$ into a
@@ -549,7 +548,7 @@ the `fftshift` function.
 > the DFT is a *finite *series with $N$ terms defined at the equally
 > spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
 > in the interval $[0,2\pi)$,
-> i.e. *including* $0$  and *excluding* $3\pi$.
+> i.e. *including* $0$  and *excluding* $2\pi$.
 > This automatically normalizes the DFT so that time does
 > not appear explicitly in the forward or inverse transform.
 >
@@ -571,7 +570,7 @@ the `fftshift` function.
 >
 > The way in which we defined the DFT leads to a few subtleties
 > when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
-> for increasing values of $k$ in Fig. ([fig:wkn values])
+> for increasing values of $k$ in Fig.
 > for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from $k$
 > to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
 > the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
