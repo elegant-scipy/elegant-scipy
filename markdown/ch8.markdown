@@ -537,13 +537,13 @@ integer_histogram(counts, xlim=(-1, 250), lw=2)
 <!-- caption text="Histogram of k-mer counts" -->
 
 > **Tips for working with streams {.callout}**
->  - (list of list -> list) with tz.concat
->  - don’t get caught out:
->     * iterators get consumed.
+>  - Convert "list of list" to "long list" with `tz.concat`
+>  - Don’t get caught out:
+>     * Iterators get consumed.
 So if you make a generator object and do some processing on it, and then a later step fails, you need to re-create the generator.
 The original is already gone.
->     * iterators are lazy. You need to force evaluation sometimes.
->  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
+>     * Iterators are lazy. You need to force evaluation sometimes.
+>  - When you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
      Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
      You can also insert `map(do(print))` (`map` and `do` are from
      `toolz.curried`) at any point in a stream to print each element while it
