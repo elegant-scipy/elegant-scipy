@@ -24,7 +24,7 @@ algebra conventions: in Python, variables names should usually begin with a
 lower case letter. However, in linear algebra, matrices are denoted by
 a capital letter, while vectors and scalar values are lowercase. Since we're
 going to be dealing with quite a few matrices and vectors, following the
-linear algbrea converton helps to keep them straight. Therefore, variables
+linear algebra convention helps to keep them straight. Therefore, variables
 that represent matrices will start with a capital letter, while vectors and
 numbers will start with lowercase:
 
