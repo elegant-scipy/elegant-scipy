@@ -140,7 +140,6 @@ is an interactive interface for Python, which allows you to quickly interact wit
 https://ipython.org/
 * The **Jupyter**
 notebook runs in your browser and allows you to write code in line with text and mathematical expressions, displaying the results of computation within the text.
-This entire book has been written with Jupyter.
 Jupyter started out as an IPython extension, but now supports multiple languages, including Cython, Julia, R, Octave, Bash, Perl and Ruby.
 http://jupyter.org
 * **pandas**
