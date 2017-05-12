@@ -260,7 +260,7 @@ What was originally multiple lines, or an unwieldy mess of parentheses, is now a
 Much easier to understand!
 
 This strategy also has an advantage over the original NumPy implementation: if we scale our data to millions or billions of rows, our computer might struggle to hold all the data in memory.
-In contrast, here we are only loading lines from disk one at a time, and maintaining a single line's worth of data.
+In contrast, here we are only loading lines from disk one at a time, and maintaining only a single line's worth of data.
 
 ## k-mer counting and error correction
 
@@ -397,6 +397,8 @@ counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
                  tz.frequencies)
 ```
 
+But, just a minute: what are all those `c.function` calls from `toolz.curried`?
+
 ## Currying: the spice of streaming
 
 Earlier, we briefly used a *curried* version of the `map` function, which
@@ -460,15 +462,15 @@ Now let's leave out the second variable.
 add_curried(2)
 ```
 
-As we expected, it returned a function. Yay!
-Now let's see if we can use that returned function as expected.
+As we expected, it returned a function.
+Now let's use that function:
 
 ```python
 add2 = add_curried(2)
 add2(5)
 ```
 
-Now, that worked, but `add_curried` was a reasonably hard function to read.
+Now, that worked, but `add_curried` was a hard function to read.
 Future us will probably have trouble remembering how we wrote that code.
 Luckily, Toolz has the, well, tools to help us out.
 
@@ -485,7 +487,7 @@ add_partial(5)
 
 To summarize what we did, `add` is now a curried function, so it can take one of the arguments and returns another function, `add_partial`, which “remembers” that argument.
 
-In fact, all of the Toolz functions are also available as curried functions in the toolz.curried namespace.
+In fact, all of the Toolz functions are also available as curried functions in the `toolz.curried` namespace.
 Toolz also includes curried version of some handy higher order Python functions like `map`, `filter` and `reduce`.
 We will import the `curried` namespace as `c` so our code doesn't get too cluttered.
 So for example the curried version of `map` will be `c.map`.
