@@ -1538,6 +1538,8 @@ Hints:
 
 <!-- solution begin -->
 
+**Solution:**
+
 ```python
 from scipy import signal
 
