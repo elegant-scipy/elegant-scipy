@@ -153,7 +153,7 @@ Then, calculate the length of the snippet and plot the audio.
 N = audio.shape[0]
 L = N / rate
 
-print('Audio length: {:.2f} seconds'.format(L))
+print(f'Audio length: {L:.2f} seconds')
 
 f, ax = plt.subplots()
 ax.plot(np.arange(N) / rate, audio)
@@ -217,7 +217,7 @@ from skimage import util
 M = 1024
 
 slices = util.view_as_windows(audio, window_shape=(M,), step=100)
-print('Audio shape: {}, Sliced audio shape: {}'.format(audio.shape, slices.shape))
+print(f'Audio shape: {audio.shape}, Sliced audio shape: {slices.shape}')
 ```
 
 Generate a windowing function (see the section on windowing for a
@@ -482,7 +482,7 @@ frequency component appear:
 z = np.ones(10)
 z[::2] = -1
 
-print("Applying FFT to {}".format(z))
+print(f'Applying FFT to {z}')
 fftpack.fft(z)
 ```
 
