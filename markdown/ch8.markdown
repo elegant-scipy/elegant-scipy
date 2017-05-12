@@ -103,7 +103,7 @@ This quote from one of Matt's blog posts very succinctly summarizes the utility 
 > In my brief experience people rarely take this [streaming] route.
 They use single-threaded in-memory Python until it breaks, and then seek out Big Data Infrastructure like Hadoop/Spark at relatively high productivity overhead.
 
-Indeed, this describes my computational career perfectly, up until recent months.
+Indeed, this describes our computational careers perfectly.
 But the intermediate approach can get you a *lot* farther than you think.
 In some cases, it can get you there even faster than the supercomputing approach, by eliminating the overhead of multi-core communication and random-access to databases.
 (For example, see [this post](http://www.frankmcsherry.org/graph/scalability/cost/2015/02/04/COST2.html) by Frank McSherry, where he processes a 128 billion edge graph on his laptop *faster* than using a graph database on a supercomputer.)
