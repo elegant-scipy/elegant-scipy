@@ -584,13 +584,13 @@ The above code uses numpy arrays to hold the matrix and perform
 the necessary computations. Because we are using a small graph of fewer than 300
 nodes, this is feasible. However, for larger graphs, it would fail.
 
-In what follows, we will analyze the dependency graph for packages in the
-Python Package Index, or PyPI, which contains over 75 thousand packages. To
-hold the Laplacian matrix for this graph would take 
-up $8 \left(75 \times 10^3\right)^2 = 45 \times 10^9$ bytes, or 45GB,
+For example, one might want to analyse the relationships between libraries
+listed on the Python Package Index, or PyPI, which contains over one hundred thousand packages.
+Holding the Laplacian matrix for this graph would take 
+up $8 \left(100 \times 10^3\right)^2 = 8 \times 10^10$ bytes, or 80GB,
 of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
 and, say, two temporary matrices used during calculations, you climb up to
-270GB, beyond the reach of most desktop computers.
+480GB, beyond the reach of most desktop computers.
 
 "Ha!", some of you might be thinking. "Ha! My desktop has 512GB of RAM! It would
 make short work of this so-called 'large' graph!"
