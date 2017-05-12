@@ -87,8 +87,6 @@ Then, we "make some noise" and display it as an image:
 import numpy as np
 random_image = np.random.rand(500, 500)
 plt.imshow(random_image);
-# Note ; suppresses the output (i.e. the plotting object text)
-# from being displayed inline in the Jupyter notebook.
 ```
 <!-- caption text="Image displayed by matplotlib's `imshow`" -->
 
