@@ -90,7 +90,7 @@ zero, except for two entries.  Traditionally, we visualize the
 magnitude of the result as a *stem plot*, in which the height of each
 stem corresponds to the underlying value.
 
-(We'll explain why you see positive and negative frequencies later on
+(We explain why you see positive and negative frequencies later on
 in the sidebox titled "Discrete Fourier transforms".  You may also
 refer to that section for a more in-depth overview of the underlying
 mathematics.)
@@ -109,7 +109,7 @@ of goals.
 ## Illustration: a birdsong spectrogram
 
 Let's start with one of the most common applications, converting a sound signal (consisting of variations of air pressure over time) to a *spectrogram*.
-(You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
+You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.
 
 ![The Numark EQ2600 Stereo Equalizer; image used with permission from the author, Sergey Gerasimuk. Source: http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html](../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG)
 
@@ -162,7 +162,7 @@ ax.set_ylabel('Amplitude [unknown]');
 ```
 <!-- caption text="Audio waveform plot of birdsong" -->
 
-Well, that's not very satisfying, is it.  If I sent this voltage to a
+Well, that's not very satisfying, is it?  If I sent this voltage to a
 speaker, I might hear a bird chirping, but I can't very well imagine
 how it would sound like in my head.  Is there a better way of *seeing*
 what is going on?
@@ -195,7 +195,7 @@ time! [^time]
          and time of occurrence, read up on wavelet analysis.
 
 So, to find both the frequencies and the time at which they were sung,
-we'll need to be somewhat clever.  Our strategy will be as follows:
+we'll need to be somewhat clever.  Our strategy is as follows:
 take the audio signal, split it into small, overlapping slices, and
 apply the Fourier transform to each (a technique known as the Short
 Time Fourier Transform).
@@ -334,7 +334,8 @@ The discrete Fourier transform functionality in SciPy lives in the
 `scipy.fftpack`` module.  Among other things, it provides the
 following DFT-related functionality:
 
- - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform using the Fast Fourier Transform algorithm
+ - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform using
+   the Fast Fourier Transform algorithm in 1, 2, or `n` dimensions.
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
  - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the spectrum and back, respectively (more about that soon).
@@ -355,7 +356,7 @@ software license.
 
 ## Choosing the length of the DFT
 
-Consider that a naive calculation of the DFT takes $\mathcal{O}\left(N^2\right)$ operations [^big_O].
+A naive calculation of the DFT takes $\mathcal{O}\left(N^2\right)$ operations [^big_O].
 How come?  Well, you have $N$
 (complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
 1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
@@ -579,7 +580,7 @@ the `fftshift` function.
 > i.e. in the direction of a negative
 > frequency. The components up to $N/2$ represent *positive* frequency
 > components, those above $N/2$ up to $N-1$ represent *negative*
-> frequencies with frequency. The angle increment for the component $N/2$
+> frequencies. The angle increment for the component $N/2$
 > for $N$ even advances precisely halfway around the circle for
 > each increment in $k$ and can therefore be interpreted as either a
 > positive or a negative frequency. This component of the DFT represents
