@@ -524,6 +524,20 @@ def genome(file_pattern):
 ## Back to counting k-mers
 
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
+Here's that code again that used those curried functions:
+
+```python
+from toolz import curried as c
+
+k = 7
+counts = tz.pipe('data/sample.fasta', open,
+                 c.filter(is_sequence),
+                 c.map(str.rstrip),
+                 c.map(c.sliding_window(k)),
+                 tz.concat, c.map(''.join),
+                 tz.frequencies)
+```
+
 We can now observe the frequency of different k-mers:
 
 ```python
