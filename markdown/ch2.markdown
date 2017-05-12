@@ -88,7 +88,7 @@ Arrays support many kinds of data manipulation through *fancy indexing*:
 also among the most useful. We will explore it further in the text that
 follows.
 
-## Get the data
+## Getting the data
 
 As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq data set.
 Our goal is to predict mortality in skin cancer patients using their RNA expression data.

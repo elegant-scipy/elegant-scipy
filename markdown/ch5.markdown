@@ -79,7 +79,7 @@ def variation_of_information(x, y):
 >
 > Python 3.5's `@` operator gives us the best of both worlds!
 
-## Contingency matrices
+## Contingency tables
 
 But let's start simple and work our way up to segmentations.
 
@@ -835,7 +835,7 @@ algebra.
 So now that we've seen a "standard" use of SciPy's sparse matrices, let's have
 a look at the out-of-the-box use that inspired this chapter.
 
-## Back to contingency matrices
+## Back to contingency tables
 
 You might recall that we are trying to quickly build a sparse, joint
 probability matrix using SciPy's sparse formats. We know that the COO format
@@ -925,7 +925,7 @@ one of size 1.
 
 <!-- exercise end -->
 
-## Contingency matrices in segmentation
+## Contingency tables in segmentation
 
 You can think of the segmentation of an image in the same way as the classification problem above:
 The segment label at each *pixel* is a *prediction* about which *class* the pixel belongs to.
@@ -1179,7 +1179,7 @@ $$
 VI(A, B) = H(A | B) + H(B | A)
 $$
 
-## Information theory applied to segmentation
+## Information theory in segmentation: variation of information
 
 Back in the image segmentation context, "days" become "pixels", and "rain" and "month"
 become "label in automated segmentation ($S$)" and "label ground truth ($T$)".
@@ -1320,7 +1320,7 @@ H_ga = np.sum(np.sum(xlog1x(cont / p_as[:, np.newaxis]), axis=1) * p_as)
 H_ga
 ```
 
-### Converting NumPy array code to use sparse matrices
+## Converting NumPy array code to use sparse matrices
 
 We used numpy arrays and broadcasting in the above examples, which, as we've
 seen many times, is a powerful way to analyze data in Python.
@@ -1382,7 +1382,7 @@ to efficiently solve the entropy calculation in the case of sparse contingency
 matrices, where NumPy would be inefficient.
 (Indeed, this whole approach was inspired by a Python `MemoryError`!)
 
-### Using variation of information
+## Using variation of information
 
 To finish, let's demonstrate the use of VI to estimate the best possible
 automated segmentation of an image.

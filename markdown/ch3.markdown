@@ -489,8 +489,6 @@ plt.colorbar();
 ```
 <!-- caption text="Generic filter applied to a random image" -->
 
-### Exercises: generic filters
-
 <!-- exercise begin -->
 
 **Exercise:** Conway's Game of Life.
@@ -806,8 +804,6 @@ There you have it: a reproduction of a scientific analysis, using SciPy. We are
 missing the line fit.... But that's what exercises are for.
 
 <!-- exercise begin -->
-
-### Exercise: Complete Figure 6B from the paper
 
 This exercise is a bit of a preview for chapter 7 (optimization):
 use `scipy.optimize.curve_fit` to fit the tail of the
