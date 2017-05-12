@@ -195,7 +195,7 @@ def confusion_matrix1(pred, gt):
     return cont
 ```
 
-The first option would be considered the more "Pythonic" of the two, but the
+The first option might be considered the more "Pythonic" of the two, but the
 second one is easier to speed up by translating and compiling in languages or
 tools such as C, Cython, and Numba (which are a topic for another book).
 
@@ -277,7 +277,7 @@ equal to 0.
 
 - the `row` and `col` arrays, which together specify the location of each
   non-zero entry (row and column indices, respectively).
-- the `data` array, which specifies the *value* at each location.
+- the `data` array, which specifies the *value* at each of those locations.
 
 Every part of the matrix that is not represented by the `(row, col)` pairs is
 considered to be 0.
@@ -439,14 +439,14 @@ print('The CSR and NumPy arrays are equal: ',
 ```
 
 The ability to store large, sparse matrices, and perform computations on them,
-is incredibly powerful!
+is incredibly powerful, and can be applied in many domains.
 
-The combination of sparsity and linear algebra abounds. For example,
+For example,
 one can think of the entire web as a large, sparse, $N \times N$ matrix.
 Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
 By normalizing this matrix and solving for its dominant eigenvector,
 one obtains the so-called PageRank—one of the numbers Google uses to
-order your search results. (You can read more about this in the next chapter!)
+order your search results. (You can read more about this in the next chapter.)
 
 As another example, we can represent the human brain as a large $m \times m$
 graph, where there are $m$ nodes (positions) in which you
@@ -637,14 +637,16 @@ point approximation error:
 print(H @ H @ H @ point)
 ```
 
-Now, we will build a function that defines a "sparse operator".  The goal of
+Now, we will build a function that defines a "sparse operator". The goal of
 the sparse operator is to take all pixels of the output image, figure out where
-they came from in the input image and, doing the appropriate (bi-linear)
-interpolation (see figure), calculate their values. It does this using just
+they came from in the input image, and do the appropriate (bi-linear)
+interpolation (see figure below) to calculate their values. It does this using just
 matrix multiplication on the image values, and thus is extremely fast.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg"/>
-<!-- caption text="Diagram explaining bilinear interpolation" -->
+<!-- caption text="Diagram explaining bilinear interpolation. The value at
+point $P$ is estimated as a weighted sum of the values at $Q_{11}$, $Q_{12}$,
+$Q_{21}$, $Q_{22}$." -->
 
 Let's look at the function that builds our sparse operator:
 
@@ -921,7 +923,8 @@ print(cont.toarray())
 ```
 
 Boom. Instead of making an array as big as the original data, we just make
-one of size 1.
+one of size 1. As we handle bigger and bigger datasets, such optimizations become
+increasingly important.
 
 <!-- solution end -->
 
@@ -972,6 +975,7 @@ COO format to confirm that this represents the matrix we want:
 print(cont.toarray())
 ```
 
+How do we convert this table into a measure of how well `seg` represents `gt`?
 Segmentation is a hard problem, so it's important to measure how well a
 segmentation algorithm is doing, by comparing its output to a "ground truth"
 segmentation that is manually produced by a human.
@@ -982,6 +986,11 @@ automated segmentation is to a ground truth?  We'll illustrate one method, the
 to the following question: on average, for a random pixel, if we are given its
 segment ID in one segmentation, how much more *information* do we need to
 determine its ID in the other segmentation?
+
+Intuitively, if the two segmentations are exactly alike, then knowing the segment
+ID in one tells you the segment ID in the other, with no additional information.
+But as the segmentations become more different, knowing an ID in one doesn't tell
+you everything you need to know about the other.
 
 ## Information theory in brief
 
@@ -1332,7 +1341,7 @@ We can instead use `sparse` throughout the calculation, and recast some of the
 NumPy magic as linear algebra operations.
 This was
 [suggested](http://stackoverflow.com/questions/16043299/substitute-for-numpy-broadcasting-using-scipy-sparse-csc-matrix)
-to me by Warren Weckesser on StackOverflow.
+to us by Warren Weckesser on StackOverflow.
 
 The linear algebra version efficiently computes a contingency matrix for very
 large amounts of data, up to billions of points, and is elegantly concise.
