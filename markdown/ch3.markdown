@@ -462,7 +462,7 @@ of the horizontal and vertical components:
 
 ```python
 coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
-plt.imshow(coins_sobel, cmap=plt.cm.viridis);
+plt.imshow(coins_sobel, cmap='viridis');
 ```
 <!-- caption text="Sobel gradient magnitude of the coins image" -->
 
@@ -622,7 +622,7 @@ Now we can try it out on the coins image:
 
 ```python
 sobel_mag = ndi.generic_filter(coins, sobel_magnitude_filter, size=3)
-plt.imshow(sobel_mag);
+plt.imshow(sobel_mag, cmap='viridis');
 ```
 <!-- caption text="Sobel magnitude implemented by `generic_filter`" -->
 
@@ -669,7 +669,7 @@ use it here to read in the data, then feed that into NetworkX.
 
 ```python
 import pandas as pd
-connectome_url = "http://www.wormatlas.org/images/NeuronConnect.xls"
+connectome_url = 'http://www.wormatlas.org/images/NeuronConnect.xls'
 conn = pd.read_excel(connectome_url)
 ```
 
@@ -721,7 +721,7 @@ Now we can find the neurons with highest centrality using the Python built-in
 function `sorted`:
 
 ```python
-central = sorted(centrality, key=centrality.__getitem__, reverse=True)
+central = sorted(centrality, key=centrality.get, reverse=True)
 print(central[:5])
 ```
 
@@ -759,9 +759,9 @@ connected component from our `wormbrain` network:
 ```python
 sccs = nx.strongly_connected_component_subgraphs(wormbrain)
 giantscc = max(sccs, key=len)
-print('The largest strongly connected component has %i nodes,' %
-      giantscc.number_of_nodes(), 'out of %i total.' %
-      wormbrain.number_of_nodes())
+print(f'The largest strongly connected component has '
+       '{giantscc.number_of_nodes()} nodes, out of '
+       '{wormbrain.number_of_nodes()} total.')
 ```
 
 As noted in the paper, the size of this component is *smaller* than
