@@ -777,7 +777,6 @@ lines = [
 
 sm = plt.cm.ScalarMappable(cmap=colormap, norm=norm)
 
-# Dirty hack, not sure why matplotlib >= 1.4 introduced this "feature"
 sm._A = []
 
 plt.colorbar(sm).set_label(r'Kaiser $\beta$');
