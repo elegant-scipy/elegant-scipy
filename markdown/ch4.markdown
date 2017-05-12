@@ -1156,7 +1156,8 @@ signals. The FFT is the tool that will do this for us.
 
 ### Signal properties in the frequency domain
 
-First, we take the FFTs of our three signals and then display the
+First, we take the FFTs of our three signals (synthetic single target,
+synthetic multi-target, and real) and then display the
 positive frequency components (i.e., components $0$ to $N/2$).  These
 are called the *range traces* in radar terminology.
 
