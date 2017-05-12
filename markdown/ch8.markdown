@@ -387,7 +387,7 @@ For example, the *sliding window* function is exactly what we need to make k-mer
 print(tz.sliding_window.__doc__)
 ```
 
-Additionally, the *frequencies* function counts the appearance of individual items in a data stream!
+Additionally, the *frequencies* function counts the appearance of individual items in a data stream.
 Together with pipe, we can now count k-mers in a single function call:
 
 ```python
