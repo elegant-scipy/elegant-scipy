@@ -583,11 +583,11 @@ import numpy as np
 def streaming_pca(samples, n_components=2, batch_size=100):
     ipca = decomposition.IncrementalPCA(n_components=n_components,
                                         batch_size=batch_size)
-    # we use `tz.last` to force evaluation of the full iterator
-    _ = tz.last(tz.pipe(samples,  # iterator of 1D arrays
-                        c.partition(batch_size),  # iterator of tuples
-                        c.map(np.array),  # iterator of 2D arrays
-                        c.map(ipca.partial_fit)))  # partial_fit on each
+    tz.pipe(samples,  # iterator of 1D arrays
+            c.partition(batch_size),  # iterator of tuples
+            c.map(np.array),  # iterator of 2D arrays
+            c.map(ipca.partial_fit),  # partial_fit on each
+            tz.last)  # Suck the stream of data through the pipeline
     return ipca
 ```
 
