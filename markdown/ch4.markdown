@@ -1251,7 +1251,7 @@ before with the spectrogram:
 c = 3e8  # Approximately the speed of light and of
          # electromagnetic waves in air
 
-fig, (ax0, ax1,ax2) = plt.subplots(3, 1, figsize=(15, 7))
+fig, (ax0, ax1, ax2) = plt.subplots(3, 1, figsize=(15, 7))
 
 
 def dB(y):
