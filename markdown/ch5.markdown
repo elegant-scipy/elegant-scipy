@@ -266,6 +266,9 @@ We hope you agree that it's a fairly intuitive, and, in some sense, inevitable
 format to hold n-dimensional array data.
 For sparse matrices, there are actually a wide array of possible formats, and
 the "right" format depends on the problem you want to solve.
+We'll cover the two most commonly-used formats, but for a complete list, see the
+comparison table later in the chapter, as well as the online documentation for
+`scipy.sparse`.
 
 ### COO (COOrdinate) format
 
