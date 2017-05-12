@@ -772,7 +772,7 @@ when you want to move the image $t_r$ pixels down and $t_c$ pixels right.
 
 <!-- solution begin -->
 
-We can *compose* transformations by multiplying them. We know how to rotate
+**Solution:** We can *compose* transformations by multiplying them. We know how to rotate
 an image about the origin, as well as how to slide it around. So what we will
 do is slide the image so that the center is at the origin, rotate it, and then
 slide it back.
@@ -906,7 +906,7 @@ required for the contingency matrix computation?
 
 <!-- solution begin -->
 
-The `np.ones` array that we create is read-only: it will only be used as the
+**Solution:** The `np.ones` array that we create is read-only: it will only be used as the
 values to sum by `coo_matrix`. We can use `broadcast_to` to create a similar
 array with only one element, "virtually" repeated n times:
 
@@ -1153,7 +1153,7 @@ p_rain_month = None
 
 <!-- solution begin -->
 
-To obtain the joint probability table, we simply divide the table by its total,
+**Solution:** To obtain the joint probability table, we simply divide the table by its total,
 in this case, 12:
 
 ```python
