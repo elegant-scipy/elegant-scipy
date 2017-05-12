@@ -731,18 +731,6 @@ the worm's front touch receptors (among others) to neurons responsible
 for backward motion, while the PVC neurons link the rear touch receptors to
 forward motion.
 
-These neurons' high centrality feels like a bit of an artifact of their placement
-controlling a large number of motor neurons. Yes, they are in many routes
-from sensory neurons to motor neurons. But all of the motor neurons do essentially
-the same thing, as hinted at by their generic names, VA 1-12. If we were to collapse
-them into one, the high centrality of the "command" neurons AVA R and L, and
-PVC R and L, might vanish. Returning to the rail lines example, suppose trains
-between Penn Station in New York City and Washington DC's Union
-Station could end up at one of 12 different platforms, *and we counted each of
-those as a separate train line*. The betweenness centrality of Penn Station
-would be inflated because from it you could get to Union Station platform 1,
-platform 2, etc. That's not necessarily very interesting.
-
 Varshney *et al* study the properties of a *strongly connected component*
 of 237 neurons, out of a total of 279. In graphs, a
 *connected component* is a set of nodes that are reachable by some path
