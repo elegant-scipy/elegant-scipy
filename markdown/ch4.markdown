@@ -1395,8 +1395,7 @@ defines the reflector's position in 3D.
 A rock slope consists of thousands of reflectors. A range bin can be
 thought of as a large sphere with the radar at its center that
 intersects the slope along a ragged line. The scatterers on this line
-will produce reflections in this range bin. The reflectors are
-essentially randomly arranged along the line. The wavelength of the
+will produce reflections in this range bin. The wavelength of the
 radar (distance the transmitted wave travels in one oscillation
 second) is about 30 mm. The reflections from scatterers separated by
 odd multiples of a quarter wavelength in range, about 7.5 mm, will
