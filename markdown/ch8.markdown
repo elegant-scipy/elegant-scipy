@@ -5,7 +5,7 @@
 >
 > — Jack Burton, *Big Trouble in Little China*
 
-Streaming is not a SciPy feature per se, but rather an approach which
+Streaming is not a SciPy feature per se, but rather an approach that
 allows us to efficiently process large datasets, like those often
 seen in science. The Python language contains some useful primitives
 for streaming data processing, and these can be combined with Matt Rocklin's
@@ -30,16 +30,12 @@ print(sum_of_means)
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
 But things can quickly get out of hand when your code becomes more sophisticated.
 
-In the most commonly used programming models, you pass your data to a function,
-the function processes the data, and then returns the result. Done. (This
-includes most of this book!)
-
-But in streaming programs, a function processes *some* of the data, returns the
+In streaming programs, a function processes *some* of the input data, returns the
 processed chunk, then, while downstream functions are dealing with that chunk,
 the function receives a bit more, and so on...  All these things are going on
 at the same time!  How can one keep them straight?
 
-We too found this difficult to do, until we found the `toolz` library.
+We too found this difficult, until we found the `toolz` library.
 Its constructs make streaming programs so elegant to write that
 it was impossible to contemplate writing this book without including a chapter
 about it.
@@ -102,7 +98,7 @@ print('Stream result: ', result_stream)
 The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
 This can conserve a lot of memory when you have many input items, or when each item is very big.
 (Or both!)
-This quote from one of Matt's posts very succinctly summarizes the utility of streaming data analysis:
+This quote from one of Matt's blog posts very succinctly summarizes the utility of streaming data analysis:
 
 > In my brief experience people rarely take this [streaming] route.
 They use single-threaded in-memory Python until it breaks, and then seek out Big Data Infrastructure like Hadoop/Spark at relatively high productivity overhead.
