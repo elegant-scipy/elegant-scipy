@@ -442,7 +442,8 @@ See the the book [GitHub repository](https://github.com/elegant-scipy/elegant-sc
 
 ### Accessing the book materials
 
-All of the code and data from this book is available on our GitHub repository: [https://github.com/elegant-scipy/elegant-scipy](https://github.com/elegant-scipy/elegant-scipy)
+All of the code and data shown in this book are available on our GitHub repository: [https://github.com/elegant-scipy/elegant-scipy](https://github.com/elegant-scipy/elegant-scipy).
+In the README file in that repository, you will find instructions to build Jupyter notebooks from the markdown source files, which you can then run interactively, using the data included in the repo.
 
 ## Diving in
 
