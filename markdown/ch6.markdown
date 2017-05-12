@@ -6,7 +6,7 @@
 
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
 will feature an elegant *method*. We
-want to highlight the linear algebra packages available in SciPy, which form
+want to highlight the packages available in SciPy to do linear algebra, which forms
 the basis of much scientific computing.
 
 A chapter in a programming book is not really the right place to learn about
@@ -635,7 +635,7 @@ import scipy.sparse.linalg
 As = sparse.csr_matrix(A)
 ```
 
-We can create our connectivity matrix in much the same way:
+We can create our connectivity matrix in the same way:
 
 ```python
 Cs = (As + As.T) / 2
@@ -663,7 +663,7 @@ vector $z$ that would satisfy $L z = b$,
 where $b = C \odot \textrm{sign}\left(A - A^T\right) \mathbf{1}$.
 (You can see this in the supplementary material for Varshney *et al*.) With
 dense matrices, we can simply use $z = L^+b$. With sparse ones, though, we can
-use one of the *solvers* (see sidebox) in `sparse.linalg.isolve` to get the `z` vector after
+use one of the *solvers* (see sidebox, "Solvers") in `sparse.linalg.isolve` to get the `z` vector after
 providing `L` and `b`, no inversion required!
 
 ```python
@@ -801,7 +801,7 @@ visits, and then asks, what's the probability that he ends up at any given
 page? This probability is called the PageRank.
 
 Since Google's rise, researchers have been applying PageRank to all sorts of
-networks. We'll start with an example by Stefano Allesina and Mercedes Pascual,
+networks. We'll use an example by Stefano Allesina and Mercedes Pascual,
 which they
 [published](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000494i)
 in PLoS Computational Biology. They thought to apply the method in ecological
@@ -979,7 +979,7 @@ Although we won't do it here, Allesina and Pascual go on to model the
 ecological impact of species extinction, and indeed find that PageRank
 predicts ecological importance better than in-degree.
 
-Before we move on though, we'll note that PageRank can be computed several
+Before we wrap up though, we'll note that PageRank can be computed several
 different ways. One way, complementary to what we did above, is called the
 *power method*, and it's quite, well, powerful! It stems from the
 [Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
