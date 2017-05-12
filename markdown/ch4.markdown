@@ -1127,27 +1127,6 @@ An individual field is accessed using dictionary syntax:
 azimuths = scan['position']['az']  # Get all azimuth measurements
 ```
 
-To construct an array such as the above from scratch, one would first
-set up the appropriate dtype:
-
-```python
-dt = np.dtype([('time', np.uint64),
-               ('size', np.uint32),
-               ('position', [('az', np.float32),
-               ('el', np.float32),
-               ('region_type', np.uint8),
-               ('region_ID', np.uint16)]),
-               ('gain', np.uint8),
-               ('samples', (np.int16, 2048))])
-```
-
-The dtype can then be used to create an array, which we can later fill
-with values:
-
-```python
-data = np.zeros(500, dtype=dt)  # Construct array with 500 measurements
-```
-
 To summarize what we've seen so far: the shown measurements
 ($v_\mathrm{sim}$ and $v_\mathrm{actual}$) are the sum of sinusoidal
 signals reflected by each of several objects.  We need to determine
