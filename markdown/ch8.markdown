@@ -121,21 +121,21 @@ def readtsv(filename):
     print('starting readtsv')
     with open(filename) as fin:
         for i, line in enumerate(fin):
-            print('reading line {}'.format(i))
+            print(f'reading line {i}')
             yield tsv_line_to_array(line)
     print('finished readtsv')
 
 def add1(arrays_iter):
     print('starting adding 1')
     for i, arr in enumerate(arrays_iter):
-        print('adding 1 to line {}'.format(i))
+        print(f'adding 1 to line {i}')
         yield arr + 1
     print('finished adding 1')
 
 def log(arrays_iter):
     print('starting log')
     for i, arr in enumerate(arrays_iter):
-        print('taking log of array {}'.format(i))
+        print(f'taking log of array {i}')
         yield np.log(arr)
     print('finished log')
 
@@ -145,7 +145,7 @@ def running_mean(arrays_iter):
         if i == 0:
             mean = arr
         mean += (arr - mean) / (i + 1)
-        print('adding line {} to the running mean'.format(i))
+        print(f'adding line {i} to the running mean')
     print('returning mean')
     return mean
 ```
@@ -160,7 +160,7 @@ print('Creating loglines iterator')
 loglines = log(add1(lines))
 print('Computing mean')
 mean = running_mean(loglines)
-print('the mean log-row is: {}'.format(mean))
+print(f'the mean log-row is: {mean}')
 ```
 
 Note:
