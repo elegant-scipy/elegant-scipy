@@ -394,7 +394,8 @@ Together with pipe, we can now count k-mers in a single function call:
 from toolz import curried as c
 
 k = 7
-counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
+counts = tz.pipe('data/sample.fasta', open,
+                 c.filter(is_sequence),
                  c.map(str.rstrip),
                  c.map(c.sliding_window(k)),
                  tz.concat, c.map(''.join),
