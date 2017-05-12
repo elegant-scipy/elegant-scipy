@@ -31,7 +31,7 @@ Python) remind us that "code is read much more often than it is
 written" and therefore "readability counts".
 
 The conciseness of elegant code comes through abstraction and the
-judicious use of functions, *not* just through packing in a bunch of nested function calls!
+judicious use of functions, *not* just through packing in a bunch of nested function calls.
 It may take a minute or two to grok, but it should ultimately provide a crisp, "ah-ha!" moment of understanding.
 Once you know the various components of the code, its correctness should be
 obvious.
@@ -118,7 +118,7 @@ cannot keep up with demand.
 
 > "SciPy (pronounced “Sigh Pie”) is a Python-based ecosystem of open-source software for mathematics, science, and engineering."
 >
-> -- http://www.scipy.org/
+> — http://www.scipy.org/
 
 The SciPy ecosystem is a loosely defined collection of Python packages.
 In Elegant SciPy we will meet many of its main players:
