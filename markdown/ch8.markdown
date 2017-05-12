@@ -229,8 +229,8 @@ in the fruit-fly genome:
 ```python
 %%timeit -r 1 -n 1
 dm = 'data/dm6.fa'
-model = tz.pipe(dm, genome, c.take(1000000), markov)
-# we use `take` to just run on the first 1000000 bases, to speed things up.
+model = tz.pipe(dm, genome, c.take(10**7), markov)
+# we use `take` to just run on the first 10 million bases, to speed things up.
 # the take step can just be removed if you have ~5-10 mins to wait.
 ```
 
@@ -761,8 +761,8 @@ Let's try it out on the Drosophila (fruit fly) genome:
 # Download dm6.fa.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
 # Unzip before using: gzip -d dm6.fa.gz
 dm = 'data/dm6.fa'
-model = tz.pipe(dm, genome, c.take(1000000), markov)
-# we use `take` to just run on the first 1000000 bases, to speed things up.
+model = tz.pipe(dm, genome, c.take(10**7), markov)
+# we use `take` to just run on the first 10 million bases, to speed things up.
 # the take step can just be removed if you have ~5-10 mins to wait.
 ```
 
@@ -838,7 +838,7 @@ You can try this out with the compressed drosophila genome file:
 
 ```python
 dm = 'data/dm6.fa.gz'
-model = tz.pipe(dm, genome_gz, c.take(1000000), markov)
+model = tz.pipe(dm, genome_gz, c.take(10**7), markov)
 plot_model(model, labels=' ACGTacgt')
 ```
 
