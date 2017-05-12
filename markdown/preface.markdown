@@ -164,9 +164,10 @@ scientific computing.
 
 In your Python travels, you may have already heard a few rumblings about which version of Python is better.
 You may have wondered why it's not just the latest version.
+(Spoiler alert: it is.)
 
 At the end of 2008, the Python core developers released Python 3.0 and, as
-Douglas Adams observed tongue-in-cheek about the creation of the Universe in
+Douglas Adams observed about the creation of the Universe in
 The Hitchiker's Guide to the Galaxy, "this has made a lot of people very angry
 and been widely regarded as a bad move".
 
@@ -243,8 +244,9 @@ unicode.  For example, `\beta<TAB>` becomes β.
 The Python 3 update also breaks a lot of existing 2.x code, and in some
 cases executes more slowly than before.  Despite these frustrations,
 we encourage all users to upgrade as soon as possible (Python 2.x is
-now in maintenance only mode until 2020), as we hope to see most
-issues addressed as the 3.x series matures.
+now in maintenance only mode until 2020), as most issues have been addressed as
+the 3.x series has matured.
+Indeed, we use many new features from Python 3 in this book.
 
 In Elegant SciPy, we use **Python 3.6**.
 
