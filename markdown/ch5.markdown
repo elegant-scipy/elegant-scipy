@@ -1413,7 +1413,8 @@ Using our skills from chapter 3, we're going to generate a number of possible wa
 ```python
 from skimage import io
 
-url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
+url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds'
+       '/BSDS300/html/images/plain/normal/color/108073.jpg')
 tiger = io.imread(url)
 
 plt.imshow(tiger);
