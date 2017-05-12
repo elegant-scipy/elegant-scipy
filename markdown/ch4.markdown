@@ -158,8 +158,7 @@ print('Audio length: {:.2f} seconds'.format(L))
 f, ax = plt.subplots()
 ax.plot(np.arange(N) / rate, audio)
 ax.set_xlabel('Time [s]')
-ax.set_ylabel('Amplitude [unknown]')
-plt.show()
+ax.set_ylabel('Amplitude [unknown]');
 ```
 <!-- caption text="Audio waveform plot of birdsong" -->
 
@@ -269,8 +268,7 @@ ax.imshow(S, origin='lower', cmap='viridis',
           extent=(0, L, 0, rate / 2 / 1000))
 ax.axis('tight')
 ax.set_ylabel('Frequency [kHz]')
-ax.set_xlabel('Time [s]')
-plt.show()
+ax.set_xlabel('Time [s]');
 ```
 <!-- caption text="Birdsong spectrogram" -->
 
@@ -428,9 +426,7 @@ ax0.set_xlabel('Length of input')
 ax0.set_ylabel('Execution time (seconds)')
 
 ax1.stem(lengths, smoothness)
-ax1.set_ylabel('Smoothness of input length\n(lower is better)')
-
-plt.show()
+ax1.set_ylabel('Smoothness of input length\n(lower is better)');
 ```
 <!-- caption text="FFT execution time vs smoothness for different input lengths" -->
 
@@ -648,8 +644,7 @@ f, ax = plt.subplots(figsize=(10, 10))
 
 ax.imshow(np.log(1 + F_magnitude), cmap='viridis',
           extent=(-N // 2, N // 2, -M // 2, M // 2))
-ax.set_title('Spectrum magnitude')
-plt.show()
+ax.set_title('Spectrum magnitude');
 ```
 <!-- caption text="Spectrum of the noisy moon landing image (magnitude)" -->
 
@@ -696,9 +691,7 @@ ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='viridis')
 ax0.set_title('Spectrum after suppression')
 
 ax1.imshow(ndi.gaussian_filter(image_filtered, sigma=1))
-ax1.set_title('Reconstructed image')
-
-plt.show()
+ax1.set_title('Reconstructed image');
 ```
 <!-- caption text="Filtered moon landing image and its spectrum" -->
 
@@ -719,8 +712,7 @@ ax0.plot(x)
 ax0.set_ylim(-0.1, 1.1)
 
 ax1.plot(fftpack.fftshift(np.abs(X)))
-ax1.set_ylim(-5, 55)
-plt.show()
+ax1.set_ylim(-5, 55);
 ```
 <!-- caption text="Spectrum of a rectangular pulse (magnitude)" -->
 
@@ -756,8 +748,7 @@ ax0.plot(x)
 ax0.set_ylim(-1.1, 1.1)
 
 ax1.plot(fftpack.fftfreq(len(t)), np.abs(X))
-ax1.set_ylim(0, 190)
-plt.show()
+ax1.set_ylim(0, 190);
 ```
 <!-- caption text="Spectrum oscillation due to signal edge discontinuity" -->
 
@@ -788,9 +779,7 @@ sm = plt.cm.ScalarMappable(cmap=colormap, norm=norm)
 # Dirty hack, not sure why matplotlib >= 1.4 introduced this "feature"
 sm._A = []
 
-plt.colorbar(sm).set_label(r'Kaiser $\beta$')
-
-plt.show()
+plt.colorbar(sm).set_label(r'Kaiser $\beta$');
 ```
 <!-- caption text="The Kaiser window for various values of $\beta$" -->
 
@@ -838,8 +827,7 @@ win = np.kaiser(len(t), 5)
 X_win = fftpack.fft(x * win)
 
 plt.plot(fftpack.fftfreq(len(t)), np.abs(X_win))
-plt.ylim(0, 190)
-plt.show()
+plt.ylim(0, 190);
 ```
 <!-- caption text="Spectrum of a windowed signal (magnitude)" -->
 
@@ -1201,8 +1189,6 @@ axes[2].set_xlabel("FFT component $n$")
 
 for ax in axes:
     ax.grid()
-
-plt.show()
 ```
 <!-- caption text="Range traces for: (a) single simulated target, (b) mutiple simulated targets, (c) real-world targets" --> 
 
@@ -1290,9 +1276,7 @@ log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
 
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
 ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
-ax2.set_xlim(0, len(V_actual) // 2)
-
-plt.show()
+ax2.set_xlim(0, len(V_actual) // 2);
 ```
 <!-- caption text="Logarithm of range traces" -->
 
@@ -1349,9 +1333,7 @@ for n, (signal, label) in enumerate([(v_single, r'$v_0 [Volt]$'),
     axes[n].grid()
 
 axes[2].set_xlim(0, t_ms[-1])
-axes[2].set_xlabel('Time [ms]')
-plt.show()
-
+axes[2].set_xlabel('Time [ms]');
 ```
 <!-- caption text="Windowed signals for: (a) single simulated target, (b) multiple simulated targets, (c) real targets" -->
 
@@ -1373,10 +1355,7 @@ ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
 
 ax1.annotate("New, previously unseen!", (160, -35),
              xytext=(10, 25), textcoords="offset points", color='red',
-             arrowprops=dict(width=2, headwidth=6, headlength=12, shrink=0.1))
-
-plt.show()
-
+             arrowprops=dict(width=2, headwidth=6, headlength=12, shrink=0.1));
 ```
 <!-- caption text="Range traces (spectrum) of windowed signals" -->
 
@@ -1470,9 +1449,6 @@ def plot_slice(ax, radar_slice, title, xlabel, ylabel):
 plot_slice(axes[0], V[:, :, 250], 'Range == 250 slice', 'Azimuth', 'Elevation')
 plot_slice(axes[1], V[:, 3, :], 'Azimuth == 3 slice', 'Range', 'Elevation')
 plot_slice(axes[2], V[6, :, :], 'Elevation == 6 slice', 'Range', 'Azimuth')
-
-plt.show()
-
 ```
 <!-- caption text="Contour plots of range traces along various axes (see diagram)" -->
 
@@ -1533,9 +1509,7 @@ ax.set_ylabel(axis_labels[1])
 ax.set_zlabel(axis_labels[2])
 
 # Adjust the camera position to match our diagram above
-ax.view_init(azim=-45)
-
-plt.show()
+ax.view_init(azim=-45);
 ```
 <!-- caption text="3-D visualization of estimated rock slope position" -->
 
