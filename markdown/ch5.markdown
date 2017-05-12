@@ -1503,7 +1503,7 @@ Now we're going to have a closer look at how this threshold impacts our segmenta
 Let's pop the segmentation code into a function so we can play with it.
 
 ```python
-def RAG_segmentation(base_seg, image, threshold=80):
+def rag_segmentation(base_seg, image, threshold=80):
     g = build_rag(base_seg, image)
     for n in g:
         node = g.node[n]
@@ -1525,13 +1525,13 @@ def RAG_segmentation(base_seg, image, threshold=80):
 Let's try a few thresholds and see what happens:
 
 ```python
-auto_seg_10 = RAG_segmentation(seg, tiger, threshold=10)
+auto_seg_10 = rag_segmentation(seg, tiger, threshold=10)
 plt.imshow(color.label2rgb(auto_seg_10, tiger));
 ```
 <!-- caption text="Tiger RAG-based segmentation at threshold 10" -->
 
 ```python
-auto_seg_40 = RAG_segmentation(seg, tiger, threshold=40)
+auto_seg_40 = rag_segmentation(seg, tiger, threshold=40)
 plt.imshow(color.label2rgb(auto_seg_40, tiger));
 ```
 <!-- caption text="Tiger RAG-based segmentation at threshold 40" -->
@@ -1559,7 +1559,7 @@ Now we can calculate the VI for a range of possible thresholds and see which one
 ```python
 # Try many thresholds
 def vi_at_threshold(seg, tiger, human_seg, threshold):
-    auto_seg = RAG_segmentation(seg, tiger, threshold)
+    auto_seg = rag_segmentation(seg, tiger, threshold)
     return variation_of_information(auto_seg, human_seg)
 
 thresholds = range(0, 110, 10)
@@ -1576,7 +1576,7 @@ Unsurprisingly, it turns out that eyeballing it and picking threshold=80, did gi
 But now we have a way to automate this process for any image!
 
 ```python
-auto_seg = RAG_segmentation(seg, tiger, threshold=80)
+auto_seg = rag_segmentation(seg, tiger, threshold=80)
 plt.imshow(color.label2rgb(auto_seg, tiger));
 ```
 <!-- caption text="Optimal tiger segmentation based on the VI curve" -->
