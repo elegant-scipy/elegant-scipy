@@ -679,7 +679,7 @@ in the `.data` attribute. We use that to invert the degrees matrix:
 
 ```python
 Dsinv2 = Ds.copy()
-Dsinv2.data = Ds.data ** (-0.5)
+Dsinv2.data = 1 / np.sqrt(Ds.data)
 ```
 
 Finally, we use SciPy's sparse linear algebra functions to find the desired
@@ -1002,7 +1002,6 @@ def power(Trans, damping=0.85, max_iter=10**5):
     for _iter_num in range(max_iter):
         rnext = damping * Trans @ r + (1 - damping) / n
         if np.allclose(rnext, r):
-            print('converged')
             break
         r = rnext
     return r
