@@ -1381,9 +1381,9 @@ radar images.
 The data is produced by a radar with a parabolic reflector antenna. It
 produces a highly directive round pencil beam with a $2^\circ$
 spreading angle between half-power points. When directed with normal
-incidence at a plane, the radar will illuminate a spot of about $2$ m in
-diameter at a distance of $60$ m.<!-- on the half power contour at a distance of 60 m
--->. Outside this spot the power drops off quite rapidly but strong
+incidence at a plane, the radar will illuminate a spot of about $2$ meters in
+diameter at a distance of 60 meters.
+Outside this spot, the power drops off quite rapidly, but strong
 echoes from outside the spot will nevertheless still be visible.
 
 By varying the pencil beam's azimuth (left-right position) and
