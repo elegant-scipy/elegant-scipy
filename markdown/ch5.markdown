@@ -1029,7 +1029,10 @@ Generally, we measure this for any random variable $X$ (which could have more
 than two possible values) by using the *entropy* function $H$:
 
 $$
-H(X) = \sum_{x}{p_x \log_2\left(\frac{1}{p_x}\right)}
+\begin{aligned}
+H(X) & = \sum_{x}{p_x \log_2\left(\frac{1}{p_x}\right)} \\
+     & = -\sum_{x}{p_x \log_2\left(p_x\right)}
+\end{aligned}
 $$
 
 where the $x$s are possible values of $X$, and $p_x$ is the probability of $X$
@@ -1076,8 +1079,8 @@ H(R | M=m) &= {p_{r|m}\log_2\left(\frac{1}{p_{r|m}}\right) +
                p_{s|m}\log_2\left(\frac{1}{p_{s|m}}\right)} \\
            &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_m}{p_{rm}}\right) +
                \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)} \\
-           &= {-\frac{p_{rm}}{p_m}\log_2\left(\frac{p_rm}{p_{m}}\right) -
-               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_sm}{p_{m}}\right)}
+           &= {-\frac{p_{rm}}{p_m}\log_2\left(\frac{p_{rm}}{p_{m}}\right) -
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_{sm}}{p_{m}}\right)}
 \end{aligned}
 $$
 
@@ -1117,8 +1120,8 @@ $$
 H(R|M) & = -\frac{1}{12} \left( 0.25 \log_2(0.25) +
                                 0.75 \log_2(0.75) \right) -
            \frac{1}{12} \left( 0.27 \log_2(0.27) +
-                               0.73 \log_2(0.73) \right) -
-           ... -
+                               0.73 \log_2(0.73) \right) \\
+       &   - ... -
            \frac{1}{12} \left( 0.23 \log_2(0.23) +
                                0.77 \log_2(0.77) \right) \\
        & \approx 0.626 \textrm{ bits}
