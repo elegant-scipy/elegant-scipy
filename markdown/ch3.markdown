@@ -106,7 +106,8 @@ Here is the coin image loaded with scikit-image:
 
 ```python
 from skimage import io
-url_coins = 'https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png'
+url_coins = ('https://raw.githubusercontent.com/scikit-image/scikit-image/'
+             'v0.10.1/skimage/data/coins.png')
 coins = io.imread(url_coins)
 print("Type:", type(coins), "Shape:", coins.shape, "Data type:", coins.dtype)
 plt.imshow(coins);
@@ -123,7 +124,8 @@ color channels, typically the three primary additive colors of red, green, and b
 To show what we can do with these dimensions, let's play with this photo of astronaut Eileen Collins:
 
 ```python
-url_astronaut = 'https://raw.githubusercontent.com/scikit-image/scikit-image/master/skimage/data/astronaut.png'
+url_astronaut = ('https://raw.githubusercontent.com/scikit-image/scikit-image/'
+                 'master/skimage/data/astronaut.png')
 astro = io.imread(url_astronaut)
 print("Type:", type(astro), "Shape:", astro.shape, "Data type:", astro.dtype)
 plt.imshow(astro);
@@ -969,7 +971,8 @@ A clustering algorithm, simple linear iterative clustering (SLIC) [^slic], can g
 us a decent starting point. It is available in the scikit-image library.
 
 ```python
-url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
+url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/vision/'
+       'bsds/BSDS300/html/images/plain/normal/color/108073.jpg')
 tiger = io.imread(url)
 from skimage import segmentation
 seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
