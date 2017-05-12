@@ -304,10 +304,14 @@ This is a plaintext format, consisting of one or many DNA sequences per file, ea
 A sample FASTA file:
 ```
     > sequence_name1
+    TCAATCTCTTTTATATTAGATCTCGTTAAAGTAAAATTTTGGTTTGTGTTAAAGTACAAG
+    GGGTACCTATGACCACGGAACCAACAAAGTGCCTAAATAGGACATCAAGTAACTAGCGGT
     ACGT
 
     > sequence_name2
-    GACT
+    ATGTCCCAGGCGTTCCTTTTGCATTTGCTTCGCATTAACAGAATATCCAGCGTACTTAGG
+    ATTGTCGACCTGTCTTGTCGTACGTGGCCGCAACACCAGGTATAGTGCCAATACAAGTCA
+    GACTAAAACTGGTTC
 ```
 
 Now we have the required information to convert a stream of lines from a FASTA file to a count of k-mers:
