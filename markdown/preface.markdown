@@ -341,7 +341,7 @@ In fact we quote Jake here, to drive home the key points of software licensing:
 > Code](http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/)*
 
 All the code in this book is available under the 3-clause BSD license.
-Where we have sourced code snippets from other people, the code was generally be under a permissive open license of some variety (although not necessarily BSD).
+Where we have sourced code snippets from other people, the code was generally under a permissive open license of some variety (although not necessarily BSD).
 
 For your own code, we recommend that you follow the practices of your
 community. In Scientific Python, this means 3-clause BSD, while the R language
