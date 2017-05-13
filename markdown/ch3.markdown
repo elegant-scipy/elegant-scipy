@@ -7,8 +7,11 @@
 >
 > — William Blake, *The Tyger*
 
-You probably know that digital images are made up of *pixels*. These are
-*samples* of the light signal *on a regular grid*. When computing
+You probably know that digital images are made up of *pixels*. Generally, you
+should not think of these as little squares, but as *point samples* of the light
+signal *measured on a regular grid* [^alvyraysmith].
+
+Further, when computing
 on images, we often deal with objects much larger than individual pixels.
 In a landscape, the sky, earth, trees, and rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
@@ -1157,6 +1160,9 @@ Still, we think that's a nice demonstration of the capabilities of RAGs...
 And the beauty with which SciPy and NetworkX make it feasible.
 Many of these functions are available in the scikit-image library. If you
 are interested in image analysis, look it up!
+
+[^alvyraysmith]: A Pixel Is Not A Little Square. Alvy Ray Smith, 1995, Technical
+                 Memo. http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 
