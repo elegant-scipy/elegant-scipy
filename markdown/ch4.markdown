@@ -354,7 +354,7 @@ SciPy wraps the Fortran FFTPACK library—it is not the fastest out
 there, but unlike packages such as FFTW, it has a permissive free
 software license.
 
-## Choosing the length of the DFT
+## Choosing the length of the discrete Fourier transform (DFT)
 
 A naive calculation of the DFT takes $\mathcal{O}\left(N^2\right)$ operations [^big_O].
 How come?  Well, you have $N$
@@ -451,7 +451,7 @@ always ensures a maximally smooth $N$ (and, thus, the fastest FFT).
          using [PyFFTW](https://github.com/hgomersall/pyFFTW) for
          faster FFTs.
 
-## Discrete Fourier transform concepts
+## More discrete Fourier transform concepts
 
 Next, we present a couple of common concepts worth knowing before
 operating heavy Fourier transform machinery, whereafter we tackle

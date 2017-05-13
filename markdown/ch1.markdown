@@ -65,7 +65,7 @@ This is broadcasting. More on how this works in just a moment!
 
 Before we delve into the power of NumPy, let's spend some time to understand the biological data that we will be working with.
 
-## What is gene expression?
+## Introduction to the data: what is gene expression?
 
 We will work our way through a *gene expression analysis* to demonstrate the power of NumPy and SciPy to solve a real-world biological problem.
 We will use the Pandas library, which builds on NumPy, to read and munge our data files, and then we manipulate our data efficiently in NumPy arrays.
@@ -202,7 +202,7 @@ If we store MRI values over time, we might need a 4D NumPy array.
 For now, we'll stick to 2D data.
 Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions!
 
-### Why use ndarrays as opposed to Python lists?
+### Why use ndarrays instead of Python lists?
 
 Arrays are fast because they enable vectorized operations, written in the low-level language C, that act on the whole array.
 Say you have a list and you want to multiply every element in the list by 5.

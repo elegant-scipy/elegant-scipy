@@ -9,6 +9,8 @@ will feature an elegant *method*. We
 want to highlight the packages available in SciPy to do linear algebra, which forms
 the basis of much scientific computing.
 
+## Linear algebra basics
+
 A chapter in a programming book is not really the right place to learn about
 linear algebra itself, so we assume familiarity with linear algebra concepts.
 At a minimum, you should know that linear algebra involves vectors (ordered
