@@ -493,8 +493,13 @@ between genes (rows).
 For example, the number of counts for each individual can vary substantially in RNAseq experiments.
 Let's take a look at the distribution of expression counts over all the genes.
 First we will sum the rows to get the total counts of expression of all genes for each individual, so we can just look at the variation between individuals.
-To visualize the distribution of total counts, we will use a kernel density estimation (KDE) function.
-KDE is commonly used to smooth out histograms, which gives a clearer picture of the underlying distribution.
+To visualize the distribution of total counts, we will use kernel density
+estimation (KDE), a technique commonly used to smooth out histograms because it
+gives a clearer picture of the underlying distribution.
+
+Before we start, we have to do some plotting setup (which we will do in every
+chapter). See "A quick note on plotting" for details about what each line of code
+below does.
 
 ```python
 # Make all plots appear inline in the Jupyter notebook from now onwards
