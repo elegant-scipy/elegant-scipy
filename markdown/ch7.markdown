@@ -572,7 +572,7 @@ from skimage import io
 stained_glass = io.imread('data/00998v.jpg') / 255  # use float image in [0, 1]
 fig, ax = plt.subplots()
 ax.imshow(stained_glass)
-ax.axis('off')
+ax.axis('off');
 ```
 <!-- caption text="A Prokudin-Gorskii plate: three photos of the same stained
 glass window, taken with three different filters" -->
@@ -607,7 +607,7 @@ blue, green, red = channels
 original = np.dstack((red, green, blue))
 fig, ax = plt.subplots()
 ax.imshow(original)
-ax.axis('off')
+ax.axis('off');
 ```
 <!-- caption text="Naive overlay of Prokudin-Gorskii channels results in color
 halos" -->
