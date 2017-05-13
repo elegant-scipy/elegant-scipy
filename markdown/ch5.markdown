@@ -38,11 +38,9 @@ def variation_of_information(x, y):
     Px_inv = sparse.diags(invert_nonzero(px))
     Py_inv = sparse.diags(invert_nonzero(py))
 
-    # then, compute the entropies, using dot-product for the sum
-    ex = np.ones_like(px)
-    ey = np.ones_like(py)
-    hygx = px @ xlog1x(Px_inv @ Pxy) @ ey
-    hxgy = ex @ xlog1x(Pxy @ Py_inv) @ py
+    # then, compute the entropies
+    hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)
+    hxgy = xlog1x(Pxy @ Py_inv).sum(axis=0) @ py
 
     # return the sum of these
     return float(hygx + hxgy)
@@ -1379,11 +1377,9 @@ def variation_of_information(x, y):
     Px_inv = sparse.diags(invert_nonzero(px))
     Py_inv = sparse.diags(invert_nonzero(py))
 
-    # then, compute the entropies, using dot-product for the sum
-    ex = np.ones_like(px)
-    ey = np.ones_like(py)
-    hygx = px @ xlog1x(Px_inv @ Pxy) @ ey
-    hxgy = ex @ xlog1x(Pxy @ Py_inv) @ py
+    # then, compute the entropies
+    hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)
+    hxgy = xlog1x(Pxy @ Py_inv).sum(axis=0) @ py
 
     # return the sum of these
     return float(hygx + hxgy)
