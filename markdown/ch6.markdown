@@ -6,7 +6,7 @@
 
 Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
 will feature an elegant *method*. We
-want to highlight the linear algebra packages available in SciPy, which form
+want to highlight the packages available in SciPy to do linear algebra, which forms
 the basis of much scientific computing.
 
 A chapter in a programming book is not really the right place to learn about
@@ -24,7 +24,7 @@ algebra conventions: in Python, variables names should usually begin with a
 lower case letter. However, in linear algebra, matrices are denoted by
 a capital letter, while vectors and scalar values are lowercase. Since we're
 going to be dealing with quite a few matrices and vectors, following the
-linear algbrea converton helps to keep them straight. Therefore, variables
+linear algebra convention helps to keep them straight. Therefore, variables
 that represent matrices will start with a capital letter, while vectors and
 numbers will start with lowercase:
 
@@ -584,13 +584,13 @@ The above code uses numpy arrays to hold the matrix and perform
 the necessary computations. Because we are using a small graph of fewer than 300
 nodes, this is feasible. However, for larger graphs, it would fail.
 
-In what follows, we will analyze the dependency graph for packages in the
-Python Package Index, or PyPI, which contains over 75 thousand packages. To
-hold the Laplacian matrix for this graph would take 
-up $8 \left(75 \times 10^3\right)^2 = 45 \times 10^9$ bytes, or 45GB,
+For example, one might want to analyse the relationships between libraries
+listed on the Python Package Index, or PyPI, which contains over one hundred thousand packages.
+Holding the Laplacian matrix for this graph would take 
+up $8 \left(100 \times 10^3\right)^2 = 8 \times 10^10$ bytes, or 80GB,
 of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
 and, say, two temporary matrices used during calculations, you climb up to
-270GB, beyond the reach of most desktop computers.
+480GB, beyond the reach of most desktop computers.
 
 "Ha!", some of you might be thinking. "Ha! My desktop has 512GB of RAM! It would
 make short work of this so-called 'large' graph!"
@@ -635,7 +635,7 @@ import scipy.sparse.linalg
 As = sparse.csr_matrix(A)
 ```
 
-We can create our connectivity matrix in much the same way:
+We can create our connectivity matrix in the same way:
 
 ```python
 Cs = (As + As.T) / 2
@@ -663,7 +663,7 @@ vector $z$ that would satisfy $L z = b$,
 where $b = C \odot \textrm{sign}\left(A - A^T\right) \mathbf{1}$.
 (You can see this in the supplementary material for Varshney *et al*.) With
 dense matrices, we can simply use $z = L^+b$. With sparse ones, though, we can
-use one of the *solvers* (see sidebox) in `sparse.linalg.isolve` to get the `z` vector after
+use one of the *solvers* (see sidebox, "Solvers") in `sparse.linalg.isolve` to get the `z` vector after
 providing `L` and `b`, no inversion required!
 
 ```python
@@ -679,7 +679,7 @@ in the `.data` attribute. We use that to invert the degrees matrix:
 
 ```python
 Dsinv2 = Ds.copy()
-Dsinv2.data = Ds.data ** (-0.5)
+Dsinv2.data = 1 / np.sqrt(Ds.data)
 ```
 
 Finally, we use SciPy's sparse linear algebra functions to find the desired
@@ -801,7 +801,7 @@ visits, and then asks, what's the probability that he ends up at any given
 page? This probability is called the PageRank.
 
 Since Google's rise, researchers have been applying PageRank to all sorts of
-networks. We'll start with an example by Stefano Allesina and Mercedes Pascual,
+networks. We'll use an example by Stefano Allesina and Mercedes Pascual,
 which they
 [published](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000494i)
 in PLoS Computational Biology. They thought to apply the method in ecological
@@ -979,7 +979,7 @@ Although we won't do it here, Allesina and Pascual go on to model the
 ecological impact of species extinction, and indeed find that PageRank
 predicts ecological importance better than in-degree.
 
-Before we move on though, we'll note that PageRank can be computed several
+Before we wrap up though, we'll note that PageRank can be computed several
 different ways. One way, complementary to what we did above, is called the
 *power method*, and it's quite, well, powerful! It stems from the
 [Perron-Frobenius theorem](https://en.wikipedia.org/wiki/Perron%E2%80%93Frobenius_theorem),
@@ -1002,7 +1002,6 @@ def power(Trans, damping=0.85, max_iter=10**5):
     for _iter_num in range(max_iter):
         rnext = damping * Trans @ r + (1 - damping) / n
         if np.allclose(rnext, r):
-            print('converged')
             break
         r = rnext
     return r
