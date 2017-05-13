@@ -553,9 +553,9 @@ def plot_cluster_survival_curves(clusters, sample_names, patients,
         clust_samples = [sample_names[i] for i in clust_samples
                          if sample_names[i] in patients.index]
         patient_cluster = patients.loc[clust_samples]
-        survival_times = np.array(patient_cluster['melanoma-survival-time'])
+        survival_times = patient_cluster['melanoma-survival-time'].values
         if censor:
-            censored = ~np.array(patient_cluster['melanoma-dead']).astype(bool)
+            censored = ~patient_cluster['melanoma-dead'].values.astype(bool)
         else:
             censored = None
         stimes, sfracs = survival_distribution_function(survival_times,
