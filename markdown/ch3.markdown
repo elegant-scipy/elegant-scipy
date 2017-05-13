@@ -762,8 +762,8 @@ connected component from our `wormbrain` network:
 sccs = nx.strongly_connected_component_subgraphs(wormbrain)
 giantscc = max(sccs, key=len)
 print(f'The largest strongly connected component has '
-       '{giantscc.number_of_nodes()} nodes, out of '
-       '{wormbrain.number_of_nodes()} total.')
+      f'{giantscc.number_of_nodes()} nodes, out of '
+      f'{wormbrain.number_of_nodes()} total.')
 ```
 
 As noted in the paper, the size of this component is *smaller* than
