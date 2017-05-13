@@ -550,7 +550,7 @@ density = stats.kde.gaussian_kde(total_counts)
 x = np.arange(min(total_counts), max(total_counts), 10000)
 
 # Make the density plot
-fig, ax = plt.subplots(figsize=(8, 5))
+fig, ax = plt.subplots()
 ax.plot(x, density(x))
 ax.set_xlabel("Total counts per individual")
 ax.set_ylabel("Density")
