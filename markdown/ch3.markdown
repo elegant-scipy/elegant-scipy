@@ -953,7 +953,7 @@ you're *sure* belong in the same segment, and then merge those according
 to some more sophisticated rule.
 
 As a simple example, suppose you want to segment out the tiger in this
-picture, from the Berkeley Segmentation Dataset (BSDS) [^bsds-tiger]:
+picture, from the Berkeley Segmentation Dataset (BSDS):
 
 ![BSDS-108073 tiger](http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg)
 
