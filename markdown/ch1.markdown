@@ -474,10 +474,19 @@ As expected, they now match up nicely!
 
 ## Normalization
 
-Before we do any kind of analysis with our data, it is important to take a look at it and determine if we need to normalize it first.
-By normalize, we mean that we want to bring all our data onto the same scale so we can make a fair comparison.
-We will consider two types of normalization commonly applied to expression data: between samples and between genes.
-For example, when we consider differences between groups of patients, we want to know that they vary due to some biological difference, not just something technical.
+Real world data contains all kinds of measurement artifacts.
+Before doing any kind of analysis with it, it is important to take a look at
+it to determine whether some normalization is warranted.
+For example, measurements with digital thermometers may systematically vary from
+those taken with mercury thermometers and read out by a human.
+Thus, comparing samples often requires some kind of data wrangling to bring
+every measurement to a common scale.
+
+In our case, we want to make sure that any differences we uncover correspond to
+real biological differences, and not to technical artifact.
+We will consider two levels of normalization often applied jointly to gene
+expression dataset: normalization between samples (columns) and normalization
+between genes (rows).
 
 ### Between samples
 
