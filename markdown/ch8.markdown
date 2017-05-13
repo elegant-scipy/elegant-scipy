@@ -35,7 +35,7 @@ processed chunk, then, while downstream functions are dealing with that chunk,
 the function receives a bit more, and so on...  All these things are going on
 at the same time!  How can one keep them straight?
 
-We too found this difficult, until we found the `toolz` library.
+We too found this difficult, until we discovered the `toolz` library.
 Its constructs make streaming programs so elegant to write that
 it was impossible to contemplate writing this book without including a chapter
 about it.
