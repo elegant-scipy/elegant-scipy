@@ -139,7 +139,8 @@ http://matplotlib.org/
 is an interactive interface for Python, which allows you to quickly interact with your data and test ideas.
 https://ipython.org/
 * The **Jupyter**
-notebook runs in your browser and allows you to write code in line with text and mathematical expressions, displaying the results of computation within the text.
+notebook runs in your browser and allows the construction of rich documents that combine code, text, mathematical expressions, and interactive widgets[^literate_computing].
+In fact, to produce this book, the text is converted to Jupyter notebooks and executed (that way, we know that all the examples execute correctly).
 Jupyter started out as an IPython extension, but now supports multiple languages, including Cython, Julia, R, Octave, Bash, Perl and Ruby.
 http://jupyter.org
 * **pandas**
@@ -153,6 +154,8 @@ http://scikit-learn.org/
 * **scikit-image**
 provides image analysis tools that integrate cleanly with the rest of the SciPy ecosystem.
 http://scikit-image.org/
+
+[^literate_computing]: "Literate computing" and computational reproducibility: IPython in the age of data-driven journalism, http://blog.fperez.org/2013/04/literate-computing-and-computational.html
 
 There are many other Python packages that form part of the SciPy ecosystem, and we will see some of them too.
 Although this book will focus on NumPy and SciPy,
