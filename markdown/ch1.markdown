@@ -1078,12 +1078,12 @@ gene1, gene2 = gene_names[gene_idxs]
 len1, len2 = gene_lengths[gene_idxs]
 gene_labels = [f'{gene1}, {len1}bp', f'{gene2}, {len2}bp']
 
-log_counts_2 = list(np.log(counts[gene_idxs] + 1))
-log_ncounts_2 = list(np.log(counts_rpkm[gene_idxs] + 1))
+log_counts = list(np.log(counts[gene_idxs] + 1))
+log_ncounts = list(np.log(counts_rpkm[gene_idxs] + 1))
 
-ax = class_boxplot(log_counts_2,
+ax = class_boxplot(log_counts,
                    ['raw counts'] * 3,
-                   labels=genes2_labels)
+                   labels=gene_labels)
 ax.set_xlabel('Genes')
 ax.set_ylabel('log gene expression counts over all samples');
 ```
@@ -1094,9 +1094,9 @@ slightly more than Gene A.
 But, after RPKM normalization, a different picture emerges:
 
 ```python
-ax = class_boxplot(log_ncounts_2,
+ax = class_boxplot(log_ncounts,
                    ['RPKM normalized'] * 3,
-                   labels=genes2_labels)
+                   labels=gene_labels)
 ax.set_xlabel('Genes')
 ax.set_ylabel('log RPKM gene expression counts over all samples');
 ```
