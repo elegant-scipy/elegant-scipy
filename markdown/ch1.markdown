@@ -450,8 +450,7 @@ Now let's use the intersection of the gene names to index our count data.
 counts = np.asarray(data_table.loc[matched_index], dtype=int)
 
 # Check how many genes and individuals were measured
-print("{0} genes measured in {1} individuals".format(counts.shape[0],
-        counts.shape[1]))
+print(f'{counts.shape[0]} genes measured in {counts.shape[1]} individuals.')
 ```
 
 And our gene lengths.
@@ -542,10 +541,9 @@ ax.set_ylabel("Density")
 
 plt.show()
 
-print('Count statistics:\n  min:  {0}\n  mean: {1}\n  max: {2}'
-      .format(np.min(total_counts),
-              np.mean(total_counts),
-              np.max(total_counts)))
+print(f'Count statistics:\n  min:  {np.min(total_counts)}'
+       '\n  mean: {np.mean(total_counts)}'
+       '\n  max:  {np.max(total_counts)}')
 ```
 <!-- caption text="Density plot of gene expression counts per individual using KDE smoothing" -->
 
