@@ -58,7 +58,8 @@ def rpkm(counts, lengths):
 This example illustrates some of the ways that NumPy arrays can make your code more elegant:
 
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
-- Arrays can be operated on along *axes*. In the first line, we calculate the sum down each column by specifying a *different* `axis`.
+- Arrays can be operated on along *axes*. In the first line, we calculate the
+  sum down each column by specifying `axis=0`.
 - Arrays allow the expression of many numerical operations at once.
 For example towards the end of the function we divide the 2D array of counts (C) by the 1D array of column sums (N).
 This is broadcasting. More on how this works in just a moment!
@@ -152,7 +153,7 @@ In particular, we're going to explore vectorization and broadcasting,
 techniques that allow us to write powerful, elegant code to manipulate our data.
 
 First, let's get our heads around the the ndarray.
-These arrays must be homogeneous; all items in an array must be the same type.
+These arrays must be homogeneous: all items in an array must be the same type.
 In our case we will need to store integers.
 Ndarrays are called N-dimensional because they can have any number of dimensions.
 A 1-dimensional array is roughly equivalent to a Python list:
@@ -160,7 +161,7 @@ A 1-dimensional array is roughly equivalent to a Python list:
 ```python
 import numpy as np
 
-array1d = np.array([1,2,3,4])
+array1d = np.array([1, 2, 3, 4])
 print(array1d)
 print(type(array1d))
 ```
@@ -180,7 +181,9 @@ This is what we use to represent our mini gene expression table from above:
 
 ```python
 array2d = np.array(expression_data)
+print(array2d)
 print(array2d.shape)
+print(type(array2d))
 ```
 
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
@@ -200,7 +203,7 @@ NumPy arrays can represent data that has even more dimensions, such as magnetic 
 If we store MRI values over time, we might need a 4D NumPy array.
 
 For now, we'll stick to 2D data.
-Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions!
+Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions.
 
 ### Why use ndarrays as opposed to Python lists?
 
@@ -217,10 +220,10 @@ import numpy as np
 
 # Create an ndarray of integers in the range
 # 0 up to (but not including) 1,000,000
-nd_array = np.arange(1e6)
+array = np.arange(1e6)
 
 # Convert it to a list
-list_array = nd_array.tolist()
+list_array = array.tolist()
 ```
 
 Let's compare how long it takes to multiply all the values in the array by 5,
@@ -233,17 +236,17 @@ using the IPython `timeit` magic function. First, when the data is in a list:
 Now, using NumPy's built-in *vectorized* operations:
 
 ```python
-%timeit -n10 x = nd_array * 5
+%timeit -n10 x = array * 5
 ```
 
-Close to 50 times faster, and more concise, too!
+Over 50 times faster, and more concise, too!
 
 Arrays are also size efficient.
 In Python, each element in a list is an object and is given a healthy memory allocation (or is that unhealthy?).
 In contrast, in arrays, each element takes up just the necessary amount of memory.
 For example, an array of 64-bit integers takes up exactly 64-bits per element, plus some very small overhead for array metadata, such as the `shape` attribute we discussed above.
 This is generally much less than would be given to objects in a python list.
-(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas' blog post [Why Python is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
+(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas' blog post, [Why Python is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
 
 Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
 
@@ -303,7 +306,7 @@ Now, we have added together each element in `x` to its corresponding element in 
 
 Both of these operations are simple and, we hope, intuitive examples of vectorization.
 NumPy also makes them very fast, much faster than iterating over the arrays manually.
-(Feel free to play with this yourself using the `%%timeit` IPython magic we saw earlier.)
+(Feel free to play with this yourself using the `%timeit` IPython magic we saw earlier.)
 
 ### Broadcasting
 
@@ -383,7 +386,8 @@ this use case, which makes subsequent operations harder than they need to be.
 
 By reading the data in as a Pandas DataFrame we can let Pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
 Here we are just using Pandas briefly to import data.
-In later chapters we will give you some more insight into the world of Pandas.
+In later chapters we will see a bit more of Pandas, but for details, read *Python
+for Data Analysis*, by Wes McKinney, creator of Pandas.
 
 ```python
 import numpy as np
@@ -398,9 +402,9 @@ print(data_table.iloc[:5, :5])
 ```
 
 We can see that Pandas has kindly pulled out the header row and used it to name the columns.
-The first column gives the name of the gene, and the remaining columns represent individual samples.
+The first column gives the name of each gene, and the remaining columns represent individual samples.
 
-We will also needs some corresponding metadata, including the sample information and the gene lengths.
+We will also need some corresponding metadata, including the sample information and the gene lengths.
 
 ```python
 # Sample names
@@ -501,14 +505,14 @@ warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 > command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
 > that simply makes all plots appear in the notebook rather than pop up a new
 > window. If you are running a Jupyter notebook interactively, you can use
-> `%matplotlib notebook` instead to get an interactive figure, rathen than a
+> `%matplotlib notebook` instead to get an interactive figure, rather than a
 > static image of each plot.
 >
 > Second, we import `matplotlib.pyplot` then direct it to use our own plotting
 > style `plt.style.use('style/elegant.mplstyle')`. You will see a block of code
 > like this before the first plot in every chapter.
 >
-> You may have seen people importing existing styles like this
+> You may have seen people importing existing styles like this:
 > `plt.style.use('ggplot')`. But we wanted some particular settings, and we
 > wanted all the plots in this book to follow the same style. So we rolled our
 > own matplotlib style. To see how we did it, take a look at the style file in
@@ -519,7 +523,8 @@ warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 Now back to plotting our counts distribution!
 
 ```python
-total_counts = counts.sum(axis=0) # sum each column (axis=1 would sum rows)
+total_counts = np.sum(counts, axis=0)  # sum columns together
+                                       # (axis=1 would sum rows)
 
 from scipy import stats
 
@@ -550,14 +555,16 @@ We say that these individuals have different library sizes.
 
 #### Normalizing library size between samples
 
-Let's take a closer look at ranges of gene expression for each individual, so when we apply our normalization we can see it in action.
+Let's take a closer look at ranges of gene expression for each individual, so when
+we apply our normalization we can see it in action. We'll subset a random sample
+of just 70 columns to keep the plotting from getting too messy.
 
 ```python
 # Subset data for plotting
 np.random.seed(seed=7) # Set seed so we will get consistent results
 # Randomly select 70 samples
 samples_index = np.random.choice(range(counts.shape[1]), size=70, replace=False)
-counts_subset = counts[:,samples_index]
+counts_subset = counts[:, samples_index]
 ```
 
 ```python
@@ -630,13 +637,13 @@ reduce_xaxis_labels(ax, 2)
 
 plt.show()
 ```
-<!-- caption text="Boxplot of library normalized gene expression counts per individual (log scale)" -->
+<!-- caption text="Boxplot of library-normalized gene expression counts per individual (log scale)" -->
 
 Much better!
 Also notice how we used broadcasting twice there.
 Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
 
-Finally, let's compare our normalized data, to the raw data.
+Finally, let's compare our normalized data to the raw data.
 
 ```python
 import itertools as it
@@ -711,7 +718,7 @@ plt.show()
 You can see that the normalized distributions are a little bit more similar
 once we have taken library size (the sum of those distributions) into account.
 Now we are comparing like with like between the samples!
-But what about difference between the genes?
+But what about differences between the genes?
 
 ### Between genes
 
@@ -793,7 +800,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 >
 >     >>> binned_boxplot(x, y, xlabel='my x label', ylabel='my y label')
 >
-> but not this, which would have been valid Python 2, raises an error in
+> but not this, which would have been valid Python 2, but raises an error in
 > Python 3:
 >
 >     >>> binned_boxplot(x, y, 'my x label', 'my y label')
@@ -825,7 +832,7 @@ binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 <!-- caption text="The relationship between gene length and average expression (log scale)" -->
 
-We can see that the longer a gene is, the higher its measure counts! As
+We can see that the longer a gene is, the higher its measured counts! As
 explained above, this is an artifact of the technique, not a biological signal!
 How do we account for this?
 
@@ -932,10 +939,9 @@ Let's say that we know that it is appropriate to broadcast B over C.
 We can explicitly add a new dimension to B using `np.newaxis`.
 Let's see this in our normalization by RPKM.
 
-Let's have a look at the dimensions of our two arrays.
+Let's look at the dimensions of our arrays.
 
 ```python
-# Check the shapes of C_tmp and L
 print('C_tmp.shape', C_tmp.shape)
 print('L.shape', L.shape)
 ```
@@ -967,9 +973,11 @@ C_tmp = C_tmp / L
 
 Finally we need to normalize by the library size,
 the total number of counts for that column.
-Remember that we have already calculated N.
+Remember that we have already calculated N with:
 
-`N = counts.sum(axis=0) # sum each column to get total reads per sample`
+```
+N = counts.sum(axis=0) # sum each column to get total reads per sample
+```
 
 ```python
 # Check the shapes of C_tmp and N
