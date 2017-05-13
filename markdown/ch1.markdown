@@ -728,16 +728,14 @@ But what about differences between the genes?
 
 ### Between genes
 
-We can also get into some strife when trying to compare different genes.
-The number of counts for a gene, is related to the gene length.
-Let's say we have gene A and gene B.
-Gene B is twice as long as gene A.
+We can also get into some trouble when trying to compare different genes.
+The number of counts for a gene is related to the gene length.
+Suppose Gene B is twice as long as gene A.
 Both are expressed at similar levels in the sample, i.e. both produce a similar number of mRNA molecules.
-Therefore you would expect that gene B would have about twice as many counts as gene A.
-Remember, that when we do an RNAseq experiment, we are fragmenting the transcript, and sampling reads from that pool of fragments.
-The counts are the number of reads from that gene in a given sample.
-So if a gene is twice as long, we are twice as likely to sample it.
-If we want to compare between genes we will have to do some more normalization.
+Remember that in RNAseq experiment, we fragment the transcripts, and sample reads from that pool of fragments.
+So if a gene is twice as long, it'll produce twice as many fragments, and we are twice as likely to sample it.
+Therefore you would expect gene B to have about twice as many counts as gene A.
+If we want to compare the expression levels of different genes, we will have to do some more normalization.
 
 <img src="../figures/gene_length_counts.png"/>
 <!-- caption text="Relationship between counts and gene length" -->
