@@ -69,8 +69,8 @@ and others examine the entire parameter space.
 ## Optimization in SciPy: `scipy.optimize`
 
 In the rest of this chapter, we are going to use SciPy's `optimize` module to
-align two images. Applications of image alignment or *registration* include
-panorama stitching, combination of multi-modal brain scans, super-resolution
+align two images. Applications of image alignment, or *registration*, include
+panorama stitching, combination of brain scans, super-resolution
 imaging, and, in astronomy, object denoising (noise reduction) through the
 combination of multiple exposures.
 
@@ -472,8 +472,8 @@ feel free to peek at the solution at the end of the book if you're stuck.
 
 <!-- exercise begin -->
 
-**Exercise:** Try incorporating the `scipy.optimize.basinhopping` function
-into the `align` function, which has explicit strategies to avoid local minima.
+**Exercise:** Try modifying the `align` function to use
+`scipy.optimize.basinhopping`, which has explicit strategies to avoid local minima.
 
 *Hint:* limit using basin-hopping to just the top levels of the pyramid, as it is
 a slower optimization approach, and could take rather long to run at full image
