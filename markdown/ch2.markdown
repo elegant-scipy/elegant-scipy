@@ -105,7 +105,7 @@ print(data_table.iloc[:5, :5])
 
 Looking at the rows and columns of `data_table`, we can see that the
 columns are the samples, and the rows are the genes.
-Now let's put our counts in an ndarray.
+Now let's put our counts in a NumPy array.
 
 ```python
 # 2D ndarray containing expression counts for each gene in each individual
@@ -158,6 +158,8 @@ plot_col_density(log_counts)
 
 We can see that while the distributions of counts are broadly similar,
 some individuals have flatter distributions and a few are pushed right over to the left.
+In fact, realizing that this is a log scale, the location of the peak of the
+distributions actually varies over an order of magnitude!
 When doing our analysis of the counts data later in this chapter, we will be assuming
 that changes in gene expression are due to biological differences between our samples.
 But a major distribution shift like this suggests that the differences are technical.
@@ -170,7 +172,7 @@ at the start of the chapter.  The idea is that all our samples should have a
 similar distribution, so any differences in the shape should be due to some
 technical variation.  More formally, given an expression matrix (microarray
 data, read counts, etc) of shape `(n_genes, n_samples)`, quantile normalization
-ensures that all samples have the same spread of data (by construction).
+ensures that all samples (columns) have the same spread of data by construction.
 
 With NumPy and SciPy, this can be done easily and efficiently.
 To recap, here is our quantile normalization implementation, which we introduced at the beginning of the chapter.
@@ -240,7 +242,7 @@ As you might expect, the distributions now look virtually identical!
 numbers of ties for low count values — 0, 1, 2, ... — in the different
 columns of the data.)
 
-Now that we have normalized our counts, we can start using our gene expression data to predict mortality.
+Now that we have normalized our counts, we can start using our gene expression data to predict patient prognosis.
 
 ## Biclustering the counts data
 
@@ -265,6 +267,11 @@ def most_variable_rows(data, *, n=1500):
         The data to be subset
     n : int, optional
         Number of rows to return.
+
+    Returns
+    -------
+    variable_data : 2D array of float
+        The `n` rows of `data` that exhibit the most variance.
     """
     # compute variance along the columns axis
     rowvar = np.var(data, axis=1)
@@ -297,7 +304,7 @@ It returns the merge tree as a "linkage matrix", which contains each merge opera
 > fourth value `Z[i, 3]` represents the number of original
 > observations in the newly formed cluster.
 
-Whew! So that's a lot of information, but let's dive right in and hopefully you'll get the hang of it rather quickly.
+Whew! That's a lot of information, but let's dive right in and hopefully you'll get the hang of it rather quickly.
 First, we define a function, `bicluster`, that clusters both the rows *and* the columns of a matrix:
 
 ```python
@@ -329,7 +336,7 @@ def bicluster(data, linkage_method='average', distance_metric='correlation'):
     return y_rows, y_cols
 ```
 
-Simple: we just call `linkage` for the input matrix and also for the transpose of that matrix, in which columns become rows and rows become columns.
+Simple: we just call `linkage` for the input matrix and also for the *transpose* of that matrix, in which columns become rows and rows become columns.
 
 ## Visualizing clusters
 
@@ -430,11 +437,11 @@ yr, yc = bicluster(counts_var, linkage_method='ward',
                    distance_metric='euclidean')
 plot_bicluster(counts_var, yr, yc)
 ```
-<!-- caption text="This heatmap shows the level of gene expression across all samples and genes. The color indicates the expression level. The rows and columns are grouped by our clusters. We can see our gene clusters along the y-axis and sample clusters across the top of the x-axis" -->
+<!-- caption text="This heatmap shows the level of gene expression across all samples and genes. The color indicates the expression level. The rows and columns are grouped by our clusters. We can see our gene clusters along the y-axis and sample clusters across the top of the x-axis." -->
 
 ## Predicting survival
 
-We can see that the sample data naturally falls into at least 2 clusters.
+We can see that the sample data naturally falls into at least 2 clusters, maybe 3.
 Are these clusters meaningful?
 To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
 After some preprocessing, we get the [patients table](https://github.com/elegant-scipy/elegant-scipy/blob/master/data/patients.csv), which contains survival information for each patient.
@@ -448,7 +455,7 @@ patients.head()
 For each patient (the rows) we have:
 
 - UV­ signature: Ultraviolet light tends to cause specific DNA mutations.
-By looking for this mutation signature they can infer that UV light likely caused the mutation(s) that lead to cancer in these patients.
+By looking for this mutation signature researchers can infer whether UV light likely caused the mutation(s) that lead to cancer in these patients.
 - original­ clusters: In the paper, the patients were clustered using gene expression data.
 These clusters were classified according to the types of genes that typified that cluster.
 The main clusters were "immune" (n = 168; 51%), "keratin" (n = 102; 31%), and "MITF-low" (n = 59; 18%).
@@ -575,13 +582,12 @@ plot_cluster_survival_curves(clusters, data_table.columns, patients)
 <!-- caption text="Survival curves for patients clustered using gene expression data" -->
 
 The clustering of gene expression profiles appears to have identified a
-higher-risk subtype of melanoma, which constitutes the majority of patients.
+higher-risk subtype of melanoma (cluster 2).
 The TCGA study backs this claim up with a more robust clustering and
-statistical testing.  This is indeed only the latest study to show such a
+statistical testing. This is indeed only the latest study to show such a
 result, with others identifying subtypes of leukemia (blood cancer), gut
-cancer, and more.  Although the above clustering technique is quite fragile,
-there are other ways to explore this dataset and similar ones that are more
-robust [^paper].
+cancer, and more. Although the above clustering technique is quite fragile,
+there are other, more robust ways to explore this and similar datasets [^paper].
 
 <!-- exercise begin -->
 
