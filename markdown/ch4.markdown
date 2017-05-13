@@ -570,8 +570,8 @@ the `fftshift` function.
 >
 > The way in which we defined the DFT leads to a few subtleties
 > when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
-> for increasing values of $k$ in Fig.
-> for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from $k$
+> for increasing values of $k$ in the figure below,
+> for the cases $n=1$ to $n=N-1$ for $N=16$. When $k$ increases from $k$
 > to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
 > the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
 > increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
