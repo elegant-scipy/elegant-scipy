@@ -846,13 +846,11 @@ RPKM puts together the ideas of normalising by sample and by gene.
 When we calculate RPKM, we are normalizing for both the library size (the sum of each column)
 and the gene length.
 
-Working through how RPKM is derived:
+To work through how RPKM is derived, let's define the following values:
 
-Let's say:
-
-C = Number of reads mapped to a gene
-L = exon length in base-pairs for a gene
-N = Total mapped reads in the experiment
+$C$ = Number of reads mapped to a gene<br/>
+$L$ = exon length in base-pairs for a gene<br/>
+$N$ = Total mapped reads in the experiment
 
 First, let's calculate reads per kilobase.
 
