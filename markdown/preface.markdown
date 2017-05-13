@@ -31,7 +31,7 @@ Python) remind us that "code is read much more often than it is
 written" and therefore "readability counts".
 
 The conciseness of elegant code comes through abstraction and the
-judicious use of functions, *not* just through packing in a bunch of nested function calls!
+judicious use of functions, *not* just through packing in a bunch of nested function calls.
 It may take a minute or two to grok, but it should ultimately provide a crisp, "ah-ha!" moment of understanding.
 Once you know the various components of the code, its correctness should be
 obvious.
@@ -118,7 +118,7 @@ cannot keep up with demand.
 
 > "SciPy (pronounced “Sigh Pie”) is a Python-based ecosystem of open-source software for mathematics, science, and engineering."
 >
-> -- http://www.scipy.org/
+> — http://www.scipy.org/
 
 The SciPy ecosystem is a loosely defined collection of Python packages.
 In Elegant SciPy we will meet many of its main players:
@@ -164,17 +164,18 @@ scientific computing.
 
 In your Python travels, you may have already heard a few rumblings about which version of Python is better.
 You may have wondered why it's not just the latest version.
+(Spoiler alert: it is.)
 
-At the end of 2008, the Python core developers released Python 3.0 and, as
-Douglas Adams observed tongue-in-cheek about the creation of the Universe in
-The Hitchiker's Guide to the Galaxy, "this has made a lot of people very angry
-and been widely regarded as a bad move".
-
-Python 3 is a major update to the language with better Unicode (international)
+At the end of 2008, the Python core developers released Python 3,
+a major update to the language with better Unicode (international)
 text handling, type consistency, and streaming data handling, among other
-improvements.  But, in most cases, Python 2.6 or 2.7 code cannot be
-interpreted by Python 3.x without at least some modification (although the
+improvements. As Douglas Adams quipped[^hitch] about the creation of the Universe,
+"this has made a lot of people very angry and been widely regarded as a bad move".
+That's because Python 2.6 or 2.7 code cannot usually be
+interpreted by Python 3 without at least some modification (though the
 changes are typically not too invasive).
+
+[^hitch]: Douglas Adams, *The Hitchhiker's Guide to the Galaxy* (1979).
 
 There is always a tension between the march of progress and backwards
 compatibility.  In this case, the Python core team decided that a
@@ -198,8 +199,8 @@ print >>sys.stderr, "fatal error"  # Python 2
 print("fatal error", file=sys.stderr)  # Python 3
 ```
 
-That change certainly seems worthwhile; what is going on in the
-Python 2 version anyway?  The authors don't rightly know.
+That change certainly seems more worthwhile; what is going on in the
+Python 2 version anyway? The authors don't rightly know.
 
 Another change is the way Python 3 treats integer division, which is the way most humans treat division.
 (Note `>>>` indicates we are typing at the Python interactive shell.)
@@ -243,8 +244,9 @@ unicode.  For example, `\beta<TAB>` becomes β.
 The Python 3 update also breaks a lot of existing 2.x code, and in some
 cases executes more slowly than before.  Despite these frustrations,
 we encourage all users to upgrade as soon as possible (Python 2.x is
-now in maintenance only mode until 2020), as we hope to see most
-issues addressed as the 3.x series matures.
+now in maintenance only mode until 2020), since most issues have been addressed as
+the 3.x series has matured.
+Indeed, we use many new features from Python 3 in this book.
 
 In Elegant SciPy, we use **Python 3.6**.
 
@@ -339,7 +341,7 @@ In fact we quote Jake here, to drive home the key points of software licensing:
 > Code](http://www.astrobetter.com/the-whys-and-hows-of-licensing-scientific-code/)*
 
 All the code in this book is available under the 3-clause BSD license.
-Where we have sourced code snippets from other people, the code was generally be under a permissive open license of some variety (although not necessarily BSD).
+Where we have sourced code snippets from other people, the code was generally under a permissive open license of some variety (although not necessarily BSD).
 
 For your own code, we recommend that you follow the practices of your
 community. In Scientific Python, this means 3-clause BSD, while the R language
@@ -367,7 +369,7 @@ Anyone can come along and create a copy (called a *fork*) of the code and edit i
 They can eventually contribute those changes back into the original by creating a *pull request*.
 There are some nice features like managing issues and change requests, as well as who can directly edit your code.
 You can even keep track of edits, contributors and other fun stats.
-There are a whole bunch of other great GitHub features, but we will leave many them for you to discover and some for you to read in later chapters.
+There are a whole bunch of other great GitHub features, but we will leave many of them for you to discover and some for you to read in later chapters.
 In essence, GitHub has democratized software development. It has substantially reduced the barrier to entry.
 
 ![The impact of GitHub (Used with permission of the author, Jake VanderPlas)](https://jakevdp.github.io/figures/author_count.png)
@@ -379,7 +381,7 @@ When you reach this point, it's time to start contributing to the SciPy Ecosyste
 
 We strongly encourage you to try doing this.
 The community lives because people are willing to share their code and improve existing code.
-And, if we each contribute a little bit, together we built a lot.
+And, if we each contribute a little bit, together we build a lot.
 But, beyond any altruistic reasons for contributing, there are some very practical personal benefits.
 By engaging with the community you will become a better coder.
 Any code you contribute will be reviewed by others and you will receive feedback.
@@ -440,7 +442,8 @@ See the the book [GitHub repository](https://github.com/elegant-scipy/elegant-sc
 
 ### Accessing the book materials
 
-All of the code and data from this book is available on our GitHub repository: [https://github.com/elegant-scipy/elegant-scipy](https://github.com/elegant-scipy/elegant-scipy)
+All of the code and data shown in this book are available on our GitHub repository: [https://github.com/elegant-scipy/elegant-scipy](https://github.com/elegant-scipy/elegant-scipy).
+In the README file in that repository, you will find instructions to build Jupyter notebooks from the markdown source files, which you can then run interactively, using the data included in the repo.
 
 ## Diving in
 
