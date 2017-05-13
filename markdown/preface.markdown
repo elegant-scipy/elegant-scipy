@@ -166,16 +166,16 @@ In your Python travels, you may have already heard a few rumblings about which v
 You may have wondered why it's not just the latest version.
 (Spoiler alert: it is.)
 
-At the end of 2008, the Python core developers released Python 3.0 and, as
-Douglas Adams observed about the creation of the Universe in
-The Hitchiker's Guide to the Galaxy, "this has made a lot of people very angry
-and been widely regarded as a bad move".
-
-Python 3 is a major update to the language with better Unicode (international)
+At the end of 2008, the Python core developers released Python 3,
+a major update to the language with better Unicode (international)
 text handling, type consistency, and streaming data handling, among other
-improvements.  But, in most cases, Python 2.6 or 2.7 code cannot be
-interpreted by Python 3.x without at least some modification (although the
+improvements. As Douglas Adams quipped[^hitch] about the creation of the Universe,
+"this has made a lot of people very angry and been widely regarded as a bad move".
+That's because Python 2.6 or 2.7 code cannot usually be
+interpreted by Python 3 without at least some modification (though the
 changes are typically not too invasive).
+
+[^hitch]: Douglas Adams, *The Hitchhiker's Guide to the Galaxy* (1979).
 
 There is always a tension between the march of progress and backwards
 compatibility.  In this case, the Python core team decided that a
@@ -199,8 +199,8 @@ print >>sys.stderr, "fatal error"  # Python 2
 print("fatal error", file=sys.stderr)  # Python 3
 ```
 
-That change certainly seems worthwhile; what is going on in the
-Python 2 version anyway?  The authors don't rightly know.
+That change certainly seems more worthwhile; what is going on in the
+Python 2 version anyway? The authors don't rightly know.
 
 Another change is the way Python 3 treats integer division, which is the way most humans treat division.
 (Note `>>>` indicates we are typing at the Python interactive shell.)
