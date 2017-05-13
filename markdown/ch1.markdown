@@ -903,40 +903,32 @@ But what happens when we need to divide a 2D array by a 1D array?
 
 #### Broadcasting rules
 
-Broadcasting allows calculations between ndarrays that have differing shapes.
+Broadcasting allows calculations between ndarrays that have different shapes.
 Numpy uses broadcasting rules to make these manipulations a little easier.
-For example, if the input arrays do not have the same number of dimensions,
-then then an additional dimension is added to the start of the first array,
-with a value of 1.
-Once the two arrays have the same number of dimensions,
-broadcasting can only occur if the sizes of the dimensions match,
+When two arrays have the same number of dimensions,
+broadcasting can occur if the sizes of each dimension match,
 or one of them is equal to 1.
+If arrays have different numbers of dimensions, then $(1,)$ is prepended to the
+shorter array until the numbers match, and then the standard broadcasting rules
+apply.
 
-For example, let's say we have two ndarrays, A and B:
-`A.shape = (1, 2)`
-`B.shape = (2,)`
+For example, suppose we have two ndarrays, A and B, with shapes $(5, 2)$ and
+$(2,)$.
+We define the product `A * B` using broadcasting.
+B has fewer dimensions than A, so during the calculation,
+a new dimension is prepended to B with value 1, so B's new shape is $(1, 2)$.
+Finally, where B's shape doesn't match A's, it is *multiplied* by stacking enough
+versions of B, giving the shape $(5, 2)$. This is done "virtually", without using
+up any additional memory. At this point, the product is just an element-wise
+multiplication, giving an output array of the same shape as A.
 
-If we performed the operation `A * B` then broadcasting would occur.
-B has fewer dimension than A, so during the calculation
-a new dimension is prepended to B with value 1.
-`B.shape = (1, 2)`
-Now A and B have the same number of dimensions, so broadcasting can proceed.
+Now let's say we have another array, C, of shape $(2, 5)$. To multiply (or add) C 
+to B, we might try to prepend $(1,)$ to the shape of B, but in that case, we still
+end up with incompatible shapes: $(2, 5)$ and $(1, 2)$. If we want the arrays to
+broadcast, we have to *ap*pend a dimension to B, manually. Then, we end up with
+$(2, 5)$ and $(2, 1)$, and broadcasting can proceed.
 
-Now let's say we have another array, C:
-
-`C.shape = (2, 1)`
-`B.shape = (2,)`
-
-Now, if we were to do the operation `C * B`,
-a new dimension needs to be prepended to B.
-
-`B.shape = (1, 2)`
-
-However, the dimensions of the two ndarrays do not match,
-so broadcasting will fail.
-
-Let's say that we know that it is appropriate to broadcast B over C.
-We can explicitly add a new dimension to B using `np.newaxis`.
+In NumPy, we can explicitly add a new dimension to B using `np.newaxis`.
 Let's see this in our normalization by RPKM.
 
 Let's look at the dimensions of our arrays.
