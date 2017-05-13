@@ -193,7 +193,7 @@ def confusion_matrix1(pred, gt):
     return cont
 ```
 
-The first option would be considered the more "Pythonic" of the two, but the
+The first option might be considered the more "Pythonic" of the two, but the
 second one is easier to speed up by translating and compiling in languages or
 tools such as C, Cython, and Numba (which are a topic for another book).
 
@@ -264,6 +264,9 @@ We hope you agree that it's a fairly intuitive, and, in some sense, inevitable
 format to hold n-dimensional array data.
 For sparse matrices, there are actually a wide array of possible formats, and
 the "right" format depends on the problem you want to solve.
+We'll cover the two most commonly-used formats, but for a complete list, see the
+comparison table later in the chapter, as well as the online documentation for
+`scipy.sparse`.
 
 ### COO (COOrdinate) format
 
@@ -275,7 +278,7 @@ equal to 0.
 
 - the `row` and `col` arrays, which together specify the location of each
   non-zero entry (row and column indices, respectively).
-- the `data` array, which specifies the *value* at each location.
+- the `data` array, which specifies the *value* at each of those locations.
 
 Every part of the matrix that is not represented by the `(row, col)` pairs is
 considered to be 0.
@@ -437,14 +440,14 @@ print('The CSR and NumPy arrays are equal: ',
 ```
 
 The ability to store large, sparse matrices, and perform computations on them,
-is incredibly powerful!
+is incredibly powerful, and can be applied in many domains.
 
-The combination of sparsity and linear algebra abounds. For example,
+For example,
 one can think of the entire web as a large, sparse, $N \times N$ matrix.
 Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
 By normalizing this matrix and solving for its dominant eigenvector,
 one obtains the so-called PageRank—one of the numbers Google uses to
-order your search results. (You can read more about this in the next chapter!)
+order your search results. (You can read more about this in the next chapter.)
 
 As another example, we can represent the human brain as a large $m \times m$
 graph, where there are $m$ nodes (positions) in which you
@@ -635,14 +638,16 @@ point approximation error:
 print(H @ H @ H @ point)
 ```
 
-Now, we will build a function that defines a "sparse operator".  The goal of
+Now, we will build a function that defines a "sparse operator". The goal of
 the sparse operator is to take all pixels of the output image, figure out where
-they came from in the input image and, doing the appropriate (bi-linear)
-interpolation (see figure), calculate their values. It does this using just
+they came from in the input image, and do the appropriate (bi-linear)
+interpolation (see figure below) to calculate their values. It does this using just
 matrix multiplication on the image values, and thus is extremely fast.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg"/>
-<!-- caption text="Diagram explaining bilinear interpolation" -->
+<!-- caption text="Diagram explaining bilinear interpolation. The value at
+point $P$ is estimated as a weighted sum of the values at $Q_{11}$, $Q_{12}$,
+$Q_{21}$, $Q_{22}$." -->
 
 Let's look at the function that builds our sparse operator:
 
@@ -765,7 +770,7 @@ when you want to move the image $t_r$ pixels down and $t_c$ pixels right.
 
 <!-- solution begin -->
 
-We can *compose* transformations by multiplying them. We know how to rotate
+**Solution:** We can *compose* transformations by multiplying them. We know how to rotate
 an image about the origin, as well as how to slide it around. So what we will
 do is slide the image so that the center is at the origin, rotate it, and then
 slide it back.
@@ -899,7 +904,7 @@ required for the contingency matrix computation?
 
 <!-- solution begin -->
 
-The `np.ones` array that we create is read-only: it will only be used as the
+**Solution:** The `np.ones` array that we create is read-only: it will only be used as the
 values to sum by `coo_matrix`. We can use `broadcast_to` to create a similar
 array with only one element, "virtually" repeated n times:
 
@@ -919,7 +924,8 @@ print(cont.toarray())
 ```
 
 Boom. Instead of making an array as big as the original data, we just make
-one of size 1.
+one of size 1. As we handle bigger and bigger datasets, such optimizations become
+increasingly important.
 
 <!-- solution end -->
 
@@ -970,6 +976,7 @@ COO format to confirm that this represents the matrix we want:
 print(cont.toarray())
 ```
 
+How do we convert this table into a measure of how well `seg` represents `gt`?
 Segmentation is a hard problem, so it's important to measure how well a
 segmentation algorithm is doing, by comparing its output to a "ground truth"
 segmentation that is manually produced by a human.
@@ -980,6 +987,11 @@ automated segmentation is to a ground truth?  We'll illustrate one method, the
 to the following question: on average, for a random pixel, if we are given its
 segment ID in one segmentation, how much more *information* do we need to
 determine its ID in the other segmentation?
+
+Intuitively, if the two segmentations are exactly alike, then knowing the segment
+ID in one tells you the segment ID in the other, with no additional information.
+But as the segmentations become more different, knowing an ID in one doesn't tell
+you the ID in the other without more information.
 
 ## Information theory in brief
 
@@ -1015,7 +1027,10 @@ Generally, we measure this for any random variable $X$ (which could have more
 than two possible values) by using the *entropy* function $H$:
 
 $$
-H(X) = \sum_{x}{p_x \log_2\left(\frac{1}{p_x}\right)}
+\begin{aligned}
+H(X) & = \sum_{x}{p_x \log_2\left(\frac{1}{p_x}\right)} \\
+     & = -\sum_{x}{p_x \log_2\left(p_x\right)}
+\end{aligned}
 $$
 
 where the $x$s are possible values of $X$, and $p_x$ is the probability of $X$
@@ -1062,8 +1077,8 @@ H(R | M=m) &= {p_{r|m}\log_2\left(\frac{1}{p_{r|m}}\right) +
                p_{s|m}\log_2\left(\frac{1}{p_{s|m}}\right)} \\
            &= {\frac{p_{rm}}{p_m}\log_2\left(\frac{p_m}{p_{rm}}\right) +
                \frac{p_{sm}}{p_m}\log_2\left(\frac{p_m}{p_{sm}}\right)} \\
-           &= {-\frac{p_{rm}}{p_m}\log_2\left(\frac{p_rm}{p_{m}}\right) -
-               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_sm}{p_{m}}\right)}
+           &= {-\frac{p_{rm}}{p_m}\log_2\left(\frac{p_{rm}}{p_{m}}\right) -
+               \frac{p_{sm}}{p_m}\log_2\left(\frac{p_{sm}}{p_{m}}\right)}
 \end{aligned}
 $$
 
@@ -1103,8 +1118,8 @@ $$
 H(R|M) & = -\frac{1}{12} \left( 0.25 \log_2(0.25) +
                                 0.75 \log_2(0.75) \right) -
            \frac{1}{12} \left( 0.27 \log_2(0.27) +
-                               0.73 \log_2(0.73) \right) -
-           ... -
+                               0.73 \log_2(0.73) \right) \\
+       &   - ... -
            \frac{1}{12} \left( 0.23 \log_2(0.23) +
                                0.77 \log_2(0.77) \right) \\
        & \approx 0.626 \textrm{ bits}
@@ -1139,7 +1154,7 @@ p_rain_month = None
 
 <!-- solution begin -->
 
-To obtain the joint probability table, we simply divide the table by its total,
+**Solution:** To obtain the joint probability table, we simply divide the table by its total,
 in this case, 12:
 
 ```python
@@ -1204,15 +1219,15 @@ $$
 Here's a simple example:
 
 ```python
-aseg = np.array([[0, 1],
-                 [2, 3]], int)
+S = np.array([[0, 1],
+              [2, 3]], int)
 
-gt = np.array([[0, 1],
-               [0, 1]], int)
+T = np.array([[0, 1],
+              [0, 1]], int)
 ```
 
-Here we have two segmentations of a four-pixel image: `as` and `gt`. `as`
-puts every pixel in its own segment, while `gt` puts the left two pixels in
+Here we have two segmentations of a four-pixel image: `S` and `T`. `S`
+puts every pixel in its own segment, while `T` puts the left two pixels in
 segment 0 and the right two pixels in segment 1.
 Now, we make a contingency table of the pixel labels, just as we did with
 the spam prediction labels.
@@ -1221,18 +1236,18 @@ the 1D arrays of predictions.
 In fact, this doesn't matter:
 remember that numpy arrays are actually linear (1D) chunks of data with some
 shape and other metadata attached.
-We can ignore the shape by using the arrays' `.ravel()` method:
+As we mentioned before, we can ignore the shape by using the arrays' `.ravel()` method:
 
 ```python
-aseg.ravel()
+S.ravel()
 ```
 
 Now we can just make the contingency table in the same way as when we were
 predicting spam:
 
 ```python
-cont = sparse.coo_matrix((np.broadcast_to(1., aseg.size),
-                          (aseg.ravel(), gt.ravel())))
+cont = sparse.coo_matrix((np.broadcast_to(1., S.size),
+                          (S.ravel(), T.ravel())))
 cont = cont.toarray()
 cont
 ```
@@ -1245,11 +1260,11 @@ cont /= np.sum(cont)
 ```
 
 Finally, we can use this table to compute the probabilities of labels in *either*
-`aseg` or `gt`, using the axis-wise sums:
+`S` or `T`, using the axis-wise sums:
 
 ```python
-p_as = np.sum(cont, axis=1)
-p_gt = np.sum(cont, axis=0)
+p_S = np.sum(cont, axis=1)
+p_T = np.sum(cont, axis=0)
 ```
 
 There is a small kink in writing Python code to compute entropy:
@@ -1309,15 +1324,15 @@ xlog1x(mat).A
 So, the conditional entropy of $S$ given $T$:
 
 ```python
-H_ag = np.sum(np.sum(xlog1x(cont / p_gt), axis=0) * p_gt)
-H_ag
+H_ST = np.sum(np.sum(xlog1x(cont / p_T), axis=0) * p_T)
+H_ST
 ```
 
 And the converse:
 
 ```python
-H_ga = np.sum(np.sum(xlog1x(cont / p_as[:, np.newaxis]), axis=1) * p_as)
-H_ga
+H_TS = np.sum(np.sum(xlog1x(cont / p_S[:, np.newaxis]), axis=1) * p_S)
+H_TS
 ```
 
 ### Converting NumPy array code to use sparse matrices
@@ -1330,7 +1345,7 @@ We can instead use `sparse` throughout the calculation, and recast some of the
 NumPy magic as linear algebra operations.
 This was
 [suggested](http://stackoverflow.com/questions/16043299/substitute-for-numpy-broadcasting-using-scipy-sparse-csc-matrix)
-to me by Warren Weckesser on StackOverflow.
+to us by Warren Weckesser on StackOverflow.
 
 The linear algebra version efficiently computes a contingency matrix for very
 large amounts of data, up to billions of points, and is elegantly concise.
@@ -1370,11 +1385,11 @@ def variation_of_information(x, y):
     return float(hygx + hxgy)
 ```
 
-We can check that this gives the right value (1) for the VI of our toy `aseg`
-and `gt`:
+We can check that this gives the right value (1) for the VI of our toy `S`
+and `T`:
 
 ```python
-variation_of_information(aseg, gt)
+variation_of_information(S, T)
 ```
 
 You can see how we use three types of sparse matrices (COO, CSR, and diagonal)
@@ -1394,7 +1409,8 @@ Using our skills from chapter 3, we're going to generate a number of possible wa
 ```python
 from skimage import io
 
-url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
+url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds'
+       '/BSDS300/html/images/plain/normal/color/108073.jpg')
 tiger = io.imread(url)
 
 plt.imshow(tiger);
@@ -1487,7 +1503,7 @@ Now we're going to have a closer look at how this threshold impacts our segmenta
 Let's pop the segmentation code into a function so we can play with it.
 
 ```python
-def RAG_segmentation(base_seg, image, threshold=80):
+def rag_segmentation(base_seg, image, threshold=80):
     g = build_rag(base_seg, image)
     for n in g:
         node = g.node[n]
@@ -1509,13 +1525,13 @@ def RAG_segmentation(base_seg, image, threshold=80):
 Let's try a few thresholds and see what happens:
 
 ```python
-auto_seg_10 = RAG_segmentation(seg, tiger, threshold=10)
+auto_seg_10 = rag_segmentation(seg, tiger, threshold=10)
 plt.imshow(color.label2rgb(auto_seg_10, tiger));
 ```
 <!-- caption text="Tiger RAG-based segmentation at threshold 10" -->
 
 ```python
-auto_seg_40 = RAG_segmentation(seg, tiger, threshold=40)
+auto_seg_40 = rag_segmentation(seg, tiger, threshold=40)
 plt.imshow(color.label2rgb(auto_seg_40, tiger));
 ```
 <!-- caption text="Tiger RAG-based segmentation at threshold 40" -->
@@ -1543,7 +1559,7 @@ Now we can calculate the VI for a range of possible thresholds and see which one
 ```python
 # Try many thresholds
 def vi_at_threshold(seg, tiger, human_seg, threshold):
-    auto_seg = RAG_segmentation(seg, tiger, threshold)
+    auto_seg = rag_segmentation(seg, tiger, threshold)
     return variation_of_information(auto_seg, human_seg)
 
 thresholds = range(0, 110, 10)
@@ -1560,7 +1576,7 @@ Unsurprisingly, it turns out that eyeballing it and picking threshold=80, did gi
 But now we have a way to automate this process for any image!
 
 ```python
-auto_seg = RAG_segmentation(seg, tiger, threshold=80)
+auto_seg = rag_segmentation(seg, tiger, threshold=80)
 plt.imshow(color.label2rgb(auto_seg, tiger));
 ```
 <!-- caption text="Optimal tiger segmentation based on the VI curve" -->
