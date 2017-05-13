@@ -244,7 +244,7 @@ unicode.  For example, `\beta<TAB>` becomes β.
 The Python 3 update also breaks a lot of existing 2.x code, and in some
 cases executes more slowly than before.  Despite these frustrations,
 we encourage all users to upgrade as soon as possible (Python 2.x is
-now in maintenance only mode until 2020), as most issues have been addressed as
+now in maintenance only mode until 2020), since most issues have been addressed as
 the 3.x series has matured.
 Indeed, we use many new features from Python 3 in this book.
 
