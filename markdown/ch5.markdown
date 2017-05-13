@@ -991,7 +991,7 @@ determine its ID in the other segmentation?
 Intuitively, if the two segmentations are exactly alike, then knowing the segment
 ID in one tells you the segment ID in the other, with no additional information.
 But as the segmentations become more different, knowing an ID in one doesn't tell
-you everything you need to know about the other.
+you the ID in the other without more information.
 
 ## Information theory in brief
 
