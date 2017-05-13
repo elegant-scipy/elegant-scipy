@@ -558,8 +558,8 @@ ax.set_ylabel("Density")
 plt.show()
 
 print(f'Count statistics:\n  min:  {np.min(total_counts)}'
-       '\n  mean: {np.mean(total_counts)}'
-       '\n  max:  {np.max(total_counts)}')
+      f'\n  mean: {np.mean(total_counts)}'
+      f'\n  max:  {np.max(total_counts)}')
 ```
 <!-- caption text="Density plot of gene expression counts per individual using KDE smoothing" -->
 
