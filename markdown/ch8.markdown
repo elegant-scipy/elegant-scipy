@@ -5,7 +5,7 @@
 >
 > — Jack Burton, *Big Trouble in Little China*
 
-Streaming is not a SciPy feature per se, but rather an approach which
+Streaming is not a SciPy feature per se, but rather an approach that
 allows us to efficiently process large datasets, like those often
 seen in science. The Python language contains some useful primitives
 for streaming data processing, and these can be combined with Matt Rocklin's
@@ -30,16 +30,12 @@ print(sum_of_means)
 This strategy works really well for cases where your problem can be neatly solved with by-row processing.
 But things can quickly get out of hand when your code becomes more sophisticated.
 
-In the most commonly used programming models, you pass your data to a function,
-the function processes the data, and then returns the result. Done. (This
-includes most of this book!)
-
-But in streaming programs, a function processes *some* of the data, returns the
+In streaming programs, a function processes *some* of the input data, returns the
 processed chunk, then, while downstream functions are dealing with that chunk,
 the function receives a bit more, and so on...  All these things are going on
 at the same time!  How can one keep them straight?
 
-We too found this difficult to do, until we found the `toolz` library.
+We too found this difficult, until we discovered the `toolz` library.
 Its constructs make streaming programs so elegant to write that
 it was impossible to contemplate writing this book without including a chapter
 about it.
@@ -102,12 +98,12 @@ print('Stream result: ', result_stream)
 The advantage of the streaming approach is that elements of a stream aren't processed until they're needed, whether it's for computing a running sum, or for writing out to disk, or something else.
 This can conserve a lot of memory when you have many input items, or when each item is very big.
 (Or both!)
-This quote from one of Matt's posts very succinctly summarizes the utility of streaming data analysis:
+This quote from one of Matt's blog posts very succinctly summarizes the utility of streaming data analysis:
 
 > In my brief experience people rarely take this [streaming] route.
 They use single-threaded in-memory Python until it breaks, and then seek out Big Data Infrastructure like Hadoop/Spark at relatively high productivity overhead.
 
-Indeed, this describes my computational career perfectly, up until recent months.
+Indeed, this describes our computational careers perfectly.
 But the intermediate approach can get you a *lot* farther than you think.
 In some cases, it can get you there even faster than the supercomputing approach, by eliminating the overhead of multi-core communication and random-access to databases.
 (For example, see [this post](http://www.frankmcsherry.org/graph/scalability/cost/2015/02/04/COST2.html) by Frank McSherry, where he processes a 128 billion edge graph on his laptop *faster* than using a graph database on a supercomputer.)
@@ -125,21 +121,21 @@ def readtsv(filename):
     print('starting readtsv')
     with open(filename) as fin:
         for i, line in enumerate(fin):
-            print('reading line {}'.format(i))
+            print(f'reading line {i}')
             yield tsv_line_to_array(line)
     print('finished readtsv')
 
 def add1(arrays_iter):
     print('starting adding 1')
     for i, arr in enumerate(arrays_iter):
-        print('adding 1 to line {}'.format(i))
+        print(f'adding 1 to line {i}')
         yield arr + 1
     print('finished adding 1')
 
 def log(arrays_iter):
     print('starting log')
     for i, arr in enumerate(arrays_iter):
-        print('taking log of array {}'.format(i))
+        print(f'taking log of array {i}')
         yield np.log(arr)
     print('finished log')
 
@@ -149,7 +145,7 @@ def running_mean(arrays_iter):
         if i == 0:
             mean = arr
         mean += (arr - mean) / (i + 1)
-        print('adding line {} to the running mean'.format(i))
+        print(f'adding line {i} to the running mean')
     print('returning mean')
     return mean
 ```
@@ -164,7 +160,7 @@ print('Creating loglines iterator')
 loglines = log(add1(lines))
 print('Computing mean')
 mean = running_mean(loglines)
-print('the mean log-row is: {}'.format(mean))
+print(f'the mean log-row is: {mean}')
 ```
 
 Note:
@@ -233,8 +229,8 @@ in the fruit-fly genome:
 ```python
 %%timeit -r 1 -n 1
 dm = 'data/dm6.fa'
-model = tz.pipe(dm, genome, c.take(1000000), markov)
-# we use `take` to just run on the first 1000000 bases, to speed things up.
+model = tz.pipe(dm, genome, c.take(10**7), markov)
+# we use `take` to just run on the first 10 million bases, to speed things up.
 # the take step can just be removed if you have ~5-10 mins to wait.
 ```
 
@@ -264,7 +260,7 @@ What was originally multiple lines, or an unwieldy mess of parentheses, is now a
 Much easier to understand!
 
 This strategy also has an advantage over the original NumPy implementation: if we scale our data to millions or billions of rows, our computer might struggle to hold all the data in memory.
-In contrast, here we are only loading lines from disk one at a time, and maintaining a single line's worth of data.
+In contrast, here we are only loading lines from disk one at a time, and maintaining only a single line's worth of data.
 
 ## k-mer counting and error correction
 
@@ -308,10 +304,14 @@ This is a plaintext format, consisting of one or many DNA sequences per file, ea
 A sample FASTA file:
 ```
     > sequence_name1
+    TCAATCTCTTTTATATTAGATCTCGTTAAAGTAAAATTTTGGTTTGTGTTAAAGTACAAG
+    GGGTACCTATGACCACGGAACCAACAAAGTGCCTAAATAGGACATCAAGTAACTAGCGGT
     ACGT
 
     > sequence_name2
-    GACT
+    ATGTCCCAGGCGTTCCTTTTGCATTTGCTTCGCATTAACAGAATATCCAGCGTACTTAGG
+    ATTGTCGACCTGTCTTGTCGTACGTGGCCGCAACACCAGGTATAGTGCCAATACAAGTCA
+    GACTAAAACTGGTTC
 ```
 
 Now we have the required information to convert a stream of lines from a FASTA file to a count of k-mers:
@@ -387,19 +387,22 @@ For example, the *sliding window* function is exactly what we need to make k-mer
 print(tz.sliding_window.__doc__)
 ```
 
-Additionally, the *frequencies* function counts the appearance of individual items in a data stream!
+Additionally, the *frequencies* function counts the appearance of individual items in a data stream.
 Together with pipe, we can now count k-mers in a single function call:
 
 ```python
 from toolz import curried as c
 
 k = 7
-counts = tz.pipe('data/sample.fasta', open, c.filter(is_sequence),
+counts = tz.pipe('data/sample.fasta', open,
+                 c.filter(is_sequence),
                  c.map(str.rstrip),
                  c.map(c.sliding_window(k)),
                  tz.concat, c.map(''.join),
                  tz.frequencies)
 ```
+
+But, just a minute: what are all those `c.function` calls from `toolz.curried`?
 
 ## Currying: the spice of streaming
 
@@ -464,15 +467,15 @@ Now let's leave out the second variable.
 add_curried(2)
 ```
 
-As we expected, it returned a function. Yay!
-Now let's see if we can use that returned function as expected.
+As we expected, it returned a function.
+Now let's use that function:
 
 ```python
 add2 = add_curried(2)
 add2(5)
 ```
 
-Now, that worked, but `add_curried` was a reasonably hard function to read.
+Now, that worked, but `add_curried` was a hard function to read.
 Future us will probably have trouble remembering how we wrote that code.
 Luckily, Toolz has the, well, tools to help us out.
 
@@ -489,7 +492,7 @@ add_partial(5)
 
 To summarize what we did, `add` is now a curried function, so it can take one of the arguments and returns another function, `add_partial`, which “remembers” that argument.
 
-In fact, all of the Toolz functions are also available as curried functions in the toolz.curried namespace.
+In fact, all of the Toolz functions are also available as curried functions in the `toolz.curried` namespace.
 Toolz also includes curried version of some handy higher order Python functions like `map`, `filter` and `reduce`.
 We will import the `curried` namespace as `c` so our code doesn't get too cluttered.
 So for example the curried version of `map` will be `c.map`.
@@ -528,6 +531,20 @@ def genome(file_pattern):
 ## Back to counting k-mers
 
 Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
+Here's that code again that used those curried functions:
+
+```python
+from toolz import curried as c
+
+k = 7
+counts = tz.pipe('data/sample.fasta', open,
+                 c.filter(is_sequence),
+                 c.map(str.rstrip),
+                 c.map(c.sliding_window(k)),
+                 tz.concat, c.map(''.join),
+                 tz.frequencies)
+```
+
 We can now observe the frequency of different k-mers:
 
 ```python
@@ -537,13 +554,13 @@ integer_histogram(counts, xlim=(-1, 250), lw=2)
 <!-- caption text="Histogram of k-mer counts" -->
 
 > **Tips for working with streams {.callout}**
->  - (list of list -> list) with tz.concat
->  - don’t get caught out:
->     * iterators get consumed.
+>  - Convert "list of list" to "long list" with `tz.concat`
+>  - Don’t get caught out:
+>     * Iterators get consumed.
 So if you make a generator object and do some processing on it, and then a later step fails, you need to re-create the generator.
 The original is already gone.
->     * iterators are lazy. You need to force evaluation sometimes.
->  - when you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
+>     * Iterators are lazy. You need to force evaluation sometimes.
+>  - When you have lots of functions in a pipe, it’s sometimes hard to figure out where things go wrong.
      Take a small stream and add functions to your pipe one by one from the first/leftmost until you find the broken one.
      You can also insert `map(do(print))` (`map` and `do` are from
      `toolz.curried`) at any point in a stream to print each element while it
@@ -587,11 +604,11 @@ import numpy as np
 def streaming_pca(samples, n_components=2, batch_size=100):
     ipca = decomposition.IncrementalPCA(n_components=n_components,
                                         batch_size=batch_size)
-    # we use `tz.last` to force evaluation of the full iterator
-    _ = tz.last(tz.pipe(samples,  # iterator of 1D arrays
-                        c.partition(batch_size),  # iterator of tuples
-                        c.map(np.array),  # iterator of 2D arrays
-                        c.map(ipca.partial_fit)))  # partial_fit on each
+    tz.pipe(samples,  # iterator of 1D arrays
+            c.partition(batch_size),  # iterator of tuples
+            c.map(np.array),  # iterator of 2D arrays
+            c.map(ipca.partial_fit),  # partial_fit on each
+            tz.last)  # Suck the stream of data through the pipeline
     return ipca
 ```
 
@@ -765,8 +782,8 @@ Let's try it out on the Drosophila (fruit fly) genome:
 # Download dm6.fa.gz from ftp://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/
 # Unzip before using: gzip -d dm6.fa.gz
 dm = 'data/dm6.fa'
-model = tz.pipe(dm, genome, c.take(1000000), markov)
-# we use `take` to just run on the first 1000000 bases, to speed things up.
+model = tz.pipe(dm, genome, c.take(10**7), markov)
+# we use `take` to just run on the first 10 million bases, to speed things up.
 # the take step can just be removed if you have ~5-10 mins to wait.
 ```
 
@@ -792,12 +809,12 @@ def plot_model(model, labels, figure=None):
         axis.set_ticklabels(labels)
     return ax
 
-plot_model(model, labels=' ACGTacgt');
+plot_model(model, labels='ACGTacgt');
 ```
 <!-- caption text="Transition probability matrix for genetic sequence in the
 *Drosophila melanogaster* genome" -->
 
-Notice how the G-A and G-C transitions are different between the repeat and
+Notice how the C-A and G-C transitions are different between the repeat and
 non-repeat parts of the genome. This information can be used to classify
 previously unseen DNA sequence.
 
@@ -842,8 +859,8 @@ You can try this out with the compressed drosophila genome file:
 
 ```python
 dm = 'data/dm6.fa.gz'
-model = tz.pipe(dm, genome_gz, c.take(1000000), markov)
-plot_model(model, labels=' ACGTacgt')
+model = tz.pipe(dm, genome_gz, c.take(10**7), markov)
+plot_model(model, labels='ACGTacgt')
 ```
 
 If you want to have a single `genome` function, you could write a custom `open`
