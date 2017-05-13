@@ -729,7 +729,7 @@ tf = align(green, red, cost=cost_nmi)
 cred = transform.warp(red, tf, order=3)
 
 corrected = np.dstack((cred, green, cblue))
-f, (ax0, ax1) = plt.subplots(1, 2)
+f, (ax0, ax1) = plt.subplots(2, 1)
 ax0.imshow(original)
 ax0.set_title('Original')
 ax1.imshow(corrected)
