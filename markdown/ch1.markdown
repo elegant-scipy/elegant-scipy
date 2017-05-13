@@ -593,8 +593,6 @@ ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("Gene expression counts")
 reduce_xaxis_labels(ax, 2)
-
-plt.show()
 ```
 <!-- caption text="Boxplot of gene expression counts per individual" -->
 
@@ -611,8 +609,6 @@ ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("log gene expression counts")
 reduce_xaxis_labels(ax, 2)
-
-plt.show()
 ```
 <!-- caption text="Boxplot of gene expression counts per individual (log scale)" -->
 
@@ -634,8 +630,6 @@ ax.set_title("Gene expression counts normalized by library size")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("log gene expression counts")
 reduce_xaxis_labels(ax, 2)
-
-plt.show()
 ```
 <!-- caption text="Boxplot of library-normalized gene expression counts per individual (log scale)" -->
 
@@ -709,9 +703,7 @@ ax = class_boxplot(log_counts_3 + log_ncounts_3,
                    ['raw counts'] * 3 + ['normalized by library size'] * 3,
                    labels=[1, 2, 3, 1, 2, 3])
 ax.set_xlabel('sample number')
-ax.set_ylabel('log gene expression counts')
-
-plt.show()
+ax.set_ylabel('log gene expression counts');
 ```
 <!-- caption text="Comparing raw and library normalized gene expression counts in three samples (log scale)" -->
 
@@ -780,9 +772,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 
     # Adjust the axis names
     ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-
-    plt.show()
+    ax.set_ylabel(ylabel);
 ```
 
 
@@ -1093,8 +1083,7 @@ ax = class_boxplot(log_counts_2,
                    ['raw counts'] * 3,
                    labels=genes2_labels)
 ax.set_xlabel('Genes')
-ax.set_ylabel('log gene expression counts over all samples')
-plt.show()
+ax.set_ylabel('log gene expression counts over all samples');
 ```
 <!-- caption text="Comparing expression of two genes before RPKM normalization" -->
 
@@ -1107,8 +1096,7 @@ ax = class_boxplot(log_ncounts_2,
                    ['RPKM normalized'] * 3,
                    labels=genes2_labels)
 ax.set_xlabel('Genes')
-ax.set_ylabel('log RPKM gene expression counts over all samples')
-plt.show()
+ax.set_ylabel('log RPKM gene expression counts over all samples');
 ```
 <!-- caption text="Comparing expression of two genes after RPKM normalization" -->
 
