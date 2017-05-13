@@ -413,7 +413,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
     idx_cols = leaves_list(col_linkage)
     data = data[:, idx_cols]
 
-    im = ax.matshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
+    im = ax.imshow(data, aspect='auto', origin='lower', cmap='YlGnBu_r')
     clear_spines(ax)
 
     # Axis labels
