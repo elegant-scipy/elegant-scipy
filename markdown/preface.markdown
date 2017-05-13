@@ -369,7 +369,7 @@ Anyone can come along and create a copy (called a *fork*) of the code and edit i
 They can eventually contribute those changes back into the original by creating a *pull request*.
 There are some nice features like managing issues and change requests, as well as who can directly edit your code.
 You can even keep track of edits, contributors and other fun stats.
-There are a whole bunch of other great GitHub features, but we will leave many them for you to discover and some for you to read in later chapters.
+There are a whole bunch of other great GitHub features, but we will leave many of them for you to discover and some for you to read in later chapters.
 In essence, GitHub has democratized software development. It has substantially reduced the barrier to entry.
 
 ![The impact of GitHub (Used with permission of the author, Jake VanderPlas)](https://jakevdp.github.io/figures/author_count.png)
@@ -381,7 +381,7 @@ When you reach this point, it's time to start contributing to the SciPy Ecosyste
 
 We strongly encourage you to try doing this.
 The community lives because people are willing to share their code and improve existing code.
-And, if we each contribute a little bit, together we built a lot.
+And, if we each contribute a little bit, together we build a lot.
 But, beyond any altruistic reasons for contributing, there are some very practical personal benefits.
 By engaging with the community you will become a better coder.
 Any code you contribute will be reviewed by others and you will receive feedback.
