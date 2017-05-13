@@ -449,6 +449,8 @@ Now let's use the intersection of the gene names to index our count data.
 # 2D ndarray containing expression counts for each gene in each individual
 counts = np.asarray(data_table.loc[matched_index], dtype=int)
 
+gene_names = np.array(matched_index)
+
 # Check how many genes and individuals were measured
 print(f'{counts.shape[0]} genes measured in {counts.shape[1]} individuals.')
 ```
@@ -1069,13 +1071,13 @@ We've already seen that longer genes have higher counts, but this doesn't mean t
 Let's choose a short gene and a long gene and compare their counts before and after RPKM normalization to see what we mean.
 
 ```python
-genes2_idx = [80, 186]
-genes2_lengths = gene_lengths[genes2_idx]
-genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]),
-                    'Gene B, {}bp'.format(genes2_lengths[1])]
+gene_idxs = np.array([80, 186])
+gene1, gene2 = gene_names[gene_idxs]
+len1, len2 = gene_lengths[gene_idxs]
+gene_labels = [f'{gene1}, {len1}bp', f'{gene2}, {len2}bp']
 
-log_counts_2 = list(np.log(counts[genes2_idx] + 1))
-log_ncounts_2 = list(np.log(counts_rpkm[genes2_idx] + 1))
+log_counts_2 = list(np.log(counts[gene_idxs] + 1))
+log_ncounts_2 = list(np.log(counts_rpkm[gene_idxs] + 1))
 
 ax = class_boxplot(log_counts_2,
                    ['raw counts'] * 3,
