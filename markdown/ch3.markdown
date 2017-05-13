@@ -391,7 +391,7 @@ place the result at the same location in the output image. And, as with the 1D
 difference filter, when the filter is placed on a location with little variation, the
 dot-product cancels out to zero, whereas, placed on a location where the
 image brightness is changing, the values multiplied by 1 will be different from
-those multiplied by -1, and the filter's output will be a positive or negative
+those multiplied by -1, and the filtered output will be a positive or negative
 value (depending on whether the image is brighter towards the bottom-right
 or top-left at that point).
 
@@ -662,7 +662,7 @@ another. (*Synapses* are the chemical connections through which neurons
 communicate.) The worm is an awesome example of neural connectivity analysis
 because every worm (of this species) has the same number of neurons (302), and the
 connections between them are all known. This has resulted in the fantastic Openworm
-project [^openworm], which we encourage you to follow.
+project [^openworm], which we encourage you to read more about.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
@@ -1104,7 +1104,7 @@ def build_rag(labels, image):
     return g
 ```
 
-Here's a few reasons this is a brilliant piece of code:
+Here are a few reasons this is a brilliant piece of code:
 
 - `ndi.generic_filter` iterates over array elements *with their neighbors*.
   (Use `numpy.ndindex` to simply iterate over array indices.)
