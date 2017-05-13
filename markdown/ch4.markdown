@@ -90,7 +90,7 @@ zero, except for two entries.  Traditionally, we visualize the
 magnitude of the result as a *stem plot*, in which the height of each
 stem corresponds to the underlying value.
 
-(We'll explain why you see positive and negative frequencies later on
+(We explain why you see positive and negative frequencies later on
 in the sidebox titled "Discrete Fourier transforms".  You may also
 refer to that section for a more in-depth overview of the underlying
 mathematics.)
@@ -109,7 +109,7 @@ of goals.
 ## Illustration: a birdsong spectrogram
 
 Let's start with one of the most common applications, converting a sound signal (consisting of variations of air pressure over time) to a *spectrogram*.
-(You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.)
+You might have seen spectrograms on your music player's equalizer view, or even on an old-school stereo.
 
 ![The Numark EQ2600 Stereo Equalizer; image used with permission from the author, Sergey Gerasimuk. Source: http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.html](../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG)
 
@@ -153,17 +153,16 @@ Then, calculate the length of the snippet and plot the audio.
 N = audio.shape[0]
 L = N / rate
 
-print('Audio length: {:.2f} seconds'.format(L))
+print(f'Audio length: {L:.2f} seconds')
 
 f, ax = plt.subplots()
 ax.plot(np.arange(N) / rate, audio)
 ax.set_xlabel('Time [s]')
-ax.set_ylabel('Amplitude [unknown]')
-plt.show()
+ax.set_ylabel('Amplitude [unknown]');
 ```
 <!-- caption text="Audio waveform plot of birdsong" -->
 
-Well, that's not very satisfying, is it.  If I sent this voltage to a
+Well, that's not very satisfying, is it?  If I sent this voltage to a
 speaker, I might hear a bird chirping, but I can't very well imagine
 how it would sound like in my head.  Is there a better way of *seeing*
 what is going on?
@@ -196,7 +195,7 @@ time! [^time]
          and time of occurrence, read up on wavelet analysis.
 
 So, to find both the frequencies and the time at which they were sung,
-we'll need to be somewhat clever.  Our strategy will be as follows:
+we'll need to be somewhat clever.  Our strategy is as follows:
 take the audio signal, split it into small, overlapping slices, and
 apply the Fourier transform to each (a technique known as the Short
 Time Fourier Transform).
@@ -218,7 +217,7 @@ from skimage import util
 M = 1024
 
 slices = util.view_as_windows(audio, window_shape=(M,), step=100)
-print('Audio shape: {}, Sliced audio shape: {}'.format(audio.shape, slices.shape))
+print(f'Audio shape: {audio.shape}, Sliced audio shape: {slices.shape}')
 ```
 
 Generate a windowing function (see the section on windowing for a
@@ -256,21 +255,20 @@ The spectrum can contain both very large and very small values.
 Taking the log compresses the range significantly.
 
 Here we do a log plot of the ratio of the signal divided by the maximum signal.
-The specific unit used for the radio is the decibel, $20
-log_10(\mathrm{amplitude ratio})$.
+The specific unit used for the ratio is the decibel, $20
+log_{10}\left(\mathrm{amplitude ratio}\right)$.
 
 ```python
 f, ax = plt.subplots(figsize=(10, 5))
 
 S = np.abs(spectrum)
-S = 20 * np.log10(S / S.max())
+S = 20 * np.log10(S / np.max(S))
 
 ax.imshow(S, origin='lower', cmap='viridis',
           extent=(0, L, 0, rate / 2 / 1000))
 ax.axis('tight')
 ax.set_ylabel('Frequency [kHz]')
-ax.set_xlabel('Time [s]')
-plt.show()
+ax.set_xlabel('Time [s]');
 ```
 <!-- caption text="Birdsong spectrogram" -->
 
@@ -336,7 +334,8 @@ The discrete Fourier transform functionality in SciPy lives in the
 `scipy.fftpack`` module.  Among other things, it provides the
 following DFT-related functionality:
 
- - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform using the Fast Fourier Transform algorithm
+ - ``fft``, ``fft2``, ``fftn``: Compute the discrete Fourier transform using
+   the Fast Fourier Transform algorithm in 1, 2, or `n` dimensions.
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
  - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the spectrum and back, respectively (more about that soon).
@@ -357,7 +356,7 @@ software license.
 
 ## Choosing the length of the DFT
 
-Consider that a naive calculation of the DFT takes $\mathcal{O}\left(N^2\right)$ operations [^big_O].
+A naive calculation of the DFT takes $\mathcal{O}\left(N^2\right)$ operations [^big_O].
 How come?  Well, you have $N$
 (complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
 1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
@@ -428,9 +427,7 @@ ax0.set_xlabel('Length of input')
 ax0.set_ylabel('Execution time (seconds)')
 
 ax1.stem(lengths, smoothness)
-ax1.set_ylabel('Smoothness of input length\n(lower is better)')
-
-plt.show()
+ax1.set_ylabel('Smoothness of input length\n(lower is better)');
 ```
 <!-- caption text="FFT execution time vs smoothness for different input lengths" -->
 
@@ -485,7 +482,7 @@ frequency component appear:
 z = np.ones(10)
 z[::2] = -1
 
-print("Applying FFT to {}".format(z))
+print(f'Applying FFT to {z}')
 fftpack.fft(z)
 ```
 
@@ -539,8 +536,7 @@ the `fftshift` function.
 > With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
 > sample values $x_{n}$ through the summation
 >
-> $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi
-> kn/N}.$$
+> $$x_{n}=\frac{1}{N}\sum_{k=0}^{N-1}X_{k}e^{j2\pi kn/N}.$$
 >
 > Keeping in mind that $e^{j\theta}=\cos\theta+j\sin\theta,$ the last
 > equation shows that the DFT has decomposed the sequence $x_{n}$ into a
@@ -552,7 +548,7 @@ the `fftshift` function.
 > the DFT is a *finite *series with $N$ terms defined at the equally
 > spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
 > in the interval $[0,2\pi)$,
-> i.e. *including* $0$  and *excluding* $3\pi$.
+> i.e. *including* $0$  and *excluding* $2\pi$.
 > This automatically normalizes the DFT so that time does
 > not appear explicitly in the forward or inverse transform.
 >
@@ -574,8 +570,8 @@ the `fftshift` function.
 >
 > The way in which we defined the DFT leads to a few subtleties
 > when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
-> for increasing values of $k$ in Fig. ([fig:wkn values])
-> for the cases $n=1$ and $n=N-1$ for $N=16$. When $k$ increases from $k$
+> for increasing values of $k$ in the figure below,
+> for the cases $n=1$ to $n=N-1$ for $N=16$. When $k$ increases from $k$
 > to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
 > the step is $\frac{2\pi}{N}$. When $n=N-1$, the angle
 > increases by $2\pi\frac{N-1}{N}=2\pi-\frac{2\pi}{N}$. Since $2\pi$
@@ -583,7 +579,7 @@ the `fftshift` function.
 > i.e. in the direction of a negative
 > frequency. The components up to $N/2$ represent *positive* frequency
 > components, those above $N/2$ up to $N-1$ represent *negative*
-> frequencies with frequency. The angle increment for the component $N/2$
+> frequencies. The angle increment for the component $N/2$
 > for $N$ even advances precisely halfway around the circle for
 > each increment in $k$ and can therefore be interpreted as either a
 > positive or a negative frequency. This component of the DFT represents
@@ -648,8 +644,7 @@ f, ax = plt.subplots(figsize=(10, 10))
 
 ax.imshow(np.log(1 + F_magnitude), cmap='viridis',
           extent=(-N // 2, N // 2, -M // 2, M // 2))
-ax.set_title('Spectrum magnitude')
-plt.show()
+ax.set_title('Spectrum magnitude');
 ```
 <!-- caption text="Spectrum of the noisy moon landing image (magnitude)" -->
 
@@ -696,9 +691,7 @@ ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='viridis')
 ax0.set_title('Spectrum after suppression')
 
 ax1.imshow(ndi.gaussian_filter(image_filtered, sigma=1))
-ax1.set_title('Reconstructed image')
-
-plt.show()
+ax1.set_title('Reconstructed image');
 ```
 <!-- caption text="Filtered moon landing image and its spectrum" -->
 
@@ -719,8 +712,7 @@ ax0.plot(x)
 ax0.set_ylim(-0.1, 1.1)
 
 ax1.plot(fftpack.fftshift(np.abs(X)))
-ax1.set_ylim(-5, 55)
-plt.show()
+ax1.set_ylim(-5, 55);
 ```
 <!-- caption text="Spectrum of a rectangular pulse (magnitude)" -->
 
@@ -756,8 +748,7 @@ ax0.plot(x)
 ax0.set_ylim(-1.1, 1.1)
 
 ax1.plot(fftpack.fftfreq(len(t)), np.abs(X))
-ax1.set_ylim(0, 190)
-plt.show()
+ax1.set_ylim(0, 190);
 ```
 <!-- caption text="Spectrum oscillation due to signal edge discontinuity" -->
 
@@ -785,12 +776,9 @@ lines = [
 
 sm = plt.cm.ScalarMappable(cmap=colormap, norm=norm)
 
-# Dirty hack, not sure why matplotlib >= 1.4 introduced this "feature"
 sm._A = []
 
-plt.colorbar(sm).set_label(r'Kaiser $\beta$')
-
-plt.show()
+plt.colorbar(sm).set_label(r'Kaiser $\beta$');
 ```
 <!-- caption text="The Kaiser window for various values of $\beta$" -->
 
@@ -838,8 +826,7 @@ win = np.kaiser(len(t), 5)
 X_win = fftpack.fft(x * win)
 
 plt.plot(fftpack.fftfreq(len(t)), np.abs(X_win))
-plt.ylim(0, 190)
-plt.show()
+plt.ylim(0, 190);
 ```
 <!-- caption text="Spectrum of a windowed signal (magnitude)" -->
 
@@ -934,7 +921,7 @@ after which a next frequency sweep occurs.
 
 This signal is radiated by a directional transmit antenna. When the
 wave with propagation velocity $v\approx300\times10^{6}$ m/s (the
-propagation speed of electro-magnetic waves in air is ever-so-slightly
+propagation speed of electromagnetic waves in air is ever-so-slightly
 slower than the speed of light in a vacuum) hits a target at a range $R$,
 the echo will reach the radar after a time
 
@@ -1139,27 +1126,6 @@ An individual field is accessed using dictionary syntax:
 azimuths = scan['position']['az']  # Get all azimuth measurements
 ```
 
-To construct an array such as the above from scratch, one would first
-set up the appropriate dtype:
-
-```python
-dt = np.dtype([('time', np.uint64),
-               ('size', np.uint32),
-               ('position', [('az', np.float32),
-               ('el', np.float32),
-               ('region_type', np.uint8),
-               ('region_ID', np.uint16)]),
-               ('gain', np.uint8),
-               ('samples', (np.int16, 2048))])
-```
-
-The dtype can then be used to create an array, which we can later fill
-with values:
-
-```python
-data = np.zeros(500, dtype=dt)  # Construct array with 500 measurements
-```
-
 To summarize what we've seen so far: the shown measurements
 ($v_\mathrm{sim}$ and $v_\mathrm{actual}$) are the sum of sinusoidal
 signals reflected by each of several objects.  We need to determine
@@ -1168,7 +1134,8 @@ signals. The FFT is the tool that will do this for us.
 
 ### Signal properties in the frequency domain
 
-First, we take the FFTs of our three signals and then display the
+First, we take the FFTs of our three signals (synthetic single target,
+synthetic multi-target, and real) and then display the
 positive frequency components (i.e., components $0$ to $N/2$).  These
 are called the *range traces* in radar terminology.
 
@@ -1201,8 +1168,6 @@ axes[2].set_xlabel("FFT component $n$")
 
 for ax in axes:
     ax.grid()
-
-plt.show()
 ```
 <!-- caption text="Range traces for: (a) single simulated target, (b) mutiple simulated targets, (c) real-world targets" --> 
 
@@ -1262,9 +1227,9 @@ before with the spectrogram:
 
 ```python
 c = 3e8  # Approximately the speed of light and of
-         # electro-magnetic waves in air
+         # electromagnetic waves in air
 
-fig, (ax0, ax1,ax2) = plt.subplots(3, 1, figsize=(15, 7))
+fig, (ax0, ax1, ax2) = plt.subplots(3, 1, figsize=(15, 7))
 
 
 def dB(y):
@@ -1290,9 +1255,7 @@ log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
 
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
 ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
-ax2.set_xlim(0, len(V_actual) // 2)
-
-plt.show()
+ax2.set_xlim(0, len(V_actual) // 2);
 ```
 <!-- caption text="Logarithm of range traces" -->
 
@@ -1349,9 +1312,7 @@ for n, (signal, label) in enumerate([(v_single, r'$v_0 [Volt]$'),
     axes[n].grid()
 
 axes[2].set_xlim(0, t_ms[-1])
-axes[2].set_xlabel('Time [ms]')
-plt.show()
-
+axes[2].set_xlabel('Time [ms]');
 ```
 <!-- caption text="Windowed signals for: (a) single simulated target, (b) multiple simulated targets, (c) real targets" -->
 
@@ -1373,10 +1334,7 @@ ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
 
 ax1.annotate("New, previously unseen!", (160, -35),
              xytext=(10, 25), textcoords="offset points", color='red',
-             arrowprops=dict(width=2, headwidth=6, headlength=12, shrink=0.1))
-
-plt.show()
-
+             arrowprops=dict(width=2, headwidth=6, headlength=12, shrink=0.1));
 ```
 <!-- caption text="Range traces (spectrum) of windowed signals" -->
 
@@ -1401,9 +1359,9 @@ radar images.
 The data is produced by a radar with a parabolic reflector antenna. It
 produces a highly directive round pencil beam with a $2^\circ$
 spreading angle between half-power points. When directed with normal
-incidence at a plane, the radar will illuminate a spot of about $2$ m in
-diameter at a distance of $60$ m.<!-- on the half power contour at a distance of 60 m
--->. Outside this spot the power drops off quite rapidly but strong
+incidence at a plane, the radar will illuminate a spot of about $2$ meters in
+diameter at a distance of 60 meters.
+Outside this spot, the power drops off quite rapidly, but strong
 echoes from outside the spot will nevertheless still be visible.
 
 By varying the pencil beam's azimuth (left-right position) and
@@ -1416,8 +1374,7 @@ defines the reflector's position in 3D.
 A rock slope consists of thousands of reflectors. A range bin can be
 thought of as a large sphere with the radar at its center that
 intersects the slope along a ragged line. The scatterers on this line
-will produce reflections in this range bin. The reflectors are
-essentially randomly arranged along the line. The wavelength of the
+will produce reflections in this range bin. The wavelength of the
 radar (distance the transmitted wave travels in one oscillation
 second) is about 30 mm. The reflections from scatterers separated by
 odd multiples of a quarter wavelength in range, about 7.5 mm, will
@@ -1470,9 +1427,6 @@ def plot_slice(ax, radar_slice, title, xlabel, ylabel):
 plot_slice(axes[0], V[:, :, 250], 'Range == 250 slice', 'Azimuth', 'Elevation')
 plot_slice(axes[1], V[:, 3, :], 'Azimuth == 3 slice', 'Range', 'Elevation')
 plot_slice(axes[2], V[6, :, :], 'Elevation == 6 slice', 'Range', 'Azimuth')
-
-plt.show()
-
 ```
 <!-- caption text="Contour plots of range traces along various axes (see diagram)" -->
 
@@ -1533,9 +1487,7 @@ ax.set_ylabel(axis_labels[1])
 ax.set_zlabel(axis_labels[2])
 
 # Adjust the camera position to match our diagram above
-ax.view_init(azim=-45)
-
-plt.show()
+ax.view_init(azim=-45);
 ```
 <!-- caption text="3-D visualization of estimated rock slope position" -->
 
@@ -1583,6 +1535,8 @@ Hints:
    `shape(x) + shape(y) - 1`.
 
 <!-- solution begin -->
+
+**Solution:**
 
 ```python
 from scipy import signal
