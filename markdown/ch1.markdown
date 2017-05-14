@@ -848,9 +848,9 @@ and the gene length.
 
 To work through how RPKM is derived, let's define the following values:
 
-$C$ = Number of reads mapped to a gene<br/>
-$L$ = exon length in base-pairs for a gene<br/>
-$N$ = Total mapped reads in the experiment
+- $C$ = Number of reads mapped to a gene
+- $L$ = exon length in base-pairs for a gene
+- $N$ = Total mapped reads in the experiment
 
 First, let's calculate reads per kilobase.
 
