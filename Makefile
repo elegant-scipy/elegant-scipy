@@ -141,6 +141,8 @@ zip: all
 
 htmlbook: build_dirs $(addsuffix .html, $(addprefix $(BUILD_HTMLBOOK)/,$(TITLES)))
 	${SED_I} 's/data-type="chapter"/data-type="preface"/' htmlbook/preface.html
+	${SED_I} 's/data-type="chapter"/data-type="afterword"/' htmlbook/epilogue.html
+	${SED_I} 's/data-type="chapter"/data-type="acknowledgments"/' htmlbook/acknowledgements.html
 
 # clean: remove intermediate products (IPython notebooks)
 clean:
