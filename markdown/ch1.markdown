@@ -58,7 +58,8 @@ def rpkm(counts, lengths):
 This example illustrates some of the ways that NumPy arrays can make your code more elegant:
 
 - Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
-- Arrays can be operated on along *axes*. In the first line, we calculate the sum down each column by specifying a *different* `axis`.
+- Arrays can be operated on along *axes*. In the first line, we calculate the
+  sum down each column by specifying `axis=0`.
 - Arrays allow the expression of many numerical operations at once.
 For example towards the end of the function we divide the 2D array of counts (C) by the 1D array of column sums (N).
 This is broadcasting. More on how this works in just a moment!
@@ -152,7 +153,7 @@ In particular, we're going to explore vectorization and broadcasting,
 techniques that allow us to write powerful, elegant code to manipulate our data.
 
 First, let's get our heads around the the ndarray.
-These arrays must be homogeneous; all items in an array must be the same type.
+These arrays must be homogeneous: all items in an array must be the same type.
 In our case we will need to store integers.
 Ndarrays are called N-dimensional because they can have any number of dimensions.
 A 1-dimensional array is roughly equivalent to a Python list:
@@ -160,7 +161,7 @@ A 1-dimensional array is roughly equivalent to a Python list:
 ```python
 import numpy as np
 
-array1d = np.array([1,2,3,4])
+array1d = np.array([1, 2, 3, 4])
 print(array1d)
 print(type(array1d))
 ```
@@ -180,7 +181,9 @@ This is what we use to represent our mini gene expression table from above:
 
 ```python
 array2d = np.array(expression_data)
+print(array2d)
 print(array2d.shape)
+print(type(array2d))
 ```
 
 Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
@@ -200,7 +203,7 @@ NumPy arrays can represent data that has even more dimensions, such as magnetic 
 If we store MRI values over time, we might need a 4D NumPy array.
 
 For now, we'll stick to 2D data.
-Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions!
+Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions.
 
 ### Why use ndarrays instead of Python lists?
 
@@ -217,10 +220,10 @@ import numpy as np
 
 # Create an ndarray of integers in the range
 # 0 up to (but not including) 1,000,000
-nd_array = np.arange(1e6)
+array = np.arange(1e6)
 
 # Convert it to a list
-list_array = nd_array.tolist()
+list_array = array.tolist()
 ```
 
 Let's compare how long it takes to multiply all the values in the array by 5,
@@ -233,17 +236,17 @@ using the IPython `timeit` magic function. First, when the data is in a list:
 Now, using NumPy's built-in *vectorized* operations:
 
 ```python
-%timeit -n10 x = nd_array * 5
+%timeit -n10 x = array * 5
 ```
 
-Close to 50 times faster, and more concise, too!
+Over 50 times faster, and more concise, too!
 
 Arrays are also size efficient.
 In Python, each element in a list is an object and is given a healthy memory allocation (or is that unhealthy?).
 In contrast, in arrays, each element takes up just the necessary amount of memory.
 For example, an array of 64-bit integers takes up exactly 64-bits per element, plus some very small overhead for array metadata, such as the `shape` attribute we discussed above.
 This is generally much less than would be given to objects in a python list.
-(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas' blog post [Why Python is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
+(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas' blog post, [Why Python is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
 
 Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
 
@@ -303,7 +306,7 @@ Now, we have added together each element in `x` to its corresponding element in 
 
 Both of these operations are simple and, we hope, intuitive examples of vectorization.
 NumPy also makes them very fast, much faster than iterating over the arrays manually.
-(Feel free to play with this yourself using the `%%timeit` IPython magic we saw earlier.)
+(Feel free to play with this yourself using the `%timeit` IPython magic we saw earlier.)
 
 ### Broadcasting
 
@@ -383,7 +386,8 @@ this use case, which makes subsequent operations harder than they need to be.
 
 By reading the data in as a Pandas DataFrame we can let Pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
 Here we are just using Pandas briefly to import data.
-In later chapters we will give you some more insight into the world of Pandas.
+In later chapters we will see a bit more of Pandas, but for details, read *Python
+for Data Analysis*, by Wes McKinney, creator of Pandas.
 
 ```python
 import numpy as np
@@ -398,9 +402,9 @@ print(data_table.iloc[:5, :5])
 ```
 
 We can see that Pandas has kindly pulled out the header row and used it to name the columns.
-The first column gives the name of the gene, and the remaining columns represent individual samples.
+The first column gives the name of each gene, and the remaining columns represent individual samples.
 
-We will also needs some corresponding metadata, including the sample information and the gene lengths.
+We will also need some corresponding metadata, including the sample information and the gene lengths.
 
 ```python
 # Sample names
@@ -445,9 +449,10 @@ Now let's use the intersection of the gene names to index our count data.
 # 2D ndarray containing expression counts for each gene in each individual
 counts = np.asarray(data_table.loc[matched_index], dtype=int)
 
+gene_names = np.array(matched_index)
+
 # Check how many genes and individuals were measured
-print("{0} genes measured in {1} individuals".format(counts.shape[0],
-        counts.shape[1]))
+print(f'{counts.shape[0]} genes measured in {counts.shape[1]} individuals.')
 ```
 
 And our gene lengths.
@@ -469,18 +474,32 @@ As expected, they now match up nicely!
 
 ## Normalization
 
-Before we do any kind of analysis with our data, it is important to take a look at it and determine if we need to normalize it first.
-By normalize, we mean that we want to bring all our data onto the same scale so we can make a fair comparison.
-We will consider two types of normalization commonly applied to expression data: between samples and between genes.
-For example, when we consider differences between groups of patients, we want to know that they vary due to some biological difference, not just something technical.
+Real world data contains all kinds of measurement artifacts.
+Before doing any kind of analysis with it, it is important to take a look at
+it to determine whether some normalization is warranted.
+For example, measurements with digital thermometers may systematically vary from
+those taken with mercury thermometers and read out by a human.
+Thus, comparing samples often requires some kind of data wrangling to bring
+every measurement to a common scale.
+
+In our case, we want to make sure that any differences we uncover correspond to
+real biological differences, and not to technical artifact.
+We will consider two levels of normalization often applied jointly to gene
+expression dataset: normalization between samples (columns) and normalization
+between genes (rows).
 
 ### Between samples
 
 For example, the number of counts for each individual can vary substantially in RNAseq experiments.
 Let's take a look at the distribution of expression counts over all the genes.
 First we will sum the rows to get the total counts of expression of all genes for each individual, so we can just look at the variation between individuals.
-To visualize the distribution of total counts, we will use a kernel density estimation (KDE) function.
-KDE is commonly used to smooth out histograms, which gives a clearer picture of the underlying distribution.
+To visualize the distribution of total counts, we will use kernel density
+estimation (KDE), a technique commonly used to smooth out histograms because it
+gives a clearer picture of the underlying distribution.
+
+Before we start, we have to do some plotting setup (which we will do in every
+chapter). See "A quick note on plotting" for details about what each line of code
+below does.
 
 ```python
 # Make all plots appear inline in the Jupyter notebook from now onwards
@@ -501,14 +520,14 @@ warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 > command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
 > that simply makes all plots appear in the notebook rather than pop up a new
 > window. If you are running a Jupyter notebook interactively, you can use
-> `%matplotlib notebook` instead to get an interactive figure, rathen than a
+> `%matplotlib notebook` instead to get an interactive figure, rather than a
 > static image of each plot.
 >
 > Second, we import `matplotlib.pyplot` then direct it to use our own plotting
 > style `plt.style.use('style/elegant.mplstyle')`. You will see a block of code
 > like this before the first plot in every chapter.
 >
-> You may have seen people importing existing styles like this
+> You may have seen people importing existing styles like this:
 > `plt.style.use('ggplot')`. But we wanted some particular settings, and we
 > wanted all the plots in this book to follow the same style. So we rolled our
 > own matplotlib style. To see how we did it, take a look at the style file in
@@ -519,7 +538,8 @@ warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 Now back to plotting our counts distribution!
 
 ```python
-total_counts = counts.sum(axis=0) # sum each column (axis=1 would sum rows)
+total_counts = np.sum(counts, axis=0)  # sum columns together
+                                       # (axis=1 would sum rows)
 
 from scipy import stats
 
@@ -530,17 +550,16 @@ density = stats.kde.gaussian_kde(total_counts)
 x = np.arange(min(total_counts), max(total_counts), 10000)
 
 # Make the density plot
-fig, ax = plt.subplots(figsize=(8, 5))
+fig, ax = plt.subplots()
 ax.plot(x, density(x))
 ax.set_xlabel("Total counts per individual")
 ax.set_ylabel("Density")
 
 plt.show()
 
-print('Count statistics:\n  min:  {0}\n  mean: {1}\n  max: {2}'
-      .format(np.min(total_counts),
-              np.mean(total_counts),
-              np.max(total_counts)))
+print(f'Count statistics:\n  min:  {np.min(total_counts)}'
+      f'\n  mean: {np.mean(total_counts)}'
+      f'\n  max:  {np.max(total_counts)}')
 ```
 <!-- caption text="Density plot of gene expression counts per individual using KDE smoothing" -->
 
@@ -550,14 +569,16 @@ We say that these individuals have different library sizes.
 
 #### Normalizing library size between samples
 
-Let's take a closer look at ranges of gene expression for each individual, so when we apply our normalization we can see it in action.
+Let's take a closer look at ranges of gene expression for each individual, so when
+we apply our normalization we can see it in action. We'll subset a random sample
+of just 70 columns to keep the plotting from getting too messy.
 
 ```python
 # Subset data for plotting
 np.random.seed(seed=7) # Set seed so we will get consistent results
 # Randomly select 70 samples
 samples_index = np.random.choice(range(counts.shape[1]), size=70, replace=False)
-counts_subset = counts[:,samples_index]
+counts_subset = counts[:, samples_index]
 ```
 
 ```python
@@ -586,8 +607,6 @@ ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("Gene expression counts")
 reduce_xaxis_labels(ax, 2)
-
-plt.show()
 ```
 <!-- caption text="Boxplot of gene expression counts per individual" -->
 
@@ -604,8 +623,6 @@ ax.set_title("Gene expression counts raw")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("log gene expression counts")
 reduce_xaxis_labels(ax, 2)
-
-plt.show()
 ```
 <!-- caption text="Boxplot of gene expression counts per individual (log scale)" -->
 
@@ -627,16 +644,14 @@ ax.set_title("Gene expression counts normalized by library size")
 ax.set_xlabel("Individuals")
 ax.set_ylabel("log gene expression counts")
 reduce_xaxis_labels(ax, 2)
-
-plt.show()
 ```
-<!-- caption text="Boxplot of library normalized gene expression counts per individual (log scale)" -->
+<!-- caption text="Boxplot of library-normalized gene expression counts per individual (log scale)" -->
 
 Much better!
 Also notice how we used broadcasting twice there.
 Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
 
-Finally, let's compare our normalized data, to the raw data.
+Finally, let's compare our normalized data to the raw data.
 
 ```python
 import itertools as it
@@ -702,29 +717,25 @@ ax = class_boxplot(log_counts_3 + log_ncounts_3,
                    ['raw counts'] * 3 + ['normalized by library size'] * 3,
                    labels=[1, 2, 3, 1, 2, 3])
 ax.set_xlabel('sample number')
-ax.set_ylabel('log gene expression counts')
-
-plt.show()
+ax.set_ylabel('log gene expression counts');
 ```
 <!-- caption text="Comparing raw and library normalized gene expression counts in three samples (log scale)" -->
 
 You can see that the normalized distributions are a little bit more similar
 once we have taken library size (the sum of those distributions) into account.
 Now we are comparing like with like between the samples!
-But what about difference between the genes?
+But what about differences between the genes?
 
 ### Between genes
 
-We can also get into some strife when trying to compare different genes.
-The number of counts for a gene, is related to the gene length.
-Let's say we have gene A and gene B.
-Gene B is twice as long as gene A.
+We can also get into some trouble when trying to compare different genes.
+The number of counts for a gene is related to the gene length.
+Suppose Gene B is twice as long as gene A.
 Both are expressed at similar levels in the sample, i.e. both produce a similar number of mRNA molecules.
-Therefore you would expect that gene B would have about twice as many counts as gene A.
-Remember, that when we do an RNAseq experiment, we are fragmenting the transcript, and sampling reads from that pool of fragments.
-The counts are the number of reads from that gene in a given sample.
-So if a gene is twice as long, we are twice as likely to sample it.
-If we want to compare between genes we will have to do some more normalization.
+Remember that in RNAseq experiment, we fragment the transcripts, and sample reads from that pool of fragments.
+So if a gene is twice as long, it'll produce twice as many fragments, and we are twice as likely to sample it.
+Therefore you would expect gene B to have about twice as many counts as gene A.
+If we want to compare the expression levels of different genes, we will have to do some more normalization.
 
 <img src="../figures/gene_length_counts.png"/>
 <!-- caption text="Relationship between counts and gene length" -->
@@ -773,9 +784,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 
     # Adjust the axis names
     ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-
-    plt.show()
+    ax.set_ylabel(ylabel);
 ```
 
 
@@ -793,7 +802,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 >
 >     >>> binned_boxplot(x, y, xlabel='my x label', ylabel='my y label')
 >
-> but not this, which would have been valid Python 2, raises an error in
+> but not this, which would have been valid Python 2, but raises an error in
 > Python 3:
 >
 >     >>> binned_boxplot(x, y, 'my x label', 'my y label')
@@ -825,7 +834,7 @@ binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 <!-- caption text="The relationship between gene length and average expression (log scale)" -->
 
-We can see that the longer a gene is, the higher its measure counts! As
+We can see that the longer a gene is, the higher its measured counts! As
 explained above, this is an artifact of the technique, not a biological signal!
 How do we account for this?
 
@@ -837,13 +846,11 @@ RPKM puts together the ideas of normalising by sample and by gene.
 When we calculate RPKM, we are normalizing for both the library size (the sum of each column)
 and the gene length.
 
-Working through how RPKM is derived:
+To work through how RPKM is derived, let's define the following values:
 
-Let's say:
-
-C = Number of reads mapped to a gene
-L = exon length in base-pairs for a gene
-N = Total mapped reads in the experiment
+- $C$ = Number of reads mapped to a gene
+- $L$ = exon length in base-pairs for a gene
+- $N$ = Total mapped reads in the experiment
 
 First, let's calculate reads per kilobase.
 
@@ -896,46 +903,37 @@ But what happens when we need to divide a 2D array by a 1D array?
 
 #### Broadcasting rules
 
-Broadcasting allows calculations between ndarrays that have differing shapes.
+Broadcasting allows calculations between ndarrays that have different shapes.
 Numpy uses broadcasting rules to make these manipulations a little easier.
-For example, if the input arrays do not have the same number of dimensions,
-then then an additional dimension is added to the start of the first array,
-with a value of 1.
-Once the two arrays have the same number of dimensions,
-broadcasting can only occur if the sizes of the dimensions match,
+When two arrays have the same number of dimensions,
+broadcasting can occur if the sizes of each dimension match,
 or one of them is equal to 1.
+If arrays have different numbers of dimensions, then $(1,)$ is prepended to the
+shorter array until the numbers match, and then the standard broadcasting rules
+apply.
 
-For example, let's say we have two ndarrays, A and B:
-`A.shape = (1, 2)`
-`B.shape = (2,)`
+For example, suppose we have two ndarrays, A and B, with shapes $(5, 2)$ and
+$(2,)$.
+We define the product `A * B` using broadcasting.
+B has fewer dimensions than A, so during the calculation,
+a new dimension is prepended to B with value 1, so B's new shape is $(1, 2)$.
+Finally, where B's shape doesn't match A's, it is *multiplied* by stacking enough
+versions of B, giving the shape $(5, 2)$. This is done "virtually", without using
+up any additional memory. At this point, the product is just an element-wise
+multiplication, giving an output array of the same shape as A.
 
-If we performed the operation `A * B` then broadcasting would occur.
-B has fewer dimension than A, so during the calculation
-a new dimension is prepended to B with value 1.
-`B.shape = (1, 2)`
-Now A and B have the same number of dimensions, so broadcasting can proceed.
+Now let's say we have another array, C, of shape $(2, 5)$. To multiply (or add) C 
+to B, we might try to prepend $(1,)$ to the shape of B, but in that case, we still
+end up with incompatible shapes: $(2, 5)$ and $(1, 2)$. If we want the arrays to
+broadcast, we have to *ap*pend a dimension to B, manually. Then, we end up with
+$(2, 5)$ and $(2, 1)$, and broadcasting can proceed.
 
-Now let's say we have another array, C:
-
-`C.shape = (2, 1)`
-`B.shape = (2,)`
-
-Now, if we were to do the operation `C * B`,
-a new dimension needs to be prepended to B.
-
-`B.shape = (1, 2)`
-
-However, the dimensions of the two ndarrays do not match,
-so broadcasting will fail.
-
-Let's say that we know that it is appropriate to broadcast B over C.
-We can explicitly add a new dimension to B using `np.newaxis`.
+In NumPy, we can explicitly add a new dimension to B using `np.newaxis`.
 Let's see this in our normalization by RPKM.
 
-Let's have a look at the dimensions of our two arrays.
+Let's look at the dimensions of our arrays.
 
 ```python
-# Check the shapes of C_tmp and L
 print('C_tmp.shape', C_tmp.shape)
 print('L.shape', L.shape)
 ```
@@ -967,9 +965,11 @@ C_tmp = C_tmp / L
 
 Finally we need to normalize by the library size,
 the total number of counts for that column.
-Remember that we have already calculated N.
+Remember that we have already calculated N with:
 
-`N = counts.sum(axis=0) # sum each column to get total reads per sample`
+```
+N = counts.sum(axis=0) # sum each column to get total reads per sample
+```
 
 ```python
 # Check the shapes of C_tmp and N
@@ -1073,20 +1073,19 @@ We've already seen that longer genes have higher counts, but this doesn't mean t
 Let's choose a short gene and a long gene and compare their counts before and after RPKM normalization to see what we mean.
 
 ```python
-genes2_idx = [80, 186]
-genes2_lengths = gene_lengths[genes2_idx]
-genes2_labels = ['Gene A, {}bp'.format(genes2_lengths[0]),
-                    'Gene B, {}bp'.format(genes2_lengths[1])]
+gene_idxs = np.array([80, 186])
+gene1, gene2 = gene_names[gene_idxs]
+len1, len2 = gene_lengths[gene_idxs]
+gene_labels = [f'{gene1}, {len1}bp', f'{gene2}, {len2}bp']
 
-log_counts_2 = list(np.log(counts[genes2_idx] + 1))
-log_ncounts_2 = list(np.log(counts_rpkm[genes2_idx] + 1))
+log_counts = list(np.log(counts[gene_idxs] + 1))
+log_ncounts = list(np.log(counts_rpkm[gene_idxs] + 1))
 
-ax = class_boxplot(log_counts_2,
+ax = class_boxplot(log_counts,
                    ['raw counts'] * 3,
-                   labels=genes2_labels)
+                   labels=gene_labels)
 ax.set_xlabel('Genes')
-ax.set_ylabel('log gene expression counts over all samples')
-plt.show()
+ax.set_ylabel('log gene expression counts over all samples');
 ```
 <!-- caption text="Comparing expression of two genes before RPKM normalization" -->
 
@@ -1095,12 +1094,11 @@ slightly more than Gene A.
 But, after RPKM normalization, a different picture emerges:
 
 ```python
-ax = class_boxplot(log_ncounts_2,
+ax = class_boxplot(log_ncounts,
                    ['RPKM normalized'] * 3,
-                   labels=genes2_labels)
+                   labels=gene_labels)
 ax.set_xlabel('Genes')
-ax.set_ylabel('log RPKM gene expression counts over all samples')
-plt.show()
+ax.set_ylabel('log RPKM gene expression counts over all samples');
 ```
 <!-- caption text="Comparing expression of two genes after RPKM normalization" -->
 
