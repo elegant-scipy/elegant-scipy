@@ -69,8 +69,8 @@ and others examine the entire parameter space.
 ## Optimization in SciPy: `scipy.optimize`
 
 In the rest of this chapter, we are going to use SciPy's `optimize` module to
-align two images. Applications of image alignment or *registration* include
-panorama stitching, combination of multi-modal brain scans, super-resolution
+align two images. Applications of image alignment, or *registration*, include
+panorama stitching, combination of different brain scans, super-resolution
 imaging, and, in astronomy, object denoising (noise reduction) through the
 combination of multiple exposures.
 
@@ -472,8 +472,8 @@ feel free to peek at the solution at the end of the book if you're stuck.
 
 <!-- exercise begin -->
 
-**Exercise:** Try incorporating the `scipy.optimize.basinhopping` function
-into the `align` function, which has explicit strategies to avoid local minima.
+**Exercise:** Try modifying the `align` function to use
+`scipy.optimize.basinhopping`, which has explicit strategies to avoid local minima.
 
 *Hint:* limit using basin-hopping to just the top levels of the pyramid, as it is
 a slower optimization approach, and could take rather long to run at full image
@@ -572,7 +572,7 @@ from skimage import io
 stained_glass = io.imread('data/00998v.jpg') / 255  # use float image in [0, 1]
 fig, ax = plt.subplots()
 ax.imshow(stained_glass)
-ax.axis('off')
+ax.axis('off');
 ```
 <!-- caption text="A Prokudin-Gorskii plate: three photos of the same stained
 glass window, taken with three different filters" -->
@@ -607,7 +607,7 @@ blue, green, red = channels
 original = np.dstack((red, green, blue))
 fig, ax = plt.subplots()
 ax.imshow(original)
-ax.axis('off')
+ax.axis('off');
 ```
 <!-- caption text="Naive overlay of Prokudin-Gorskii channels results in color
 halos" -->
@@ -729,7 +729,7 @@ tf = align(green, red, cost=cost_nmi)
 cred = transform.warp(red, tf, order=3)
 
 corrected = np.dstack((cred, green, cblue))
-f, (ax0, ax1) = plt.subplots(1, 2)
+f, (ax0, ax1) = plt.subplots(2, 1)
 ax0.imshow(original)
 ax0.set_title('Original')
 ax1.imshow(corrected)
