@@ -70,7 +70,7 @@ and others examine the entire parameter space.
 
 In the rest of this chapter, we are going to use SciPy's `optimize` module to
 align two images. Applications of image alignment, or *registration*, include
-panorama stitching, combination of brain scans, super-resolution
+panorama stitching, combination of different brain scans, super-resolution
 imaging, and, in astronomy, object denoising (noise reduction) through the
 combination of multiple exposures.
 
