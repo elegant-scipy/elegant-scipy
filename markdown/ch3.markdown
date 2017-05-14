@@ -1109,8 +1109,8 @@ Here are a few reasons this is a brilliant piece of code:
 - `ndi.generic_filter` iterates over array elements *with their neighbors*.
   (Use `numpy.ndindex` to simply iterate over array indices.)
 - We return "0.0" from the filter function because `generic_filter` requires
-  the filter function to return a float. However, we will ignore the filter's
-  output, and only use it for its "side effect" of adding edges to the graph.
+  the filter function to return a float. However, we ignore the filter
+  output (which is zero everywhere), and use it only for its "side effect" of adding edges to the graph.
 - The loops are not nested several levels deep. This makes the code more
   compact, easier to take in in one go.
 - The code works identically for 1D, 2D, 3D, or even 8D images!
