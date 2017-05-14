@@ -7,9 +7,12 @@
 >
 > — William Blake, *The Tyger*
 
-You probably know that digital images are made up of *pixels*. These are
-the light signal *sampled on a regular grid*. When computing
-on images, we often deal with objects much larger than individual pixels.
+You probably know that digital images are made up of *pixels*. Generally, you
+should not think of these as little squares, but as *point samples* of the light
+signal *measured on a regular grid* [^alvyraysmith].
+
+Further, when processing
+images, we often deal with objects much larger than individual pixels.
 In a landscape, the sky, earth, trees, and rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
 or RAG. Its *nodes* hold properties of each region in the image, and its
@@ -81,14 +84,12 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-Finally, "make some noise" and display it as an image:
+Then, we "make some noise" and display it as an image:
 
 ```python
 import numpy as np
 random_image = np.random.rand(500, 500)
 plt.imshow(random_image);
-# Note ; suppresses the output (i.e. the plotting object text)
-# from being displayed inline in the Jupyter notebook.
 ```
 <!-- caption text="Image displayed by matplotlib's `imshow`" -->
 
@@ -106,7 +107,8 @@ Here is the coin image loaded with scikit-image:
 
 ```python
 from skimage import io
-url_coins = 'https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png'
+url_coins = ('https://raw.githubusercontent.com/scikit-image/scikit-image/'
+             'v0.10.1/skimage/data/coins.png')
 coins = io.imread(url_coins)
 print("Type:", type(coins), "Shape:", coins.shape, "Data type:", coins.dtype)
 plt.imshow(coins);
@@ -123,7 +125,8 @@ color channels, typically the three primary additive colors of red, green, and b
 To show what we can do with these dimensions, let's play with this photo of astronaut Eileen Collins:
 
 ```python
-url_astronaut = 'https://raw.githubusercontent.com/scikit-image/scikit-image/master/skimage/data/astronaut.png'
+url_astronaut = ('https://raw.githubusercontent.com/scikit-image/scikit-image/'
+                 'master/skimage/data/astronaut.png')
 astro = io.imread(url_astronaut)
 print("Type:", type(astro), "Shape:", astro.shape, "Data type:", astro.dtype)
 plt.imshow(astro);
@@ -272,7 +275,7 @@ the `sigon` array is not equal to 0.)
 
 It turns out that this can be accomplished by an signal processing operation
 called *convolution*. At every point of the signal, we compute the dot-product
-between the values surrounding it and a *kernel* or *filter*, which is a
+between the values surrounding that point and a *kernel* or *filter*, which is a
 predetermined vector of values. Depending on the kernel, then, the convolution
 shows a different feature of the signal.
 
@@ -302,6 +305,7 @@ plt.plot(dsig);
 Signals are usually *noisy* though, not perfect as above:
 
 ```python
+np.random.seed(0)
 sig = sig + np.random.normal(0, 0.3, size=sig.shape)
 plt.plot(sig);
 ```
@@ -387,7 +391,7 @@ place the result at the same location in the output image. And, as with the 1D
 difference filter, when the filter is placed on a location with little variation, the
 dot-product cancels out to zero, whereas, placed on a location where the
 image brightness is changing, the values multiplied by 1 will be different from
-those multiplied by -1, and the filter's output will be a positive or negative
+those multiplied by -1, and the filtered output will be a positive or negative
 value (depending on whether the image is brighter towards the bottom-right
 or top-left at that point).
 
@@ -460,7 +464,7 @@ of the horizontal and vertical components:
 
 ```python
 coins_sobel = np.sqrt(coins_h**2 + coins_v**2)
-plt.imshow(coins_sobel, cmap=plt.cm.viridis);
+plt.imshow(coins_sobel, cmap='viridis');
 ```
 <!-- caption text="Sobel gradient magnitude of the coins image" -->
 
@@ -618,7 +622,7 @@ Now we can try it out on the coins image:
 
 ```python
 sobel_mag = ndi.generic_filter(coins, sobel_magnitude_filter, size=3)
-plt.imshow(sobel_mag);
+plt.imshow(sobel_mag, cmap='viridis');
 ```
 <!-- caption text="Sobel magnitude implemented by `generic_filter`" -->
 
@@ -656,7 +660,7 @@ another. (*Synapses* are the chemical connections through which neurons
 communicate.) The worm is an awesome example of neural connectivity analysis
 because every worm (of this species) has the same number of neurons (302), and the
 connections between them are all known. This has resulted in the fantastic Openworm
-project [^openworm], which I encourage you to follow.
+project [^openworm], which we encourage you to read more about.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
@@ -665,7 +669,7 @@ use it here to read in the data, then feed that into NetworkX.
 
 ```python
 import pandas as pd
-connectome_url = "http://www.wormatlas.org/images/NeuronConnect.xls"
+connectome_url = 'http://www.wormatlas.org/images/NeuronConnect.xls'
 conn = pd.read_excel(connectome_url)
 ```
 
@@ -717,7 +721,7 @@ Now we can find the neurons with highest centrality using the Python built-in
 function `sorted`:
 
 ```python
-central = sorted(centrality, key=centrality.__getitem__, reverse=True)
+central = sorted(centrality, key=centrality.get, reverse=True)
 print(central[:5])
 ```
 
@@ -726,18 +730,6 @@ implicated in how the worm responds to prodding: the AVA neurons link
 the worm's front touch receptors (among others) to neurons responsible
 for backward motion, while the PVC neurons link the rear touch receptors to
 forward motion.
-
-These neurons' high centrality feels like a bit of an artifact of their placement
-controlling a large number of motor neurons. Yes, they are in many routes
-from sensory neurons to motor neurons. But all of the motor neurons do essentially
-the same thing, as hinted at by their generic names, VA 1-12. If we were to collapse
-them into one, the high centrality of the "command" neurons AVA R and L, and
-PVC R and L, might vanish. Returning to the rail lines example, suppose trains
-between Penn Station in New York City and Washington DC's Union
-Station could end up at one of 12 different platforms, *and we counted each of
-those as a separate train line*. The betweenness centrality of Penn Station
-would be inflated because from it you could get to Union Station platform 1,
-platform 2, etc. That's not necessarily very interesting.
 
 Varshney *et al* study the properties of a *strongly connected component*
 of 237 neurons, out of a total of 279. In graphs, a
@@ -759,7 +751,7 @@ upstream of it are inputs, and nodes downstream are outputs.
 > lovely paragraph about this idea from an article in *Nautilus*,
 > "The Man Who Tried to Redeem the World With Logic", by Amanda Gefter:
 >
-> If one were to see a lightning bolt flash on the sky, the eyes would send a signal to the brain, shuffling it through a chain of neurons. Starting with any given neuron in the chain, you could retrace the signal's steps and figure out just how long ago the lightning struck. Unless, that is, the chain is a loop. In that case, the information encoding the lightning bolt just spins in circles, endlessly. It bears no connection to the time at which the lightning actually occurred. It becomes, as McCulloch put it, "an idea wrenched out of time." In other words, a memory.
+> > If one were to see a lightning bolt flash on the sky, the eyes would send a signal to the brain, shuffling it through a chain of neurons. Starting with any given neuron in the chain, you could retrace the signal's steps and figure out just how long ago the lightning struck. Unless, that is, the chain is a loop. In that case, the information encoding the lightning bolt just spins in circles, endlessly. It bears no connection to the time at which the lightning actually occurred. It becomes, as McCulloch put it, "an idea wrenched out of time." In other words, a memory.
 
 NetworkX makes straightforward work out of getting the largest strongly
 connected component from our `wormbrain` network:
@@ -767,9 +759,9 @@ connected component from our `wormbrain` network:
 ```python
 sccs = nx.strongly_connected_component_subgraphs(wormbrain)
 giantscc = max(sccs, key=len)
-print('The largest strongly connected component has %i nodes,' %
-      giantscc.number_of_nodes(), 'out of %i total.' %
-      wormbrain.number_of_nodes())
+print(f'The largest strongly connected component has '
+      f'{giantscc.number_of_nodes()} nodes, out of '
+      f'{wormbrain.number_of_nodes()} total.')
 ```
 
 As noted in the paper, the size of this component is *smaller* than
@@ -957,7 +949,7 @@ you're *sure* belong in the same segment, and then merge those according
 to some more sophisticated rule.
 
 As a simple example, suppose you want to segment out the tiger in this
-picture, from the Berkeley Segmentation Dataset (BSDS) [^bsds-tiger]:
+picture, from the Berkeley Segmentation Dataset (BSDS):
 
 ![BSDS-108073 tiger](http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg)
 
@@ -965,7 +957,8 @@ A clustering algorithm, simple linear iterative clustering (SLIC) [^slic], can g
 us a decent starting point. It is available in the scikit-image library.
 
 ```python
-url = 'http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg'
+url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/vision/'
+       'bsds/BSDS300/html/images/plain/normal/color/108073.jpg')
 tiger = io.imread(url)
 from skimage import segmentation
 seg = segmentation.slic(tiger, n_segments=30, compactness=40.0,
@@ -1003,7 +996,7 @@ colormap from matplotlib, according to the difference in color between the
 two nodes.
 
 The figure also shows the magic of thinking of segmentations as graphs: you can
-see that edges between nodes within the tiger and those outside of it are darker
+see that edges between nodes within the tiger and those outside of it are brighter
 (higher-valued) than edges within the same object. Thus, if we can cut the
 graph along those edges, we will get our segmentation. We have chosen an easy
 example for color-based segmentation, but the same principles hold true for
@@ -1039,7 +1032,7 @@ def build_rag(labels, image):
     return g
 ```
 
-This works, but if you want to segment a 3D image, you'll have to write a
+Whew! This works, but if you want to segment a 3D image, you'll have to write a
 different version:
 
 ```python
@@ -1107,13 +1100,13 @@ def build_rag(labels, image):
     return g
 ```
 
-Here's a few reasons why we think this is a brilliant piece of code:
+Here are a few reasons this is a brilliant piece of code:
 
 - `ndi.generic_filter` iterates over array elements *with their neighbors*.
   (Use `numpy.ndindex` to simply iterate over array indices.)
 - We return "0.0" from the filter function because `generic_filter` requires
-  the filter function to return a float. However, we will ignore the filter
-  output, and only use it for its "side effect" of adding edges to the graph.
+  the filter function to return a float. However, we ignore the filter
+  output (which is zero everywhere), and use it only for its "side effect" of adding edges to the graph.
 - The loops are not nested several levels deep. This makes the code more
   compact, easier to take in in one go.
 - The code works identically for 1D, 2D, 3D, or even 8D images!
@@ -1163,6 +1156,9 @@ Still, we think that's a nice demonstration of the capabilities of RAGs...
 And the beauty with which SciPy and NetworkX make it feasible.
 Many of these functions are available in the scikit-image library. If you
 are interested in image analysis, look it up!
+
+[^alvyraysmith]: A Pixel Is Not A Little Square. Alvy Ray Smith, 1995, Technical
+                 Memo. http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 
