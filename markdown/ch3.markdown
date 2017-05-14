@@ -11,8 +11,8 @@ You probably know that digital images are made up of *pixels*. Generally, you
 should not think of these as little squares, but as *point samples* of the light
 signal *measured on a regular grid* [^alvyraysmith].
 
-Further, when computing
-on images, we often deal with objects much larger than individual pixels.
+Further, when processing
+images, we often deal with objects much larger than individual pixels.
 In a landscape, the sky, earth, trees, and rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
 or RAG. Its *nodes* hold properties of each region in the image, and its
