@@ -542,7 +542,7 @@ Now, let's use that function to plot the neurons:
 plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(12, 8))
+                xlabel='Affinity eigenvector 1', ylabel='Processing depth')
 ```
 <!-- caption text="Spectral layout of the neurons of a nematode worm" -->
 
@@ -571,7 +571,8 @@ if y[asjl_index] < 0:
 plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(12, 8))
+                xlabel='Affinity eigenvector 1',
+                ylabel='Affinity eigenvector 2')
 ```
 <!-- caption text="Spectral layout of the neurons of a nematode worm, using two
 spectral dimensions" -->
@@ -719,12 +720,13 @@ We can now reproduce the above plots!
 plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(12, 8))
+                xlabel='Affinity eigenvector 1', ylabel='Processing depth')
 
 plot_connectome(x, y, C, labels=neuron_ids, types=neuron_types,
                 type_names=['sensory neurons', 'interneurons',
                             'motor neurons'],
-                figsize=(12, 8))
+                xlabel='Affinity eigenvector 1',
+                ylabel='Affinity eigenvector 2')
 ```
 <!-- caption text="Spectral layout of a nematode brain, computed using sparse
 matrices" -->
