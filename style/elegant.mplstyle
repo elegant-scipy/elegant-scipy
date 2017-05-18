@@ -2,6 +2,7 @@
 # Author: Juan Nunez-Iglesias
 
 lines.linewidth: 1.5
+lines.markersize: 4
 
 # Use the Seaborn Colorblind palette for color cycles
 axes.prop_cycle: cycler('color', ['0072b2', '009e73', 'd55e00', 'cc79a7', 'f0e442', '56b4e9', '0072b2'])
