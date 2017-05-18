@@ -1,7 +1,7 @@
 # Elegant SciPy Matplotlib Style
 # Author: Juan Nunez-Iglesias
 
-lines.linewidth: 2
+lines.linewidth: 1.5
 
 # Use the Seaborn Colorblind palette for color cycles
 axes.prop_cycle: cycler('color', ['0072b2', '009e73', 'd55e00', 'cc79a7', 'f0e442', '56b4e9', '0072b2'])
@@ -16,7 +16,7 @@ axes.spines.right: false
 axes.labelsize: large
 
 # Use thicker axes
-axes.linewidth: 1.5
+axes.linewidth: 1.1
 
 # Remove ticks
 xtick.major.size: 0
@@ -38,6 +38,8 @@ legend.fontsize: large
 
 figure.facecolor: 1.0
 figure.autolayout: false
+# O'Reilly figure width, maintaining 4:3 aspect ratio
+figure.figsize: 4.8, 3.6
 figure.dpi: 300
 savefig.dpi: 300
 
