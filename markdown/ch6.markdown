@@ -477,7 +477,7 @@ from matplotlib.collections import LineCollection
 
 def plot_connectome(x_coords, y_coords, conn_matrix, *,
                     labels=(), types=None, type_names=('',),
-                    **figkwargs):
+                    xlabel='', ylabel=''):
     """Plot neurons as points connected by lines.
 
     Neurons can have different types (up to 6 distinct colors).
@@ -497,9 +497,8 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
         The name of each value of `types`. For example, if a 0 in
         `types` means "sensory neuron", then `type_names[0]` should
         be "sensory neuron".
-    **figkwargs :
-        Additional keyword arguments are passed to `plt.subplots` to
-        create the figure.
+    xlabel, ylabel : str, optional
+        Labels for the axes.
     """
     if types is None:
         types = np.zeros(x_coords.shape, dtype=int)
@@ -507,29 +506,32 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
     colors = plt.rcParams['axes.prop_cycle'][:ntypes].by_key()['color']
     cmap = ListedColormap(colors)
 
-    fig, ax = plt.subplots(**figkwargs)
+    fig, ax = plt.subplots()
 
     # plot neuron locations:
     for neuron_type in range(ntypes):
         plotting = (types == neuron_type)
         pts = ax.scatter(x_coords[plotting], y_coords[plotting],
-                         c=cmap(neuron_type), edgecolors='face', zorder=1)
+                         c=cmap(neuron_type), s=4, zorder=1)
         pts.set_label(type_names[neuron_type])
 
     # add text labels:
     for x, y, label in zip(x_coords, y_coords, labels):
         ax.text(x, y, '   ' + label,
-                horizontalalignment='left', verticalalignment='center',
-                fontsize=6, zorder=2)
+                verticalalignment='center', fontsize=3, zorder=2)
 
     # plot edges
     pre, post = np.nonzero(conn_matrix)
     links = np.array([[x_coords[pre], x_coords[post]],
                       [y_coords[pre], y_coords[post]]]).T
-    ax.add_collection(LineCollection(links, color='silver',
-                                     lw=2, alpha=0.5, zorder=0))
+    ax.add_collection(LineCollection(links, color='lightgray',
+                                     lw=0.3, alpha=0.5, zorder=0))
 
-    ax.legend(scatterpoints=3)
+    ax.legend(scatterpoints=3, fontsize=6)
+
+    ax.set_xlabel(xlabel, fontsize=8)
+    ax.set_ylabel(ylabel, fontsize=8)
+
     plt.show()
 ```
 
