@@ -12,8 +12,8 @@ axes.spines.bottom: true
 axes.spines.top: false
 axes.spines.right: false
 
-# Use large font for axis labels
-axes.labelsize: large
+# Use small font for axis labels
+axes.labelsize: small
 
 # Use thicker axes
 axes.linewidth: 1.1
@@ -21,20 +21,20 @@ axes.linewidth: 1.1
 # Remove ticks
 xtick.major.size: 0
 xtick.minor.size: 0
-xtick.labelsize: large
+xtick.labelsize: small
 ytick.major.size: 0
 ytick.minor.size: 0
-ytick.labelsize: large
+ytick.labelsize: small
 
 # Remove grids
 grid.linewidth: 0
 
 # Remove box around legend
 # Use 3 scatter points in points legend
-# Use large font in legend
+# Use small font in legend
 legend.frameon: false
 legend.scatterpoints: 3
-legend.fontsize: large
+legend.fontsize: small
 
 figure.facecolor: 1.0
 figure.autolayout: false
