@@ -594,19 +594,19 @@ def reduce_xaxis_labels(ax, factor):
     factor : int, factor to reduce the number of x-axis labels by
     """
     plt.setp(ax.xaxis.get_ticklabels(), visible=False)
-    for label in ax.xaxis.get_ticklabels()[::factor]:
+    for label in ax.xaxis.get_ticklabels()[factor-1::factor]:
         label.set_visible(True)
 ```
 
 ```python
 # Bar plot of expression counts by individual
-fig, ax = plt.subplots(figsize=(16,5))
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
 
-ax.boxplot(counts_subset)
-ax.set_title("Gene expression counts raw")
-ax.set_xlabel("Individuals")
-ax.set_ylabel("Gene expression counts")
-reduce_xaxis_labels(ax, 2)
+with plt.style.context('style/thinner.mplstyle'):
+    ax.boxplot(counts_subset)
+    ax.set_xlabel("Individuals")
+    ax.set_ylabel("Gene expression counts")
+    reduce_xaxis_labels(ax, 5)
 ```
 <!-- caption text="Boxplot of gene expression counts per individual" -->
 
@@ -616,13 +616,13 @@ Both the log function and the n + 1 step can be done using broadcasting to simpl
 
 ```python
 # Bar plot of expression counts by individual
-fig, ax = plt.subplots(figsize=(16,5))
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
 
-ax.boxplot(np.log(counts_subset + 1))
-ax.set_title("Gene expression counts raw")
-ax.set_xlabel("Individuals")
-ax.set_ylabel("log gene expression counts")
-reduce_xaxis_labels(ax, 2)
+with plt.style.context('style/thinner.mplstyle'):
+    ax.boxplot(np.log(counts_subset + 1))
+    ax.set_xlabel("Individuals")
+    ax.set_ylabel("log gene expression counts")
+    reduce_xaxis_labels(ax, 5)
 ```
 <!-- caption text="Boxplot of gene expression counts per individual (log scale)" -->
 
@@ -637,13 +637,13 @@ counts_lib_norm = counts / total_counts * 1000000
 counts_subset_lib_norm = counts_lib_norm[:,samples_index]
 
 # Bar plot of expression counts by individual
-fig, ax = plt.subplots(figsize=(16,5))
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
 
-ax.boxplot(np.log(counts_subset_lib_norm + 1))
-ax.set_title("Gene expression counts normalized by library size")
-ax.set_xlabel("Individuals")
-ax.set_ylabel("log gene expression counts")
-reduce_xaxis_labels(ax, 2)
+with plt.style.context('style/thinner.mplstyle'):
+    ax.boxplot(np.log(counts_subset_lib_norm + 1))
+    ax.set_xlabel("Individuals")
+    ax.set_ylabel("log gene expression counts")
+    reduce_xaxis_labels(ax, 5)
 ```
 <!-- caption text="Boxplot of library-normalized gene expression counts per individual (log scale)" -->
 

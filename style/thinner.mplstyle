@@ -1,0 +1,63 @@
+# Elegant SciPy Matplotlib Style
+# Author: Juan Nunez-Iglesias
+
+lines.linewidth: 0.75
+lines.markersize: 2
+
+# Use the Seaborn Colorblind palette for color cycles
+axes.prop_cycle: cycler('color', ['0072b2', '009e73', 'd55e00', 'cc79a7', 'f0e442', '56b4e9', '0072b2'])
+
+# Remove the right and top axis spines
+axes.spines.left: true
+axes.spines.bottom: true
+axes.spines.top: false
+axes.spines.right: false
+
+# Use small font for axis labels
+axes.labelsize: x-small
+
+# Use thicker axes
+axes.linewidth: 1.1
+
+# Remove ticks
+xtick.major.size: 0
+xtick.minor.size: 0
+xtick.labelsize: x-small
+ytick.major.size: 0
+ytick.minor.size: 0
+ytick.labelsize: x-small
+
+# Remove grids
+grid.linewidth: 0
+
+# Remove box around legend
+# Use 3 scatter points in points legend
+# Use small font in legend
+legend.frameon: false
+legend.scatterpoints: 3
+legend.fontsize: x-small
+
+figure.facecolor: 1.0
+figure.autolayout: false
+# O'Reilly figure width, maintaining 4:3 aspect ratio
+figure.figsize: 4.8, 3.6
+figure.dpi: 300
+savefig.dpi: 300
+
+image.interpolation: nearest
+image.cmap: gray
+image.resample: false
+
+# Box plots
+boxplot.flierprops.marker: .
+boxplot.flierprops.markerfacecolor: 0072b2
+boxplot.flierprops.markeredgecolor: 0072b2
+boxplot.flierprops.markersize: 0.6
+boxplot.boxprops.color: 0072b2
+boxplot.boxprops.linewidth: 0.6
+boxplot.whiskerprops.linestyle: -
+boxplot.whiskerprops.color: 0072b2
+boxplot.whiskerprops.linewidth: 0.6
+boxplot.capprops.linewidth: 0
+boxplot.medianprops.linewidth: 0.6
+boxplot.medianprops.color: d55e00
