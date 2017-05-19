@@ -1,3 +1,52 @@
+================== Chapter 1 ===================
+
+## Making a class boxplot using seaborn:
+
+```
+import itertools as it
+from collections import defaultdict
+
+import seaborn.apionly as sns
+
+def restyle_boxplot(self, artist_dict, color, props):
+    """Change color of certain elements according to class.
+
+    This function money-patches seaborn's, which messes too
+    much with the styling.
+    """
+    for box in artist_dict["boxes"]:
+        box.update(dict(facecolor=color + (0.05,),
+                        edgecolor=color))
+    for whisk in artist_dict["whiskers"]:
+        whisk.update(dict(color=color))
+    for fly in artist_dict["fliers"]:
+        fly.update(dict(markeredgecolor=color))
+
+sns.categorical._BoxPlotter.restyle_boxplot = restyle_boxplot
+
+
+def class_boxplot(data, samples, classes):
+    """Make a boxplot with boxes colored according to the class they belong to.
+
+    Parameters
+    ----------
+    data : (distributions, samples) shape array of float
+        The input data. One boxplot will be generated for each element
+        in `data`.
+    samples : array of int
+        sample ID of each column of `data`
+    classes : list of string, same length as `data`
+        The class each distribution in `data` belongs to.
+    """
+    data = np.array(data)
+    samples = np.broadcast_to(samples, data.shape)
+    classes = np.broadcast_to(classes, data.shape)
+    df = pd.DataFrame({'class': np.ravel(classes),
+                       'sample': np.ravel(samples),
+                       'values': np.ravel(data)})
+    sns.boxplot(data=df, x='sample', y='values', hue='class')
+```
+
 ================== Chapter 4 ===================
 
 ## Notes
