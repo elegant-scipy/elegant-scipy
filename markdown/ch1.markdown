@@ -687,7 +687,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         class2data[cls][-1] = distrib
 
     # then, do each boxplot in turn with the appropriate color
-    fig, ax = plt.subplots(figsize=(2 * len(data), 5))
+    fig, ax = plt.subplots()
     lines = []
     for cls in all_classes:
         # set color for all elements of the boxplot
