@@ -668,11 +668,6 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         in `data`.
     classes : list of string, same length as `data`
         The class each distribution in `data` belongs to.
-    colors : list of matplotlib colorspecs
-        The color corresponding to each class. These will be cycled in
-        the order in which the classes appear in `classes`. (So it is
-        ideal to provide as many colors as there are classes! The
-        default palette contains six colors.)
 
     Other parameters
     ----------------
@@ -680,8 +675,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         Keyword arguments to pass on to `plt.boxplot`.
     """
     all_classes = sorted(set(classes))
-    if colors is None:
-        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
     class2color = dict(zip(all_classes, it.cycle(colors)))
 
     # map classes to data vectors
