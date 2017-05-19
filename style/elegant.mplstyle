@@ -52,11 +52,12 @@ image.resample: false
 boxplot.flierprops.marker: .
 boxplot.flierprops.markerfacecolor: 0072b2
 boxplot.flierprops.markeredgecolor: 0072b2
+boxplot.flierprops.markersize: 2
 boxplot.boxprops.color: 0072b2
-boxplot.boxprops.linewidth: 2
+boxplot.boxprops.linewidth: 1
 boxplot.whiskerprops.linestyle: -
 boxplot.whiskerprops.color: 0072b2
-boxplot.whiskerprops.linewidth: 2
+boxplot.whiskerprops.linewidth: 1
 boxplot.capprops.linewidth: 0
-boxplot.medianprops.linewidth: 2
+boxplot.medianprops.linewidth: 1
 boxplot.medianprops.color: d55e00
