@@ -15,33 +15,37 @@ import sys
 rate, audio = wavfile.read('data/nightingale.wav')
 left, right = audio.T
 
-f, ax = plt.subplots(figsize=(10, 5))
+plt.style.use('style/thinner.mplstyle')
+
+f, ax = plt.subplots(figsize=(4.8, 2.4))
 ax.plot(left[:1524], zorder=-100)
 
-window_0 = Rectangle((0, -80), 1024, 160, fill=False, lw=3)
-window_1 = Rectangle((100, -85), 1024, 170, fill=False, lw=3, ls='--')
+window_0 = Rectangle((0, -80), 1024, 160, fill=False, lw=1)
+window_1 = Rectangle((100, -85), 1024, 155, fill=False, lw=1, ls='--')
 ax.add_patch(window_0)
 ax.add_patch(window_1)
 
 plt.annotate(
-    '', xy=(0, -70), xycoords='data',
-    xytext=(1024, -70), textcoords='data',
-    arrowprops={'arrowstyle': '<->',
-                'linewidth': 2})
-
-plt.annotate(
-    '1024', xy=(1024 / 2, -70), xycoords='data',
-    xytext=(-10, 5), textcoords='offset points')
-
-plt.annotate(
     '', xy=(0, -60), xycoords='data',
-    xytext=(100, -60), textcoords='data',
+    xytext=(1024, -60), textcoords='data',
     arrowprops={'arrowstyle': '<->',
-                'linewidth': 2})
+                'linewidth': 1})
 
 plt.annotate(
-    '100', xy=(100 / 2, -60), xycoords='data',
-    xytext=(-10, 5), textcoords='offset points')
+    '1024', xy=(1024 / 2, -60), xycoords='data',
+    xytext=(-10, -8), textcoords='offset points',
+    size='small')
+
+plt.annotate(
+    '', xy=(1024, -70), xycoords='data',
+    xytext=(1124, -70), textcoords='data',
+    arrowprops={'arrowstyle': '<-',
+                'linewidth': 1})
+
+plt.annotate(
+    '100', xy=(1074, -70), xycoords='data',
+    xytext=(-8, 5), textcoords='offset points',
+    size='small')
 
 
 ax = plt.gca()
@@ -59,4 +63,4 @@ else:
 
 plt.savefig(fn, dpi=300)
 
-#plt.show()
+plt.show()
