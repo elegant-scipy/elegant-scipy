@@ -763,7 +763,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
     # expected by `plt.boxplot`
     binned_y = [y[x_bin_idxs == i]
                 for i in range(np.max(x_bin_idxs))]
-    fig, ax = plt.subplots(figsize=(16,3))
+    fig, ax = plt.subplots(figsize=(4.8,1))
 
     # Make the x-axis labels using the bin centers
     x_bin_centers = (x_bins[1:] + x_bins[:-1]) / 2
@@ -823,7 +823,8 @@ log_gene_lengths = np.log(gene_lengths)
 ```
 
 ```python
-binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+with plt.style.context('style/thinner.mplstyle'):
+    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 <!-- caption text="The relationship between gene length and average expression (log scale)" -->
 
@@ -1040,7 +1041,8 @@ log_counts = np.log(counts + 1)
 mean_log_counts = np.mean(log_counts, axis=1)
 log_gene_lengths = np.log(gene_lengths)
 
-binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+with plt.style.context('style/thinner.mplstyle'):
+    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 <!-- caption text="The relationship between gene length and average expression before RPKM normalization (log scale)" -->
 
@@ -1051,7 +1053,8 @@ log_counts = np.log(counts_rpkm + 1)
 mean_log_counts = np.mean(log_counts, axis=1)
 log_gene_lengths = np.log(gene_lengths)
 
-binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+with plt.style.context('style/thinner.mplstyle'):
+    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
 <!-- caption text="The relationship between gene length and average expression after RPKM normalization (log scale)" -->
