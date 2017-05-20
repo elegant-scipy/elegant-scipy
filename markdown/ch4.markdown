@@ -1303,9 +1303,9 @@ t_ms = t * 1000  # Sample times in milli-second
 
 w = np.kaiser(N, 6.1)  # Kaiser window with beta = 6.1
 
-for n, (signal, label) in enumerate([(v_single, r'$v_0 [Volt]$'),
-                                     (v_sim, r'$v_5 [Volt]$'),
-                                     (v_actual, r'$v_{\mathrm{actual}}$')]):
+for n, (signal, label) in enumerate([(v_single, r'$v_0 [V]$'),
+                                     (v_sim, r'$v_5 [V]$'),
+                                     (v_actual, r'$v_{\mathrm{actual}} [V]$')]):
     with plt.style.context('style/thinner.mplstyle'):
         axes[n].plot(t_ms, w * signal)
         axes[n].set_ylabel(label)
@@ -1327,9 +1327,9 @@ fig, (ax0, ax1,ax2) = plt.subplots(3, 1)
 
 with plt.style.context('style/thinner.mplstyle'):
     log_plot_normalized(rng, V_single_win[:N // 2],
-                        r"$|V_0,\mathrm{win}|$ [dB]", ax0)
+                        r"$|V_{0,\mathrm{win}}|$ [dB]", ax0)
     log_plot_normalized(rng, V_sim_win[:N // 2],
-                        r"$|V_5,\mathrm{win}|$ [dB]", ax1)
+                        r"$|V_{5,\mathrm{win}}|$ [dB]", ax1)
     log_plot_normalized(rng, V_actual_win[:N // 2],
                         r"$|V_\mathrm{actual,win}|$ [dB]", ax2)
 
