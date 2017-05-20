@@ -43,23 +43,21 @@ v4 = np.cos(2 * pi * fd * 1.8 * t + pi / 6)
 # Blend them together
 v5 = (v1 / 3.0) + (0.2 * v1) + (0.9 * v2) + (0.02 * v3) + (0.1 * v4)
 
-plt.plot(t, v5)
-plt.show()
-
 
 scan = np.load(pjoin(os.path.dirname(__file__),
                '../data/radar_scan_0.npz'))['scan']
 
-fig, (ax0, ax1, ax2) = plt.subplots(3, 1, figsize=(15, 7))
+plt.style.use('style/thinner.mplstyle')
+
+fig, (ax0, ax1, ax2) = plt.subplots(3, 1, sharex=True,
+                                    tight_layout=True)
 ax0.plot(1000 * t, v0)
 ax0.set_ylabel("$v_{single} (t)$, V")
 ax0.set_ylim(-1.1, 1.1)
-ax0.set_xlim(0, Teff * 1000)
 ax0.grid()
 
 ax1.plot(t * 1000, v5)
 ax1.set_ylabel("$v_{sim} (t)$, V")
-ax1.set_xlim(0, Teff * 1024)
 ax1.set_ylim(-1.5, 1.5)
 ax1.grid()
 
