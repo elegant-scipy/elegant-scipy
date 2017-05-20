@@ -682,10 +682,6 @@ F_dim = F_dim * peaks.astype(int)
 # the output.
 image_filtered = np.real(fftpack.ifft2(F_dim))
 
-# And add a slight bit of blurring to soften the result
-from scipy import ndimage as ndi
-image_filtered = ndi.gaussian_filter(image_filtered, sigma=1)
-
 f, (ax0, ax1) = plt.subplots(2, 1, figsize=(4.8, 7))
 ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='viridis')
 ax0.set_title('Spectrum after suppression')
