@@ -691,8 +691,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
     lines = []
     for cls in all_classes:
         # set color for all elements of the boxplot
-        for key in ['boxprops', 'whiskerprops', 'capprops',
-                    'medianprops', 'flierprops']:
+        for key in ['boxprops', 'whiskerprops', 'flierprops']:
             kwargs.setdefault(key, {}).update(color=class2color[cls])
         # draw the boxplot
         box = ax.boxplot(class2data[cls], **kwargs)
