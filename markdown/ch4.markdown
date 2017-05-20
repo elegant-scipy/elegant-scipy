@@ -1136,7 +1136,7 @@ positive frequency components (i.e., components $0$ to $N/2$).  These
 are called the *range traces* in radar terminology.
 
 ```python
-fig, axes = plt.subplots(3, 1, sharex=True, figsize=(15, 7))
+fig, axes = plt.subplots(3, 1, sharex=True, figsize=(4.8, 2.4))
 
 # Take FFTs of our signals.  Note the convention to name FFTs with a
 # capital letter.
@@ -1147,23 +1147,24 @@ V_actual = np.fft.fft(v_actual)
 
 N = len(V_single)
 
-axes[0].plot(np.abs(V_single[:N // 2]))
-axes[0].set_ylabel("$|V_\mathrm{single}|$")
-axes[0].set_xlim(0, N // 2)
-axes[0].set_ylim(0, 1100)
+with plt.style.context('style/thinner.mplstyle'):
+    axes[0].plot(np.abs(V_single[:N // 2]))
+    axes[0].set_ylabel("$|V_\mathrm{single}|$")
+    axes[0].set_xlim(0, N // 2)
+    axes[0].set_ylim(0, 1100)
 
-axes[1].plot(np.abs(V_sim[:N // 2]))
-axes[1].set_ylabel("$|V_\mathrm{sim} |$")
-axes[1].set_ylim(0, 1000)
+    axes[1].plot(np.abs(V_sim[:N // 2]))
+    axes[1].set_ylabel("$|V_\mathrm{sim} |$")
+    axes[1].set_ylim(0, 1000)
 
-axes[2].plot(np.abs(V_actual[:N // 2]))
-axes[2].set_ylim(0, 750)
-axes[2].set_ylabel("$|V_\mathrm{actual}|$")
+    axes[2].plot(np.abs(V_actual[:N // 2]))
+    axes[2].set_ylim(0, 750)
+    axes[2].set_ylabel("$|V_\mathrm{actual}|$")
 
-axes[2].set_xlabel("FFT component $n$")
+    axes[2].set_xlabel("FFT component $n$")
 
-for ax in axes:
-    ax.grid()
+    for ax in axes:
+        ax.grid()
 ```
 <!-- caption text="Range traces for: (a) single simulated target, (b) mutiple simulated targets, (c) real-world targets" --> 
 
