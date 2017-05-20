@@ -1226,7 +1226,7 @@ before with the spectrogram:
 c = 3e8  # Approximately the speed of light and of
          # electromagnetic waves in air
 
-fig, (ax0, ax1, ax2) = plt.subplots(3, 1, figsize=(15, 7))
+fig, (ax0, ax1, ax2) = plt.subplots(3, 1)
 
 
 def dB(y):
@@ -1246,13 +1246,15 @@ def log_plot_normalized(x, y, ylabel, ax):
 
 rng = np.arange(N // 2) * c / 2 / Beff
 
-log_plot_normalized(rng, V_single[:N // 2], "$|V_0|$ [dB]", ax0)
-log_plot_normalized(rng, V_sim[:N // 2], "$|V_5|$ [dB]", ax1)
-log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
+with plt.style.context('style/thinner.mplstyle'):
+    log_plot_normalized(rng, V_single[:N // 2], "$|V_0|$ [dB]", ax0)
+    log_plot_normalized(rng, V_sim[:N // 2], "$|V_5|$ [dB]", ax1)
+    log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
 
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
 ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
-ax2.set_xlim(0, len(V_actual) // 2);
+ax2.set_xlim(0, len(V_actual) // 2)
+ax2.set_xlabel('range')
 ```
 <!-- caption text="Logarithm of range traces" -->
 
@@ -1295,7 +1297,7 @@ Here are the signals used thus far in this example, windowed with a
 Kaiser window with $\beta=6.1$:
 
 ```python
-f, axes = plt.subplots(3, 1, sharex=True, figsize=(10, 5))
+f, axes = plt.subplots(3, 1, sharex=True, figsize=(4.8, 2.8))
 
 t_ms = t * 1000  # Sample times in milli-second
 
@@ -1304,9 +1306,10 @@ w = np.kaiser(N, 6.1)  # Kaiser window with beta = 6.1
 for n, (signal, label) in enumerate([(v_single, r'$v_0 [Volt]$'),
                                      (v_sim, r'$v_5 [Volt]$'),
                                      (v_actual, r'$v_{\mathrm{actual}}$')]):
-    axes[n].plot(t_ms, w * signal)
-    axes[n].set_ylabel(label)
-    axes[n].grid()
+    with plt.style.context('style/thinner.mplstyle'):
+        axes[n].plot(t_ms, w * signal)
+        axes[n].set_ylabel(label)
+        axes[n].grid()
 
 axes[2].set_xlim(0, t_ms[-1])
 axes[2].set_xlabel('Time [ms]');
@@ -1320,18 +1323,23 @@ V_single_win = np.fft.fft(w * v_single)
 V_sim_win = np.fft.fft(w * v_sim)
 V_actual_win = np.fft.fft(w * v_actual)
 
-fig, (ax0, ax1,ax2) = plt.subplots(3, 1, figsize=(15, 7))
+fig, (ax0, ax1,ax2) = plt.subplots(3, 1)
 
-log_plot_normalized(rng, V_single_win[:N // 2], r"$|V_0,\mathrm{win}|$ [dB]", ax0)
-log_plot_normalized(rng, V_sim_win[:N // 2], r"$|V_5,\mathrm{win}|$ [dB]", ax1)
-log_plot_normalized(rng, V_actual_win[:N // 2], r"$|V_\mathrm{actual,win}|$ [dB]", ax2)
+with plt.style.context('style/thinner.mplstyle'):
+    log_plot_normalized(rng, V_single_win[:N // 2],
+                        r"$|V_0,\mathrm{win}|$ [dB]", ax0)
+    log_plot_normalized(rng, V_sim_win[:N // 2],
+                        r"$|V_5,\mathrm{win}|$ [dB]", ax1)
+    log_plot_normalized(rng, V_actual_win[:N // 2],
+                        r"$|V_\mathrm{actual,win}|$ [dB]", ax2)
 
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
 ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
 
-ax1.annotate("New, previously unseen!", (160, -35),
-             xytext=(10, 25), textcoords="offset points", color='red',
-             arrowprops=dict(width=2, headwidth=6, headlength=12, shrink=0.1));
+ax1.annotate("New, previously unseen!", (160, -35), xytext=(10, 25),
+             textcoords="offset points", color='red', size='x-small',
+             arrowprops=dict(width=0.5, headwidth=3, headlength=4,
+                             fc='k', shrink=0.1));
 ```
 <!-- caption text="Range traces (spectrum) of windowed signals" -->
 
