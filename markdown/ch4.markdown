@@ -686,7 +686,7 @@ f, (ax0, ax1) = plt.subplots(2, 1, figsize=(4.8, 7))
 ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='viridis')
 ax0.set_title('Spectrum after suppression')
 
-ax1.imshow(ndi.gaussian_filter(image_filtered, sigma=1))
+ax1.imshow(image_filtered)
 ax1.set_title('Reconstructed image');
 ```
 <!-- caption text="Filtered moon landing image and its spectrum" -->
