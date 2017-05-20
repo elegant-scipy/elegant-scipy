@@ -1487,18 +1487,19 @@ Now, Matplotlib's `trisurf` can be used to visualize the result:
 from mpl_toolkits.mplot3d import Axes3D
 
 # Set up the 3D axis
-f, ax = plt.subplots(1, 1,
-                     figsize=(10, 10),
+f, ax = plt.subplots(1, 1, figsize=(4.8, 4.8),
                      subplot_kw=dict(projection='3d'))
 
-ax.plot_trisurf(*coords.T, triangles=d.vertices, cmap='magma_r')
+with plt.style.context('style/thinner.mplstyle'):
+    ax.plot_trisurf(*coords.T, triangles=d.vertices, cmap='magma_r')
 
-ax.set_xlabel(axis_labels[0])
-ax.set_ylabel(axis_labels[1])
-ax.set_zlabel(axis_labels[2])
+    ax.set_xlabel(axis_labels[0])
+    ax.set_ylabel(axis_labels[1])
+    ax.set_zlabel(axis_labels[2], labelpad=-3)
+    ax.set_xticks([0, 5, 10, 15])
 
 # Adjust the camera position to match our diagram above
-ax.view_init(azim=-45);
+ax.view_init(azim=-50);
 ```
 <!-- caption text="3-D visualization of estimated rock slope position" -->
 
