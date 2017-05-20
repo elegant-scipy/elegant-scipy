@@ -507,9 +507,6 @@ below does.
 # Use our own style file for the plots
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
-# ignore MPL layout warnings
-import warnings
-warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
 
 > **A quick note on plotting {.callout}**
