@@ -259,7 +259,7 @@ The specific unit used for the ratio is the decibel, $20
 log_{10}\left(\mathrm{amplitude ratio}\right)$.
 
 ```python
-f, ax = plt.subplots(figsize=(10, 5))
+f, ax = plt.subplots(figsize=(4.8, 2.4))
 
 S = np.abs(spectrum)
 S = 20 * np.log10(S / np.max(S))
@@ -421,7 +421,7 @@ for i in lengths:
     exec_times.append(min(times))
 
 
-f, (ax0, ax1) = plt.subplots(2, 1, sharex=True, figsize=(10, 5))
+f, (ax0, ax1) = plt.subplots(2, 1, sharex=True, figsize=(4.8, 2.4))
 ax0.stem(lengths, exec_times)
 ax0.set_xlabel('Length of input')
 ax0.set_ylabel('Execution time (seconds)')
@@ -612,7 +612,7 @@ from skimage import io
 image = io.imread('images/moonlanding.png')
 M, N = image.shape
 
-f, ax = plt.subplots(figsize=(10, 10))
+f, ax = plt.subplots(figsize=(4.8, 4.8))
 ax.imshow(image)
 
 print((M, N), image.dtype)
@@ -640,7 +640,7 @@ Again, we take the log of the spectrum to compress the range of
 values, before displaying:
 
 ```python
-f, ax = plt.subplots(figsize=(10, 10))
+f, ax = plt.subplots(figsize=(4.8, 4.8))
 
 ax.imshow(np.log(1 + F_magnitude), cmap='viridis',
           extent=(-N // 2, N // 2, -M // 2, M // 2))
@@ -686,7 +686,7 @@ image_filtered = np.real(fftpack.ifft2(F_dim))
 from scipy import ndimage as ndi
 image_filtered = ndi.gaussian_filter(image_filtered, sigma=1)
 
-f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
+f, (ax0, ax1) = plt.subplots(2, 1, figsize=(4.8, 7))
 ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='viridis')
 ax0.set_title('Spectrum after suppression')
 
@@ -811,7 +811,7 @@ drastically reduced, at the cost of a slight widening in the main lobe.
 # @interact(beta=(0, 20.))
 # def window(beta):
 #    x = np.kaiser(1000, beta)
-#    f, axes = plt.subplots(1, 2, figsize=(10, 5))
+#    f, axes = plt.subplots(1, 2, figsize=(4.8, 2.4))
 #    axes[0].plot(x)
 #    axes[1].plot(fftpack.fftshift(np.abs(np.fft.fft(x, 10000))))
 #    axes[1].set_xlim(2*2480, 2*2520)
