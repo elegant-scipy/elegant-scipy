@@ -1336,7 +1336,7 @@ with plt.style.context('style/thinner.mplstyle'):
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
 ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
 
-ax1.annotate("New, previously unseen!", (160, -35), xytext=(10, 25),
+ax1.annotate("New, previously unseen!", (160, -35), xytext=(10, 15),
              textcoords="offset points", color='red', size='x-small',
              arrowprops=dict(width=0.5, headwidth=3, headlength=4,
                              fc='k', shrink=0.1));
