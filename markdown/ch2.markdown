@@ -374,7 +374,7 @@ def plot_bicluster(data, row_linkage, col_linkage,
     n_clusters_r, n_clusters_c : int, optional
         Number of clusters for rows and columns.
     """
-    fig = plt.figure(figsize=(8, 8))
+    fig = plt.figure(figsize=(4.8, 4.8))
 
     # Compute and plot row-wise dendrogram
     # `add_axes` takes a "rectangle" input to add a subplot to a figure.
@@ -435,7 +435,8 @@ counts_log = np.log(counts + 1)
 counts_var = most_variable_rows(counts_log, n=1500)
 yr, yc = bicluster(counts_var, linkage_method='ward',
                    distance_metric='euclidean')
-plot_bicluster(counts_var, yr, yc)
+with plt.style.context('style/thinner.mplstyle'):
+    plot_bicluster(counts_var, yr, yc)
 ```
 <!-- caption text="This heatmap shows the level of gene expression across all samples and genes. The color indicates the expression level. The rows and columns are grouped by our clusters. We can see our gene clusters along the y-axis and sample clusters across the top of the x-axis." -->
 
