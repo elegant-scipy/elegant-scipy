@@ -1418,7 +1418,11 @@ V = np.fft.fft(v * win, axis=2)[::-1, :, :N // 2]
 
 contours = np.arange(-40, 1, 2)
 
-f, axes = plt.subplots(1, 3, figsize=(16, 5))
+# ignore MPL layout warnings
+import warnings
+warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
+
+f, axes = plt.subplots(2, 2, figsize=(4.8, 4.8), tight_layout=True)
 
 labels = ('Range', 'Azimuth', 'Elevation')
 
@@ -1427,11 +1431,13 @@ def plot_slice(ax, radar_slice, title, xlabel, ylabel):
     ax.set_title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    ax.set_axis_bgcolor(plt.cm.magma_r(-40))
+    ax.set_facecolor(plt.cm.magma_r(-40))
 
-plot_slice(axes[0], V[:, :, 250], 'Range == 250 slice', 'Azimuth', 'Elevation')
-plot_slice(axes[1], V[:, 3, :], 'Azimuth == 3 slice', 'Range', 'Elevation')
-plot_slice(axes[2], V[6, :, :], 'Elevation == 6 slice', 'Range', 'Azimuth')
+with plt.style.context('style/thinner.mplstyle'):
+    plot_slice(axes[0, 0], V[:, :, 250], 'Range=250', 'Azimuth', 'Elevation')
+    plot_slice(axes[0, 1], V[:, 3, :], 'Azimuth=3', 'Range', 'Elevation')
+    plot_slice(axes[1, 0], V[6, :, :].T, 'Elevation=6', 'Azimuth', 'Range')
+    axes[1, 1].axis('off')
 ```
 <!-- caption text="Contour plots of range traces along various axes (see diagram)" -->
 
