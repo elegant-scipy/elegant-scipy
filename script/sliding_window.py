@@ -63,4 +63,4 @@ else:
 
 plt.savefig(fn, dpi=300)
 
-#plt.show()
+plt.show()
