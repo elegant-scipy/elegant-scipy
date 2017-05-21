@@ -570,7 +570,7 @@ Prokudin-Gorskii Collection](http://www.loc.gov/pictures/item/prk2000000263/):
 ```python
 from skimage import io
 stained_glass = io.imread('data/00998v.jpg') / 255  # use float image in [0, 1]
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(4.8, 7))
 ax.imshow(stained_glass)
 ax.axis('off');
 ```
@@ -729,7 +729,7 @@ tf = align(green, red, cost=cost_nmi)
 cred = transform.warp(red, tf, order=3)
 
 corrected = np.dstack((cred, green, cblue))
-fig, ax = plt.subplots(figsize=(4.8, 4.8))
+fig, ax = plt.subplots(figsize=(4.8, 4.8), tight_layout=True)
 ax.imshow(corrected)
 ax.axis('off')
 ```
