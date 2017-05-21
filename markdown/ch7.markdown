@@ -605,7 +605,7 @@ be fine-tuned between the three channels:
 ```python
 blue, green, red = channels
 original = np.dstack((red, green, blue))
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(4.8, 4.8), tight_layout=True)
 ax.imshow(original)
 ax.axis('off');
 ```
