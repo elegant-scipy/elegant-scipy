@@ -729,9 +729,8 @@ tf = align(green, red, cost=cost_nmi)
 cred = transform.warp(red, tf, order=3)
 
 corrected = np.dstack((cred, green, cblue))
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(4.8, 4.8))
 ax.imshow(corrected)
-ax.set_title('NMI-Corrected')
 ax.axis('off')
 ```
 <!-- caption text="Prokudin-Gorskii channels aligned with normalized mutual

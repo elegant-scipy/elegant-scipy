@@ -507,9 +507,6 @@ below does.
 # Use our own style file for the plots
 import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
-# ignore MPL layout warnings
-import warnings
-warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
 ```
 
 > **A quick note on plotting {.callout}**
@@ -594,19 +591,19 @@ def reduce_xaxis_labels(ax, factor):
     factor : int, factor to reduce the number of x-axis labels by
     """
     plt.setp(ax.xaxis.get_ticklabels(), visible=False)
-    for label in ax.xaxis.get_ticklabels()[::factor]:
+    for label in ax.xaxis.get_ticklabels()[factor-1::factor]:
         label.set_visible(True)
 ```
 
 ```python
 # Bar plot of expression counts by individual
-fig, ax = plt.subplots(figsize=(16,5))
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
 
-ax.boxplot(counts_subset)
-ax.set_title("Gene expression counts raw")
-ax.set_xlabel("Individuals")
-ax.set_ylabel("Gene expression counts")
-reduce_xaxis_labels(ax, 2)
+with plt.style.context('style/thinner.mplstyle'):
+    ax.boxplot(counts_subset)
+    ax.set_xlabel("Individuals")
+    ax.set_ylabel("Gene expression counts")
+    reduce_xaxis_labels(ax, 5)
 ```
 <!-- caption text="Boxplot of gene expression counts per individual" -->
 
@@ -616,13 +613,13 @@ Both the log function and the n + 1 step can be done using broadcasting to simpl
 
 ```python
 # Bar plot of expression counts by individual
-fig, ax = plt.subplots(figsize=(16,5))
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
 
-ax.boxplot(np.log(counts_subset + 1))
-ax.set_title("Gene expression counts raw")
-ax.set_xlabel("Individuals")
-ax.set_ylabel("log gene expression counts")
-reduce_xaxis_labels(ax, 2)
+with plt.style.context('style/thinner.mplstyle'):
+    ax.boxplot(np.log(counts_subset + 1))
+    ax.set_xlabel("Individuals")
+    ax.set_ylabel("log gene expression counts")
+    reduce_xaxis_labels(ax, 5)
 ```
 <!-- caption text="Boxplot of gene expression counts per individual (log scale)" -->
 
@@ -637,13 +634,13 @@ counts_lib_norm = counts / total_counts * 1000000
 counts_subset_lib_norm = counts_lib_norm[:,samples_index]
 
 # Bar plot of expression counts by individual
-fig, ax = plt.subplots(figsize=(16,5))
+fig, ax = plt.subplots(figsize=(4.8, 2.4))
 
-ax.boxplot(np.log(counts_subset_lib_norm + 1))
-ax.set_title("Gene expression counts normalized by library size")
-ax.set_xlabel("Individuals")
-ax.set_ylabel("log gene expression counts")
-reduce_xaxis_labels(ax, 2)
+with plt.style.context('style/thinner.mplstyle'):
+    ax.boxplot(np.log(counts_subset_lib_norm + 1))
+    ax.set_xlabel("Individuals")
+    ax.set_ylabel("log gene expression counts")
+    reduce_xaxis_labels(ax, 5)
 ```
 <!-- caption text="Boxplot of library-normalized gene expression counts per individual (log scale)" -->
 
@@ -668,11 +665,6 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         in `data`.
     classes : list of string, same length as `data`
         The class each distribution in `data` belongs to.
-    colors : list of matplotlib colorspecs
-        The color corresponding to each class. These will be cycled in
-        the order in which the classes appear in `classes`. (So it is
-        ideal to provide as many colors as there are classes! The
-        default palette contains six colors.)
 
     Other parameters
     ----------------
@@ -680,8 +672,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         Keyword arguments to pass on to `plt.boxplot`.
     """
     all_classes = sorted(set(classes))
-    if colors is None:
-        colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
     class2color = dict(zip(all_classes, it.cycle(colors)))
 
     # map classes to data vectors
@@ -693,12 +684,11 @@ def class_boxplot(data, classes, colors=None, **kwargs):
         class2data[cls][-1] = distrib
 
     # then, do each boxplot in turn with the appropriate color
-    fig, ax = plt.subplots(figsize=(2 * len(data), 5))
+    fig, ax = plt.subplots()
     lines = []
     for cls in all_classes:
         # set color for all elements of the boxplot
-        for key in ['boxprops', 'whiskerprops', 'capprops',
-                    'medianprops', 'flierprops']:
+        for key in ['boxprops', 'whiskerprops', 'flierprops']:
             kwargs.setdefault(key, {}).update(color=class2color[cls])
         # draw the boxplot
         box = ax.boxplot(class2data[cls], **kwargs)
@@ -770,7 +760,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
     # expected by `plt.boxplot`
     binned_y = [y[x_bin_idxs == i]
                 for i in range(np.max(x_bin_idxs))]
-    fig, ax = plt.subplots(figsize=(16,3))
+    fig, ax = plt.subplots(figsize=(4.8,1))
 
     # Make the x-axis labels using the bin centers
     x_bin_centers = (x_bins[1:] + x_bins[:-1]) / 2
@@ -830,7 +820,8 @@ log_gene_lengths = np.log(gene_lengths)
 ```
 
 ```python
-binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+with plt.style.context('style/thinner.mplstyle'):
+    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 <!-- caption text="The relationship between gene length and average expression (log scale)" -->
 
@@ -1047,7 +1038,8 @@ log_counts = np.log(counts + 1)
 mean_log_counts = np.mean(log_counts, axis=1)
 log_gene_lengths = np.log(gene_lengths)
 
-binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+with plt.style.context('style/thinner.mplstyle'):
+    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 <!-- caption text="The relationship between gene length and average expression before RPKM normalization (log scale)" -->
 
@@ -1058,7 +1050,8 @@ log_counts = np.log(counts_rpkm + 1)
 mean_log_counts = np.mean(log_counts, axis=1)
 log_gene_lengths = np.log(gene_lengths)
 
-binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+with plt.style.context('style/thinner.mplstyle'):
+    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
 <!-- caption text="The relationship between gene length and average expression after RPKM normalization (log scale)" -->

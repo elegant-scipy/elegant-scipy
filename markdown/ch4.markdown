@@ -259,7 +259,7 @@ The specific unit used for the ratio is the decibel, $20
 log_{10}\left(\mathrm{amplitude ratio}\right)$.
 
 ```python
-f, ax = plt.subplots(figsize=(10, 5))
+f, ax = plt.subplots(figsize=(4.8, 2.4))
 
 S = np.abs(spectrum)
 S = 20 * np.log10(S / np.max(S))
@@ -421,7 +421,7 @@ for i in lengths:
     exec_times.append(min(times))
 
 
-f, (ax0, ax1) = plt.subplots(2, 1, sharex=True, figsize=(10, 5))
+f, (ax0, ax1) = plt.subplots(2, 1, sharex=True, figsize=(4.8, 2.4))
 ax0.stem(lengths, exec_times)
 ax0.set_xlabel('Length of input')
 ax0.set_ylabel('Execution time (seconds)')
@@ -612,7 +612,7 @@ from skimage import io
 image = io.imread('images/moonlanding.png')
 M, N = image.shape
 
-f, ax = plt.subplots(figsize=(10, 10))
+f, ax = plt.subplots(figsize=(4.8, 4.8))
 ax.imshow(image)
 
 print((M, N), image.dtype)
@@ -640,7 +640,7 @@ Again, we take the log of the spectrum to compress the range of
 values, before displaying:
 
 ```python
-f, ax = plt.subplots(figsize=(10, 10))
+f, ax = plt.subplots(figsize=(4.8, 4.8))
 
 ax.imshow(np.log(1 + F_magnitude), cmap='viridis',
           extent=(-N // 2, N // 2, -M // 2, M // 2))
@@ -682,15 +682,11 @@ F_dim = F_dim * peaks.astype(int)
 # the output.
 image_filtered = np.real(fftpack.ifft2(F_dim))
 
-# And add a slight bit of blurring to soften the result
-from scipy import ndimage as ndi
-image_filtered = ndi.gaussian_filter(image_filtered, sigma=1)
-
-f, (ax0, ax1) = plt.subplots(2, 1, figsize=(20, 15))
+f, (ax0, ax1) = plt.subplots(2, 1, figsize=(4.8, 7))
 ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='viridis')
 ax0.set_title('Spectrum after suppression')
 
-ax1.imshow(ndi.gaussian_filter(image_filtered, sigma=1))
+ax1.imshow(image_filtered)
 ax1.set_title('Reconstructed image');
 ```
 <!-- caption text="Filtered moon landing image and its spectrum" -->
@@ -811,7 +807,7 @@ drastically reduced, at the cost of a slight widening in the main lobe.
 # @interact(beta=(0, 20.))
 # def window(beta):
 #    x = np.kaiser(1000, beta)
-#    f, axes = plt.subplots(1, 2, figsize=(10, 5))
+#    f, axes = plt.subplots(1, 2, figsize=(4.8, 2.4))
 #    axes[0].plot(x)
 #    axes[1].plot(fftpack.fftshift(np.abs(np.fft.fft(x, 10000))))
 #    axes[1].set_xlim(2*2480, 2*2520)
@@ -1140,7 +1136,7 @@ positive frequency components (i.e., components $0$ to $N/2$).  These
 are called the *range traces* in radar terminology.
 
 ```python
-fig, axes = plt.subplots(3, 1, sharex=True, figsize=(15, 7))
+fig, axes = plt.subplots(3, 1, sharex=True, figsize=(4.8, 2.4))
 
 # Take FFTs of our signals.  Note the convention to name FFTs with a
 # capital letter.
@@ -1151,23 +1147,24 @@ V_actual = np.fft.fft(v_actual)
 
 N = len(V_single)
 
-axes[0].plot(np.abs(V_single[:N // 2]))
-axes[0].set_ylabel("$|V_\mathrm{single}|$")
-axes[0].set_xlim(0, N // 2)
-axes[0].set_ylim(0, 1100)
+with plt.style.context('style/thinner.mplstyle'):
+    axes[0].plot(np.abs(V_single[:N // 2]))
+    axes[0].set_ylabel("$|V_\mathrm{single}|$")
+    axes[0].set_xlim(0, N // 2)
+    axes[0].set_ylim(0, 1100)
 
-axes[1].plot(np.abs(V_sim[:N // 2]))
-axes[1].set_ylabel("$|V_\mathrm{sim} |$")
-axes[1].set_ylim(0, 1000)
+    axes[1].plot(np.abs(V_sim[:N // 2]))
+    axes[1].set_ylabel("$|V_\mathrm{sim} |$")
+    axes[1].set_ylim(0, 1000)
 
-axes[2].plot(np.abs(V_actual[:N // 2]))
-axes[2].set_ylim(0, 750)
-axes[2].set_ylabel("$|V_\mathrm{actual}|$")
+    axes[2].plot(np.abs(V_actual[:N // 2]))
+    axes[2].set_ylim(0, 750)
+    axes[2].set_ylabel("$|V_\mathrm{actual}|$")
 
-axes[2].set_xlabel("FFT component $n$")
+    axes[2].set_xlabel("FFT component $n$")
 
-for ax in axes:
-    ax.grid()
+    for ax in axes:
+        ax.grid()
 ```
 <!-- caption text="Range traces for: (a) single simulated target, (b) mutiple simulated targets, (c) real-world targets" --> 
 
@@ -1229,7 +1226,7 @@ before with the spectrogram:
 c = 3e8  # Approximately the speed of light and of
          # electromagnetic waves in air
 
-fig, (ax0, ax1, ax2) = plt.subplots(3, 1, figsize=(15, 7))
+fig, (ax0, ax1, ax2) = plt.subplots(3, 1)
 
 
 def dB(y):
@@ -1249,13 +1246,15 @@ def log_plot_normalized(x, y, ylabel, ax):
 
 rng = np.arange(N // 2) * c / 2 / Beff
 
-log_plot_normalized(rng, V_single[:N // 2], "$|V_0|$ [dB]", ax0)
-log_plot_normalized(rng, V_sim[:N // 2], "$|V_5|$ [dB]", ax1)
-log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
+with plt.style.context('style/thinner.mplstyle'):
+    log_plot_normalized(rng, V_single[:N // 2], "$|V_0|$ [dB]", ax0)
+    log_plot_normalized(rng, V_sim[:N // 2], "$|V_5|$ [dB]", ax1)
+    log_plot_normalized(rng, V_actual[:N // 2], "$|V_{\mathrm{actual}}|$ [dB]", ax2)
 
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
 ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
-ax2.set_xlim(0, len(V_actual) // 2);
+ax2.set_xlim(0, len(V_actual) // 2)
+ax2.set_xlabel('range')
 ```
 <!-- caption text="Logarithm of range traces" -->
 
@@ -1298,18 +1297,19 @@ Here are the signals used thus far in this example, windowed with a
 Kaiser window with $\beta=6.1$:
 
 ```python
-f, axes = plt.subplots(3, 1, sharex=True, figsize=(10, 5))
+f, axes = plt.subplots(3, 1, sharex=True, figsize=(4.8, 2.8))
 
 t_ms = t * 1000  # Sample times in milli-second
 
 w = np.kaiser(N, 6.1)  # Kaiser window with beta = 6.1
 
-for n, (signal, label) in enumerate([(v_single, r'$v_0 [Volt]$'),
-                                     (v_sim, r'$v_5 [Volt]$'),
-                                     (v_actual, r'$v_{\mathrm{actual}}$')]):
-    axes[n].plot(t_ms, w * signal)
-    axes[n].set_ylabel(label)
-    axes[n].grid()
+for n, (signal, label) in enumerate([(v_single, r'$v_0 [V]$'),
+                                     (v_sim, r'$v_5 [V]$'),
+                                     (v_actual, r'$v_{\mathrm{actual}} [V]$')]):
+    with plt.style.context('style/thinner.mplstyle'):
+        axes[n].plot(t_ms, w * signal)
+        axes[n].set_ylabel(label)
+        axes[n].grid()
 
 axes[2].set_xlim(0, t_ms[-1])
 axes[2].set_xlabel('Time [ms]');
@@ -1323,18 +1323,23 @@ V_single_win = np.fft.fft(w * v_single)
 V_sim_win = np.fft.fft(w * v_sim)
 V_actual_win = np.fft.fft(w * v_actual)
 
-fig, (ax0, ax1,ax2) = plt.subplots(3, 1, figsize=(15, 7))
+fig, (ax0, ax1,ax2) = plt.subplots(3, 1)
 
-log_plot_normalized(rng, V_single_win[:N // 2], r"$|V_0,\mathrm{win}|$ [dB]", ax0)
-log_plot_normalized(rng, V_sim_win[:N // 2], r"$|V_5,\mathrm{win}|$ [dB]", ax1)
-log_plot_normalized(rng, V_actual_win[:N // 2], r"$|V_\mathrm{actual,win}|$ [dB]", ax2)
+with plt.style.context('style/thinner.mplstyle'):
+    log_plot_normalized(rng, V_single_win[:N // 2],
+                        r"$|V_{0,\mathrm{win}}|$ [dB]", ax0)
+    log_plot_normalized(rng, V_sim_win[:N // 2],
+                        r"$|V_{5,\mathrm{win}}|$ [dB]", ax1)
+    log_plot_normalized(rng, V_actual_win[:N // 2],
+                        r"$|V_\mathrm{actual,win}|$ [dB]", ax2)
 
 ax0.set_xlim(0, 300)  # Change x limits for these plots so that
 ax1.set_xlim(0, 300)  # we are better able to see the shape of the peaks.
 
-ax1.annotate("New, previously unseen!", (160, -35),
-             xytext=(10, 25), textcoords="offset points", color='red',
-             arrowprops=dict(width=2, headwidth=6, headlength=12, shrink=0.1));
+ax1.annotate("New, previously unseen!", (160, -35), xytext=(10, 15),
+             textcoords="offset points", color='red', size='x-small',
+             arrowprops=dict(width=0.5, headwidth=3, headlength=4,
+                             fc='k', shrink=0.1));
 ```
 <!-- caption text="Range traces (spectrum) of windowed signals" -->
 
@@ -1413,7 +1418,11 @@ V = np.fft.fft(v * win, axis=2)[::-1, :, :N // 2]
 
 contours = np.arange(-40, 1, 2)
 
-f, axes = plt.subplots(1, 3, figsize=(16, 5))
+# ignore MPL layout warnings
+import warnings
+warnings.filterwarnings('ignore', '.*Axes.*compatible.*tight_layout.*')
+
+f, axes = plt.subplots(2, 2, figsize=(4.8, 4.8), tight_layout=True)
 
 labels = ('Range', 'Azimuth', 'Elevation')
 
@@ -1422,11 +1431,13 @@ def plot_slice(ax, radar_slice, title, xlabel, ylabel):
     ax.set_title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    ax.set_axis_bgcolor(plt.cm.magma_r(-40))
+    ax.set_facecolor(plt.cm.magma_r(-40))
 
-plot_slice(axes[0], V[:, :, 250], 'Range == 250 slice', 'Azimuth', 'Elevation')
-plot_slice(axes[1], V[:, 3, :], 'Azimuth == 3 slice', 'Range', 'Elevation')
-plot_slice(axes[2], V[6, :, :], 'Elevation == 6 slice', 'Range', 'Azimuth')
+with plt.style.context('style/thinner.mplstyle'):
+    plot_slice(axes[0, 0], V[:, :, 250], 'Range=250', 'Azimuth', 'Elevation')
+    plot_slice(axes[0, 1], V[:, 3, :], 'Azimuth=3', 'Range', 'Elevation')
+    plot_slice(axes[1, 0], V[6, :, :].T, 'Elevation=6', 'Azimuth', 'Range')
+    axes[1, 1].axis('off')
 ```
 <!-- caption text="Contour plots of range traces along various axes (see diagram)" -->
 
@@ -1476,18 +1487,19 @@ Now, Matplotlib's `trisurf` can be used to visualize the result:
 from mpl_toolkits.mplot3d import Axes3D
 
 # Set up the 3D axis
-f, ax = plt.subplots(1, 1,
-                     figsize=(10, 10),
+f, ax = plt.subplots(1, 1, figsize=(4.8, 4.8),
                      subplot_kw=dict(projection='3d'))
 
-ax.plot_trisurf(*coords.T, triangles=d.vertices, cmap='magma_r')
+with plt.style.context('style/thinner.mplstyle'):
+    ax.plot_trisurf(*coords.T, triangles=d.vertices, cmap='magma_r')
 
-ax.set_xlabel(axis_labels[0])
-ax.set_ylabel(axis_labels[1])
-ax.set_zlabel(axis_labels[2])
+    ax.set_xlabel(axis_labels[0])
+    ax.set_ylabel(axis_labels[1])
+    ax.set_zlabel(axis_labels[2], labelpad=-3)
+    ax.set_xticks([0, 5, 10, 15])
 
 # Adjust the camera position to match our diagram above
-ax.view_init(azim=-45);
+ax.view_init(azim=-50);
 ```
 <!-- caption text="3-D visualization of estimated rock slope position" -->
 
