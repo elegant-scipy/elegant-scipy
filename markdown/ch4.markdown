@@ -421,13 +421,13 @@ for i in lengths:
     exec_times.append(min(times))
 
 
-f, (ax0, ax1) = plt.subplots(2, 1, sharex=True, figsize=(4.8, 2.4))
-ax0.stem(lengths, exec_times)
-ax0.set_xlabel('Length of input')
-ax0.set_ylabel('Execution time (seconds)')
+f, (ax0, ax1) = plt.subplots(2, 1, sharex=True)
+ax0.stem(lengths, np.array(exec_times) * 10**6)
+ax0.set_ylabel('Execution time (µs)')
 
 ax1.stem(lengths, smoothness)
-ax1.set_ylabel('Smoothness of input length\n(lower is better)');
+ax1.set_ylabel('Smoothness of input length\n(lower is better)')
+ax1.set_xlabel('Length of input');
 ```
 <!-- caption text="FFT execution time vs smoothness for different input lengths" -->
 
