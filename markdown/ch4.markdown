@@ -289,7 +289,10 @@ freqs, times, Sx = signal.spectrogram(audio, fs=rate, window='hanning',
                                       nperseg=1024, noverlap=M - 100,
                                       detrend=False, scaling='spectrum')
 
-plt.pcolormesh(times, freqs, 10 * np.log10(Sx), cmap='viridis');
+f, ax = plt.subplots(figsize=(4.8, 2.4))
+ax.pcolormesh(times, freqs / 1000, 10 * np.log10(Sx), cmap='viridis')
+ax.set_ylabel('Frequency [kHz]')
+ax.set_xlabel('Time [s]');
 ```
 <!-- caption text="SciPy built-in rendition of birdsong spectrogram" -->
 
