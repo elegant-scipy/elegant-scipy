@@ -23,4 +23,4 @@ dependencies:
   - jupytercontrib>=0.0.5
   - bs4
   # need improvements from master branch
-  - pip install git+https://github.com/networkx/networkx.git
+  - git+https://github.com/networkx/networkx.git
