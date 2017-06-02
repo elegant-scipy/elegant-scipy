@@ -772,7 +772,7 @@ Now we reproduce figure 6B from the paper, the survival function of the
 in-degree distribution. First, compute the relevant quantities:
 
 ```python
-in_degrees = list(wormbrain.in_degree().values())
+in_degrees = list(dict(wormbrain.in_degree()).values())
 in_deg_distrib = np.bincount(in_degrees)
 avg_in_degree = np.mean(in_degrees)
 cumfreq = np.cumsum(in_deg_distrib) / np.sum(in_deg_distrib)
