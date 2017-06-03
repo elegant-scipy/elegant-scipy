@@ -1508,7 +1508,7 @@ def rag_segmentation(base_seg, image, threshold=80):
     for n in g:
         node = g.node[n]
         node['mean'] = node['total color'] / node['pixel count']
-    for u, v in g.edges_iter():
+    for u, v in g.edges():
         d = g.node[u]['mean'] - g.node[v]['mean']
         g[u][v]['weight'] = np.linalg.norm(d)
 
