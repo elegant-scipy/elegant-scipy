@@ -1122,7 +1122,7 @@ g = build_rag(seg, tiger)
 for n in g:
     node = g.node[n]
     node['mean'] = node['total color'] / node['pixel count']
-for u, v in g.edges_iter():
+for u, v in g.edges():
     d = g.node[u]['mean'] - g.node[v]['mean']
     g[u][v]['weight'] = np.linalg.norm(d)
 ```
@@ -1132,8 +1132,8 @@ We can now threshold the graph:
 
 ```python
 def threshold_graph(g, t):
-    to_remove = ((u, v) for (u, v, d) in g.edges(data=True)
-                 if d['weight'] > t)
+    to_remove = [(u, v) for (u, v, d) in g.edges(data=True)
+                 if d['weight'] > t]
     g.remove_edges_from(to_remove)
 threshold_graph(g, 80)
 ```
