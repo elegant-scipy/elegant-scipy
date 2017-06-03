@@ -17,6 +17,7 @@ dependencies:
 - beautifulsoup4=4.5*
 - pillow
 - lxml
+- networkx  # make sure nx installed even if no git
 - pip:
   # not available on conda, so use pip
   - notedown>=1.5
