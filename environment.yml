@@ -4,7 +4,7 @@ channels:
 dependencies:
 - python=3.6*
 - numpy=1.12*
-- matplotlib=2.0.0*
+- matplotlib=2.0*
 - pandas=0.19*
 - scipy=0.19*
 - scikit-learn=0.18*
@@ -17,10 +17,11 @@ dependencies:
 - beautifulsoup4=4.5*
 - pillow
 - lxml
+- networkx  # make sure nx installed even if no git
 - pip:
   # not available on conda, so use pip
   - notedown>=1.5
   - jupytercontrib>=0.0.5
   - bs4
   # need improvements from master branch
-  - pip install git+https://github.com/networkx/networkx.git
+  - git+https://github.com/networkx/networkx.git

@@ -892,5 +892,5 @@ analysis, think about whether you can do it streaming. If you can, just do it
 from the beginning. Your future self will thank you.
 Doing it later is harder, and results in things like this:
 
-![TODOs in history. Comic by Manu Cornet, http://www.bonkersworld.net/all-engineers-are-the-same/, used with permission.](http://www.bonkersworld.net/images/2012.08.15_todo.png)
+![TODOs in history. Comic by Manu Cornet, http://www.bonkersworld.net/all-engineers-are-the-same/, used with permission.](http://bonkersworld.net/img/2012.08.15_all_engineers_are_the_same.png)
 

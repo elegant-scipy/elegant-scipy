@@ -841,7 +841,7 @@ only holds numerical information, we need to maintain a separate list of
 package names corresponding to the matrix rows/columns:
 
 ```python
-species = np.array(stmarks.nodes())  # array for multi-indexing
+species = np.array(list(stmarks.nodes()))  # array for multi-indexing
 Adj = nx.to_scipy_sparse_matrix(stmarks, dtype=np.float64)
 ```
 
