@@ -1484,8 +1484,8 @@ def build_rag(labels, image):
     return g
 
 def threshold_graph(g, t):
-    to_remove = ((u, v) for (u, v, d) in g.edges(data=True)
-                 if d['weight'] > t)
+    to_remove = [(u, v) for (u, v, d) in g.edges(data=True)
+                 if d['weight'] > t]
     g.remove_edges_from(to_remove)
 ```
 
