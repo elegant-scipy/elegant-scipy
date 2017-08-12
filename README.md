@@ -31,6 +31,18 @@ edition in each instance.
 If you are unsure whether your use falls outside fair use or the permissions
 given above, contact us at permissions@oreilly.com.
 
+## Pre-built Jupyter notebooks
+
+You can find the pre-compiled Jupyter notebooks corresponding to the latest
+version of this repo at:
+
+https://github.com/elegant-scipy/notebooks
+
+This includes the necessary data in the data folder.
+
+Or, if you are feeling adventurous, you can compile the notebooks yourself by
+following the instructions below.
+
 # Building the IPython notebooks
 
 This book was written in markdown, with `notedown` and `jupyter nbconvert` used
