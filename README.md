@@ -1,11 +1,11 @@
 # Elegant SciPy
 
 This is the online repository for the book
-[Elegant SciPy](http://shop.oreilly.com/product/0636920038481.do),
+[Elegant SciPy](http://elegant-scipy.com),
 written by Juan Nunez-Iglesias (@jni), Harriet Dashnow (@hdashnow), and Stéfan
 van der Walt (@stefanv), and published by O'Reilly Media:
 
-<a href="http://shop.oreilly.com/product/0636920038481.do">
+<a href="http://elegant-scipy.com">
 <img src="https://github.com/elegant-scipy/elegant-scipy/blob/master/_images/cover.jpg?raw=true"
  alt="Elegant SciPy Cover" height=256>
 </a>
