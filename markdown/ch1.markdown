@@ -11,12 +11,12 @@ This chapter touches on some statistical functions in SciPy, but more than that,
 We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
 
 Our use case is using gene expression data from The Cancer Genome Atlas (TCGA) project to predict mortality in skin cancer patients.
-We will be working towards this goal throughout Chapters 1 and 2, learning about some key SciPy concepts along the way.
+We will be working toward this goal throughout this chapter and the next one, learning about some key SciPy concepts along the way.
 Before we can predict mortality, we will need to normalize the expression data using a method called RPKM normalization.
 This allows the comparison of measurements between different samples and genes.
 (We will unpack what "gene expression" means in just a moment.)
 
-Let's start with a code snippet to tantalize, and motivate the ideas in this chapter.
+Let's start with a code snippet to tantalize you and introduce the ideas in this chapter.
 As we will do in each chapter, we open with a code sample that we believe epitomizes the elegance and power of a particular function from the SciPy ecosystem.
 In this case, we want to highlight NumPy's vectorization and broadcasting rules, which allow us to manipulate and reason about data arrays very efficiently.
 
@@ -57,26 +57,26 @@ def rpkm(counts, lengths):
 
 This example illustrates some of the ways that NumPy arrays can make your code more elegant:
 
-- Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
+- Arrays can be 1D, like lists, but they can also be 2D, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
 - Arrays can be operated on along *axes*. In the first line, we calculate the
   sum down each column by specifying `axis=0`.
 - Arrays allow the expression of many numerical operations at once.
-For example towards the end of the function we divide the 2D array of counts (C) by the 1D array of column sums (N).
+For example toward the end of the function we divide the 2D array of counts (C) by the 1D array of column sums (N).
 This is broadcasting. More on how this works in just a moment!
 
-Before we delve into the power of NumPy, let's spend some time to understand the biological data that we will be working with.
+Before we delve into the power of NumPy, let's spend some time looking at the biological data that we will be working with.
 
-## Introduction to the data: what is gene expression?
+## Introduction to the Data: What Is Gene Expression?
 
 We will work our way through a *gene expression analysis* to demonstrate the power of NumPy and SciPy to solve a real-world biological problem.
-We will use the Pandas library, which builds on NumPy, to read and munge our data files, and then we manipulate our data efficiently in NumPy arrays.
+We will use the pandas library, which builds on NumPy, to read and munge our data files, and then we will manipulate our data efficiently in NumPy arrays.
 
 The so-called [central dogma of molecular biology](https://en.wikipedia.org/wiki/Central_dogma_of_molecular_biology) states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
-There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
+There are four kinds of bases, abbreviated as A, C, G, and T, comprising an alphabet with which information is stored.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg"/>
-<!-- caption text="The chemical structure of DNA. Image by Madeleine Price Ball, used under the terms of the CC0 public domain license" -->
+<!-- caption text="The chemical structure of DNA (image by Madeleine Price Ball, used under the terms of the CC0 public domain license)" -->
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
@@ -84,7 +84,10 @@ A section of DNA that encodes the information to make a protein (via mRNA) is ca
 
 The amount of mRNA produced from a given gene is called the *expression* of that gene.
 Although we would ideally like to measure protein levels, this is a much harder task than measuring mRNA.
-Fortunately, expression levels of an mRNA and levels of its corresponding protein are usually correlated ([Maier, Güell, and Serrano, 2009](http://www.sciencedirect.com/science/article/pii/S0014579309008126)).
+Fortunately, expression levels of an mRNA and levels of its corresponding protein are usually correlated.[^Maier]
+
+[^Maier]: Tobias Maier, Marc Güell, and Luis Serrano. ["Correlation of mRNA and protein in complex biological samples"](http://www.sciencedirect.com/science/article/pii/S0014579309008126), FEBS Letters 583, no. 204 (2009).
+
 Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
