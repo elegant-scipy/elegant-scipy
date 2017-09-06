@@ -92,7 +92,7 @@ Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
 <img src="../figures/central_dogma.png"/>
-<!-- caption text="Central Dogma of Molecular Biology" -->
+<!-- caption text="Central dogma of molecular biology" -->
 
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of
