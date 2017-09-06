@@ -97,22 +97,22 @@ As you will see below, it often doesn't matter, because we are using mRNA levels
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of
 that DNA into RNA: in different cells, different parts of the DNA are processed
-into downstream molecules. Similarly, as we shall see in this chapter and the
+into downstream molecules. Similarly, as we will see in this chapter and the
 next, differential expression can distinguish different kinds of cancer.
 
 <img src="../figures/differential_gene_expression.png"/>
 <!-- caption text="Gene expression" -->
 
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
-RNA is extracted from a tissue sample, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
-Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
+RNA is extracted from a tissue sample (e.g., from a biopsy from a patient), *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
+Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads.”
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
-We’ll be starting directly from this count data.
+We’ll be starting our analysis directly from this count data.
 
 <img src="../figures/RNAseq.png"/>
 <!-- caption text="RNA sequencing (RNAseq)" -->
 
-Here's an example of what this gene expression data looks like.
+This table shows a minimal example of gene expression count data:
 
 |        | Cell type A | Cell type B |
 |--------|-------------|-------------|
@@ -122,7 +122,7 @@ Here's an example of what this gene expression data looks like.
 
 The data is a table of counts, integers representing how many reads were observed for each gene in each cell type.
 See how the counts for each gene differ between the cell types?
-We can use this information to tell us about the differences between these two types of cell.
+We can use this information to learn about the differences between these two types of cell.
 
 One way to represent this data in Python would be as a list of lists:
 
@@ -141,14 +141,14 @@ We can retrieve individual data points using two levels of list indexing:
 expression_data[2][0]
 ```
 
-It turns out that, because of the way the Python interpreter works, this is a very inefficient way to store these data points.
+Because of the way the Python interpreter works, this is a very inefficient way to store these data points.
 First, Python lists are always lists of *objects*, so that the above list `gene2` is not a list of integers, but a list of *pointers* to integers, which is unnecessary overhead.
-Additionally, this means that each of these lists and each of these integers end up in a completely different, random part of your computer's RAM.
+Additionally, this means that each of these lists and each of these integers ends up in a completely different, random part of your computer's RAM.
 However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is inefficient.
 
 This is precisely the problem solved by the *NumPy array*.
 
-## NumPy N-dimensional arrays
+## NumPy N-Dimensional Arrays
 
 One of the key NumPy data types is the N-dimensional array (ndarray, or just array).
 Ndarrays underpin lots of awesome data manipulation techniques in SciPy.
@@ -170,7 +170,7 @@ print(type(array1d))
 ```
 
 Arrays have particular attributes and methods, that you can access by placing a dot after the array name.
-For example, you can get the array's *shape*:
+For example, you can get the array's *shape* with the following code:
 
 ```python
 print(array1d.shape)
@@ -178,9 +178,9 @@ print(array1d.shape)
 
 Here, it's just a tuple with a single number.
 You might wonder why you wouldn't just use `len`, as you would for a list.
-That will work, but it doesn't extend to *two-dimensional* arrays.
+That will work, but it doesn't extend to *2D* arrays.
 
-This is what we use to represent our mini gene expression table from above:
+This is what we use to represent the data in the table above:
 
 ```python
 array2d = np.array(expression_data)
@@ -189,7 +189,7 @@ print(array2d.shape)
 print(type(array2d))
 ```
 
-Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
+Now you can see that the `shape` attribute generalizes `len` to account for the size of multiple dimensions of an array of data.
 
 <img src="../figures/NumPy_ndarrays_v2.png"/>
 <!-- caption text="Visualizing NumPy's ndarrays in one, two and three dimensions" -->
@@ -208,14 +208,14 @@ If we store MRI values over time, we might need a 4D NumPy array.
 For now, we'll stick to 2D data.
 Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions.
 
-### Why use ndarrays instead of Python lists?
+### Why Use ndarrays Instead of Python Lists?
 
 Arrays are fast because they enable vectorized operations, written in the low-level language C, that act on the whole array.
-Say you have a list and you want to multiply every element in the list by 5.
+Say you have a list and you want to multiply every element in the list by five.
 A standard Python approach would be to write a loop that iterates over the
-elements of the list and multiply each one by 5.
+elements of the list and multiply each one by five.
 However, if your data were instead represented as an array,
-you can multiply every element in the array by 5 in a single bound.
+you can multiply every element in the array by five in a single bound.
 Behind the scenes, the highly-optimized NumPy library is doing the iteration as fast as possible.
 
 ```python
@@ -229,7 +229,7 @@ array = np.arange(1e6)
 list_array = array.tolist()
 ```
 
-Let's compare how long it takes to multiply all the values in the array by 5,
+Let's compare how long it takes to multiply all the values in the array by five,
 using the IPython `timeit` magic function. First, when the data is in a list:
 
 ```python
@@ -248,8 +248,8 @@ Arrays are also size efficient.
 In Python, each element in a list is an object and is given a healthy memory allocation (or is that unhealthy?).
 In contrast, in arrays, each element takes up just the necessary amount of memory.
 For example, an array of 64-bit integers takes up exactly 64-bits per element, plus some very small overhead for array metadata, such as the `shape` attribute we discussed above.
-This is generally much less than would be given to objects in a python list.
-(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas' blog post, [Why Python is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
+This is generally much less than would be given to objects in a Python list.
+(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas's blog post, ["Why Python Is Slow: Looking Under the Hood"](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
 
 Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
 
@@ -278,7 +278,7 @@ Notice that although we edited `y`, `x` has also changed, because `y` was refere
 print(x)
 ```
 
-This does mean you have to be careful with array references.
+This means you have to be careful with array references.
 If you want to manipulate the data without touching the original, it's easy to make a copy:
 
 ```python
