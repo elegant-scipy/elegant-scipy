@@ -878,7 +878,7 @@ Now let's implement RPKM over the entire counts array.
 ```python
 # Make our variable names the same as the RPKM formula so we can compare easily
 C = counts
-N = counts.sum(axis=0)  # sum each column to get total reads per sample
+N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
 L = gene_lengths  # lengths for each gene, matching rows in `C`
 ```
 
@@ -964,7 +964,7 @@ the total number of counts for that column.
 Remember that we have already calculated $N$ with:
 
 ```
-N = counts.sum(axis=0) # sum each column to get total reads per sample
+N = np.sum(counts, axis=0) # sum each column to get total reads per sample
 ```
 
 ```python
