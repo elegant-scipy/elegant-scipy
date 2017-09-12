@@ -1060,8 +1060,6 @@ with plt.style.context('style/thinner.mplstyle'):
     binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
-<!-- caption text="The relationship between gene length and average expression after RPKM normalization (log scale)" -->
-
 You can see that the mean expression counts have flattened quite a bit,
 especially for genes larger than about 3,000 base pairs.
 (Smaller genes still appear to have low expression — these may be too small for
