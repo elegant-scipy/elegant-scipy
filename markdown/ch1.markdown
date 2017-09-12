@@ -823,13 +823,14 @@ mean_log_counts = np.mean(log_counts, axis=1)  # across samples
 log_gene_lengths = np.log(gene_lengths)
 ```
 
+And we plot the counts as a function of gene length:
+
 ```python
 with plt.style.context('style/thinner.mplstyle'):
     binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
-<!-- caption text="The relationship between gene length and average expression (log scale)" -->
 
-We can see in the following image that the longer a gene is, the higher its measured counts! As
+We can see in the previous image that the longer a gene is, the higher its measured counts! As
 previously explained, this is an artifact of the technique, not a biological signal!
 How do we account for this?
 
