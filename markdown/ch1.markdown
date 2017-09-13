@@ -11,12 +11,12 @@ This chapter touches on some statistical functions in SciPy, but more than that,
 We will see how NumPy array operations enable concise and efficient code when manipulating numerical data.
 
 Our use case is using gene expression data from The Cancer Genome Atlas (TCGA) project to predict mortality in skin cancer patients.
-We will be working towards this goal throughout Chapters 1 and 2, learning about some key SciPy concepts along the way.
+We will be working toward this goal throughout this chapter and the next one, learning about some key SciPy concepts along the way.
 Before we can predict mortality, we will need to normalize the expression data using a method called RPKM normalization.
 This allows the comparison of measurements between different samples and genes.
 (We will unpack what "gene expression" means in just a moment.)
 
-Let's start with a code snippet to tantalize, and motivate the ideas in this chapter.
+Let's start with a code snippet to tantalize you and introduce the ideas in this chapter.
 As we will do in each chapter, we open with a code sample that we believe epitomizes the elegance and power of a particular function from the SciPy ecosystem.
 In this case, we want to highlight NumPy's vectorization and broadcasting rules, which allow us to manipulate and reason about data arrays very efficiently.
 
@@ -57,26 +57,26 @@ def rpkm(counts, lengths):
 
 This example illustrates some of the ways that NumPy arrays can make your code more elegant:
 
-- Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
+- Arrays can be 1D, like lists, but they can also be 2D, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
 - Arrays can be operated on along *axes*. In the first line, we calculate the
   sum down each column by specifying `axis=0`.
 - Arrays allow the expression of many numerical operations at once.
-For example towards the end of the function we divide the 2D array of counts (C) by the 1D array of column sums (N).
+For example toward the end of the function we divide the 2D array of counts (C) by the 1D array of column sums (N).
 This is broadcasting. More on how this works in just a moment!
 
-Before we delve into the power of NumPy, let's spend some time to understand the biological data that we will be working with.
+Before we delve into the power of NumPy, let's spend some time looking at the biological data that we will be working with.
 
-## Introduction to the data: what is gene expression?
+## Introduction to the Data: What Is Gene Expression?
 
 We will work our way through a *gene expression analysis* to demonstrate the power of NumPy and SciPy to solve a real-world biological problem.
-We will use the Pandas library, which builds on NumPy, to read and munge our data files, and then we manipulate our data efficiently in NumPy arrays.
+We will use the pandas library, which builds on NumPy, to read and munge our data files, and then we will manipulate our data efficiently in NumPy arrays.
 
 The so-called [central dogma of molecular biology](https://en.wikipedia.org/wiki/Central_dogma_of_molecular_biology) states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
-There are four kinds of bases, abbreviated to A, C, G, and T, constituting an alphabet with which information is stored.
+There are four kinds of bases, abbreviated as A, C, G, and T, comprising an alphabet with which information is stored.
 
 <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg"/>
-<!-- caption text="The chemical structure of DNA. Image by Madeleine Price Ball, used under the terms of the CC0 public domain license" -->
+<!-- caption text="The chemical structure of DNA (image by Madeleine Price Ball, used under the terms of the CC0 public domain license)" -->
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
@@ -84,32 +84,35 @@ A section of DNA that encodes the information to make a protein (via mRNA) is ca
 
 The amount of mRNA produced from a given gene is called the *expression* of that gene.
 Although we would ideally like to measure protein levels, this is a much harder task than measuring mRNA.
-Fortunately, expression levels of an mRNA and levels of its corresponding protein are usually correlated ([Maier, Güell, and Serrano, 2009](http://www.sciencedirect.com/science/article/pii/S0014579309008126)).
+Fortunately, expression levels of an mRNA and levels of its corresponding protein are usually correlated.[^Maier]
+
+[^Maier]: Tobias Maier, Marc Güell, and Luis Serrano. ["Correlation of mRNA and protein in complex biological samples"](http://www.sciencedirect.com/science/article/pii/S0014579309008126), FEBS Letters 583, no. 204 (2009).
+
 Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
 <img src="../figures/central_dogma.png"/>
-<!-- caption text="Central Dogma of Molecular Biology" -->
+<!-- caption text="Central dogma of molecular biology" -->
 
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of
 that DNA into RNA: in different cells, different parts of the DNA are processed
-into downstream molecules. Similarly, as we shall see in this chapter and the
+into downstream molecules. Similarly, as we will see in this chapter and the
 next, differential expression can distinguish different kinds of cancer.
 
 <img src="../figures/differential_gene_expression.png"/>
 <!-- caption text="Gene expression" -->
 
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
-RNA is extracted from a tissue sample, for example from a biopsy from a patient, *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
-Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads”.
+RNA is extracted from a tissue sample (e.g., from a biopsy from a patient), *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
+Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads.”
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
-We’ll be starting directly from this count data.
+We’ll be starting our analysis directly from this count data.
 
 <img src="../figures/RNAseq.png"/>
 <!-- caption text="RNA sequencing (RNAseq)" -->
 
-Here's an example of what this gene expression data looks like.
+This table shows a minimal example of gene expression count data:
 
 |        | Cell type A | Cell type B |
 |--------|-------------|-------------|
@@ -119,7 +122,7 @@ Here's an example of what this gene expression data looks like.
 
 The data is a table of counts, integers representing how many reads were observed for each gene in each cell type.
 See how the counts for each gene differ between the cell types?
-We can use this information to tell us about the differences between these two types of cell.
+We can use this information to learn about the differences between these two types of cell.
 
 One way to represent this data in Python would be as a list of lists:
 
@@ -138,14 +141,14 @@ We can retrieve individual data points using two levels of list indexing:
 expression_data[2][0]
 ```
 
-It turns out that, because of the way the Python interpreter works, this is a very inefficient way to store these data points.
+Because of the way the Python interpreter works, this is a very inefficient way to store these data points.
 First, Python lists are always lists of *objects*, so that the above list `gene2` is not a list of integers, but a list of *pointers* to integers, which is unnecessary overhead.
-Additionally, this means that each of these lists and each of these integers end up in a completely different, random part of your computer's RAM.
+Additionally, this means that each of these lists and each of these integers ends up in a completely different, random part of your computer's RAM.
 However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is inefficient.
 
 This is precisely the problem solved by the *NumPy array*.
 
-## NumPy N-dimensional arrays
+## NumPy N-Dimensional Arrays
 
 One of the key NumPy data types is the N-dimensional array (ndarray, or just array).
 Ndarrays underpin lots of awesome data manipulation techniques in SciPy.
@@ -167,7 +170,7 @@ print(type(array1d))
 ```
 
 Arrays have particular attributes and methods, that you can access by placing a dot after the array name.
-For example, you can get the array's *shape*:
+For example, you can get the array's *shape* with the following code:
 
 ```python
 print(array1d.shape)
@@ -175,9 +178,9 @@ print(array1d.shape)
 
 Here, it's just a tuple with a single number.
 You might wonder why you wouldn't just use `len`, as you would for a list.
-That will work, but it doesn't extend to *two-dimensional* arrays.
+That will work, but it doesn't extend to *2D* arrays.
 
-This is what we use to represent our mini gene expression table from above:
+This is what we use to represent the data in the table above:
 
 ```python
 array2d = np.array(expression_data)
@@ -186,7 +189,7 @@ print(array2d.shape)
 print(type(array2d))
 ```
 
-Now you can see that the `shape` attribute generalises `len` to account for the size of multiple dimensions of an array of data.
+Now you can see that the `shape` attribute generalizes `len` to account for the size of multiple dimensions of an array of data.
 
 <img src="../figures/NumPy_ndarrays_v2.png"/>
 <!-- caption text="Visualizing NumPy's ndarrays in one, two and three dimensions" -->
@@ -205,14 +208,14 @@ If we store MRI values over time, we might need a 4D NumPy array.
 For now, we'll stick to 2D data.
 Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions.
 
-### Why use ndarrays instead of Python lists?
+### Why Use ndarrays Instead of Python Lists?
 
 Arrays are fast because they enable vectorized operations, written in the low-level language C, that act on the whole array.
-Say you have a list and you want to multiply every element in the list by 5.
+Say you have a list and you want to multiply every element in the list by five.
 A standard Python approach would be to write a loop that iterates over the
-elements of the list and multiply each one by 5.
+elements of the list and multiply each one by five.
 However, if your data were instead represented as an array,
-you can multiply every element in the array by 5 in a single bound.
+you can multiply every element in the array by five in a single bound.
 Behind the scenes, the highly-optimized NumPy library is doing the iteration as fast as possible.
 
 ```python
@@ -226,7 +229,7 @@ array = np.arange(1e6)
 list_array = array.tolist()
 ```
 
-Let's compare how long it takes to multiply all the values in the array by 5,
+Let's compare how long it takes to multiply all the values in the array by five,
 using the IPython `timeit` magic function. First, when the data is in a list:
 
 ```python
@@ -245,8 +248,8 @@ Arrays are also size efficient.
 In Python, each element in a list is an object and is given a healthy memory allocation (or is that unhealthy?).
 In contrast, in arrays, each element takes up just the necessary amount of memory.
 For example, an array of 64-bit integers takes up exactly 64-bits per element, plus some very small overhead for array metadata, such as the `shape` attribute we discussed above.
-This is generally much less than would be given to objects in a python list.
-(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas' blog post, [Why Python is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
+This is generally much less than would be given to objects in a Python list.
+(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas's blog post, ["Why Python Is Slow: Looking Under the Hood"](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
 
 Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
 
@@ -275,7 +278,7 @@ Notice that although we edited `y`, `x` has also changed, because `y` was refere
 print(x)
 ```
 
-This does mean you have to be careful with array references.
+This means you have to be careful with array references.
 If you want to manipulate the data without touching the original, it's easy to make a copy:
 
 ```python
@@ -285,7 +288,7 @@ y = np.copy(x[:2])
 ### Vectorization
 
 Earlier we talked about the speed of operations on arrays.
-Once of the tricks Numpy uses to speed things up is *vectorization*.
+One of the tricks NumPy uses to speed things up is *vectorization*.
 Vectorization is where you apply a calculation to each element in an array, without having to use a for loop.
 In addition to speeding things up, this can result in more natural, readable code.
 Let's look at some examples.
@@ -333,7 +336,7 @@ Two shapes are compatible when, for each dimension, either is equal to
 [^more_dimensions]: We always start by comparing the last dimensions,
                     and work our way forward, ignoring excess
                     dimensions in the case of one array having more
-                    than the other.  E.g., `(3, 5, 1)` and `(5, 8)`
+                    than the other (e.g., `(3, 5, 1)` and `(5, 8)`
                     would match.
 
 Let's check the shapes of these two arrays.
@@ -350,7 +353,7 @@ outer = x * y
 print(outer)
 ```
 
-The outer dimensions tell you how size of the resulting array.
+The outer dimensions tell you the size of the resulting array.
 In our case we expect a (4, 4) array:
 
 ```python
@@ -362,32 +365,32 @@ You can see for yourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
 This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the corresponding dimension of the other array.
 Don't worry, we will talk about these rules in more detail later in this chapter.
 
-As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable to perform real-world calculations on arrays of data.
+As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable for real-world calculations on arrays of data.
 It allows us to express complex operations concisely and efficiently.
 
-## Exploring a gene expression data set
+## Exploring a Gene Expression Dataset
 
-The data set that we'll be using is an RNAseq experiment of skin cancer samples from The Cancer Genome Atlas (TCGA) project (http://cancergenome.nih.gov/).
+The dataset that we'll be using is an RNAseq experiment of skin cancer samples from The Cancer Genome Atlas (TCGA) project (http://cancergenome.nih.gov/).
 We've already cleaned and sorted the data for you, so you can just use `data/counts.txt`
 in the book repository.
 In Chapter 2 we will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 But first we need to get our heads around the biases in our data, and think about how we could improve it.
 
-### Reading in the data with Pandas
+### Reading in the Data with pandas
 
-We're first going to use Pandas to read in the table of counts.
-Pandas is a Python library for data manipulation and analysis,
+We're first going to use pandas to read in the table of counts.
+pandas is a Python library for data manipulation and analysis,
 with particular emphasis on tabular and time series data.
 Here, we will use it here to read in tabular data of mixed type.
-It uses the DataFrame type, which is a flexible tabular format based on the data frame object in R.
-For example the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so reading it into a homogeneous array of numbers would be the wrong approach.
+It uses the `DataFrame` type, which is a flexible tabular format based on the data frame object in R.
+For example, the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so reading it into a homogeneous array of numbers would be the wrong approach.
 Although NumPy has some support for mixed data types (called "structured arrays"), it is not primarily designed for
 this use case, which makes subsequent operations harder than they need to be.
 
-By reading the data in as a Pandas DataFrame we can let Pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
-Here we are just using Pandas briefly to import data.
-In later chapters we will see a bit more of Pandas, but for details, read *Python
-for Data Analysis*, by Wes McKinney, creator of Pandas.
+By reading the data in as a pandas data frame, we can let pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
+Here we are just using pandas briefly to import data.
+In later chapters we will see a bit more of pandas, but for details, read *Python
+for Data Analysis* (O'Reilly) by the creator of pandas, Wes McKinney.
 
 ```python
 import numpy as np
@@ -401,7 +404,7 @@ with open(filename, 'rt') as f:
 print(data_table.iloc[:5, :5])
 ```
 
-We can see that Pandas has kindly pulled out the header row and used it to name the columns.
+We can see that pandas has kindly pulled out the header row and used it to name the columns.
 The first column gives the name of each gene, and the remaining columns represent individual samples.
 
 We will also need some corresponding metadata, including the sample information and the gene lengths.
@@ -435,8 +438,8 @@ There are more genes in our gene length data than were actually measured in the 
 Let's filter so we only get the relevant genes, and we want to make sure they are
 in the same order as in our count data.
 This is where pandas indexing comes in handy!
-We can get the intersection of the gene names from our our two sources of data
-and use these to index both data sets, ensuring they have the same genes in the same order.
+We can get the intersection of the gene names from our two sources of data
+and use these to index both datasets, ensuring they have the same genes in the same order.
 
 ```python
 # Subset gene info to match the count data
@@ -488,18 +491,17 @@ We will consider two levels of normalization often applied jointly to gene
 expression dataset: normalization between samples (columns) and normalization
 between genes (rows).
 
-### Between samples
+### Between Samples
 
 For example, the number of counts for each individual can vary substantially in RNAseq experiments.
 Let's take a look at the distribution of expression counts over all the genes.
-First we will sum the rows to get the total counts of expression of all genes for each individual, so we can just look at the variation between individuals.
+First, we will sum the columns to get the total counts of expression of all genes for each individual, so we can just look at the variation between individuals.
 To visualize the distribution of total counts, we will use kernel density
 estimation (KDE), a technique commonly used to smooth out histograms because it
 gives a clearer picture of the underlying distribution.
 
 Before we start, we have to do some plotting setup (which we will do in every
-chapter). See "A quick note on plotting" for details about what each line of code
-below does.
+chapter). See "A quick note on plotting" for details about each line of the following code.
 
 ```python
 # Make all plots appear inline in the Jupyter notebook from now onwards
@@ -509,9 +511,9 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
-> **A quick note on plotting {.callout}**
+> **A Quick Note on Plotting {.callout}**
 >
-> The code above does a few neat things to make our plots prettier.
+> The preceding code does a few neat things to make our plots prettier.
 
 > First, `%matplotlib inline` is a Jupyter notebook [magic
 > command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
@@ -520,14 +522,14 @@ plt.style.use('style/elegant.mplstyle')
 > `%matplotlib notebook` instead to get an interactive figure, rather than a
 > static image of each plot.
 >
-> Second, we import `matplotlib.pyplot` then direct it to use our own plotting
+> Second, we import `matplotlib.pyplot` and then direct it to use our own plotting
 > style `plt.style.use('style/elegant.mplstyle')`. You will see a block of code
 > like this before the first plot in every chapter.
 >
 > You may have seen people importing existing styles like this:
 > `plt.style.use('ggplot')`. But we wanted some particular settings, and we
 > wanted all the plots in this book to follow the same style. So we rolled our
-> own matplotlib style. To see how we did it, take a look at the style file in
+> own Matplotlib style. To see how we did it, take a look at the style file in
 > the Elegant SciPy repository: `style/elegant.mplstyle`. For more information
 > on styles, check out the [Matplotlib documentation on style
 > sheets](http://matplotlib.org/users/style_sheets.html).
@@ -607,7 +609,7 @@ with plt.style.context('style/thinner.mplstyle'):
 ```
 <!-- caption text="Boxplot of gene expression counts per individual" -->
 
-There are obviously a lot of outliers at the high expression end of the scale and a lot of variation between individuals, but pretty hard to see because everything is clustered around zero.
+There are obviously a lot of outliers at the high expression end of the scale and a lot of variation between individuals, but these are hard to see because everything is clustered around zero.
 So let's do log(n + 1) of our data so it's a bit easier to look at.
 Both the log function and the n + 1 step can be done using broadcasting to simplify our code and speed things up.
 
@@ -697,7 +699,7 @@ def class_boxplot(data, classes, colors=None, **kwargs):
     return ax
 ```
 
-Now we can plot a colored boxplot according to normalized vs unnormalized samples.
+Now we can plot a colored boxplot according to normalized versus unnormalized samples.
 We show only three samples from each class for illustration:
 
 ```python
@@ -711,26 +713,27 @@ ax.set_ylabel('log gene expression counts');
 ```
 <!-- caption text="Comparing raw and library normalized gene expression counts in three samples (log scale)" -->
 
-You can see that the normalized distributions are a little bit more similar
-once we have taken library size (the sum of those distributions) into account.
+You can see that the normalized distributions are a little more similar
+when we take library size (the sum of those distributions) into account.
 Now we are comparing like with like between the samples!
 But what about differences between the genes?
 
-### Between genes
+### Between Genes
 
 We can also get into some trouble when trying to compare different genes.
 The number of counts for a gene is related to the gene length.
-Suppose Gene B is twice as long as gene A.
-Both are expressed at similar levels in the sample, i.e. both produce a similar number of mRNA molecules.
+Suppose gene B is twice as long as gene A.
+Both are expressed at similar levels in the sample (i.e., both produce a similar number of mRNA molecules).
 Remember that in RNAseq experiment, we fragment the transcripts, and sample reads from that pool of fragments.
 So if a gene is twice as long, it'll produce twice as many fragments, and we are twice as likely to sample it.
-Therefore you would expect gene B to have about twice as many counts as gene A.
+Therefore, we would expect gene B to have about twice as many counts as gene A.
 If we want to compare the expression levels of different genes, we will have to do some more normalization.
 
 <img src="../figures/gene_length_counts.png"/>
 <!-- caption text="Relationship between counts and gene length" -->
 
-Let's see if the relationship between gene length and counts plays out in our data set.
+Let's see if the relationship between gene length and counts plays out in our dataset.
+First, we define a utility function for plotting:
 
 ```python
 def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
@@ -787,8 +790,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 > ["keyword-only" arguments](https://www.python.org/dev/peps/pep-3102/).
 > These are arguments that you have to call using a keyword, rather than relying
 > on position alone.
-> For example, with the `binned_boxplot` function we just wrote, you can call it
-> like this:
+> For example, you can call the `binned_boxplot` we just wrote like so:
 >
 >     >>> binned_boxplot(x, y, xlabel='my x label', ylabel='my y label')
 >
@@ -810,8 +812,10 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 >
 >     binned_boxplot(x, y, 'my y label')
 >
-> which would give you your y label on the x axis, and is a common error for
+> which would give you your y label on the x-axis, and is a common error for
 > signatures with many optional parameters that don't have an obvious ordering.
+
+We now compute the gene lengths and counts:
 
 ```python
 log_counts = np.log(counts_lib_norm + 1)
@@ -819,28 +823,29 @@ mean_log_counts = np.mean(log_counts, axis=1)  # across samples
 log_gene_lengths = np.log(gene_lengths)
 ```
 
+And we plot the counts as a function of gene length:
+
 ```python
 with plt.style.context('style/thinner.mplstyle'):
     binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
-<!-- caption text="The relationship between gene length and average expression (log scale)" -->
 
-We can see that the longer a gene is, the higher its measured counts! As
-explained above, this is an artifact of the technique, not a biological signal!
+We can see in the previous image that the longer a gene is, the higher its measured counts! As
+previously explained, this is an artifact of the technique, not a biological signal!
 How do we account for this?
 
-### Normalizing over samples and genes: RPKM
+### Normalizing Over Samples and Genes: RPKM
 
 One of the simplest normalization methods for RNAseq data is RPKM: reads per
 kilobase transcript per million reads.
-RPKM puts together the ideas of normalising by sample and by gene.
+RPKM puts together the ideas of normalizing by sample and by gene.
 When we calculate RPKM, we are normalizing for both the library size (the sum of each column)
 and the gene length.
 
 To work through how RPKM is derived, let's define the following values:
 
 - $C$ = Number of reads mapped to a gene
-- $L$ = exon length in base-pairs for a gene
+- $L$ = Exon length in base-pairs for a gene
 - $N$ = Total mapped reads in the experiment
 
 First, let's calculate reads per kilobase.
@@ -849,7 +854,7 @@ Reads per base would be:
 $\frac{C}{L}$
 
 The formula asks for reads per kilobase instead of reads per base.
-One kilobase = 1000 bases, so we'll need to divide length (L) by 1000.
+One kilobase = 1,000 bases, so we'll need to divide length (L) by 1,000.
 
 Reads per kilobase would be:
 
@@ -874,7 +879,7 @@ Now let's implement RPKM over the entire counts array.
 ```python
 # Make our variable names the same as the RPKM formula so we can compare easily
 C = counts
-N = counts.sum(axis=0)  # sum each column to get total reads per sample
+N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
 L = gene_lengths  # lengths for each gene, matching rows in `C`
 ```
 
@@ -929,9 +934,10 @@ print('C_tmp.shape', C_tmp.shape)
 print('L.shape', L.shape)
 ```
 
-We can see that `C_tmp` has 2 dimensions, while L has one.
-So during broadcasting, an additional dimension will be prepended to L.
+We can see that `C_tmp` has two dimensions, while `L` has one.
+So during broadcasting, an additional dimension will be prepended to `L`.
 Then we will have:
+
 ```
 C_tmp.shape (20500, 375)
 L.shape (1, 20500)
@@ -956,10 +962,10 @@ C_tmp = C_tmp / L
 
 Finally we need to normalize by the library size,
 the total number of counts for that column.
-Remember that we have already calculated N with:
+Remember that we have already calculated $N$ with:
 
 ```
-N = counts.sum(axis=0) # sum each column to get total reads per sample
+N = np.sum(counts, axis=0) # sum each column to get total reads per sample
 ```
 
 ```python
@@ -1054,8 +1060,6 @@ with plt.style.context('style/thinner.mplstyle'):
     binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 
-<!-- caption text="The relationship between gene length and average expression after RPKM normalization (log scale)" -->
-
 You can see that the mean expression counts have flattened quite a bit,
 especially for genes larger than about 3,000 base pairs.
 (Smaller genes still appear to have low expression — these may be too small for
@@ -1082,8 +1086,8 @@ ax.set_ylabel('log gene expression counts over all samples');
 ```
 <!-- caption text="Comparing expression of two genes before RPKM normalization" -->
 
-If we look just at the raw counts, it looks like the longer Gene B is expressed
-slightly more than Gene A.
+If we look just at the raw counts, it looks like the longer gene, TXNDC5, is expressed
+slightly more than the shorter one, RPL24.
 But, after RPKM normalization, a different picture emerges:
 
 ```python
@@ -1095,16 +1099,16 @@ ax.set_ylabel('log RPKM gene expression counts over all samples');
 ```
 <!-- caption text="Comparing expression of two genes after RPKM normalization" -->
 
-Now it looks like gene A is actually expressed at a much higher level than gene B.
+Now it looks like RPL24 is actually expressed at a much higher level than TXNDC5.
 This is because RPKM includes normalization for gene length, so we can now directly compare between genes of different lengths.
 
-## Taking stock
+## Taking Stock
 
-So far we have:
-- imported data using Pandas;
-- gotten to know the key NumPy object class: the ndarray; and
-- used the power of broadcasting to make our calculations more elegant.
+So far we have done the following:
+- Imported data using pandas
+- Become familiar with the key NumPy object class — the ndarray
+- Used the power of broadcasting to make our calculations more elegant.
 
-In Chapter 2 we will continue working with the same data set, implementing a
-more sophisticated normalization technique, then using clustering to make some
+In Chapter 2 we will continue working with the same dataset, implementing a
+more sophisticated normalization technique, then use clustering to make some
 predictions about mortality in skin cancer patients.
