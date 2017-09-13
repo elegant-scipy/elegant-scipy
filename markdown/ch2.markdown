@@ -1,4 +1,4 @@
-# Quantile normalization with NumPy and SciPy
+# Quantile Normalization with NumPy and SciPy
 
 > Distress not yourself if you cannot at first understand the deeper mysteries
 > of Spaceland. By degrees they will dawn upon you.
@@ -15,9 +15,9 @@ For example, Bolstad and colleagues [showed](https://doi.org/10.1093/bioinformat
 Over the course of the chapter, we will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
 
 Our implementation of quantile normalization uses NumPy and SciPy effectively to produce a function that is fast, efficient, and elegant. Quantile normalization involves three steps:
-- sort the values along each column,
-- find the average of each resulting row, and
-- replace each column quantile with the quantile of the average column.
+- Sort the values along each column,
+- Find the average of each resulting row, and
+- Replace each column quantile with the quantile of the average column.
 
 ```python
 import numpy as np
@@ -83,13 +83,13 @@ Together, these two functions illustrate many of the things that make NumPy powe
 also among the most useful. We will explore it further in the text that
 follows.
 
-## Getting the data
+## Getting the Data
 
-As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq data set.
+As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq dataset.
 Our goal is to predict mortality in skin cancer patients using their RNA expression data.
-By the end of this chapter we will have reproduced a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
+As mentioned earlier, by the end of this chapter we will have reproduced a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 
-As in Chapter 1, first we will use Pandas to make our job of reading in the data much easier.
+As in Chapter 1, first we will use pandas to make our job of reading in the data much easier.
 First we will read in our counts data as a pandas table.
 
 ```python
@@ -112,7 +112,7 @@ Now let's put our counts in a NumPy array.
 counts = data_table.values
 ```
 
-## Gene expression distribution differences between individuals
+## Gene Expression Distribution Differences Between Individuals
 
 Now, let's get a feel for our counts data by plotting the distribution of counts for each individual.
 We will use a Gaussian kernel to smooth out bumps in our data so we can get a
@@ -244,7 +244,7 @@ columns of the data.)
 
 Now that we have normalized our counts, we can start using our gene expression data to predict patient prognosis.
 
-## Biclustering the counts data
+## Biclustering the Counts Data
 
 
 Clustering the samples tells us which samples have similar gene expression profiles, which may indicate similar characteristics of the samples on other scales.
@@ -296,7 +296,7 @@ By cutting the tree at a specific height, we can get a finer or coarser clusteri
 
 The `linkage` function in `scipy.cluster.hierarchy` performs a hierarchical clustering of the rows of a matrix, using a particular metric (for example, Euclidean distance, Manhattan distance, or others) and a particular linkage method, the distance between two clusters (for example, the average distance between all the observations in a pair of clusters).
 
-It returns the merge tree as a "linkage matrix", which contains each merge operation along with the distance computed for the merge and the number of observations in the resulting cluster. From the `linkage` documentation:
+It returns the merge tree as a "linkage matrix," which contains each merge operation along with the distance computed for the merge and the number of observations in the resulting cluster. From the `linkage` documentation:
 
 > A cluster with an index less than $n$ corresponds to one of
 > the $n$ original observations. The distance between
@@ -338,7 +338,7 @@ def bicluster(data, linkage_method='average', distance_metric='correlation'):
 
 Simple: we just call `linkage` for the input matrix and also for the *transpose* of that matrix, in which columns become rows and rows become columns.
 
-## Visualizing clusters
+## Visualizing Clusters
 
 Next, we define a function to visualize the output of that clustering.
 We are going to rearrange the rows and columns of the input data so that similar rows are together and similar columns are together.
@@ -440,9 +440,9 @@ with plt.style.context('style/thinner.mplstyle'):
 ```
 <!-- caption text="This heatmap shows the level of gene expression across all samples and genes. The color indicates the expression level. The rows and columns are grouped by our clusters. We can see our gene clusters along the y-axis and sample clusters across the top of the x-axis." -->
 
-## Predicting survival
+## Predicting Survival
 
-We can see that the sample data naturally falls into at least 2 clusters, maybe 3.
+We can see that the sample data naturally falls into at least two clusters, maybe three.
 Are these clusters meaningful?
 To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
 After some preprocessing, we get the [patients table](https://github.com/elegant-scipy/elegant-scipy/blob/master/data/patients.csv), which contains survival information for each patient.
@@ -456,7 +456,7 @@ patients.head()
 For each patient (the rows) we have:
 
 - UV­ signature: Ultraviolet light tends to cause specific DNA mutations.
-By looking for this mutation signature researchers can infer whether UV light likely caused the mutation(s) that lead to cancer in these patients.
+By looking for this mutation signature researchers can infer whether UV light likely caused the mutation(s) that led to cancer in these patients.
 - original­ clusters: In the paper, the patients were clustered using gene expression data.
 These clusters were classified according to the types of genes that typified that cluster.
 The main clusters were "immune" (n = 168; 51%), "keratin" (n = 102; 31%), and "MITF-low" (n = 59; 18%).
@@ -469,7 +469,7 @@ Note that some data is *right-censored*, which means that in some cases, we don'
 We count these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
 
 To obtain a survival curve from survival times, we create a step function that decreases by $1/n$ at each step, where $n$ is the number of patients in the group.
-We then match that function against the non-censored survival times.
+We then match that function against the noncensored survival times.
 
 ```python
 def survival_distribution_function(lifetimes, right_censored=None):
@@ -481,9 +481,9 @@ def survival_distribution_function(lifetimes, right_censored=None):
         The observed lifetimes of a population. These must be non-
         -negative.
     right_censored : array of bool, same shape as `lifetimes`
-        A value of `True` here indicates that this lifetime was not
-        observed. Values of `np.nan` in `lifetimes` are also considered
-        to be right-censored.
+        A value of `True` here indicates that this lifetime was not observed.
+        Values of `np.nan` in `lifetimes` are also considered to be
+        right-censored.
 
     Returns
     -------
@@ -592,14 +592,18 @@ there are other, more robust ways to explore this and similar datasets [^paper].
 
 <!-- exercise begin -->
 
-**Exercise:** Do our clusters do a better job of predicting survival than the original clusters in the paper? What about UV signature?
+## Further Work: Using the TCGA's Patient Clusters
 
+Do our clusters do a better job of predicting survival than the original clusters in the paper? What about UV signature?
 Plot survival curves using the original clusters and UV signature columns of the patient data. How do they compare to our clusters?
+
 <!-- exercise end -->
 
 <!-- exercise begin -->
 
-**Exercise:** We leave you the exercise of implementing the approach described in the paper[^paper]:
+## Further Work: Reproducing the TCGA's Clusters
+
+We leave you the exercise of implementing the approach described in the paper[^paper]:
 
 1. Take bootstrap samples (random choice with replacement) of the genes used to cluster the samples;
 2. For each sample, produce a hierarchical clustering;
