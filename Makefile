@@ -119,6 +119,8 @@ nbs: $(addsuffix .ipynb,$(NBS_))
 # build_dirs: directories for build products
 build_dirs:
 	mkdir -p $(BUILD_HTML) $(BUILD_NB) $(BUILD_HTMLBOOK) $(FIGURES)
+	ln -s data $(BUILD_NB)/data
+	ln -s style $(BUILD_NB)/style
 
 exercises: chs
 	./tools/split_exercise.py html/ch?.html
