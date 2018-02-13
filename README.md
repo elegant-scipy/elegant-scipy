@@ -1,5 +1,7 @@
 # Elegant SciPy
 
+[Try the live notebooks via MyBinder!](https://mybinder.org/v2/gh/elegant-scipy/notebooks/master?filepath=index.ipynb)
+
 This is the online repository for the book
 [Elegant SciPy](http://elegant-scipy.com),
 written by Juan Nunez-Iglesias (@jni), Harriet Dashnow (@hdashnow), and Stéfan
