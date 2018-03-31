@@ -46,9 +46,9 @@ def rpkm(counts, lengths):
     normed : array, shape (N_genes, N_samples)
         The RPKM normalized counts matrix.
     """
-    N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
+    C = counts.astype(float)  # use float to avoid overflow with `1e9 * C`
+    N = np.sum(C, axis=0)  # sum each column to get total reads per sample
     L = lengths
-    C = counts
 
     normed = 1e9 * C / (N[np.newaxis, :] * L[:, np.newaxis])
 
@@ -1021,9 +1021,9 @@ def rpkm(counts, lengths):
     normed : array, shape (N_genes, N_samples)
         The RPKM normalized counts matrix.
     """
-    N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
+    C = counts.astype(float)  # use float to avoid overflow with `1e9 * C`
+    N = np.sum(C, axis=0)  # sum each column to get total reads per sample
     L = lengths
-    C = counts
 
     normed = 1e9 * C / (N[np.newaxis, :] * L[:, np.newaxis])
 
