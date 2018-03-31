@@ -883,7 +883,42 @@ N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
 L = gene_lengths  # lengths for each gene, matching rows in `C`
 ```
 
-First, we multiply by 10^9.
+> **Tip: Numbers and computers {.callout}**
+>
+> We can't cover everything you need to know about numeric representations
+> in computers in just a tip box, but you *should* know that numbers are
+> represented as "n-bit precision" "integer" or "floating point" numbers in
+> the computer. As an example, a 32-bit precision integer is an integer
+> number (no decimal point) represented as a string of 0s and 1s of width
+> 32. And, just like you can't represent a number larger than 9999 ($10^4-1$)
+> if you have a length-4 array of numbers, you can't represent a number
+> larger than $2^32 - 1 \approx 4 \times 10^9$ if you are using 32-bit
+> integers, or $2^31 - 1 \approx 2 \times 10^9$ if you want to have negative
+> numbers (because you need one of the 32 bits to indicate sign).
+>
+> So what happens when you go over that limit? You can try it with the
+> following code:
+>
+>     >>> 2**31 - 1
+>     2147483647
+>     >>> np.array([2147483647], dtype=np.int32) + 1
+>     array([-2147483648], dtype=int32)
+>
+> As you can see, it just ticks over, without warning!
+>
+> Floating point numbers can express much larger numbers, at the cost of some
+> precision:
+>
+>     >>> np.float32(2**96)
+>     7.9228163e+28
+>     >>> np.float32(2**96) == np.float32(2**96 + 1)
+>     True
+>
+> As mentioned, we can't go into all the subtleties of dealing with these
+> errors, but if you see us converting an array with `.astype(float)`, we are
+> probably dealing with these issues!
+
+First, we multiply by $10^9$.
 Because counts (C) is an ndarray, we can use broadcasting.
 If we multiple an ndarray by a single value,
 that value is broadcast over the entire array.
