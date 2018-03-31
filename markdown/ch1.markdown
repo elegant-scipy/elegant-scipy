@@ -889,9 +889,12 @@ If we multiple an ndarray by a single value,
 that value is broadcast over the entire array.
 
 ```python
-# Multiply all counts by 10^9
-C_tmp = 10^9 * C
+# Multiply all counts by $10^9$. Note that ^ in Python is bitwise-or.
+# Exponentiation is denoted by `**`
+# Avoid overflow by converting C to float, see tip "Numbers and computers"
+C_tmp = 10**9 * C.astype(float)
 ```
+
 Next we need to divide by the gene length.
 Broadcasting a single value over a 2D array was pretty clear.
 We were just multiplying every element in the array by the value.
