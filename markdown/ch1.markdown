@@ -866,7 +866,7 @@ If we just divide by the number of mapped reads we get:
 $ \frac{10^3C}{LN} $
 
 But biologists like thinking in millions of reads so that the numbers don't get
-too big. Counting per million reads we get:
+too small. Counting per million reads we get:
 
 $ \frac{10^3C}{L(N/10^6)} = \frac{10^9C}{LN}$
 
