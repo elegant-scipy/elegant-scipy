@@ -46,7 +46,9 @@ def rpkm(counts, lengths):
     normed : array, shape (N_genes, N_samples)
         The RPKM normalized counts matrix.
     """
-    C = counts.astype(float)  # use float to avoid overflow with `1e9 * C`
+    # First, convert counts to float to avoid overflow when multiplying by
+    # 1e9 in the RPKM formula
+    C = counts.astype(float)
     N = np.sum(C, axis=0)  # sum each column to get total reads per sample
     L = lengths
 
@@ -887,7 +889,7 @@ L = gene_lengths  # lengths for each gene, matching rows in `C`
 >
 > We can't cover everything you need to know about numeric representations
 > in computers in just a tip box, but you *should* know that numbers are
-> represented as "n-bit precision" "integer" or "floating point" numbers in
+> represented as "n-bit" "integer" or "floating point" numbers in
 > the computer. As an example, a 32-bit precision integer is an integer
 > number (no decimal point) represented as a string of 0s and 1s of width
 > 32. And, just like you can't represent a number larger than 9999 ($10^4-1$)
@@ -915,8 +917,21 @@ L = gene_lengths  # lengths for each gene, matching rows in `C`
 >     True
 >
 > As mentioned, we can't go into all the subtleties of dealing with these
-> errors, but if you see us converting an array with `.astype(float)`, we are
-> probably dealing with these issues!
+> errors, but it's probably what we are avoiding if you see us converting an
+> array with `.astype(float)`!
+>
+> The paper "What Every Computer Scientist Should Know About Floating-Point
+> Arithmetic", by David Goldberg, contains a lot of detail about this, if you
+> are curious. A free version is available at
+> https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
+> . Somewhat more amusingly, try:
+>
+>     >>> np.sum(np.array([0.1 + 0.2], dtype=np.float64))
+>     0.30000000000000004
+>
+> Then, copy that value to go to http://0.30000000000000004.com, which
+> contains a very concise explanation of the problem and links to further
+> resources, including the Goldberg paper.
 
 First, we multiply by $10^9$.
 Because counts (C) is an ndarray, we can use broadcasting.
