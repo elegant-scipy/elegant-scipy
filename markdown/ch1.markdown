@@ -46,9 +46,11 @@ def rpkm(counts, lengths):
     normed : array, shape (N_genes, N_samples)
         The RPKM normalized counts matrix.
     """
-    N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
+    # First, convert counts to float to avoid overflow when multiplying by
+    # 1e9 in the RPKM formula
+    C = counts.astype(float)
+    N = np.sum(C, axis=0)  # sum each column to get total reads per sample
     L = lengths
-    C = counts
 
     normed = 1e9 * C / (N[np.newaxis, :] * L[:, np.newaxis])
 
@@ -866,7 +868,7 @@ If we just divide by the number of mapped reads we get:
 $ \frac{10^3C}{LN} $
 
 But biologists like thinking in millions of reads so that the numbers don't get
-too big. Counting per million reads we get:
+too small. Counting per million reads we get:
 
 $ \frac{10^3C}{L(N/10^6)} = \frac{10^9C}{LN}$
 
@@ -883,15 +885,66 @@ N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
 L = gene_lengths  # lengths for each gene, matching rows in `C`
 ```
 
-First, we multiply by 10^9.
+> **Tip: Numbers and computers {.callout}**
+>
+> We can't cover everything you need to know about numeric representations
+> in computers in just a tip box, but you *should* know that numbers are
+> represented as "n-bit" "integer" or "floating point" numbers in
+> the computer. As an example, a 32-bit precision integer is an integer
+> number (no decimal point) represented as a string of 0s and 1s of width
+> 32. And, just like you can't represent a number larger than 9999 ($10^4-1$)
+> if you have a length-4 array of numbers, you can't represent a number
+> larger than $2^32 - 1 \approx 4 \times 10^9$ if you are using 32-bit
+> integers, or $2^31 - 1 \approx 2 \times 10^9$ if you want to have negative
+> numbers (because you need one of the 32 bits to indicate sign).
+>
+> So what happens when you go over that limit? You can try it with the
+> following code:
+>
+>     >>> 2**31 - 1
+>     2147483647
+>     >>> np.array([2147483647], dtype=np.int32) + 1
+>     array([-2147483648], dtype=int32)
+>
+> As you can see, it just ticks over, without warning!
+>
+> Floating point numbers can express much larger numbers, at the cost of some
+> precision:
+>
+>     >>> np.float32(2**96)
+>     7.9228163e+28
+>     >>> np.float32(2**96) == np.float32(2**96 + 1)
+>     True
+>
+> As mentioned, we can't go into all the subtleties of dealing with these
+> errors, but it's probably what we are avoiding if you see us converting an
+> array with `.astype(float)`!
+>
+> The paper "What Every Computer Scientist Should Know About Floating-Point
+> Arithmetic", by David Goldberg, contains a lot of detail about this, if you
+> are curious. A free version is available at
+> https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
+> . Somewhat more amusingly, try:
+>
+>     >>> np.sum(np.array([0.1 + 0.2], dtype=np.float64))
+>     0.30000000000000004
+>
+> Then, copy that value to go to http://0.30000000000000004.com, which
+> contains a very concise explanation of the problem and links to further
+> resources, including the Goldberg paper.
+
+First, we multiply by $10^9$.
 Because counts (C) is an ndarray, we can use broadcasting.
 If we multiple an ndarray by a single value,
 that value is broadcast over the entire array.
 
 ```python
-# Multiply all counts by 10^9
-C_tmp = 10^9 * C
+# Multiply all counts by $10^9$. Note that ^ in Python is bitwise-or.
+# Exponentiation is denoted by `**`
+# Avoid overflow by converting C to float, see tip "Numbers and computers"
+C_tmp = 10**9 * C.astype(float)
 ```
+
 Next we need to divide by the gene length.
 Broadcasting a single value over a 2D array was pretty clear.
 We were just multiplying every element in the array by the value.
@@ -1021,9 +1074,9 @@ def rpkm(counts, lengths):
     normed : array, shape (N_genes, N_samples)
         The RPKM normalized counts matrix.
     """
-    N = np.sum(counts, axis=0)  # sum each column to get total reads per sample
+    C = counts.astype(float)  # use float to avoid overflow with `1e9 * C`
+    N = np.sum(C, axis=0)  # sum each column to get total reads per sample
     L = lengths
-    C = counts
 
     normed = 1e9 * C / (N[np.newaxis, :] * L[:, np.newaxis])
 
