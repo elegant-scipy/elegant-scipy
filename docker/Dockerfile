@@ -1,4 +1,4 @@
-FROM ubuntu:16.10
+FROM ubuntu:17.10
 
 RUN apt-get update && \
     apt install -y software-properties-common && \
@@ -10,7 +10,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # gsutil is installed to deploy the book to Google Cloud Storage
-RUN pip2 install --upgrade pip && pip2 install gsutil
+RUN pip install --upgrade pip
+RUN pip install gsutil
 
 # Make sure Python 3.6 is the default
 RUN ln -sf /usr/bin/python3.6 /usr/bin/python && \
@@ -23,7 +24,7 @@ RUN pip install --upgrade pip ipykernel && \
     python -m ipykernel install --user
 
 # Install dependencies for HTMLBook build
-RUN ln -s /usr/bin/nodejs /usr/bin/node && \
+RUN ln -s /usr/bin/node && \
     npm install -g htmlbook
 
 # Download big data files
