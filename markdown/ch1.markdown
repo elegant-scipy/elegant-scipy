@@ -1123,7 +1123,8 @@ We've already seen that longer genes have higher counts, but this doesn't mean t
 Let's choose a short gene and a long gene and compare their counts before and after RPKM normalization to see what we mean.
 
 ```python
-gene_idxs = np.array([80, 186])
+gene_idxs = np.nonzero((gene_names == 'RPL24') |
+                       (gene_names == 'TXNDC5'))
 gene1, gene2 = gene_names[gene_idxs]
 len1, len2 = gene_lengths[gene_idxs]
 gene_labels = [f'{gene1}, {len1}bp', f'{gene2}, {len2}bp']
