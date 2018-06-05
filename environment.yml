@@ -22,6 +22,5 @@ dependencies:
   # not available on conda, so use pip
   - notedown>=1.5
   - jupytercontrib>=0.0.5
-  - bs4
   # need improvements from master branch
   - git+https://github.com/networkx/networkx.git

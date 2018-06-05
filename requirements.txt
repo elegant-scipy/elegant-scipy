@@ -13,5 +13,5 @@ scikit-learn
 sympy
 jupytercontrib>=0.0.5
 pillow
-bs4
+beautifulsoup4>=4.5.0,<4.6.0
 lxml
