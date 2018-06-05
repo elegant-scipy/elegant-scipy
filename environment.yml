@@ -18,6 +18,7 @@ dependencies:
 - pillow
 - lxml
 - networkx  # make sure nx installed even if no git
+- nodejs
 - pip:
   # not available on conda, so use pip
   - notedown>=1.5
