@@ -285,7 +285,7 @@ def gaussian_pyramid(image, levels=6):
 
     for level in range(levels - 1):
         blurred = ndi.gaussian_filter(image, sigma=2/3)
-        image = downsample2x(image)
+        image = downsample2x(blurred)
         pyramid.append(image)
 
     return reversed(pyramid)
