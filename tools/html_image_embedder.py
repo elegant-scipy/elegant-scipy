@@ -41,8 +41,12 @@ for image_tag in soup.find_all("img"):
                        'svg': 'svg'}
 
         if src.startswith('http'):
-            with urllib.request.urlopen(src) as response:
-                image_data = response.read()
+            try:
+                with urllib.request.urlopen(src) as response:
+                    image_data = response.read()
+            except urllib.error.HTTPError:
+                print(f"Can't load image at {src}. Ignoring.",
+                      file=sys.stderr)
         else:
             with open(os.path.join(html_dir, src), 'rb') as image:
                 image_data = image.read()
