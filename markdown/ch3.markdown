@@ -886,7 +886,7 @@ A Region Adjacency Graph (RAG) is a representation of an image that is useful
 for *segmentation*: the division of images into meaningful regions (or
 *segments*). If you've seen Terminator 2, you've seen segmentation:
 
-![Terminator vision](https://raw.githubusercontent.com/scikit-image/skimage-tutorials/master/2014-scipy/images/terminator-vision.png)
+![Terminator vision](../images/terminator-vision.png)
 
 Segmentation is one of those problems that humans do trivially, all the time,
 without thinking, whereas computers have a hard time of it. To
