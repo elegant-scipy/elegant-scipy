@@ -78,8 +78,12 @@ existing setup you may have.  This can be done using, e.g., Conda:
    necessary dependencies:
 
 ```console
-conda env create --name elegant-scipy -f path/to/environment.yml
+conda env create --name elegant-scipy -f /path/to/elegant-scipy/environment.yml
 ```
+
+3. Activate the environment with `conda activate elegant-scipy` (or
+   `source activate elegant-scipy` if using conda 4.3.x or earlier, or
+   `activate elegant-scipy` on Windows)
 
 ### Windows
 
