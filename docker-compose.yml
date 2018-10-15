@@ -3,5 +3,6 @@ book_builder:
   volumes:
     - .:/repo
   working_dir: /repo
-  command: make
+  command: bash -c "pip install -r requirements.txt && make"
+
 

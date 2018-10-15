@@ -8,6 +8,7 @@ import sys
 import os
 import encodings
 import urllib
+import urllib.request
 import bs4
 import textwrap
 

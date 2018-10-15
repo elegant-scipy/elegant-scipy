@@ -1,8 +1,11 @@
-FROM ubuntu:16.10
+FROM ubuntu:16.04
+
 
 RUN apt-get update && \
     apt install -y software-properties-common && \
     add-apt-repository -y ppa:fkrull/deadsnakes && \
+    add-apt-repository -y ppa:deadsnakes/ppa `# for python3.6` && \
+    apt-get update && \
     apt-get install -y python3.6 python3.6-dev curl zip \
                        libffi-dev libssl-dev npm git \
                        python-pip python-pkg-resources python-setuptools \
