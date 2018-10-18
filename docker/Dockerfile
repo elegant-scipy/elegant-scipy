@@ -1,34 +1,28 @@
-FROM ubuntu:16.10
+FROM debian:buster
 
 RUN apt-get update && \
-    apt install -y software-properties-common && \
-    add-apt-repository -y ppa:fkrull/deadsnakes && \
+    apt-get install -y software-properties-common apt-utils && \
     apt-get install -y python3.6 python3.6-dev curl zip \
                        libffi-dev libssl-dev npm git \
-                       python-pip python-pkg-resources python-setuptools \
-                       libffi-dev libssl-dev libxml2-utils blahtexml && \
+                       python-pip python3-pkg-resources python3-setuptools \
+                       libxml2-utils blahtexml && \
     rm -rf /var/lib/apt/lists/*
 
 # gsutil is installed to deploy the book to Google Cloud Storage
-RUN pip2 install --upgrade pip && pip2 install gsutil
+RUN pip2 install gsutil
 
-# Make sure Python 3.6 is the default
-RUN ln -sf /usr/bin/python3.6 /usr/bin/python && \
-    ln -sf /usr/bin/python3.6 /usr/bin/python3 && \
+# Install Python dependencies
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1 && \
     curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py && \
-    python /tmp/get-pip.py
-
-# Install dependencies not included in Debian
-RUN pip install --upgrade pip ipykernel && \
+    python /tmp/get-pip.py && \
+    pip install --upgrade pip ipykernel && \
     python -m ipykernel install --user
 
 # Install dependencies for HTMLBook build
-RUN ln -s /usr/bin/nodejs /usr/bin/node && \
-    npm install -g htmlbook
+RUN npm install -g htmlbook
 
 # Download big data files
 # (Potential refactor: use Wercker's cache to store data files)
 RUN mkdir /data && \
     curl http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/dm6.fa.gz \
          -o /data/dm6.fa.gz
-
