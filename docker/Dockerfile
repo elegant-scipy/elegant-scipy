@@ -5,8 +5,11 @@ RUN apt-get update && \
     apt-get install -y python3.6 python3.6-dev curl zip \
                        libffi-dev libssl-dev npm git \
                        python-pip python3-pkg-resources python3-setuptools \
-                       libxml2-utils blahtexml && \
-    rm -rf /var/lib/apt/lists/*
+                       libxml2-utils blahtexml locales && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    /usr/sbin/locale-gen
+
 
 # gsutil is installed to deploy the book to Google Cloud Storage
 RUN pip2 install gsutil
