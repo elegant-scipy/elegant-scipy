@@ -6,7 +6,7 @@ Unpack remote PNGs and JPGs from HTML documents.
 
 import sys
 import os
-import urllib
+import urllib.request
 import bs4
 
 
