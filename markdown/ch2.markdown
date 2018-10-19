@@ -488,7 +488,7 @@ def survival_distribution_function(lifetimes, right_censored=None):
     Returns
     -------
     sorted_lifetimes : array of float
-        The
+        The *some words are missing*
     sdf : array of float
         Values starting at 1 and progressively decreasing, one level
         for each observation in `lifetimes`.
