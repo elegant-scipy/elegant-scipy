@@ -11,7 +11,7 @@ xlrd
 pandas
 scikit-learn
 sympy
-jupytercontrib>=0.0.5
+jupytercontrib>=0.0.7
 pillow
 bs4
 lxml
