@@ -513,10 +513,11 @@ import matplotlib.pyplot as plt
 plt.style.use('style/elegant.mplstyle')
 ```
 
+
 > **A Quick Note on Plotting {.callout}**
 >
 > The preceding code does a few neat things to make our plots prettier.
-
+>
 > First, `%matplotlib inline` is a Jupyter notebook [magic
 > command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
 > that simply makes all plots appear in the notebook rather than pop up a new
@@ -600,7 +601,7 @@ def reduce_xaxis_labels(ax, factor):
 ```
 
 ```python
-# Bar plot of expression counts by individual
+# Box plot of expression counts by individual
 fig, ax = plt.subplots(figsize=(4.8, 2.4))
 
 with plt.style.context('style/thinner.mplstyle'):

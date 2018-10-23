@@ -85,8 +85,6 @@ Let's check that we get the same result with both methods:
 ```python
 # We set the random seed so we will get consistent results
 np.random.seed(seed=7)
-# Set print options to show only 3 significant digits
-np.set_printoptions(precision=3, suppress=True)
 
 arr = np.random.rand(1000) + 0.5
 result_batch = sum(log_all_standard(arr))

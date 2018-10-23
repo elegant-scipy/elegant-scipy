@@ -114,7 +114,7 @@ If we want to measure how well we are doing, we have to count the above kinds of
 (This is also sometimes called a confusion matrix. The name is apt.)
 For this, we place the prediction labels along the rows and the ground truth labels along the columns.
 Then we count the number of times they correspond.
-So, for example, since there are 4 true positives (where `pred` and `gt` are both 1), the matrix will have a value of 3 at position (1, 1).
+So, for example, since there are 4 true positives (where `pred` and `gt` are both 1), the matrix will have a value of 4 at position (1, 1).
 
 Generally:
 
