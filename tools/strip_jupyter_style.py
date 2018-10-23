@@ -15,7 +15,7 @@ fn = sys.argv[1]
 with open(fn, encoding='utf-8') as f:
     html = f.read()
 
-html_no_style = re.sub('<style>(.*?)</style>',
+html_no_style = re.sub('<style(.*?)>(.*?)</style>',
                        '', html, flags=re.DOTALL)
 
 print(html_no_style)
