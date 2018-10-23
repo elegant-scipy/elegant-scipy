@@ -4,5 +4,5 @@ book_builder:
     - .:/repo
   working_dir: /repo
   command: >
-      bash -c "pip install -r requirements.txt && make"
+      bash -c "pip install --upgrade -r requirements.txt && make"
 

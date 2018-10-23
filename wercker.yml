@@ -14,7 +14,7 @@ build:
 
     - pip-install:
         pip_commands: pip3
-        extra_args: ""
+        extra_args: "--upgrade"
 
     - script:
         name: build book
