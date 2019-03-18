@@ -32,9 +32,9 @@ TITLES := preface ch1 ch2 ch3 ch4 ch5 ch6 ch7 ch8 epilogue acknowledgements
 CHS_ := $(addprefix $(BUILD_HTML)/,$(TITLES))
 chs: build_dirs $(addsuffix .html,$(CHS_))
 
-ipynb/ch1.ipynb: data/counts.txt
+ipynb/ch1.ipynb: data/counts.txt.bz2
 
-ipynb/ch2.ipynb: data/counts.txt
+ipynb/ch2.ipynb: data/counts.txt.bz2
 
 ipynb/ch4.ipynb: $(FIGURES)/radar_time_signals.png $(FIGURES)/sliding_window.png
 
