@@ -42,9 +42,6 @@ ipynb/ch7.ipynb: $(FIGURES)/optimization_comparison.png
 
 ipynb/ch8.ipynb: data/dm6.fa
 
-data/counts.txt: data/counts.txt.bz2
-	 bunzip2 -d -k -f data/counts.txt.bz2
-
 data/dm6.fa: data/dm6.fa.gz
 	 gunzip -f -k $<
 
@@ -108,7 +105,7 @@ $(BUILD_NB)/%.ipynb: %.markdown style/elegant.mplstyle build_dirs
 # .SECONDARY: Ensure ipynb files are not deleted after being generated.
 NBS_ := $(addprefix $(BUILD_NB)/,$(TITLES))
 nbs: $(addsuffix .ipynb,$(NBS_))
-.SECONDARY: nbs data/counts.txt data/dm6.fa data/dm6.fa.gz
+.SECONDARY: nbs data/dm6.fa data/dm6.fa.gz
 
 # .PHONY: Special Makefile variable specifying targets that don't
 #     correspond to any actual files.
