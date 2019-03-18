@@ -93,12 +93,14 @@ As in Chapter 1, first we will use pandas to make our job of reading in the data
 First we will read in our counts data as a pandas table.
 
 ```python
+import bz2
 import numpy as np
 import pandas as pd
 
 # Import TCGA melanoma data
-filename = 'data/counts.txt'
-data_table = pd.read_csv(filename, index_col=0)  # Parse file with pandas
+filename = 'data/counts.txt.bz2'
+with bz2.open(filename, mode='rt') as f:
+    data_table = pd.read_csv(f, index_col=0)  # Parse file with pandas
 
 print(data_table.iloc[:5, :5])
 ```
