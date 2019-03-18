@@ -373,7 +373,7 @@ It allows us to express complex operations concisely and efficiently.
 ## Exploring a Gene Expression Dataset
 
 The dataset that we'll be using is an RNAseq experiment of skin cancer samples from The Cancer Genome Atlas (TCGA) project (http://cancergenome.nih.gov/).
-We've already cleaned and sorted the data for you, so you can just use `data/counts.txt`
+We've already cleaned and sorted the data for you, so you can use `data/counts.txt.bz2`
 in the book repository.
 In Chapter 2 we will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 But first we need to get our heads around the biases in our data, and think about how we could improve it.
@@ -395,12 +395,13 @@ In later chapters we will see a bit more of pandas, but for details, read *Pytho
 for Data Analysis* (O'Reilly) by the creator of pandas, Wes McKinney.
 
 ```python
+import bz2
 import numpy as np
 import pandas as pd
 
 # Import TCGA melanoma data
-filename = 'data/counts.txt'
-with open(filename, 'rt') as f:
+filename = 'data/counts.txt.bz2'
+with bz2.open(filename, 'rt') as f:
     data_table = pd.read_csv(f, index_col=0) # Parse file with pandas
 
 print(data_table.iloc[:5, :5])

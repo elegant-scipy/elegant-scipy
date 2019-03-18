@@ -42,8 +42,6 @@ ipynb/ch7.ipynb: $(FIGURES)/optimization_comparison.png
 
 ipynb/ch8.ipynb: data/dm6.fa
 
-.SECONDARY: data/counts.txt data/dm6.fa data/dm6.fa.gz
-
 data/counts.txt: data/counts.txt.bz2
 	 bunzip2 -d -k -f data/counts.txt.bz2
 
