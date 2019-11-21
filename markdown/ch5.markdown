@@ -1475,12 +1475,12 @@ def build_rag(labels, image):
     _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
                           mode='nearest', extra_arguments=(g,))
     for n in g:
-        g.node[n]['total color'] = np.zeros(3, np.double)
-        g.node[n]['pixel count'] = 0
+        g.nodes[n]['total color'] = np.zeros(3, np.double)
+        g.nodes[n]['pixel count'] = 0
     for index in np.ndindex(labels.shape):
         n = labels[index]
-        g.node[n]['total color'] += image[index]
-        g.node[n]['pixel count'] += 1
+        g.nodes[n]['total color'] += image[index]
+        g.nodes[n]['pixel count'] += 1
     return g
 
 def threshold_graph(g, t):
@@ -1506,10 +1506,10 @@ Let's pop the segmentation code into a function so we can play with it.
 def rag_segmentation(base_seg, image, threshold=80):
     g = build_rag(base_seg, image)
     for n in g:
-        node = g.node[n]
+        node = g.nodes[n]
         node['mean'] = node['total color'] / node['pixel count']
     for u, v in g.edges():
-        d = g.node[u]['mean'] - g.node[v]['mean']
+        d = g.nodes[u]['mean'] - g.nodes[v]['mean']
         g[u][v]['weight'] = np.linalg.norm(d)
 
     threshold_graph(g, threshold)
