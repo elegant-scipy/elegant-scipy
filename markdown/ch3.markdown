@@ -757,7 +757,7 @@ NetworkX makes straightforward work out of getting the largest strongly
 connected component from our `wormbrain` network:
 
 ```python
-sccs = nx.strongly_connected_component_subgraphs(wormbrain)
+sccs = (wormbrain.subgraph(c) for c in nx.strongly_connected_components(wormbrain))
 giantscc = max(sccs, key=len)
 print(f'The largest strongly connected component has '
       f'{giantscc.number_of_nodes()} nodes, out of '
@@ -1091,12 +1091,12 @@ def build_rag(labels, image):
     _ = ndi.generic_filter(labels, add_edge_filter, footprint=footprint,
                            mode='nearest', extra_arguments=(g,))
     for n in g:
-        g.node[n]['total color'] = np.zeros(3, np.double)
-        g.node[n]['pixel count'] = 0
+        g.nodes[n]['total color'] = np.zeros(3, np.double)
+        g.nodes[n]['pixel count'] = 0
     for index in np.ndindex(labels.shape):
         n = labels[index]
-        g.node[n]['total color'] += image[index]
-        g.node[n]['pixel count'] += 1
+        g.nodes[n]['total color'] += image[index]
+        g.nodes[n]['pixel count'] += 1
     return g
 ```
 
@@ -1120,10 +1120,10 @@ Now, we can use everything we've learned to segment the tiger in the image above
 ```python
 g = build_rag(seg, tiger)
 for n in g:
-    node = g.node[n]
+    node = g.nodes[n]
     node['mean'] = node['total color'] / node['pixel count']
 for u, v in g.edges():
-    d = g.node[u]['mean'] - g.node[v]['mean']
+    d = g.nodes[u]['mean'] - g.nodes[v]['mean']
     g[u][v]['weight'] = np.linalg.norm(d)
 ```
 
