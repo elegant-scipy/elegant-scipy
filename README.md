@@ -70,7 +70,10 @@ jupyter notebook
 ## Installing dependencies
 
 First, we build an isolated environment as not to interrupt any
-existing setup you may have.  This can be done using, e.g., Conda:
+existing setup you may have.  This can be done using, e.g., Conda or Python's
+built-in virtual environment module:
+
+### Conda install
 
 1. Install [conda](http://conda.pydata.org/miniconda.html) or Anaconda
 
@@ -84,6 +87,31 @@ conda env create --name elegant-scipy -f /path/to/elegant-scipy/environment.yml
 3. Activate the environment with `conda activate elegant-scipy` (or
    `source activate elegant-scipy` if using conda 4.3.x or earlier, or
    `activate elegant-scipy` on Windows)
+
+### Python `venv` module
+
+1. Create a new virtual environment:
+
+   ```console
+   python -m venv --prompt elegant-scipy venv
+   ```
+   
+   This will create a python virtual environment named `elegant-scipy` and 
+   store it in `./venv`.
+
+2. Activate the newly-created environment:
+
+   ```console
+   source venv/bin/activate
+   ```
+
+3. Install the dependencies with `pip`
+
+   ```console
+   pip install -r requirements.txt
+   ```
+You can remove the virtual environment at any time by deleting the `venv/` 
+directory.
 
 ### Windows
 
