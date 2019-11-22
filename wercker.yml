@@ -12,6 +12,11 @@ build:
         locale: en_US
         charset: UTF-8
 
+    - script:
+        name: test conda env
+        code: |
+          conda env create --name elegant-scipy -f environment.yml
+
     - pip-install:
         pip_commands: pip3
         extra_args: "--upgrade"
