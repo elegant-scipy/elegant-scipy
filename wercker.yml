@@ -14,7 +14,7 @@ build:
 
     - pip-install:
         pip_commands: pip3
-        extra_args: "--upgrade"
+        extra_args: "--upgrade --force-reinstall"
 
     - script:
         name: build book
