@@ -12,5 +12,5 @@ scikit-learn>=0.21
 sympy>=1.4
 jupytercontrib>=0.0.7
 pillow>=6.2
-bs4>=0.0.1
+beautifulsoup4>=4.8
 lxml>=4.4

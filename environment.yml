@@ -17,7 +17,7 @@ dependencies:
 - lxml>=4.4
 - networkx>=2.4
 - notedown>=1.5
+- beautifulsoup4>=4.8
 - pip:
   # not available on conda, so use pip
   - jupytercontrib>=0.0.7
-  - bs4
