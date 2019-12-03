@@ -781,7 +781,8 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 
     # Adjust the axis names
     ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel);
+    ax.set_ylabel(ylabel)
+    return ax
 ```
 
 
@@ -831,7 +832,7 @@ And we plot the counts as a function of gene length:
 
 ```python
 with plt.style.context('style/thinner.mplstyle'):
-    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+    binned_boxplot(x=log_gene_lengths, y=mean_log_counts);
 ```
 
 We can see in the previous image that the longer a gene is, the higher its measured counts! As
@@ -1100,7 +1101,8 @@ mean_log_counts = np.mean(log_counts, axis=1)
 log_gene_lengths = np.log(gene_lengths)
 
 with plt.style.context('style/thinner.mplstyle'):
-    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+    # Keep track of axis object so that the next plot can have the same scale
+    unnormalized_ax = binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
 ```
 <!-- caption text="The relationship between gene length and average expression before RPKM normalization (log scale)" -->
 
@@ -1112,7 +1114,9 @@ mean_log_counts = np.mean(log_counts, axis=1)
 log_gene_lengths = np.log(gene_lengths)
 
 with plt.style.context('style/thinner.mplstyle'):
-    binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+    rpkm_ax = binned_boxplot(x=log_gene_lengths, y=mean_log_counts)
+    # Set the axis limits to those of the previous plot for visual comparison
+    rpkm_ax.set_ylim(unnormalized_ax.get_ylim())
 ```
 
 You can see that the mean expression counts have flattened quite a bit,
