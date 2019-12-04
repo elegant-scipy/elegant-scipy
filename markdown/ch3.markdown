@@ -44,7 +44,7 @@ a filter from SciPy's N-dimensional image processing submodule, `ndimage`.
 ```python
 import networkx as nx
 import numpy as np
-from scipy import ndimage as nd
+from scipy import ndimage as ndi
 
 def add_edge_filter(values, graph):
     center = values[len(values) // 2]
@@ -1075,7 +1075,7 @@ arguments to the filter function, and we can use that to build the graph:
 ```python
 import networkx as nx
 import numpy as np
-from scipy import ndimage as nd
+from scipy import ndimage as ndi
 
 def add_edge_filter(values, graph):
     center = values[len(values) // 2]
