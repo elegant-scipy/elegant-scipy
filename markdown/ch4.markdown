@@ -686,7 +686,7 @@ F_dim = F_dim * peaks.astype(int)
 image_filtered = np.real(fftpack.ifft2(F_dim))
 
 f, (ax0, ax1) = plt.subplots(2, 1, figsize=(4.8, 7))
-ax0.imshow(np.log10(1 + np.abs(F_dim)), cmap='viridis')
+ax0.imshow(fftpack.fftshift(np.log10(1 + np.abs(F_dim))), cmap='viridis')
 ax0.set_title('Spectrum after suppression')
 
 ax1.imshow(image_filtered)
