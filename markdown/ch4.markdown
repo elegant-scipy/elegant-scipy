@@ -598,7 +598,7 @@ the `fftshift` function.
 > century by the IEEE journal Computing in Science & Engineering in the
 > year $2000$.
 >
-> ![Unit circle samples](../figures/Unit circle samples.png)
+> ![Unit circle samples](../figures/unit_circle_samples.png)
 
 [^odd_N]: We leave it as an exercise for the reader to picture the
           situation for $N$ odd.  In this chapter, all examples use
@@ -869,7 +869,7 @@ discards any high frequencies).
 
 > **A simple FMCW radar system** {.callout}
 >
-> ![The block diagram of a simple FMCW radar system](../figures/FMCW Block.png)
+> ![The block diagram of a simple FMCW radar system](../figures/FMCW_Block.png)
 >
 > A block diagram of a simple FMCW radar that uses separate
 > transmit and receive antennas is shown above. The radar consists of a waveform generator
@@ -961,7 +961,7 @@ proportional to the range to the target.
 -->
 
 ![The frequency relationships in an FMCW radar with
- linear frequency modulation](../figures/FMCW waveform.png)
+ linear frequency modulation](../figures/FMCW_waveform.png)
 
 To start off, we'll generate some synthetic signals, after which we'll
 turn our focus to the output of an actual radar.
