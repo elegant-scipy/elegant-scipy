@@ -497,12 +497,9 @@ part, and anti-symmetric in the imaginary part):
 x = np.array([1, 5, 12, 7, 3, 0, 4, 3, 2, 8])
 X = fftpack.fft(x)
 
-np.set_printoptions(precision=2)
-
-print("Real part:     ", X.real)
-print("Imaginary part:", X.imag)
-
-np.set_printoptions()
+with np.printoptions(precision=2):
+    print("Real part:     ", X.real)
+    print("Imaginary part:", X.imag)
 ```
 
 (And, again, recall that the first component is ``np.mean(x) * N``.)
