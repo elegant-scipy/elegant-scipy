@@ -364,7 +364,7 @@ print(outer.shape)
 
 You can see for yourself that `outer[i, j] = x[i] * y[j]` for all `(i, j)`.
 
-This was accomplished by NumPy's [broadcasting rules](http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the corresponding dimension of the other array.
+This was accomplished by NumPy's [broadcasting rules](https://numpy.org/devdocs/user/basics.broadcasting.html), which implicitly expand dimensions of size 1 in one array to match the corresponding dimension of the other array.
 Don't worry, we will talk about these rules in more detail later in this chapter.
 
 As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable for real-world calculations on arrays of data.
