@@ -21,7 +21,10 @@ As we will do in each chapter, we open with a code sample that we believe epitom
 In this case, we want to highlight NumPy's vectorization and broadcasting rules, which allow us to manipulate and reason about data arrays very efficiently.
 
 
-```python
+```{code-block} python
+---
+caption: 'By the end of the chapter, this will all make sense!'
+---
 def rpkm(counts, lengths):
     """Calculate reads per kilobase transcript per million reads.
 
