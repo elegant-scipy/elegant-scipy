@@ -1,6 +1,6 @@
 # -- Project information -----------------------------------------------------
 
-project = 'elscipy-mistletoe-test'
+project = 'Elegant-Scipy in Myst'
 copyright = '2020, ross'
 author = 'ross'
 
@@ -14,7 +14,7 @@ release = '0.0.0-dev'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "mistletoe",
+    "myst_parser",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
