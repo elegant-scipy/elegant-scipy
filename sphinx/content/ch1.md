@@ -24,6 +24,7 @@ In this case, we want to highlight NumPy's vectorization and broadcasting rules,
 ```{code-block} python
 ---
 caption: 'By the end of the chapter, this will all make sense!'
+name: 'code:intro'
 ---
 def rpkm(counts, lengths):
     """Calculate reads per kilobase transcript per million reads.
@@ -60,7 +61,8 @@ def rpkm(counts, lengths):
     return(normed)
 ```
 
-This example illustrates some of the ways that NumPy arrays can make your code more elegant:
+The {ref}`RPMK function <code:intro>` illustrates some of the ways that NumPy arrays
+can make your code more elegant:
 
 - Arrays can be 1D, like lists, but they can also be 2D, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are manipulating a 2D matrix.
 - Arrays can be operated on along *axes*. In the first line, we calculate the
