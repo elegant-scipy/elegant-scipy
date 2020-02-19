@@ -433,16 +433,17 @@ But first we need to get our heads around the biases in our data, and think abou
 
 ### Reading in the Data with `pandas`
 
-We're first going to use pandas to read in the table of counts.
-pandas is a Python library for data manipulation and analysis,
+We're first going to use [pandas](https://pandas.pydata.org/) to read in the
+table of counts.
+`pandas` is a Python library for data manipulation and analysis,
 with particular emphasis on tabular and time series data.
 Here, we will use it here to read in tabular data of mixed type.
-It uses the `DataFrame` type, which is a flexible tabular format based on the data frame object in R.
+It uses the `DataFrame` type, which is a flexible tabular format based on the data frame object in `R`.
 For example, the data we will read has a column of gene names (strings) and multiple columns of counts (integers), so reading it into a homogeneous array of numbers would be the wrong approach.
 Although NumPy has some support for mixed data types (called "structured arrays"), it is not primarily designed for
 this use case, which makes subsequent operations harder than they need to be.
 
-By reading the data in as a pandas data frame, we can let pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
+By reading the data in as a pandas `DataFrame`, we can let pandas do all the parsing, then extract out the relevant information and store it in a more efficient data type.
 Here we are just using pandas briefly to import data.
 In later chapters we will see a bit more of pandas, but for details, read *Python
 for Data Analysis* (O'Reilly) by the creator of pandas, Wes McKinney.
