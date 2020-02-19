@@ -234,8 +234,12 @@ print(type(array2d))
 
 Now you can see that the `shape` attribute generalizes `len` to account for the size of multiple dimensions of an array of data.
 
-<img src="../figures/NumPy_ndarrays_v2.png"/>
-<!-- caption text="Visualizing NumPy's ndarrays in one, two and three dimensions" -->
+```{figure} ../../figures/NumPy_ndarrays_v2.png
+---
+name: fig:ndary
+---
+Visualizing NumPy's ndarrays in one, two and three dimensions
+```
 
 Arrays have other attributes, such as `ndim`, the number of dimensions:
 
@@ -245,7 +249,7 @@ print(array2d.ndim)
 
 You'll become familiar with all of these as you start to use NumPy more for your own data analysis.
 
-NumPy arrays can represent data that has even more dimensions, such as magnetic resonance imaging (MRI) data, which includes measurements within a 3D volume.
+NumPy arrays can represent data that has even more dimensions ({numref}`fig:ndary`), such as magnetic resonance imaging (MRI) data, which includes measurements within a 3D volume.
 If we store MRI values over time, we might need a 4D NumPy array.
 
 For now, we'll stick to 2D data.
