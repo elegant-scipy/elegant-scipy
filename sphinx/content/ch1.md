@@ -257,7 +257,7 @@ Later chapters will introduce higher-dimensional data and will teach you to writ
 
 ### Why Use ndarrays Instead of Python Lists?
 
-Arrays are fast because they enable vectorized operations, written in the low-level language C, that act on the whole array.
+Arrays are fast because they enable *vectorized* operations, written in the low-level language C, that act on the whole array.
 Say you have a list and you want to multiply every element in the list by five.
 A standard Python approach would be to write a loop that iterates over the
 elements of the list and multiply each one by five.
@@ -279,13 +279,13 @@ list_array = array.tolist()
 Let's compare how long it takes to multiply all the values in the array by five,
 using the IPython `timeit` magic function. First, when the data is in a list:
 
-```python
+```ipython
 %timeit -n10 y = [val * 5 for val in list_array]
 ```
 
 Now, using NumPy's built-in *vectorized* operations:
 
-```python
+```ipython
 %timeit -n10 x = array * 5
 ```
 
@@ -296,7 +296,11 @@ In Python, each element in a list is an object and is given a healthy memory all
 In contrast, in arrays, each element takes up just the necessary amount of memory.
 For example, an array of 64-bit integers takes up exactly 64-bits per element, plus some very small overhead for array metadata, such as the `shape` attribute we discussed above.
 This is generally much less than would be given to objects in a Python list.
-(If you're interested in digging into how Python memory allocation works, check out Jake VanderPlas's blog post, ["Why Python Is Slow: Looking Under the Hood"](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).)
+```{note}
+If you're interested in digging into how Python memory allocation works,
+check out Jake VanderPlas's blog post:
+["Why Python Is Slow: Looking Under the Hood"](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).
+```
 
 Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
 
