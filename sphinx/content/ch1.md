@@ -140,7 +140,10 @@ name: fig:rnaseq
 RNA sequencing (RNAseq)
 ```
 
-This table shows a minimal example of gene expression count data:
+{numref}`count_table` shows a minimal example of gene expression count 
+data:
+
+(count_table)=
 
 |        | Cell type A | Cell type B |
 |--------|-------------|-------------|
