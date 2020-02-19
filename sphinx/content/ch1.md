@@ -619,6 +619,8 @@ print(f'Count statistics:\n  min:  {np.min(total_counts)}'
       f'\n  max:  {np.max(total_counts)}')
 ```
 <!-- caption text="Density plot of gene expression counts per individual using KDE smoothing" -->
+TODO: REQUIRES CODE RUNNING. PLOT DIRECTIVE FROM MATPLOTLIB SPHINX EXTENTION?
+INCLUDE SPHINX-EXECUTE-CODE EXTENSION TO PRODUCE MINIMUM WORKING EXAMPLE?
 
 We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
 This means that a different number of RNAseq reads were generated for each individual.
