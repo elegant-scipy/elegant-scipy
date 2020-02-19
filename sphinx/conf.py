@@ -15,6 +15,7 @@ release = '0.0.0-dev'
 # ones.
 extensions = [
     "myst_parser",
+    "sphinxcontrib.bibtex",
 ]
 
 # Enable auto-numbering

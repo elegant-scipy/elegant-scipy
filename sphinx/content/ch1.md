@@ -100,9 +100,7 @@ A section of DNA that encodes the information to make a protein (via mRNA) is ca
 
 The amount of mRNA produced from a given gene is called the *expression* of that gene.
 Although we would ideally like to measure protein levels, this is a much harder task than measuring mRNA.
-Fortunately, expression levels of an mRNA and levels of its corresponding protein are usually correlated.[^Maier]
-
-[^Maier]: Tobias Maier, Marc Güell, and Luis Serrano. ["Correlation of mRNA and protein in complex biological samples"](http://www.sciencedirect.com/science/article/pii/S0014579309008126), FEBS Letters 583, no. 204 (2009).
+Fortunately, expression levels of an mRNA and levels of its corresponding protein are usually correlated {cite}`maier2009correlation`.
 
 Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
@@ -1186,3 +1184,6 @@ So far we have done the following:
 In Chapter 2 we will continue working with the same dataset, implementing a
 more sophisticated normalization technique, then use clustering to make some
 predictions about mortality in skin cancer patients.
+
+```{bibliography} references.bib
+```
