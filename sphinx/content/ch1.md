@@ -160,14 +160,18 @@ We can use this information to learn about the differences between these two typ
 
 One way to represent this data in Python would be as a list of lists:
 
-```python
+```{code-block} python
+---
+name: 'code:lol'
+caption: '{numref}`tab:counts` as a list-of-lists in Python'
+---
 gene0 = [100, 200]
 gene1 = [50, 0]
 gene2 = [350, 100]
 expression_data = [gene0, gene1, gene2]
 ```
 
-Above, each gene's expression across different cell types is stored in a list of Python integers.
+In {numref}`code:lol`, each gene's expression across different cell types is stored in a list of Python integers.
 Then, we store all of these lists in a list (a meta-list, if you will).
 We can retrieve individual data points using two levels of list indexing:
 
@@ -176,7 +180,7 @@ expression_data[2][0]
 ```
 
 Because of the way the Python interpreter works, this is a very inefficient way to store these data points.
-First, Python lists are always lists of *objects*, so that the above list `gene2` is not a list of integers, but a list of *pointers* to integers, which is unnecessary overhead.
+First, Python lists are always lists of *objects*, so that in {numref}`code:lol`, `gene2` is not a list of integers but a list of *pointers* to integers, which is unnecessary overhead.
 Additionally, this means that each of these lists and each of these integers ends up in a completely different, random part of your computer's RAM.
 However, modern processors actually like to retrieve things from memory in *chunks*, so this spreading of the data throughout the RAM is inefficient.
 
