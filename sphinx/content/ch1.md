@@ -140,16 +140,19 @@ name: fig:rnaseq
 RNA sequencing (RNAseq)
 ```
 
-{numref}`count_table` shows a minimal example of gene expression count 
+{numref}`tab:counts` shows a minimal example of gene expression count 
 data:
 
-(count_table)=
-
+```{table} Gene expression count from RNAseq experiment
+---
+name: tab:counts
+---
 |        | Cell type A | Cell type B |
 |--------|-------------|-------------|
 | Gene 0 | 100         | 200         |
 | Gene 1 | 50          | 0           |
 | Gene 2 | 350         | 100         |
+```
 
 The data is a table of counts, integers representing how many reads were observed for each gene in each cell type.
 See how the counts for each gene differ between the cell types?
