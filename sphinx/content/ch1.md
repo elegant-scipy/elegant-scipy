@@ -218,9 +218,14 @@ Here, it's just a tuple with a single number.
 You might wonder why you wouldn't just use `len`, as you would for a list.
 That will work, but it doesn't extend to *2D* arrays.
 
-This is what we use to represent the data in the table above:
+We can represent the data from {numref}`tab:counts` as an `ndarray` as shown
+in {numref}`code:ary2d`:
 
-```python
+```{code-block} python
+---
+name: code:ary2d
+caption: '{numref}`tab:counts` as a `numpy` array'
+---
 array2d = np.array(expression_data)
 print(array2d)
 print(array2d.shape)
