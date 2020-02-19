@@ -340,7 +340,7 @@ y = np.copy(x[:2])
 
 Earlier we talked about the speed of operations on arrays.
 One of the tricks NumPy uses to speed things up is *vectorization*.
-Vectorization is where you apply a calculation to each element in an array, without having to use a for loop.
+Vectorization is where you apply a calculation to each element in an array, without having to use a `for` loop.
 In addition to speeding things up, this can result in more natural, readable code.
 Let's look at some examples.
 
@@ -381,6 +381,7 @@ y = np.reshape(y, (1, len(y)))
 print(y)
 ```
 
+TODO: FIGURE OUT FOOTNOTES
 Two shapes are compatible when, for each dimension, either is equal to
 1 (one) or they match one another[^more_dimensions].
 
