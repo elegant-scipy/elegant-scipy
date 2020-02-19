@@ -115,20 +115,30 @@ Central dogma of molecular biology
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of
 that DNA into RNA: in different cells, different parts of the DNA are processed
-into downstream molecules. Similarly, as we will see in this chapter and the
-next, differential expression can distinguish different kinds of cancer.
+into downstream molecules (see {numref}`fig:gene_expression`).
+Similarly, as we will see in this chapter and the next, differential
+expression can distinguish different kinds of cancer.
 
-<img src="../figures/differential_gene_expression.png"/>
-<!-- caption text="Gene expression" -->
+```{figure} ../../figures/differential_gene_expression.png
+---
+name: fig:gene_expression
+---
+Gene expression
+```
 
 The state-of-the-art technology to measure mRNA is RNA sequencing (RNAseq).
+The procedure is illustrated schematically in {numref}`fig:rnaseq`.
 RNA is extracted from a tissue sample (e.g., from a biopsy from a patient), *reverse transcribed* back into DNA (which is more stable), and then read out using chemically modified bases that glow when they are incorporated into the DNA sequence.
 Currently, high-throughput sequencing machines can only read short fragments (approximately 100 bases is common). These short sequences are called “reads.”
 We measure millions of reads and then based on their sequence we count how many reads came from each gene.
 We’ll be starting our analysis directly from this count data.
 
-<img src="../figures/RNAseq.png"/>
-<!-- caption text="RNA sequencing (RNAseq)" -->
+```{figure} ../../figures/RNAseq.png
+---
+name: fig:rnaseq
+---
+RNA sequencing (RNAseq)
+```
 
 This table shows a minimal example of gene expression count data:
 
