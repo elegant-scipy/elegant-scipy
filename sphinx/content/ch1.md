@@ -82,10 +82,14 @@ We will work our way through a *gene expression analysis* to demonstrate the pow
 We will use the pandas library, which builds on NumPy, to read and munge our data files, and then we will manipulate our data efficiently in NumPy arrays.
 
 The so-called [central dogma of molecular biology](https://en.wikipedia.org/wiki/Central_dogma_of_molecular_biology) states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
+{numref}`fig:dna` presents a high-level overview of the DNA molecule.
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
 There are four kinds of bases, abbreviated as A, C, G, and T, comprising an alphabet with which information is stored.
 
 ```{figure} https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg
+---
+name: fig:dna
+---
 The chemical structure of DNA (image by Madeleine Price Ball, used under
 the terms of the CC0 public domain license)
 ```
