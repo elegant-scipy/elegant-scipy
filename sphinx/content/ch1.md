@@ -81,7 +81,7 @@ Before we delve into the power of NumPy, let's spend some time looking at the bi
 We will work our way through a *gene expression analysis* to demonstrate the power of NumPy and SciPy to solve a real-world biological problem.
 We will use the pandas library, which builds on NumPy, to read and munge our data files, and then we will manipulate our data efficiently in NumPy arrays.
 
-The so-called [central dogma of molecular biology](https://en.wikipedia.org/wiki/Central_dogma_of_molecular_biology) states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
+The so-called [central dogma of molecular biology](https://en.wikipedia.org/wiki/Central_dogma_of_molecular_biology) (see {numref}`fig:central_dogma`) states that all the information needed to run a cell (or an organism, for that matter) is stored in a molecule called *deoxyribonucleic acid*, or DNA.
 {numref}`fig:dna` presents a high-level overview of the DNA molecule.
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
 There are four kinds of bases, abbreviated as A, C, G, and T, comprising an alphabet with which information is stored.
@@ -105,8 +105,12 @@ Fortunately, expression levels of an mRNA and levels of its corresponding protei
 Therefore, we usually measure mRNA levels and base our analyses on that.
 As you will see below, it often doesn't matter, because we are using mRNA levels for their power to predict biological outcomes, rather than to make specific statements about proteins.
 
-<img src="../figures/central_dogma.png"/>
-<!-- caption text="Central dogma of molecular biology" -->
+```{figure} ../../figures/central_dogma.png
+---
+name: fig:central_dogma
+---
+Central dogma of molecular biology
+```
 
 It's important to note that the DNA in every cell of your body is identical.
 Thus, the differences between cells arise from *differential expression* of
