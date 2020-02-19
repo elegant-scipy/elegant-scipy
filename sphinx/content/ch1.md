@@ -85,8 +85,10 @@ The so-called [central dogma of molecular biology](https://en.wikipedia.org/wiki
 This molecule has a repetitive backbone on which lie chemical groups called *bases*, in sequence.
 There are four kinds of bases, abbreviated as A, C, G, and T, comprising an alphabet with which information is stored.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg"/>
-<!-- caption text="The chemical structure of DNA (image by Madeleine Price Ball, used under the terms of the CC0 public domain license)" -->
+```{figure} https://upload.wikimedia.org/wikipedia/commons/e/e4/DNA_chemical_structure.svg
+The chemical structure of DNA (image by Madeleine Price Ball, used under
+the terms of the CC0 public domain license)
+```
 
 To access this information, the DNA is *transcribed* into a sister molecule called *messenger ribonucleic acid*, or mRNA.
 Finally, this mRNA is *translated* into proteins, the workhorses of the cell.
