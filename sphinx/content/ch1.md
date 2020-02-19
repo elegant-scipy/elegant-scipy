@@ -573,8 +573,8 @@ plt.style.use('style/elegant.mplstyle')
 >
 > The preceding code does a few neat things to make our plots prettier.
 >
-> First, `%matplotlib inline` is a Jupyter notebook [magic
-> command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
+> First, `%matplotlib inline` is a Jupyter notebook 
+> [magic command](http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magics-explained),
 > that simply makes all plots appear in the notebook rather than pop up a new
 > window. If you are running a Jupyter notebook interactively, you can use
 > `%matplotlib notebook` instead to get an interactive figure, rather than a
@@ -589,8 +589,8 @@ plt.style.use('style/elegant.mplstyle')
 > wanted all the plots in this book to follow the same style. So we rolled our
 > own Matplotlib style. To see how we did it, take a look at the style file in
 > the Elegant SciPy repository: `style/elegant.mplstyle`. For more information
-> on styles, check out the [Matplotlib documentation on style
-> sheets](http://matplotlib.org/users/style_sheets.html).
+> on styles, check out the 
+> [Matplotlib documentation on stylesheets](http://matplotlib.org/users/style_sheets.html).
 
 Now back to plotting our counts distribution!
 
