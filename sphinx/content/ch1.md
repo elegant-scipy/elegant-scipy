@@ -687,7 +687,11 @@ with plt.style.context('style/thinner.mplstyle'):
 
 Now let's see what happens when we normalize by library size.
 
-```python
+```{code-block} python
+---
+name: code:norm-libsize
+caption: Normalization by library size
+---
 # Normalize by library size
 # Divide the expression counts by the total counts for that individual
 # Multiply by 1 million to get things back in a similar scale
@@ -707,8 +711,9 @@ with plt.style.context('style/thinner.mplstyle'):
 <!-- caption text="Boxplot of library-normalized gene expression counts per individual (log scale)" -->
 
 Much better!
-Also notice how we used broadcasting twice there.
-Once to divide all the gene expression counts by the total for that column, and then again to multiply all the values by 1 million.
+Also notice how we used broadcasting twice in {numref}`code:norm-libsize`:
+once to divide all the gene expression counts by the total for that column,
+and then again to multiply all the values by 1 million.
 
 Finally, let's compare our normalized data to the raw data.
 
