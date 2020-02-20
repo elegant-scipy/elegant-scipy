@@ -78,14 +78,21 @@ def quantile_norm(X):
 Due to the kind of variability of gene expression count data, it is common practice to log-transform the data before quantile-normalizing.
 Thus, we write an additional helper function to transform to log:
 
-```python
+```{code-block} python
+---
+name: code:log-qnorm
+caption: |
+    Helper function to perform quantile normalization on $\log$ data
+---
 def quantile_norm_log(X):
     logX = np.log(X + 1)
     logXn = quantile_norm(logX)
     return logXn
 ```
 
-Together, these two functions illustrate many of the things that make NumPy powerful (you will remember the first three of these moves from chapter 1):
+Together, the functions defined in {numref}`code:ch2-intro` and 
+{numref}`code:log-qnorm` illustrate many of the things that make NumPy powerful
+(you will remember the first three of these moves from {doc}`Chapter 1 <ch1>`):
 
 1. Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
 2. Arrays allow the expression of many numerical operations at once. In the  first line of `quantile_norm_log`, we add one and take the logarithm for every value in `X` in a single call. This is called *vectorization*.
