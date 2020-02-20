@@ -896,6 +896,7 @@ with plt.style.context('style/thinner.mplstyle'):
     binned_boxplot(x=log_gene_lengths, y=mean_log_counts);
 ```
 
+TODO: REPLACE WITH NUMREF
 We can see in the previous image that the longer a gene is, the higher its measured counts! As
 previously explained, this is an artifact of the technique, not a biological signal!
 How do we account for this?
