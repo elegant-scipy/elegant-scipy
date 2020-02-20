@@ -427,8 +427,7 @@ The dataset that we'll be using is an RNAseq experiment of skin cancer samples
 from [The Cancer Genome Atlas (TCGA) project](http://cancergenome.nih.gov/).
 We've already cleaned and sorted the data for you, so you can use 
 `data/counts.txt.bz2` in the book repository.
-%TODO: CROSS-DOC REF
-In Chapter 2 we will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
+In {doc}`Chapter 2 <ch2>` we will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 But first we need to get our heads around the biases in our data, and think about how we could improve it.
 
 ### Reading in the Data with `pandas`
@@ -1236,10 +1235,9 @@ So far we have done the following:
 - Become familiar with the key NumPy object class — the ndarray
 - Used the power of broadcasting to make our calculations more elegant.
 
-%TODO: REF TO CH 2
-In Chapter 2 we will continue working with the same dataset, implementing a
-more sophisticated normalization technique, then use clustering to make some
-predictions about mortality in skin cancer patients.
+In {doc}`Chapter 2 <ch2>` we will continue working with the same dataset,
+implementing a more sophisticated normalization technique, then use clustering
+to make some predictions about mortality in skin cancer patients.
 
 ```{bibliography} references.bib
 ```
