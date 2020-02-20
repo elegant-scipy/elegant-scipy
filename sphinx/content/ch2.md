@@ -20,12 +20,20 @@ admirably in recovering known expression levels in microarray data
 
 Over the course of the chapter, we will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project {cite}`akbani2015genomic`.
 
-Our implementation of quantile normalization uses NumPy and SciPy effectively to produce a function that is fast, efficient, and elegant. Quantile normalization involves three steps:
+{ref}`Our implementation of quantile normalization <code:ch2-intro>` uses
+NumPy and SciPy effectively to produce a function that is fast, efficient,
+and elegant. Quantile normalization involves three steps:
 - Sort the values along each column,
 - Find the average of each resulting row, and
 - Replace each column quantile with the quantile of the average column.
 
-```python
+```{code-block}
+---
+name: code:ch2-intro
+caption: |
+    {doc}`Chapter 2 <ch2>` is dedicated to the implementation of the
+    quantile normalization scheme.
+---
 import numpy as np
 from scipy import stats
 
