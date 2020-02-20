@@ -1187,6 +1187,7 @@ with plt.style.context('style/thinner.mplstyle'):
 
 You can see that the mean expression counts have flattened quite a bit,
 especially for genes larger than about 3,000 base pairs.
+TODO: MOVE TO FOOTNOTE
 (Smaller genes still appear to have low expression — these may be too small for
 the statistical power of the RPKM method.)
 
@@ -1235,6 +1236,7 @@ So far we have done the following:
 - Become familiar with the key NumPy object class — the ndarray
 - Used the power of broadcasting to make our calculations more elegant.
 
+TODO: REF TO CH 2
 In Chapter 2 we will continue working with the same dataset, implementing a
 more sophisticated normalization technique, then use clustering to make some
 predictions about mortality in skin cancer patients.
