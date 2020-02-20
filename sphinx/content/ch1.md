@@ -336,6 +336,7 @@ If you want to manipulate the data without touching the original, it's easy to m
 y = np.copy(x[:2])
 ```
 
+(sec:vectorization)=
 ### Vectorization
 
 Earlier we talked about the speed of operations on arrays.
