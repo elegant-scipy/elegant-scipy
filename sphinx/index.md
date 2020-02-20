@@ -6,4 +6,5 @@ maxdepth: 2
 caption: Chapters
 ---
 content/ch1.md
+content/ch2.md
 ```
