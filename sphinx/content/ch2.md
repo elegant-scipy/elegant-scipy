@@ -1,3 +1,4 @@
+(sec:ch2_intro)=
 # Quantile Normalization with NumPy and SciPy
 
 > Distress not yourself if you cannot at first understand the deeper mysteries
@@ -111,7 +112,7 @@ follows.
 
 ## Getting the Data
 
-As in Chapter 1, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq dataset.
+As in {ref}`Chapter 1 <sec:gene_expression_dataset>`, we will be working with the The Cancer Genome Atlas (TCGA) skin cancer RNAseq dataset.
 Our goal is to predict mortality in skin cancer patients using their RNA expression data.
 As mentioned earlier, by the end of this chapter we will have reproduced a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 
@@ -196,7 +197,8 @@ rather than due to biological variation.
 So we will try to normalize out these global differences between individuals.
 
 To do this normalization, we will perform quantile normalization, as described
-at the start of the chapter.  The idea is that all our samples should have a
+{ref}`at the start of the chapter <sec:ch2_intro>`.  The idea is that all
+our samples should have a
 similar distribution, so any differences in the shape should be due to some
 technical variation.  More formally, given an expression matrix (microarray
 data, read counts, etc) of shape `(n_genes, n_samples)`, quantile normalization
