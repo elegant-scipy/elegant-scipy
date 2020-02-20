@@ -205,11 +205,18 @@ data, read counts, etc) of shape `(n_genes, n_samples)`, quantile normalization
 ensures that all samples (columns) have the same spread of data by construction.
 
 With NumPy and SciPy, this can be done easily and efficiently.
-To recap, here is our quantile normalization implementation, which we introduced at the beginning of the chapter.
+To recap, {numref}`code:qnorm` containts our quantile normalization
+implementation, which we introduced at the beginning of the chapter.
 
 Let's assume we've read in the input matrix as X:
 
-```python
+```{code-block} python
+---
+name: code:qnorm
+caption: |
+    Implementation of quantile normalization and $\log$ helper function,
+    repeated here from {numref}`code:ch2-intro` and {numref}`code:log-qnorm`.
+---
 import numpy as np
 from scipy import stats
 
