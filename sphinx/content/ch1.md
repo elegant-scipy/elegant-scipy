@@ -381,7 +381,7 @@ y = np.reshape(y, (1, len(y)))
 print(y)
 ```
 
-TODO: FIGURE OUT FOOTNOTES
+%TODO: FIGURE OUT FOOTNOTES
 Two shapes are compatible when, for each dimension, either is equal to
 1 (one) or they match one another[^more_dimensions].
 
@@ -427,7 +427,7 @@ The dataset that we'll be using is an RNAseq experiment of skin cancer samples
 from [The Cancer Genome Atlas (TCGA) project](http://cancergenome.nih.gov/).
 We've already cleaned and sorted the data for you, so you can use 
 `data/counts.txt.bz2` in the book repository.
-TODO: CROSS-DOC REF
+%TODO: CROSS-DOC REF
 In Chapter 2 we will be using this gene expression data to predict mortality in skin cancer patients, reproducing a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) of a [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044) from the TCGA consortium.
 But first we need to get our heads around the biases in our data, and think about how we could improve it.
 
@@ -619,7 +619,7 @@ print(f'Count statistics:\n  min:  {np.min(total_counts)}'
       f'\n  max:  {np.max(total_counts)}')
 ```
 <!-- caption text="Density plot of gene expression counts per individual using KDE smoothing" -->
-TODO: REQUIRES CODE RUNNING. PLOT DIRECTIVE FROM MATPLOTLIB SPHINX EXTENTION?
+%TODO: REQUIRES CODE RUNNING. PLOT DIRECTIVE FROM MATPLOTLIB SPHINX EXTENTION?
 INCLUDE SPHINX-EXECUTE-CODE EXTENSION TO PRODUCE MINIMUM WORKING EXAMPLE?
 
 We can see that there is an order of magnitude difference in the total number of counts between the lowest and the highest individual.
@@ -847,7 +847,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
     return ax
 ```
 
-TODO: FIND/MAKE SPHINX EXTENSIONS FOR PRODUCING CALLOUTS (E.G. "TIP")
+%TODO: FIND/MAKE SPHINX EXTENSIONS FOR PRODUCING CALLOUTS (E.G. "TIP")
 ```{note}
 > **Python 3 Tip: using `*` to create keyword-only arguments {.callout}**
 >
@@ -896,7 +896,7 @@ with plt.style.context('style/thinner.mplstyle'):
     binned_boxplot(x=log_gene_lengths, y=mean_log_counts);
 ```
 
-TODO: REPLACE WITH NUMREF
+%TODO: REPLACE WITH NUMREF
 We can see in the previous image that the longer a gene is, the higher its measured counts! As
 previously explained, this is an artifact of the technique, not a biological signal!
 How do we account for this?
@@ -1187,7 +1187,7 @@ with plt.style.context('style/thinner.mplstyle'):
 
 You can see that the mean expression counts have flattened quite a bit,
 especially for genes larger than about 3,000 base pairs.
-TODO: MOVE TO FOOTNOTE
+%TODO: MOVE TO FOOTNOTE
 (Smaller genes still appear to have low expression — these may be too small for
 the statistical power of the RPKM method.)
 
@@ -1236,7 +1236,7 @@ So far we have done the following:
 - Become familiar with the key NumPy object class — the ndarray
 - Used the power of broadcasting to make our calculations more elegant.
 
-TODO: REF TO CH 2
+%TODO: REF TO CH 2
 In Chapter 2 we will continue working with the same dataset, implementing a
 more sophisticated normalization technique, then use clustering to make some
 predictions about mortality in skin cancer patients.
