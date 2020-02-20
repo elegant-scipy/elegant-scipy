@@ -1117,7 +1117,11 @@ rpkm_counts = C_tmp / N
 
 Let's put this in a function so we can reuse it.
 
-```python
+```{code-block} python
+---
+name: code:rpkm
+caption: 'The fruits of our normalization-labors'
+---
 def rpkm(counts, lengths):
     """Calculate reads per kilobase transcript per million reads.
 

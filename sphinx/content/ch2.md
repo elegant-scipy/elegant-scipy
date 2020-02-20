@@ -7,7 +7,8 @@
 
 In this chapter, we will continue to analyze the gene expression data from 
 {doc}`Chapter 1 <ch1>`, but with a slightly different purpose: we want to use each patient's *gene expression profile* (the full vector of their gene expression measurements) to predict their expected survival.
-In order to use full profiles, we need a stronger normalization than what Chapter 1's RPKM provides.
+In order to use full profiles, we need a stronger normalization than what
+{ref}`Chapter 1's RPKM <code:rpkm>` provides.
 We will instead perform [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
 This method enforces a strong assumption: if the data are not distributed according to a desired shape, we just make it fit!
 This might feel a bit like cheating, but it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
