@@ -847,6 +847,8 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
     return ax
 ```
 
+TODO: FIND/MAKE SPHINX EXTENSIONS FOR PRODUCING CALLOUTS (E.G. "TIP")
+```{note}
 > **Python 3 Tip: using `*` to create keyword-only arguments {.callout}**
 >
 > Since version 3.0 Python allows
@@ -877,6 +879,7 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
 >
 > which would give you your y label on the x-axis, and is a common error for
 > signatures with many optional parameters that don't have an obvious ordering.
+```
 
 We now compute the gene lengths and counts:
 
