@@ -342,6 +342,7 @@ By cutting the tree at a specific height, we can get a finer or coarser clusteri
 The `linkage` function in `scipy.cluster.hierarchy` performs a hierarchical clustering of the rows of a matrix, using a particular metric (for example, Euclidean distance, Manhattan distance, or others) and a particular linkage method, the distance between two clusters (for example, the average distance between all the observations in a pair of clusters).
 
 It returns the merge tree as a "linkage matrix," which contains each merge operation along with the distance computed for the merge and the number of observations in the resulting cluster. From the `linkage` documentation:
+%TODO - USE AUTODOC FEATURES FOR THIS?
 
 > A cluster with an index less than $n$ corresponds to one of
 > the $n$ original observations. The distance between
@@ -352,9 +353,14 @@ It returns the merge tree as a "linkage matrix," which contains each merge opera
 Whew! That's a lot of information, but let's dive right in and hopefully you'll get the hang of it rather quickly.
 First, we define a function, `bicluster`, that clusters both the rows *and* the columns of a matrix:
 
-```python
+```{code-block} python
+---
+name: code:bicluster
+caption: |
+    Definition of a `bicluster` function based on 
+    `scipy.cluster.hierarchy.linkage`
+---
 from scipy.cluster.hierarchy import linkage
-
 
 def bicluster(data, linkage_method='average', distance_metric='correlation'):
     """Cluster the rows and the columns of a matrix.
