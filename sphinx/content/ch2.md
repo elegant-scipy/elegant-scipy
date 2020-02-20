@@ -404,9 +404,14 @@ analysis, hard-coding parameters is often difficult to avoid for plotting,
 where design is often a matter of eyeballing to find the correct proportions.
 ```
 
-```python
+```{code-block} python
+---
+name: code:plot-bicluster
+caption: |
+    Function for visualizing clusters found in `data` using `bicluster` as
+    defined in {numref}`code:bicluster`.
+---
 from scipy.cluster.hierarchy import dendrogram, leaves_list
-
 
 def clear_spines(axes):
     for loc in ['left', 'right', 'top', 'bottom']:
