@@ -917,13 +917,10 @@ To work through how RPKM is derived, let's define the following values:
 
 First, let's calculate reads per kilobase.
 
-Reads per base would be:
-$\frac{C}{L}$
+Reads per base would be: $\frac{C}{L}$
 
 The formula asks for reads per kilobase instead of reads per base.
-One kilobase = 1,000 bases, so we'll need to divide length (L) by 1,000.
-
-Reads per kilobase would be:
+One kilobase = 1,000 bases, so we'll need to divide length $L$ by 1,000:
 
 $\frac{C}{L/1000}  = \frac{10^3C}{L}$
 
@@ -938,8 +935,14 @@ too small. Counting per million reads we get:
 $ \frac{10^3C}{L(N/10^6)} = \frac{10^9C}{LN}$
 
 
-In summary, to calculate reads per kilobase transcript per million reads:
-$RPKM = \frac{10^9C}{LN}$
+In summary, we use equation {math:numref}`math:rpkm` to calculate reads per kilobase
+transcript per million reads:
+```{math}
+---
+label: math:rpkm
+---
+RPKM = \frac{10^9C}{LN}
+```
 
 Now let's implement RPKM over the entire counts array.
 
