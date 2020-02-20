@@ -325,14 +325,17 @@ def most_variable_rows(data, *, n=1500):
 ```
 
 Next, we need a function to bicluster the data.
-Normally, you would use a sophisticated clustering algorithm from the [scikit-learn](http://scikit-learn.org) library for this.
+Normally, you would use a sophisticated clustering algorithm from the
+[scikit-learn](http://scikit-learn.org) library for this.
 In our case, we want to use hierarchical clustering for simplicity and ease of display.
 The SciPy library happens to have a perfectly good hierarchical clustering module, though it requires a bit of wrangling to get your head around its interface.
 
-As a reminder, hierarchical clustering is a method to group observations using sequential merging of clusters:
-initially, every observation is its own cluster.
-Then, the two nearest clusters are repeatedly merged, and then the next two,
-and so on, until every observation is in a single cluster.
+As a reminder, hierarchical clustering is a method to group observations using
+sequential merging of clusters:
+ * Initially, every observation is its own cluster.
+ * Then, the two nearest clusters are repeatedly merged, and then the next two,
+   and so on, until every observation is in a single cluster.
+
 This sequence of merges forms a *merge tree*.
 By cutting the tree at a specific height, we can get a finer or coarser clustering of observations.
 
