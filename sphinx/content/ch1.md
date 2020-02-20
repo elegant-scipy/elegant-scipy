@@ -991,13 +991,13 @@ L = gene_lengths  # lengths for each gene, matching rows in `C`
 > The paper "What Every Computer Scientist Should Know About Floating-Point
 > Arithmetic", by David Goldberg, contains a lot of detail about this, if you
 > are curious. A free version is available at
-> https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html
-> . Somewhat more amusingly, try:
+> <https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html>.
+> Somewhat more amusingly, try:
 >
 >     >>> np.sum(np.array([0.1 + 0.2], dtype=np.float64))
 >     0.30000000000000004
 >
-> Then, copy that value to go to http://0.30000000000000004.com, which
+> Then, copy that value to go to <http://0.30000000000000004.com>, which
 > contains a very concise explanation of the problem and links to further
 > resources, including the Goldberg paper.
 
