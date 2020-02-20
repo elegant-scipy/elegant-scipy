@@ -670,8 +670,8 @@ with plt.style.context('style/thinner.mplstyle'):
 <!-- caption text="Boxplot of gene expression counts per individual" -->
 
 There are obviously a lot of outliers at the high expression end of the scale and a lot of variation between individuals, but these are hard to see because everything is clustered around zero.
-So let's do log(n + 1) of our data so it's a bit easier to look at.
-Both the log function and the n + 1 step can be done using broadcasting to simplify our code and speed things up.
+So let's do $\log(n + 1)$ of our data so it's a bit easier to look at.
+Both the $\log$ function and the $n + 1$ step can be done using broadcasting to simplify our code and speed things up.
 
 ```python
 # Bar plot of expression counts by individual
