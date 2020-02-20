@@ -422,6 +422,7 @@ Don't worry, we will talk about these rules in more detail
 As we will see in the rest of the chapter, as we explore real data, broadcasting is extremely valuable for real-world calculations on arrays of data.
 It allows us to express complex operations concisely and efficiently.
 
+(sec:gene_expression_dataset)=
 ## Exploring a Gene Expression Dataset
 
 The dataset that we'll be using is an RNAseq experiment of skin cancer samples
