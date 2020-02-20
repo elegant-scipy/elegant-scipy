@@ -505,8 +505,12 @@ with plt.style.context('style/thinner.mplstyle'):
 
 We can see that the sample data naturally falls into at least two clusters, maybe three.
 Are these clusters meaningful?
-To answer this, we can access the patient data, available from the [data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/) for the paper.
-After some preprocessing, we get the [patients table](https://github.com/elegant-scipy/elegant-scipy/blob/master/data/patients.csv), which contains survival information for each patient.
+To answer this, we can access the patient data, available from the 
+[data repository](https://tcga-data.nci.nih.gov/docs/publications/skcm_2015/)
+for the paper.
+After some preprocessing, we get the
+[patients table](https://github.com/elegant-scipy/elegant-scipy/blob/master/data/patients.csv),
+which contains survival information for each patient.
 We can then match these to the counts clusters, and understand whether the patients' gene expression can predict differences in their pathology.
 
 ```python
@@ -529,10 +533,17 @@ This is a plot of the fraction of a population that remains alive over a period 
 Note that some data is *right-censored*, which means that in some cases, we don't actually know when the patient died, or the patient might have died of causes unrelated to the melanoma.
 We count these patients as "alive" for the duration of the survival curve, but more sophisticated analyses might try to estimate their likely time of death.
 
-To obtain a survival curve from survival times, we create a step function that decreases by $1/n$ at each step, where $n$ is the number of patients in the group.
+To obtain a survival curve from survival times, we create a step function that
+decreases by $1/n$ at each step, where $n$ is the number of patients in the
+group.
 We then match that function against the noncensored survival times.
 
-```python
+```{code-block} python
+---
+name: code:survival
+caption: |
+    Definition of a function for *computing* the survival curve of a population
+---
 def survival_distribution_function(lifetimes, right_censored=None):
     """Return the survival distribution function of a set of lifetimes.
 
@@ -576,10 +587,17 @@ def survival_distribution_function(lifetimes, right_censored=None):
     return xs, ys
 ```
 
-Now that we can easily obtain survival curves from the survival data, we can plot them.
-We write a function that groups the survival times by cluster identity and plots each group as a different line:
+Now that we can easily obtain curves from the survival data, we can plot them.
+We write a function that groups the survival times by cluster identity and
+plots each group as a different line:
 
-```python
+```{code-block} python
+---
+name: code:plot-survival
+caption: |
+    Function for plotting the survival curve computed by 
+    `survival_distribution_function` in {numref}`code:survival`.
+---
 def plot_cluster_survival_curves(clusters, sample_names, patients,
                                  censor=True):
     """Plot the survival data from a set of sample clusters.
@@ -649,7 +667,8 @@ The TCGA study backs this claim up with a more robust clustering and
 statistical testing. This is indeed only the latest study to show such a
 result, with others identifying subtypes of leukemia (blood cancer), gut
 cancer, and more. Although the above clustering technique is quite fragile,
-there are other, more robust ways to explore this and similar datasets [^paper].
+there are other, more robust ways to explore this and similar datasets
+{cite}`akbani2015genomic`.
 
 %TODO: BOOK-LEVEL CITATIONS TO SUPPRESS SPHINX ERRORS ABOUT MULTIPLE 
 %LABEL DEFINITIONS FROM USING {bibliography} DIRECTIVE IN EACH CHAPTER
@@ -669,7 +688,8 @@ Plot survival curves using the original clusters and UV signature columns of the
 
 ## Further Work: Reproducing the TCGA's Clusters
 
-We leave you the exercise of implementing the approach described in the paper[^paper]:
+We leave you the exercise of implementing the approach described in the paper
+{cite}`akbani2015genomic`:
 
 1. Take bootstrap samples (random choice with replacement) of the genes used to cluster the samples;
 2. For each sample, produce a hierarchical clustering;
@@ -679,10 +699,8 @@ We leave you the exercise of implementing the approach described in the paper[^p
 This identifies groups of samples that frequently occur together in clusterings, regardless of the genes chosen.
 Thus, these samples can be considered to robustly cluster together.
 
-*Hint: use `np.random.choice` with `replacement=True` to create bootstrap samples of row indices.*
+```{hint}
+*Use `np.random.choice` with `replacement=True` to create bootstrap samples of row indices.*
+```
 
 <!-- exercise end -->
-
-[^paper]: The Cancer Genome Atlas Network. (2015) Genomic Classification of
-          Cutaneous Melanoma. Cell 161:1681-1696.
-          http://dx.doi.org/10.1016/j.cell.2015.05.044
