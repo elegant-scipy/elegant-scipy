@@ -794,8 +794,9 @@ So if a gene is twice as long, it'll produce twice as many fragments, and we are
 Therefore, we would expect gene B to have about twice as many counts as gene A.
 If we want to compare the expression levels of different genes, we will have to do some more normalization.
 
-<img src="../figures/gene_length_counts.png"/>
-<!-- caption text="Relationship between counts and gene length" -->
+```{figure} ../../figures/gene_length_counts.png
+Relationship between counts and gene length
+```
 
 Let's see if the relationship between gene length and counts plays out in our dataset.
 First, we define a utility function for plotting:
@@ -845,10 +846,6 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
     ax.set_ylabel(ylabel)
     return ax
 ```
-
-
-
-
 
 > **Python 3 Tip: using `*` to create keyword-only arguments {.callout}**
 >
