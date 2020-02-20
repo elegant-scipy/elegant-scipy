@@ -1097,12 +1097,12 @@ print('N.shape', N.shape)
 ```
 
 Once we trigger broadcasting, an additional dimension will be
-prepended to N:
+prepended to $N$:
 
 `N.shape (1, 375)`
 
 The dimensions will match so we don't have to do anything.
-However, for readability, it can be useful to add the extra dimension to N anyway.
+However, for readability, it can be useful to add the extra dimension to $N$ anyway.
 
 ```python
 # Divide each column by the total counts for that column (N)
