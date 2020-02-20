@@ -962,8 +962,8 @@ L = gene_lengths  # lengths for each gene, matching rows in `C`
 > number (no decimal point) represented as a string of 0s and 1s of width
 > 32. And, just like you can't represent a number larger than 9999 ($10^4-1$)
 > if you have a length-4 array of numbers, you can't represent a number
-> larger than $2^32 - 1 \approx 4 \times 10^9$ if you are using 32-bit
-> integers, or $2^31 - 1 \approx 2 \times 10^9$ if you want to have negative
+> larger than $2^{32} - 1 \approx 4 \times 10^9$ if you are using 32-bit
+> integers, or $2^{31} - 1 \approx 2 \times 10^9$ if you want to have negative
 > numbers (because you need one of the 32 bits to indicate sign).
 >
 > So what happens when you go over that limit? You can try it with the
