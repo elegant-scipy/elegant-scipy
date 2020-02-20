@@ -292,6 +292,11 @@ By clustering along the rows we find out with genes are working together, and by
 
 Because clustering can be an expensive operation, we will limit our analysis to the 1,500 genes that are most variable, since these will account for most of the correlation signal in either dimension.
 
+```{tip}
+This strategy is generally useful for when developing/testing data analysis
+techniques on large datasets.
+```
+
 ```python
 def most_variable_rows(data, *, n=1500):
     """Subset data to the n most variable rows
