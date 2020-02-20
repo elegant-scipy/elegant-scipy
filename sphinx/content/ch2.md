@@ -12,7 +12,11 @@ In order to use full profiles, we need a stronger normalization than what
 We will instead perform [*quantile normalization*](https://en.wikipedia.org/wiki/Quantile_normalization), a technique that ensures measurements fit a specific distribution.
 This method enforces a strong assumption: if the data are not distributed according to a desired shape, we just make it fit!
 This might feel a bit like cheating, but it turns out to be simple and useful in many cases where the specific distribution doesn't matter, but the relative changes of values within a population are important.
-For example, Bolstad and colleagues [showed](https://doi.org/10.1093/bioinformatics/19.2.185) that it performs admirably in recovering known expression levels in microarray data.
+For example, Bolstad and colleagues [showed][bolstad] that it performs
+admirably in recovering known expression levels in microarray data
+{cite}`bolstad2003comparison`.
+
+[bolstad]: https://doi.org/10.1093/bioinformatics/19.2.185
 
 Over the course of the chapter, we will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
 
@@ -593,6 +597,11 @@ statistical testing. This is indeed only the latest study to show such a
 result, with others identifying subtypes of leukemia (blood cancer), gut
 cancer, and more. Although the above clustering technique is quite fragile,
 there are other, more robust ways to explore this and similar datasets [^paper].
+
+%TODO: BOOK-LEVEL CITATIONS TO SUPPRESS SPHINX ERRORS ABOUT MULTIPLE 
+%LABEL DEFINITIONS FROM USING {bibliography} DIRECTIVE IN EACH CHAPTER
+```{bibliography} references.bib
+```
 
 <!-- exercise begin -->
 
