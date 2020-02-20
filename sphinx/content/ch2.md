@@ -18,7 +18,7 @@ admirably in recovering known expression levels in microarray data
 
 [bolstad]: https://doi.org/10.1093/bioinformatics/19.2.185
 
-Over the course of the chapter, we will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project.
+Over the course of the chapter, we will reproduce a simplified version of [Figures 5A and 5B](http://www.cell.com/action/showImagesData?pii=S0092-8674%2815%2900634-0) from this [paper](http://dx.doi.org/10.1016/j.cell.2015.05.044), which comes from The Cancer Genome Atlas (TCGA) project {cite}`akbani2015genomic`.
 
 Our implementation of quantile normalization uses NumPy and SciPy effectively to produce a function that is fast, efficient, and elegant. Quantile normalization involves three steps:
 - Sort the values along each column,
