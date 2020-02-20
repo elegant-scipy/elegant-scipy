@@ -95,9 +95,12 @@ Together, the functions defined in {numref}`code:ch2-intro` and
 (you will remember the first three of these moves from {doc}`Chapter 1 <ch1>`):
 
 1. Arrays can be one-dimensional, like lists, but they can also be two-dimensional, like matrices, and higher-dimensional still. This allows them to represent many different kinds of numerical data. In our case, we are representing a 2D matrix.
-2. Arrays allow the expression of many numerical operations at once. In the  first line of 
-%TODO - FIGURE OUT HOW TO SPECIFY LITERALS WITHIN A ROLE
-{ref}`quantile_norm_log <code:log-qnorm>`, we add one and take the logarithm for every value in `X` in a single call. This is called {ref}`*vectorization* <sec:vectorization>`
+2. Arrays allow the expression of many numerical operations at once.
+   In the  first line of 
+   %TODO - FIGURE OUT HOW TO SPECIFY LITERALS WITHIN A ROLE
+   {ref}`quantile_norm_log <code:log-qnorm>`, we add one and take the
+   logarithm for every value in `X` in a single call. This is called
+   {ref}`*vectorization* <sec:vectorization>`.
 3. Arrays can be operated on along *axes*. In the first line of `quantile_norm`, we sort the data along each column just by specifying an `axis` parameter to `np.sort`. We then take the mean along each row by specifying a *different* `axis`.
 4. Arrays underpin the scientific Python ecosystem. The `scipy.stats.rankdata` function operates not on Python lists, but on NumPy arrays. This is true of many scientific libraries in Python.
 5. Even functions that don't have an `axis=` keyword can be made to operate along axes by NumPy's `apply_along_axis` function.
