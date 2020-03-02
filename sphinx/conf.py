@@ -28,7 +28,7 @@ numfig=True
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db']
+exclude_patterns = ['_build', 'Thumbs.db', 'README.md']
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -37,6 +37,8 @@ exclude_patterns = ['_build', 'Thumbs.db']
 # a list of builtin themes.
 #
 html_theme = 'alabaster'
+# NOTE: For testing with jupyter-book theme sphinx ext
+#html_theme = 'sphinx_jupyter_book_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
