@@ -299,7 +299,7 @@ This is generally much less than would be given to objects in a Python list.
 ```{note}
 If you're interested in digging into how Python memory allocation works,
 check out Jake VanderPlas's blog post:
-["Why Python Is Slow: Looking Under the Hood"](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).
+[Why Python Is Slow: Looking Under the Hood](https://jakevdp.github.io/blog/2014/05/09/why-python-is-slow/).
 ```
 
 Plus, when computing with arrays, you can also use *slices* that subset the array *without copying the underlying data*.
