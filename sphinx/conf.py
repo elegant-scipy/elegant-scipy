@@ -17,10 +17,16 @@ extensions = [
     "myst_parser",              # Supporting myst syntax
     "sphinxcontrib.bibtex",     # LaTeX-style bibliographies
     "sphinx.ext.imgconverter",  # SVG support in LaTeX
+    "sphinx.ext.intersphinx",   # Intersphinx for linking to project docs
 ]
 
 # Enable auto-numbering
 numfig=True
+
+# Intersphinx conf
+intersphinx_mapping = {
+    'scipy' : ('https://docs.scipy.org/doc/scipy/reference', None),
+}
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['_templates']

@@ -28,7 +28,9 @@ when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
 here we will show you how to produce a {abbr}`RAG` in a few lines of code using
 NetworkX (a Python library to analyze graphs and networks), and
-a filter from SciPy's N-dimensional image processing submodule, `ndimage`.
+% TODO: apply intersphinx to whole book
+a filter from SciPy's N-dimensional image processing submodule,
+{mod}`ndimage <scipy.ndimage>`.
 
 > **The origins of Elegant SciPy {.callout}**
 >
