@@ -647,18 +647,18 @@ those pages can be, well, links. Or, in biology, so-called *transcription
 networks* have nodes represent genes and edges connect genes that have a direct
 influence on each other's expression.
 
-> **Note: graphs and networks {.callout}**
->
-> In this context, the term "graph" is synonymous with "network", not with
-> "plot". Mathematicians and computer scientists invented slightly different
-> words to discuss these: graph = network, vertex = node, edge = link = arc. As
-> most people do, we will be using these terms interchangeably.
->
-> You might be slightly more familiar with the network terminology: a network
-> consists of *nodes* and *links* between the nodes. Equivalently, a graph
-> consists of *vertices* and *edges* between the vertices. In NetworkX, you
-> have `Graph` objects consisting of `nodes` and `edges` between the nodes, and
-> this is probably the most common usage.
+```{admonition} **Note: graphs and networks {.callout}**
+In this context, the term "graph" is synonymous with "network", not with
+"plot". Mathematicians and computer scientists invented slightly different
+words to discuss these: graph = network, vertex = node, edge = link = arc. As
+most people do, we will be using these terms interchangeably.
+```
+
+You might be slightly more familiar with the network terminology: a network
+consists of *nodes* and *links* between the nodes. Equivalently, a graph
+consists of *vertices* and *edges* between the vertices. In NetworkX, you
+have `Graph` objects consisting of `nodes` and `edges` between the nodes, and
+this is probably the most common usage.
 
 To introduce you to graphs, we will reproduce some results from the paper
 ["Structural properties of the *Caenorhabditis elegans* neuronal network"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Lav Varshney *et al*, 2011.
