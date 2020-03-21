@@ -372,13 +372,13 @@ plt.plot(sdsig);
 Although it still looks wobbly, the *signal-to-noise ratio* (SNR),
 is much greater in this version than when using the simple difference filter.
 
-> **A note about filtering** {.callout}
->
-> This operation is called filtering because, in physical electrical circuits,
-> many of these operations are implemented by hardware that allows certain
-> kinds of current through, while blocking others; these hardware components
-> are called filters. For example, a common filter that removes high-frequency
-> voltage fluctuations from a current is called a *low-pass filter*.
+```{admonition} **A note about filtering**
+This operation is called filtering because, in physical electrical circuits,
+many of these operations are implemented by hardware that allows certain
+kinds of current through, while blocking others; these hardware components
+are called filters. For example, a common filter that removes high-frequency
+voltage fluctuations from a current is called a *low-pass filter*.
+```
 
 ## Filtering images (2D filters)
 
