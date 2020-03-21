@@ -15,7 +15,9 @@ Further, when processing
 images, we often deal with objects much larger than individual pixels.
 In a landscape, the sky, earth, trees, and rocks each span many
 pixels. A common structure to represent these is the Region Adjacency Graph,
-or RAG. Its *nodes* hold properties of each region in the image, and its
+% TODO: test with table of acronyms and LaTeX output
+or {abbr}`RAG (Region Adjacency Graph)`. 
+Its *nodes* hold properties of each region in the image, and its
 *links* hold the spatial relationships between the regions. Two nodes are
 linked whenever their corresponding regions touch each other in the input
 image.
@@ -24,7 +26,7 @@ Building such a structure could be a complicated
 affair, and even more difficult
 when images are not two-dimensional but 3D and even 4D, as is
 common in microscopy, materials science, and climatology, among others. But
-here we will show you how to produce a RAG in a few lines of code using
+here we will show you how to produce a {abbr}`RAG` in a few lines of code using
 NetworkX (a Python library to analyze graphs and networks), and
 a filter from SciPy's N-dimensional image processing submodule, `ndimage`.
 
