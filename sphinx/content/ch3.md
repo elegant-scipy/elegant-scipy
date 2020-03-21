@@ -9,7 +9,7 @@
 
 You probably know that digital images are made up of *pixels*. Generally, you
 should not think of these as little squares, but as *point samples* of the light
-signal *measured on a regular grid* [^alvyraysmith].
+signal *measured on a regular grid* {cite}`smith1995pixel`.
 
 Further, when processing
 images, we often deal with objects much larger than individual pixels.
@@ -1156,6 +1156,9 @@ Still, we think that's a nice demonstration of the capabilities of RAGs...
 And the beauty with which SciPy and NetworkX make it feasible.
 Many of these functions are available in the scikit-image library. If you
 are interested in image analysis, look it up!
+
+```{bibliography} references.bib
+```
 
 [^alvyraysmith]: A Pixel Is Not A Little Square. Alvy Ray Smith, 1995, Technical
                  Memo. http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf
