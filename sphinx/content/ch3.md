@@ -72,7 +72,7 @@ There are a few things going on here: images being represented as numpy arrays,
 regions into a graph (network) using the NetworkX library. We'll go over these
 in turn.
 
-## Images are just numpy arrays
+## Images are just `numpy` arrays
 
 In the previous chapter, we saw that numpy arrays can efficiently represent
 tabular data, and are a convenient way to perform computations on it.
