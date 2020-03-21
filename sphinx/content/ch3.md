@@ -96,6 +96,7 @@ import numpy as np
 random_image = np.random.rand(500, 500)
 plt.imshow(random_image);
 ```
+% TODO: Execute and convert to figure w/ caption
 <!-- caption text="Image displayed by matplotlib's `imshow`" -->
 
 This `imshow` function displays a numpy array as an image. The converse is also true: an image
@@ -104,7 +105,7 @@ library, a collection of image processing tools built on top of NumPy and SciPy.
 
 Here is a PNG image from the scikit-image repository. It is a black and white
 (sometimes called "grayscale") picture of some ancient Roman coins from
-Pompeii, obtained from the Brooklyn Museum [^coins-source]:
+Pompeii, obtained from the [Brooklyn Museum][coins-source]:
 
 ![Coins image from the Brooklyn Museum](https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png)
 
@@ -1168,7 +1169,7 @@ are interested in image analysis, look it up!
 [^alvyraysmith]: A Pixel Is Not A Little Square. Alvy Ray Smith, 1995, Technical
                  Memo. http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf
 
-[^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
+[coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 
 [^openworm]: http://www.openworm.org
 
