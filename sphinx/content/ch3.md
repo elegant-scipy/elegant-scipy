@@ -486,7 +486,7 @@ complex filters.
 
 For example, suppose an image represents median house values in a county,
 with a 100m x 100m resolution. The local council decides to tax house sales as
-&#36;10,000 plus 5% of the 90th percentile of house prices in a 1km radius. (So,
+\$10,000 plus 5% of the 90th percentile of house prices in a 1km radius. (So,
 selling a house in an expensive neighborhood costs more.) With
 `generic_filter`, we can produce the map of the tax rate everywhere in the map:
 
@@ -523,11 +523,11 @@ of its 8 neighbors (above, below, left, right, and diagonals):
 Although the rules sound like a contrived math problem, they in fact give rise
 to incredible patterns, starting with gliders (small patterns of live cells
 that slowly move in each generation) and glider guns (stationary patterns that
-sprout off gliders), all the way up to prime number generator machines (see,
-for example,
-[this page](http://www.njohnston.ca/2009/08/generating-sequences-of-primes-in-conways-game-of-life/)),
-and even
-[simulating Game of Life itself](https://www.youtube.com/watch?v=xP5-iIeKXE8)!
+sprout off gliders), all the way up to [prime number generator machines][primes],
+and even [simulating Game of Life itself][meta-life]!
+
+[primes]: http://www.njohnston.ca/2009/08/generating-sequences-of-primes-in-conways-game-of-life/
+[meta-life]: https://www.youtube.com/watch?v=xP5-iIeKXE8
 
 Can you implement the Game of Life using `ndi.generic_filter`?
 
@@ -661,7 +661,10 @@ have `Graph` objects consisting of `nodes` and `edges` between the nodes, and
 this is probably the most common usage.
 
 To introduce you to graphs, we will reproduce some results from the paper
-["Structural properties of the *Caenorhabditis elegans* neuronal network"](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066), by Lav Varshney *et al*, 2011.
+["Structural properties of the *Caenorhabditis elegans* neuronal network"][brain],
+by Lav Varshney *et al*, 2011.
+
+[brain]: http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066
 
 In our example, we will represent neurons in the nematode worm's nervous system as
 nodes, and place an edge between two nodes when a neuron makes a synapse with
