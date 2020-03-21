@@ -150,7 +150,9 @@ plt.imshow(astro_sq);
 <!-- caption text="Modified image of Eileen Collins" -->
 
 You can also use a boolean *mask*, an array of `True` or `False` values.
-We saw these in Chapter 2 as a way to select rows of a table. In this case, we
+We saw these in {ref}`Chapter 2 <code:survival>` as a way to select rows of
+a table.
+In this case, we
 can use an array of the same shape as the image to select pixels:
 
 ```python
@@ -163,6 +165,7 @@ plt.imshow(astro_sq);
 <!-- caption text="Another modified image of Eileen Collins" -->
 
 <!-- exercise begin -->
+%TODO: Exercise
 
 **Exercise:** We just saw how to select a square and paint it green. Can you
 extend that to other shapes and colors? Create a function to draw a blue grid
