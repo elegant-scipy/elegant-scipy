@@ -912,10 +912,14 @@ to some more sophisticated rule.
 As a simple example, suppose you want to segment out the tiger in this
 picture, from the Berkeley Segmentation Dataset (BSDS):
 
-![BSDS-108073 tiger](http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg)
+![BSDS-108073 tiger][tiger]
 
-A clustering algorithm, simple linear iterative clustering (SLIC) [^slic], can give
-us a decent starting point. It is available in the scikit-image library.
+[tiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg
+
+A clustering algorithm, [simple linear iterative clustering (SLIC)][slic],
+can give us a decent starting point. It is available in the scikit-image library.
+
+[slic]: http://ivrg.epfl.ch/research/superpixels
 
 ```python
 url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/vision/'
@@ -1132,6 +1136,5 @@ are interested in image analysis, look it up!
 
 [^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
 
-[^slic]: http://ivrg.epfl.ch/research/superpixels
 
 <!-- -->
