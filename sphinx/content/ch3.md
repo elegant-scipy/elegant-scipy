@@ -671,13 +671,14 @@ nodes, and place an edge between two nodes when a neuron makes a synapse with
 another[^synapses].
 The worm is an awesome example of neural connectivity analysis
 because every worm (of this species) has the same number of neurons (302), and the
-connections between them are all known. This has resulted in the fantastic Openworm
-project [^openworm], which we encourage you to read more about.
+connections between them are all known. This has resulted in the fantastic 
+[Openworm project](http://openworm.org), which we encourage you to read more
+about.
 
 [^synapses]: *Synapses* are the chemical connections through which neurons communicate.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
-database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
+database at <http://www.wormatlas.org/neuronalwiring.html#Connectivitydata>.
 The `pandas` library allows one to read an Excel table over the web, so we will
 use it here to read in the data, then feed that into NetworkX.
 
@@ -1179,7 +1180,6 @@ are interested in image analysis, look it up!
 
 [coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 
-[^openworm]: http://www.openworm.org
 
 [^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
 
