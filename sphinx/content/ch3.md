@@ -647,7 +647,7 @@ those pages can be, well, links. Or, in biology, so-called *transcription
 networks* have nodes represent genes and edges connect genes that have a direct
 influence on each other's expression.
 
-```{admonition} **Note: graphs and networks {.callout}**
+```{admonition} **Note: graphs and networks**
 In this context, the term "graph" is synonymous with "network", not with
 "plot". Mathematicians and computer scientists invented slightly different
 words to discuss these: graph = network, vertex = node, edge = link = arc. As
@@ -668,11 +668,13 @@ by Lav Varshney *et al*, 2011.
 
 In our example, we will represent neurons in the nematode worm's nervous system as
 nodes, and place an edge between two nodes when a neuron makes a synapse with
-another. (*Synapses* are the chemical connections through which neurons
-communicate.) The worm is an awesome example of neural connectivity analysis
+another[^synapses].
+The worm is an awesome example of neural connectivity analysis
 because every worm (of this species) has the same number of neurons (302), and the
 connections between them are all known. This has resulted in the fantastic Openworm
 project [^openworm], which we encourage you to read more about.
+
+[^synapses]: *Synapses* are the chemical connections through which neurons communicate.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
 database at [http://www.wormatlas.org/neuronalwiring.html#Connectivitydata](http://www.wormatlas.org/neuronalwiring.html#Connectivitydata).
