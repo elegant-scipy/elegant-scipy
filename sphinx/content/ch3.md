@@ -693,7 +693,7 @@ conn = pd.read_excel(connectome_url)
 `conn` now contains a pandas DataFrame, with rows of the form:
 
 % TODO: pandas output table
-[Neuron1, Neuron2, connection type, strength]
+`[Neuron1, Neuron2, connection type, strength]`
 
 We are only going to examine the connectome of chemical synapses, so we filter
 out other synapse types[^conntypes] as follows:
@@ -726,10 +726,13 @@ for many different trips. They are the ones with high betweenness
 centrality.
 
 With NetworkX, we can find similarly important neurons with ease. In the
-NetworkX API documentation [^nxdoc], under "centrality", the docstring
-for `betweenness_centrality` [^bwcdoc] specifies a function that takes a
+[NetworkX API documentation][nxdoc], under "centrality", the docstring
+for [`betweenness_centrality`][bwcdoc] specifies a function that takes a
 graph as input and returns a dictionary mapping node IDs to betweenness
 centrality values (floating point values).
+
+[nxdoc]: http://networkx.github.io/documentation/latest/reference/index.html
+[bwcdoc]: https://networkx.github.io/documentation/latest/reference/algorithms/generated/networkx.algorithms.centrality.betweenness_centrality.html#networkx.algorithms.centrality.betweenness_centrality
 
 ```python
 centrality = nx.betweenness_centrality(wormbrain)
@@ -1183,12 +1186,8 @@ are interested in image analysis, look it up!
 
 [coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 
-
 [^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
 
-[^nxdoc]: http://networkx.github.io/documentation/latest/reference/index.html
-
-[^bwcdoc]: http://networkx.github.io/documentation/latest/reference/generated/networkx.algorithms.centrality.betweenness_centrality.html
 
 [^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
 
