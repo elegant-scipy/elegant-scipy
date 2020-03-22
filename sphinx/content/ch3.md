@@ -766,13 +766,14 @@ In a neuronal circuit, you can think of the strongly connected component
 as the "brain" of the circuit, where the processing happens, while nodes
 upstream of it are inputs, and nodes downstream are outputs.
 
-> **Cycles in neuronal networks {.callout}**
->
-> The idea of cyclical neuronal circuits dates back to the 1950s. Here's a
-> lovely paragraph about this idea from an article in *Nautilus*,
-> "The Man Who Tried to Redeem the World With Logic", by Amanda Gefter:
->
-> > If one were to see a lightning bolt flash on the sky, the eyes would send a signal to the brain, shuffling it through a chain of neurons. Starting with any given neuron in the chain, you could retrace the signal's steps and figure out just how long ago the lightning struck. Unless, that is, the chain is a loop. In that case, the information encoding the lightning bolt just spins in circles, endlessly. It bears no connection to the time at which the lightning actually occurred. It becomes, as McCulloch put it, "an idea wrenched out of time." In other words, a memory.
+```{admonition} **Cycles in neuronal networks**
+
+The idea of cyclical neuronal circuits dates back to the 1950s. Here's a
+lovely paragraph about this idea from an article in *Nautilus*,
+"The Man Who Tried to Redeem the World With Logic", by Amanda Gefter:
+
+> If one were to see a lightning bolt flash on the sky, the eyes would send a signal to the brain, shuffling it through a chain of neurons. Starting with any given neuron in the chain, you could retrace the signal's steps and figure out just how long ago the lightning struck. Unless, that is, the chain is a loop. In that case, the information encoding the lightning bolt just spins in circles, endlessly. It bears no connection to the time at which the lightning actually occurred. It becomes, as McCulloch put it, "an idea wrenched out of time." In other words, a memory.
+```
 
 NetworkX makes straightforward work out of getting the largest strongly
 connected component from our `wormbrain` network:
