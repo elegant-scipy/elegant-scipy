@@ -107,6 +107,8 @@ Here is a PNG image from the scikit-image repository. It is a black and white
 (sometimes called "grayscale") picture of some ancient Roman coins from
 Pompeii, obtained from the [Brooklyn Museum][coins-source]:
 
+[coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
+
 ![Coins image from the Brooklyn Museum](https://raw.githubusercontent.com/scikit-image/scikit-image/v0.10.1/skimage/data/coins.png)
 
 Here is the coin image loaded with scikit-image:
@@ -1095,6 +1097,7 @@ Here are a few reasons this is a brilliant piece of code:
 
 ## Putting it all together: mean color segmentation
 
+% TODO: Generic ref to markdown image (not currently working)
 Now, we can use everything we've learned to segment the tiger in the image above:
 
 ```python
@@ -1118,7 +1121,8 @@ def threshold_graph(g, t):
 threshold_graph(g, 80)
 ```
 
-Finally, we use the numpy index-with-an-array trick we learned in chapter 2:
+Finally, we use the numpy index-with-an-array trick we learned in 
+{ref}`Chapter 2 <code:ch2-intro>`:
 
 ```python
 map_array = np.zeros(np.max(seg) + 1, int)
@@ -1132,23 +1136,12 @@ plt.imshow(color.label2rgb(segmented, tiger));
 
 Oops! Looks like the cat lost its tail!
 
-Still, we think that's a nice demonstration of the capabilities of RAGs...
-And the beauty with which SciPy and NetworkX make it feasible.
+Still, we think that's a nice demonstration of the capabilities of 
+{abbr}`RAG`s... and the beauty with which SciPy and NetworkX make it feasible.
 Many of these functions are available in the scikit-image library. If you
 are interested in image analysis, look it up!
 
 ```{bibliography} references.bib
 ```
-
-[^alvyraysmith]: A Pixel Is Not A Little Square. Alvy Ray Smith, 1995, Technical
-                 Memo. http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf
-
-[coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
-
-[^file-url]: https://github.com/scikit-image/scikit-image/tree/master/skimage/io/util.py
-
-
-[^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
-
 
 <!-- -->
