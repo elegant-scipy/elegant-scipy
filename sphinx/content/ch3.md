@@ -843,7 +843,7 @@ processing and computer vision.
 
 ## Region adjacency graphs
 
-A Region Adjacency Graph (RAG) is a representation of an image that is useful
+A Region Adjacency Graph ({abbr}`RAG`) is a representation of an image that is useful
 for *segmentation*: the division of images into meaningful regions (or
 *segments*). If you've seen Terminator 2, you've seen segmentation:
 
@@ -938,7 +938,8 @@ io.imshow(color.label2rgb(seg, tiger));
 This shows that the body of the tiger has been split in three parts, with the
 rest of the image in the remaining segments.
 
-A region adjacency graph (RAG) is a graph in which every node represents one
+A {abbr}`RAG` is a graph in which every node represents one
+%TODO: "above regions" -> ref to specific figure
 of the above regions, and an edge connects two nodes when they touch. For a
 taste of what it looks like before we build one, we'll use the `show_rag` function
 from scikit-image — indeed, the library that contains this chapter's code snippet!
