@@ -847,7 +847,7 @@ A Region Adjacency Graph ({abbr}`RAG`) is a representation of an image that is u
 for *segmentation*: the division of images into meaningful regions (or
 *segments*). If you've seen Terminator 2, you've seen segmentation:
 
-![Terminator vision](../images/terminator-vision.png)
+![Terminator vision](../../images/terminator-vision.png)
 
 Segmentation is one of those problems that humans do trivially, all the time,
 without thinking, whereas computers have a hard time of it. To
