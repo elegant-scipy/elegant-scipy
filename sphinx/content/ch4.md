@@ -29,7 +29,7 @@ plt.style.use('style/elegant.mplstyle')
 import numpy as np
 ```
 
-The {abbr}`discrete Fourier transform (DFT)`[^discrete] is a mathematical technique
+The {abbr}`DFT (discrete Fourier transform)`[^discrete] is a mathematical technique
 to convert temporal or spatial data into *frequency domain* data.
 *Frequency* is a familiar concept, due to its colloquial occurrence in
 the English language: the lowest notes your headphones can rumble out
@@ -73,7 +73,7 @@ photo of a textile patterns exhibits high *spatial frequency*, whereas
 the sky or other smooth objects have low spatial frequency.
 
 Let us now examine our sinusoid in equation {math:numref}`eqn:simple_sin` 
-through application of the discrete Fourier transform:
+through application of the {abbr}`DFT`:
 
 ```python
 from scipy import fftpack
