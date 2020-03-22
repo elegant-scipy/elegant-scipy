@@ -10,7 +10,7 @@
 This chapter will depart slightly from the format of the rest of the
 book.  In particular, you may find the *code* in the chapter quite
 modest.  Instead, we want to illustrate an elegant *algorithm*, the
-Fast Fourier Transform (FFT), that is endlessly useful, implemented in
+{abbr}`Fast Fourier Transform (FFT)`, that is endlessly useful, implemented in
 SciPy, and works, of course, on NumPy arrays.
 
 ## Introducing frequency
