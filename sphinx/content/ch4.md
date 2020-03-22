@@ -29,7 +29,7 @@ plt.style.use('style/elegant.mplstyle')
 import numpy as np
 ```
 
-The discrete[^discrete] Fourier transform (DFT) is a mathematical technique
+The {abbr}`discrete Fourier transform (DFT)`[^discrete] is a mathematical technique
 to convert temporal or spatial data into *frequency domain* data.
 *Frequency* is a familiar concept, due to its colloquial occurrence in
 the English language: the lowest notes your headphones can rumble out
