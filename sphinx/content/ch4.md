@@ -38,7 +38,15 @@ Hertz.  Hertz (Hz), or oscillations per second, in this case literally
 refers to the number of times per second at which the membrane inside
 the headphone moves to-and-fro.  That, in turn, creates compressed
 pulses of air which, upon arrival at your eardrum, induces a vibration
-at the same frequency.  So, if you take a simple periodic function, $\sin(10 \times 2 \pi t)$, you can view it as a wave:
+at the same frequency. Let's set the stage for our discussion on frequency
+analysis by examining a simple periodic function:
+
+```{math}
+---
+label: eqn:simple_sin
+---
+\sin(10 \times 2 \pi t):
+```
 
 ```python
 f = 10  # Frequency, in cycles per second, or Hertz
@@ -57,15 +65,15 @@ ax.set_ylabel('Signal amplitude');
 % TODO: Change to multiline when supported
 [^discrete]: The discrete Fourier transform operates on sampled data, in contrast to the standard Fourier transform which is defined for continuous functions.
 
-Or you can equivalently think of it as a repeating signal of
-*frequency* 10 Hertz (it repeats once every $1/10$ seconds—a length of
+Our wave in equation {math:numref}`eqn:simple_sin` can be thought of as a repeating signal of
+*frequency* 10 Hertz (it repeats once every $\frac{1}{10}$ seconds—a length of
 time we call its *period*).  Although we naturally associate frequency
 with time, it can equally well be applied to space.  E.g., a
 photo of a textile patterns exhibits high *spatial frequency*, whereas
 the sky or other smooth objects have low spatial frequency.
 
-Let us now examine our sinusoid through application of the discrete Fourier
-transform:
+Let us now examine our sinusoid in equation {math:numref}`eqn:simple_sin` 
+through application of the discrete Fourier transform:
 
 ```python
 from scipy import fftpack
