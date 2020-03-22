@@ -678,9 +678,11 @@ about.
 [^synapses]: *Synapses* are the chemical connections through which neurons communicate.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
-database at <http://www.wormatlas.org/neuronalwiring.html#Connectivitydata>.
+database [here][conndata].
 The `pandas` library allows one to read an Excel table over the web, so we will
 use it here to read in the data, then feed that into NetworkX.
+
+[conndata]: http://www.wormatlas.org/neuronalwiring.html#Connectivitydata
 
 ```python
 import pandas as pd
@@ -690,10 +692,11 @@ conn = pd.read_excel(connectome_url)
 
 `conn` now contains a pandas DataFrame, with rows of the form:
 
+% TODO: pandas output table
 [Neuron1, Neuron2, connection type, strength]
 
 We are only going to examine the connectome of chemical synapses, so we filter
-out other synapse types as follows:
+out other synapse types[^conntypes] as follows:
 
 ```python
 conn_edges = [(n1, n2, {'weight': s})
@@ -701,7 +704,7 @@ conn_edges = [(n1, n2, {'weight': s})
               if t.startswith('S')]
 ```
 
-(Look at the WormAtlas page for a description of the different connection types.)
+[^conntypes]: See the [WormAtlas page][conndata] for a description of the different connection types
 
 We use `weight` in a dictionary above because it is a special keyword for
 edge properties in NetworkX. We then build the graph using NetworkX's
