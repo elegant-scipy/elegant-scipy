@@ -977,7 +977,13 @@ the tiger out of that picture!
 The obvious approach is to use two nested for-loops to iterate over every pixel
 of the image, look at the neighboring pixels, and checking for different labels:
 
-```python
+```{code-block} python
+---
+caption: |
+    A naïve implementation of the `build_rag` function based on looping over
+    the entire image and manually comparing neighboring pixels.
+name: code:naive_rag
+---
 import networkx as nx
 def build_rag(labels, image):
     g = nx.Graph()
@@ -998,10 +1004,17 @@ def build_rag(labels, image):
     return g
 ```
 
-Whew! This works, but if you want to segment a 3D image, you'll have to write a
-different version:
+Whew! The code in {numref}`code:naive_rag` will work, but if you want to segment
+a 3D image, you'll have to write a different version:
 
-```python
+```{code-block} python
+---
+caption: |
+    As defined in {numref}`code:naive_rag`, `build_rag` does not *generalize*.
+    A whole new function has to be defined to apply the same approach to
+    3D images.
+name: code:naive_rag_3d
+---
 import networkx as nx
 def build_rag_3d(labels, image):
     g = nx.Graph()
@@ -1025,9 +1038,10 @@ def build_rag_3d(labels, image):
     return g
 ```
 
-Both of these are pretty ugly and unwieldy, too. And difficult to extend:
+Not only are {numref}`code:naive_rag` and {numref}`code:naive_rag_3d` 
+ugly and difficult to understand, they are also difficult to extend:
 if we want to count diagonally neighboring pixels as adjacent (that is,
-[row, col] is "adjacent to" [row + 1, col + 1]), the code becomes even
+`[row, col]` is "adjacent to" `[row + 1, col + 1]`), the code becomes even
 messier. And if we want to analyze 3D video, we need yet another
 dimension, and another level of nesting. It's a mess!
 
