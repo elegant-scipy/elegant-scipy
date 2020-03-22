@@ -128,7 +128,7 @@ http://sgerasimuk.blogspot.com/2014/06/numark-eq-2600-10-band-stereo-graphic.htm
 [birdsong]: ../../images/sergey_gerasimuk_numark-eq-2600-IMG_0236.JPG
 
 Listen to the following snippet of nightingale birdsong (released under CC BY 4.0 at
-http://www.orangefreesounds.com/nightingale-sound/):
+<http://www.orangefreesounds.com/nightingale-sound/>):
 
 ```python
 from IPython.display import Audio
