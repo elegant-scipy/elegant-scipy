@@ -968,10 +968,10 @@ graph along those edges, we will get our segmentation. We have chosen an easy
 example for color-based segmentation, but the same principles hold true for
 graphs with more complicated pairwise relationships.
 
-## Elegant ndimage: how to build graphs from image regions
+## Elegant `ndimage`: how to build graphs from image regions
 
 All the pieces are in place: you know about numpy arrays, image filtering,
-generic filters, graphs, and region adjacency graphs. Let's build one to pluck
+generic filters, graphs, and {abbr}`RAG`s. Let's build one to pluck
 the tiger out of that picture!
 
 The obvious approach is to use two nested for-loops to iterate over every pixel
