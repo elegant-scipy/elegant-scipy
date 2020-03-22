@@ -97,10 +97,13 @@ zero, except for two entries.  Traditionally, we visualize the
 magnitude of the result as a *stem plot*, in which the height of each
 stem corresponds to the underlying value.
 
-(We explain why you see positive and negative frequencies later on
+%TODO: Forward reference to other sidebox
+```{tip}
+We explain why you see positive and negative frequencies later on
 in the sidebox titled "Discrete Fourier transforms".  You may also
 refer to that section for a more in-depth overview of the underlying
-mathematics.)
+mathematics.
+```
 
 The Fourier transform takes us from the *time* to the *frequency*
 domain, and this turns out to have a massive number of applications.
