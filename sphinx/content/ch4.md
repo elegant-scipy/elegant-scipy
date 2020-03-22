@@ -54,9 +54,8 @@ ax.set_ylabel('Signal amplitude');
 ```
 <!-- caption text="A simple periodic function in time" -->
 
-[^discrete]: The discrete Fourier transform operates on sampled data,
-             in contrast to the standard Fourier transform which is
-             defined for continuous functions.
+% TODO: Change to multiline when supported
+[^discrete]: The discrete Fourier transform operates on sampled data, in contrast to the standard Fourier transform which is defined for continuous functions.
 
 Or you can equivalently think of it as a repeating signal of
 *frequency* 10 Hertz (it repeats once every $1/10$ seconds—a length of
