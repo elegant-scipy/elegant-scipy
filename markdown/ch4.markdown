@@ -1036,7 +1036,7 @@ v_sim = np.sum(M * signals, axis=1)
 
 ```
 
-Above, we generate a synthetic signal, $v_{single}$, received when
+Above, we generate a synthetic signal, $v_\mathrm{single}$, received when
 looking at a single target (see figure below).  By counting the number
 of cycles seen in a given time period, we can compute the frequency of
 the signal and thus the distance to the target.
