@@ -1028,10 +1028,20 @@ $$ t_R = 2R / v $$
 
 Therefore, the change in frequency for a target at range $R$ will be:
 
-$$ f_{d}= t_R S = \frac{2RS}{v}$$
+```{math}
+---
+label: eqn:fdiff
+---
+f_{d}= t_R S = \frac{2RS}{v}
+```
 
-
-```python
+```{code-block} python
+---
+name: code:fmcw_simdata
+caption: |
+    Use equation {math:numref}`eqn:fdiff` to generate simulated radar 
+    return signals from objects at various distances.
+---
 pi = np.pi
 
 # Radar parameters
