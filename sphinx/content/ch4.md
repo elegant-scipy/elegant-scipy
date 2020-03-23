@@ -488,6 +488,7 @@ another real-world problem: analyzing target detection in radar data.
 ### Frequencies and their ordering
 
 For historical reasons, most implementations return an array where
+% TODO: links to callouts here
 frequencies vary from low-to-high-to-low (see the box "Discrete
 Fourier transforms" for further explanation of frequencies).  E.g., when we do the real
 Fourier transform of a signal of all ones, an input that has no
