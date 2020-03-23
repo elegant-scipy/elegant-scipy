@@ -237,7 +237,7 @@ slices = util.view_as_windows(audio, window_shape=(M,), step=100)
 print(f'Audio shape: {audio.shape}, Sliced audio shape: {slices.shape}')
 ```
 
-Generate a windowing function (see the section on windowing for a
+Generate a windowing function (see {ref}`the section on windowing <sec:windowing>` for a
 discussion of the underlying assumptions and interpretations of each)
 and multiply it with the signal:
 
@@ -708,6 +708,7 @@ ax1.set_title('Reconstructed image');
 ```
 <!-- caption text="Filtered moon landing image and its spectrum" -->
 
+(sec:windowing)=
 ### Windowing
 
 If we examine the Fourier transform of a rectangular pulse, we see
