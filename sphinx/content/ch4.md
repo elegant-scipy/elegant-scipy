@@ -726,7 +726,11 @@ ax1.set_title('Reconstructed image');
 If we examine the Fourier transform of a rectangular pulse, we see
 significant sidelobes in the spectrum:
 
-```python
+```{code-block} python
+---
+name: code:rectpulse
+caption: FFT of a rectangular pulse.
+---
 x = np.zeros(500)
 x[100:150] = 1
 
@@ -836,6 +840,7 @@ lobes ($\beta$ typically between 5 and 10) [^choosing_a_window].
 Applying the Kaiser window here, we see that the sidelobes have been
 drastically reduced, at the cost of a slight widening in the main lobe.
 
+% TODO: Opportunity to test interactivity features
 <!--
 *For online notebook, use something like:*
 
@@ -851,7 +856,8 @@ drastically reduced, at the cost of a slight widening in the main lobe.
 ```
 -->
 
-The effect of windowing our previous example is noticeable:
+The effect of windowing {ref}`our rectangular pulse example <code:rectpulse>`
+is noticeable:
 
 ```python
 win = np.kaiser(len(t), 5)
