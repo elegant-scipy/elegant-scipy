@@ -1097,6 +1097,7 @@ v_sim = np.sum(M * signals, axis=1)
 ```
 
 In {numref}`code:fmcw_simdata`, we generate a synthetic signal, $v_{single}$, received when
+% TODO: explicit fig xref
 looking at a single target (see figure below).  By counting the number
 of cycles seen in a given time period, we can compute the frequency of
 the signal and thus the distance to the target.
@@ -1125,7 +1126,7 @@ m.
 -->
 
 ![Receiver output signals: (a) single simulated target
- (b) five simulated targets (c) actual radar data](../figures/generated/radar_time_signals.png)
+ (b) five simulated targets (c) actual radar data](../../figures/generated/radar_time_signals.png)
 
 The real world radar data is read from a NumPy-format ``.npz`` file (a
 light-weight, cross platform and cross-version compatible storage
