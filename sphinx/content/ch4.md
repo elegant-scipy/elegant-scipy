@@ -362,7 +362,9 @@ following DFT-related functionality:
    the Fast Fourier Transform algorithm in 1, 2, or `n` dimensions.
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
- - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the spectrum and back, respectively (more about that soon).
+ - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the
+   center of the spectrum and back, respectively (more about that 
+   {ref}`soon <sec:freq_and_order>`).
  - ``fftfreq``: Return the discrete Fourier transform sample frequencies.
  - ``rfft``: Compute the DFT of a real sequence, exploiting the symmetry of the resulting spectrum for increased performance.  Also used by ``fft`` internally when applicable.
 
