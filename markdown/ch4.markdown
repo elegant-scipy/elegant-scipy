@@ -525,12 +525,12 @@ the `fftshift` function.
 > **Discrete Fourier transforms {.callout}**
 >
 > The Discrete Fourier Transform (DFT) converts a sequence of $N$
-> equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
+> equally spaced real or complex samples $x_{0},x_{1},\ldots, x_{N-1}$ of
 > a function $x(t)$ of time (or another variable, depending on the
 > application) into a sequence of $N$ complex numbers $X_{k}$ by the
 > summation
 >
-> $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
+> $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots,
 > N-1.$$
 >
 > With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
