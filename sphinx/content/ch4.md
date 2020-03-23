@@ -583,10 +583,9 @@ half of the sampling frequency (the so-called *Nyquist frequency*),
 interpolation between sample values produced by the inverse DFT will
 usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
 limited as such, the inverse DFT can, in general, not be used to
-reconstruct $x(t)$ by interpolation.  Note that this limit does not
-imply that there are *no* methods that can do such a
-reconstruction—see, e.g., compressed sensing, or finite rate of
-innovation sampling.
+reconstruct $x(t)$ by interpolation[^nyqvist].
+
+[^nyqvist]: Note that this limit does not imply that there are *no* methods that can do such a reconstruction—see, e.g., compressed sensing, or finite rate of innovation sampling.
 
 The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
 discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in
