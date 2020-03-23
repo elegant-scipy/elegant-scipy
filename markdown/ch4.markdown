@@ -545,7 +545,7 @@ the `fftshift` function.
 >
 > $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},$$
 >
-> the DFT is a *finite *series with $N$ terms defined at the equally
+> the DFT is a *finite* series with $N$ terms defined at the equally
 > spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
 > in the interval $[0,2\pi)$,
 > i.e. *including* $0$  and *excluding* $2\pi$.
