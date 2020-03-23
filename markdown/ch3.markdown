@@ -1168,7 +1168,7 @@ are interested in image analysis, look it up!
 
 [^nxdoc]: http://networkx.github.io/documentation/latest/reference/index.html
 
-[^bwcdoc]: https://networkx.github.io/documentation/latest/reference/algorithms/generated/networkx.algorithms.centrality.betweenness_centrality.html#networkx.algorithms.centrality.betweenness_centrality
+[^bwcdoc]: https://networkx.github.io/documentation/latest/reference/algorithms/generated/networkx.algorithms.centrality.betweenness_centrality.html
 
 [^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
 
