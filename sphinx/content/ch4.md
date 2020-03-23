@@ -877,7 +877,8 @@ provide examples of various applications of the FFT. We will use actual
 data from an {abbr}`FMCW` radar to demonstrate one such an application: target
 detection.
 
-Roughly, an FMCW radar works like this (see box "A
+% TODO: Link to FMCW callout
+Roughly, an {abbr}`FMCW` radar works like this (see box "A
 simple FMCW radar system" for more detail):
 
 A signal with changing frequency is generated.  This signal is
@@ -891,10 +892,10 @@ those numbers to form meaningful results.
 The multiplication step above is important.  From school, recall the
 trigonometric identity:
 
-$
+$$
 \sin(xt) \sin(yt) = \frac{1}{2}
 \left[ \sin \left( (x - y)t + \frac{\pi}{2} \right) - \sin \left( (x + y)t + \frac{\pi}{2} \right) \right]
-$
+$$
 
 Thus, if we multiply the received signal by the transmitted signal, we
 expect two frequency components to appear in the spectrum: one that is
