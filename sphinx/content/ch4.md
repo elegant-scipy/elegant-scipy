@@ -908,33 +908,34 @@ indication of how long it took the signal to reflect back to the radar
 other by applying a low-pass filter to the signal (i.e., a filter that
 discards any high frequencies).
 
-> **A simple FMCW radar system** {.callout}
->
-> ![The block diagram of a simple FMCW radar system](../figures/FMCW_Block.png)
->
-> A block diagram of a simple FMCW radar that uses separate
-> transmit and receive antennas is shown above. The radar consists of a waveform generator
-> that generates a sinusoidal signal of which the frequency varies
-> linearly around the required transmit frequency. The generated signal
-> is amplified to the required power level by the transmit amplifier
-> and routed to the transmit antenna via a coupler circuit where a copy
-> of the transmit signal is tapped off. The transmit antenna radiates
-> the transmit signal as an electromagnetic wave in a narrow beam
-> towards the target to be detected. When the wave encounters an object
-> that reflects electromagnetic waves, a fraction of of the energy
-> irradiating the target is reflected back to the receiver as a second
-> electromagnetic wave that propagates in the direction of the radar
-> system. When this wave encounters the receive antenna, the antenna
-> collects the energy in the wave energy impinging on it and converts
-> it to a fluctuating voltage that is fed to the mixer. The mixer
-> multiplies the received signal with a replica of the transmit signal
-> and produces a sinusoidal signal with a frequency equal to the
-> difference in frequency between the transmitted and received
-> signals. The low-pass filter ensures that the received signal is band
-> limited (i.e., does not contain frequencies that we don't care about)
-> and the receive amplifier strengthens the signal to a suitable
-> amplitude for the analog to digital converter (ADC) that feeds data
-> to the computer.
+```{admonition} **A simple FMCW radar system**
+
+![The block diagram of a simple FMCW radar system](../../figures/FMCW_Block.png)
+
+A block diagram of a simple FMCW radar that uses separate
+transmit and receive antennas is shown above. The radar consists of a waveform generator
+that generates a sinusoidal signal of which the frequency varies
+linearly around the required transmit frequency. The generated signal
+is amplified to the required power level by the transmit amplifier
+and routed to the transmit antenna via a coupler circuit where a copy
+of the transmit signal is tapped off. The transmit antenna radiates
+the transmit signal as an electromagnetic wave in a narrow beam
+towards the target to be detected. When the wave encounters an object
+that reflects electromagnetic waves, a fraction of of the energy
+irradiating the target is reflected back to the receiver as a second
+electromagnetic wave that propagates in the direction of the radar
+system. When this wave encounters the receive antenna, the antenna
+collects the energy in the wave energy impinging on it and converts
+it to a fluctuating voltage that is fed to the mixer. The mixer
+multiplies the received signal with a replica of the transmit signal
+and produces a sinusoidal signal with a frequency equal to the
+difference in frequency between the transmitted and received
+signals. The low-pass filter ensures that the received signal is band
+limited (i.e., does not contain frequencies that we don't care about)
+and the receive amplifier strengthens the signal to a suitable
+amplitude for the analog to digital converter (ADC) that feeds data
+to the computer.
+```
 
 To summarize, we should note that:
 
