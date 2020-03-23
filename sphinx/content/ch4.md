@@ -786,7 +786,13 @@ original function is multiplied with a window function such as the
 Kaiser window $K(N,\beta)$.  Here we visualize it for $\beta$ ranging
 from 0 to 100:
 
-```python
+```{code-block} python
+---
+name: code:kaiser
+caption: |
+    Visualization of the Kaiser windowing function for different values of
+    $\beta$
+---
 f, ax = plt.subplots()
 
 N = 10
@@ -824,7 +830,7 @@ lobes ($\beta$ typically between 5 and 10) [^choosing_a_window].
                       prolate spheroid window, which concentrates the
                       most energy into the main lobe.  The Kaiser
                       window can be tuned to suit the particular
-                      application, as illustrated in the main text, by
+                      application, as illustrated in {numref}`code:kaiser`, by
                       adjusting the parameter $\beta$.
 
 Applying the Kaiser window here, we see that the sidelobes have been
