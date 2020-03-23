@@ -196,6 +196,7 @@ turns it into a spectrum—a set of frequencies with corresponding
 (complex[^complex]) values.  The spectrum does not contain any information about
 time! [^time]
 
+% TODO: Need multi-line footnote support for this
 [^complex]: The Fourier transform essentially tells us how to combine
             a set of sinusoids of varying frequency to form the input
             signal.  The spectrum consists of complex numbers—one for
@@ -211,7 +212,7 @@ time! [^time]
 So, to find both the frequencies and the time at which they were sung,
 we'll need to be somewhat clever.  Our strategy is as follows:
 take the audio signal, split it into small, overlapping slices, and
-apply the Fourier transform to each (a technique known as the Short
+apply the {abbr}`FFT` to each (a technique known as the Short
 Time Fourier Transform).
 
 We'll split the signal into slices of 1024 samples—that's about 0.02
