@@ -917,8 +917,8 @@ name: fig:fmcw_block
 The block diagram of a simple {abbr}`FMCW` radar system
 ```
 
-A block diagram of a simple FMCW radar that uses separate
-transmit and receive antennas is shown above. The radar consists of a waveform generator
+A block diagram of a simple {abbr}`FMCW` radar that uses separate
+transmit and receive antennas. The radar consists of a waveform generator
 that generates a sinusoidal signal of which the frequency varies
 linearly around the required transmit frequency. The generated signal
 is amplified to the required power level by the transmit amplifier
