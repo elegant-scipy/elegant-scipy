@@ -374,7 +374,7 @@ This is complemented by the following functions in NumPy:
    ``np.kaiser``: Tapered windowing functions.
 
 It is also used to perform fast convolutions of large inputs by
-``scipy.signal.fftconvolve`.
+`scipy.signal.fftconvolve`.
 
 SciPy wraps the Fortran FFTPACK library—it is not the fastest out
 there, but unlike packages such as FFTW, it has a permissive free
