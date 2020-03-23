@@ -263,10 +263,12 @@ spectrum = np.fft.fft(slices, axis=0)[:M // 2 + 1:-1]
 spectrum = np.abs(spectrum)
 ```
 
-(As a quick aside, you'll note that we use `scipy.fftpack.fft` and
+```{note}
+As a quick aside, you'll note that we use `scipy.fftpack.fft` and
 `np.fft` interchangeably.  NumPy provides basic FFT functionality,
 which SciPy extends further, but both include an `fft` function, based
-on the Fortran FFTPACK.)
+on the Fortran FFTPACK.
+```
 
 The spectrum can contain both very large and very small values.
 Taking the log compresses the range significantly.
