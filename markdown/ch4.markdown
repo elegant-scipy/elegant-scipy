@@ -468,8 +468,8 @@ Fourier transforms" for further explanation of frequencies).  E.g., when we do t
 Fourier transform of a signal of all ones, an input that has no
 variation and therefore only has the slowest, constant Fourier
 component (also known as the "DC" or Direct Current component—just
-electronics jargon for "mean of the signal"), appearing as the first
-entry:
+electronics jargon for "mean of the signal"), we see this DC component 
+appearing as the first entry:
 
 ```python
 from scipy import fftpack
