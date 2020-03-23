@@ -382,6 +382,7 @@ software license.
 
 ## Choosing the length of the discrete Fourier transform (DFT)
 
+% TODO: Ensure that footnote keys can have underscores in them
 A naive calculation of the DFT takes $\mathcal{O}\left(N^2\right)$ operations [^big_O].
 How come?  Well, you have $N$
 (complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
