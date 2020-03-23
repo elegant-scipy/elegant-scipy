@@ -675,12 +675,14 @@ ax.set_title('Spectrum magnitude');
 ```
 <!-- caption text="Spectrum of the noisy moon landing image (magnitude)" -->
 
+%TODO: Add figure ref
 Note the high values around the origin (middle) of the spectrum—these
 coefficients describe the low frequencies or smooth parts of the
 image; a vague canvas of the photo.  Higher frequency components,
 spread throughout the spectrum, fill in the edges and detail.  Peaks
 around higher frequencies correspond to the periodic noise.
 
+% TODO: Add figure ref
 From the photo, we can see that the noise (measurement artifacts) is
 highly periodic, so we hope to remove it by zeroing out the
 corresponding parts of the spectrum.
@@ -742,9 +744,10 @@ ax1.set_ylim(-5, 55);
 
 In theory, you would need a combination of infinitely many sinusoids
 (frequencies) to represent any abrupt transition; the coefficients would
+% TODO: explicit figure ref
 typically have the same sidelobe structure as seen here for the pulse.
 
-Importantly, the discrete Fourier transform assumes that the input
+Importantly, the {abbr}`DFT` assumes that the input
 signal is periodic.  If the signal is not, the assumption is simply
 that, right at the end of the signal, it jumps back to its beginning
 value.  Consider the function, $x(t)$, shown here:
