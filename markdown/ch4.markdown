@@ -365,7 +365,7 @@ How come?  Well, you have $N$
 1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
 strongly your signal corresponds to each.  Starting with the first,
 you take the dot product with the signal (which, in itself, entails $N$
-multiplication operations).  Repeating this operation$N$times, once
+multiplication operations).  Repeating this operation $N$ times, once
 for each sinusoid, then gives $N^2$ operations.
 
 [^big_O]: In computer science, the computational cost of an algorithm
