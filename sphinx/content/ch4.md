@@ -319,6 +319,7 @@ The only differences are that SciPy returns the spectrum magnitude
 squared (which turns measured voltage into measured energy), and
 multiplies it by some normalization factors[^scaling].
 
+%TODO: Again, multiline footnotes
 [^scaling]: SciPy goes to some effort to preserve the energy in the
             spectrum.  Therefore, when taking only half the components
             (for N even), it multiplies the remaining components,
@@ -341,6 +342,7 @@ Fourier, after whom the transform is named, first claimed that
 *arbitrary* periodic [^periodic] functions can be expressed as a sum of
 trigonometric functions.
 
+%TODO: ML footnote
 [^periodic]: The period can, in fact, also be infinite!  The general
              continuous Fourier transform provides for this
              possibility.  Discrete Fourier transforms are generally
