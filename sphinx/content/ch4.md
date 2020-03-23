@@ -218,9 +218,11 @@ Time Fourier Transform).
 We'll split the signal into slices of 1024 samples—that's about 0.02
 seconds of audio.  Why we choose 1024 and not 1000 we'll explain in a
 second when we examine performance.  The slices will overlap by 100
+% TODO: Replace 'here' with reflink
 samples as shown here:
 
-![A sliding window operation](../figures/generated/sliding_window.png)
+% TODO: Make md-style plots caption/linkable
+![A sliding window operation](../../figures/generated/sliding_window.png)
 
 Start by chopping up the signal into slices of 1024 samples, each
 slice overlapping the previous by 100 samples.  The resulting `slices`
@@ -235,7 +237,7 @@ slices = util.view_as_windows(audio, window_shape=(M,), step=100)
 print(f'Audio shape: {audio.shape}, Sliced audio shape: {slices.shape}')
 ```
 
-Generate a windowing function (see the section on windowing for a
+Generate a windowing function (see {ref}`the section on windowing <sec:windowing>` for a
 discussion of the underlying assumptions and interpretations of each)
 and multiply it with the signal:
 
@@ -251,9 +253,9 @@ slices = slices.T
 print('Shape of `slices`:', slices.shape)
 ```
 
-For each slice, calculate the discrete Fourier transform.  The DFT
+For each slice, calculate the discrete Fourier transform.  The {abbr}`DFT`
 returns both positive and negative frequencies (more on that in
-"Frequencies and their ordering"), so we slice out the positive M / 2
+{ref}`sec:freq_and_order`), so we slice out the positive `M / 2`
 frequencies for now.
 
 ```python
@@ -261,10 +263,12 @@ spectrum = np.fft.fft(slices, axis=0)[:M // 2 + 1:-1]
 spectrum = np.abs(spectrum)
 ```
 
-(As a quick aside, you'll note that we use `scipy.fftpack.fft` and
+```{note}
+As a quick aside, you'll note that we use `scipy.fftpack.fft` and
 `np.fft` interchangeably.  NumPy provides basic FFT functionality,
 which SciPy extends further, but both include an `fft` function, based
-on the Fortran FFTPACK.)
+on the Fortran FFTPACK.
+```
 
 The spectrum can contain both very large and very small values.
 Taking the log compresses the range significantly.
@@ -315,6 +319,7 @@ The only differences are that SciPy returns the spectrum magnitude
 squared (which turns measured voltage into measured energy), and
 multiplies it by some normalization factors[^scaling].
 
+%TODO: Again, multiline footnotes
 [^scaling]: SciPy goes to some effort to preserve the energy in the
             spectrum.  Therefore, when taking only half the components
             (for N even), it multiplies the remaining components,
@@ -337,6 +342,7 @@ Fourier, after whom the transform is named, first claimed that
 *arbitrary* periodic [^periodic] functions can be expressed as a sum of
 trigonometric functions.
 
+%TODO: ML footnote
 [^periodic]: The period can, in fact, also be infinite!  The general
              continuous Fourier transform provides for this
              possibility.  Discrete Fourier transforms are generally
@@ -356,7 +362,9 @@ following DFT-related functionality:
    the Fast Fourier Transform algorithm in 1, 2, or `n` dimensions.
  - ``ifft``, ``ifft2``, ``ifftn``: Compute the inverse of the DFT
  - ``dct``, ``idct``, ``dst``, ``idst``: Compute the cosine and sine transforms, and their inverses.
- - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the center of the spectrum and back, respectively (more about that soon).
+ - ``fftshift``, ``ifftshift``: Shift the zero-frequency component to the
+   center of the spectrum and back, respectively (more about that 
+   {ref}`soon <sec:freq_and_order>`).
  - ``fftfreq``: Return the discrete Fourier transform sample frequencies.
  - ``rfft``: Compute the DFT of a real sequence, exploiting the symmetry of the resulting spectrum for increased performance.  Also used by ``fft`` internally when applicable.
 
@@ -475,6 +483,7 @@ Next, we present a couple of common concepts worth knowing before
 operating heavy Fourier transform machinery, whereafter we tackle
 another real-world problem: analyzing target detection in radar data.
 
+(sec:freq_and_order)=
 ### Frequencies and their ordering
 
 For historical reasons, most implementations return an array where
@@ -706,6 +715,7 @@ ax1.set_title('Reconstructed image');
 ```
 <!-- caption text="Filtered moon landing image and its spectrum" -->
 
+(sec:windowing)=
 ### Windowing
 
 If we examine the Fourier transform of a rectangular pulse, we see
