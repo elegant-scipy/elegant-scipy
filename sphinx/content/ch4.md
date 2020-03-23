@@ -255,7 +255,7 @@ print('Shape of `slices`:', slices.shape)
 
 For each slice, calculate the discrete Fourier transform.  The {abbr}`DFT`
 returns both positive and negative frequencies (more on that in
-"Frequencies and their ordering"), so we slice out the positive M / 2
+{ref}`sec:freq_and_order`), so we slice out the positive `M / 2`
 frequencies for now.
 
 ```python
@@ -477,6 +477,7 @@ Next, we present a couple of common concepts worth knowing before
 operating heavy Fourier transform machinery, whereafter we tackle
 another real-world problem: analyzing target detection in radar data.
 
+(sec:freq_and_order)=
 ### Frequencies and their ordering
 
 For historical reasons, most implementations return an array where
