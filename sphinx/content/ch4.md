@@ -1008,7 +1008,7 @@ proportional to the range to the target.
 -->
 
 ![The frequency relationships in an FMCW radar with
- linear frequency modulation](../figures/FMCW_waveform.png)
+ linear frequency modulation](../../figures/FMCW_waveform.png)
 
 To start off, we'll generate some synthetic signals, after which we'll
 turn our focus to the output of an actual radar.
