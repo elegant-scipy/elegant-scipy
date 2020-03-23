@@ -594,7 +594,7 @@ origin $n\frac{N-1}{N}$ times, thus generating harmonics of the fundamental
 sinusoid for which $n=1$.
 
 The way in which we defined the DFT leads to a few subtleties
-when $n>\frac{N}{2}$, for even $N$ [^odd_N]. The function $e^{j2\pi kn/N}$ is plotted
+when $n>\frac{N}{2}$, for even $N$[^oddN]. The function $e^{j2\pi kn/N}$ is plotted
 for increasing values of $k$ in the figure below,
 for the cases $n=1$ to $n=N-1$ for $N=16$. When $k$ increases from $k$
 to $k+1$, the angle increases by $\frac{2\pi n}{N}$. When $n=1$,
@@ -623,7 +623,7 @@ year $2000$.
 ![Unit circle samples](../figures/unit_circle_samples.png)
 ```
 
-[^odd_N]: We leave it as an exercise for the reader to picture the
+[^oddN]:  We leave it as an exercise for the reader to picture the
           situation for $N$ odd.  In this chapter, all examples use
           even-order DFTs.
 
