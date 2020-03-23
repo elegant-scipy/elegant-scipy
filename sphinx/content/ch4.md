@@ -870,10 +870,11 @@ plt.ylim(0, 190);
 
 ## Real-world Application: Analyzing Radar Data
 
-Linearly modulated FMCW (Frequency-Modulated Continuous-Wave) radars
+Linearly modulated Frequency-Modulated Continuous-Wave 
+({abbr}`FMCW (Frequency-Modulated Continuous-Wave)`) radars
 make extensive use of the FFT algorithm for signal processing and
 provide examples of various applications of the FFT. We will use actual
-data from an FMCW radar to demonstrate one such an application: target
+data from an {abbr}`FMCW` radar to demonstrate one such an application: target
 detection.
 
 Roughly, an FMCW radar works like this (see box "A
