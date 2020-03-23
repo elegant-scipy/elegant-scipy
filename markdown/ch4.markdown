@@ -386,7 +386,7 @@ calculations—a great improvement!  However, the classical Cooley-Tukey
 algorithm implemented in FFTPACK (and used by SciPy) recursively breaks up the transform
 into smaller (prime-sized) pieces and only shows this improvement for
 "smooth" input lengths (an input length is considered smooth when its
-largest prime factor is small).  For large prime sized pieces, the
+largest prime factor is small).  For large-prime-sized pieces, the
 Bluestein or Rader algorithms can be used in conjunction with the
 Cooley-Tukey algorithm, but this optimization is not implemented in
 FFTPACK.[^fast]
