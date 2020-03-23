@@ -750,13 +750,12 @@ typically have the same sidelobe structure as seen here for the pulse.
 Importantly, the {abbr}`DFT` assumes that the input
 signal is periodic.  If the signal is not, the assumption is simply
 that, right at the end of the signal, it jumps back to its beginning
+%TODO: explicit figure ref
 value.  Consider the function, $x(t)$, shown here:
 
-<img src="../figures/periodic.png"/>
-<!-- caption text="Eight samples have been taken of a given
- function with effective length $T_{eff}$.  With the discrete Fourier
- transform assuming periodicity, it creates a step discontinuity
- between the first and last samples." -->
+![Eight samples have been taken of a given function with the effective length
+$T_{eff}$. With the {abbr}`DFT` assuming periodicity, it creates a step
+discontinuity between the first and last samples](../../figures/periodic.png)
 
 We only measure the signal for a short time, labeled $T_{eff}$.  The
 Fourier transform assumes that $x(8) = x(0)$, and that the signal is
