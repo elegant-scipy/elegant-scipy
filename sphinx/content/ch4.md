@@ -1108,8 +1108,7 @@ like with five targets at different ranges (including two close to one
 another at 154 and 159 meters), and $v_\mathrm{actual}(t)$ shows the
 output signal obtained with an actual radar.  When multiple echoes add
 together, the result makes little intuitive sense; until, that is, we
-look at it more carefully through the lens of the discrete Fourier
-transform.
+look at it more carefully through the lens of the {abbr}`DFT`.
 
 <!--
 A synthetic radar signal is shown as $v_{1}(t)$ in Fig. [fig:radar time signals]
