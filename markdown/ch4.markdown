@@ -1067,8 +1067,8 @@ m.
 ![Receiver output signals: (a) single simulated target
  (b) five simulated targets (c) actual radar data](../figures/generated/radar_time_signals.png)
 
-The real world radar data is read from a NumPy-format ``.npz`` file (a
-light-weight, cross platform and cross-version compatible storage
+The real-world radar data is read from a NumPy-format ``.npz`` file (a
+light-weight, cross-platform and cross-version compatible storage
 format).  These files can be saved with the ``np.savez`` or
 ``np.savez_compressed`` functions.  Note that SciPy's ``io`` submodule
 can also easily read other formats, such as MATLAB(R) and NetCDF
