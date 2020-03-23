@@ -879,7 +879,7 @@ detection.
 
 % TODO: Link to FMCW callout
 Roughly, an {abbr}`FMCW` radar works like this (see box "A
-simple FMCW radar system" for more detail):
+simple FMCW radar system" and {numref}`fig:fmcw_block` for more detail):
 
 A signal with changing frequency is generated.  This signal is
 transmitted by an antenna, after which it travels outwards, away from the
@@ -908,9 +908,14 @@ indication of how long it took the signal to reflect back to the radar
 other by applying a low-pass filter to the signal (i.e., a filter that
 discards any high frequencies).
 
-```{admonition} **A simple FMCW radar system**
+````{admonition} **A simple FMCW radar system**
 
-![The block diagram of a simple FMCW radar system](../../figures/FMCW_Block.png)
+```{figure} ../../figures/FMCW_Block.png
+---
+name: fig:fmcw_block
+---
+The block diagram of a simple {abbr}`FMCW` radar system
+```
 
 A block diagram of a simple FMCW radar that uses separate
 transmit and receive antennas is shown above. The radar consists of a waveform generator
@@ -935,7 +940,7 @@ limited (i.e., does not contain frequencies that we don't care about)
 and the receive amplifier strengthens the signal to a suitable
 amplitude for the analog to digital converter (ADC) that feeds data
 to the computer.
-```
+````
 
 To summarize, we should note that:
 
