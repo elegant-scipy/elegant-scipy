@@ -253,7 +253,7 @@ slices = slices.T
 print('Shape of `slices`:', slices.shape)
 ```
 
-For each slice, calculate the discrete Fourier transform.  The DFT
+For each slice, calculate the discrete Fourier transform.  The {abbr}`DFT`
 returns both positive and negative frequencies (more on that in
 "Frequencies and their ordering"), so we slice out the positive M / 2
 frequencies for now.
