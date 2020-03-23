@@ -218,9 +218,11 @@ Time Fourier Transform).
 We'll split the signal into slices of 1024 samples—that's about 0.02
 seconds of audio.  Why we choose 1024 and not 1000 we'll explain in a
 second when we examine performance.  The slices will overlap by 100
+% TODO: Replace 'here' with reflink
 samples as shown here:
 
-![A sliding window operation](../figures/generated/sliding_window.png)
+% TODO: Make md-style plots caption/linkable
+![A sliding window operation](../../figures/generated/sliding_window.png)
 
 Start by chopping up the signal into slices of 1024 samples, each
 slice overlapping the previous by 100 samples.  The resulting `slices`
