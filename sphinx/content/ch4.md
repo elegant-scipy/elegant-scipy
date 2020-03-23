@@ -404,7 +404,7 @@ for each sinusoid, then gives $N^2$ operations.
           meaning that the computational cost grows quadratically with
           the number of input elements.
 
-Now, contrast that with the fast Fourier transform, which is $\mathcal{O}\left(N \log N\right)$ in
+Now, contrast that with the {abbr}`FFT`, which is $\mathcal{O}\left(N \log N\right)$ in
 the ideal case due to the clever re-use of
 calculations—a great improvement!  However, the classical Cooley-Tukey
 algorithm implemented in FFTPACK (and used by SciPy) recursively breaks up the transform
