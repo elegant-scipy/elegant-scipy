@@ -1243,7 +1243,7 @@ Again, we use the formula:
 
 $$R_{n}=\frac{nv}{2B_{eff}}$$
 
-In radar terminology, each DFT component is known as a *range bin*.
+In radar terminology, each {abbr}`DFT` component is known as a *range bin*.
 
 <!--
 The sinusoid associated with the first component of the DFT has a
@@ -1336,7 +1336,8 @@ radar limits its ability to detect weak echoes. -->
 We're getting there, but in the spectrum of the simulated signal, we
 still cannot distinguish the peaks at 154 and 159 meters.  Who knows
 what we're missing in the real-world signal!  To sharpen the peaks,
-we'll return to our toolbox and make use of *windowing*.
+% TODO: Figure out this link syntax
+we'll return to our toolbox and make use of [*windowing*](sec:windowing).
 
 <!--
 
