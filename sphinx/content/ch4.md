@@ -1230,7 +1230,7 @@ with plt.style.context('style/thinner.mplstyle'):
 
 Suddenly, the information makes sense!
 
-The plot for $|V_{0}|$ clearly shows a target at component 67, and
+The plot for $|V_\mathrm{single}|$ clearly shows a target at component 67, and
 for $|V_\mathrm{sim}|$ shows the targets that produced the signal that was
 uninterpretable in the time domain. The real radar
 signal, $|V_\mathrm{actual}|$ shows a large number of targets between
