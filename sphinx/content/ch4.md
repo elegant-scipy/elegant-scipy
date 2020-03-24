@@ -1404,6 +1404,7 @@ ax1.annotate("New, previously unseen!", (160, -35), xytext=(10, 15),
 ```
 <!-- caption text="Range traces (spectrum) of windowed signals" -->
 
+% TODO: Add explicit xref to previous traces
 Compare these with the earlier range traces. There is a dramatic
 lowering in side lobe level, but at a price: the peaks have changed in
 shape, widening and becoming less peaky, thus lowering the radar
@@ -1452,15 +1453,18 @@ antenna in order to scan small regions consisting of $20^\circ$
 azimuth and $30^\circ$ elevation bins scanned in steps of $0.5^\circ$.
 
 We will now draw some contour plots of the resulting radar data.
-Please refer to the diagram below to see how the different slices are
+Please refer to {numref}`fig:axes_slices` to see how the different slices are
 taken.  A first slice at fixed range shows the strength of echoes
 against elevation and azimuth.  Another two slices at fixed elevation
 and azimuth respectively shows the slope.  The stepped construction of
 the high wall in an opencast mine is visible in the azimuth plane.
 
-<img src="../figures/axes_slices.png"
-     alt="Diagram showing azimuth, elevation and range slices through data volume"/>
-
+```{figure} ../../figures/axes_slices.png
+---
+name: fig:axes_slices
+---
+Diagram showing azimuth, elevation and range slices through data volume
+```
 
 ```python
 data = np.load('data/radar_scan_1.npz')
