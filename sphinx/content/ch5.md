@@ -1022,7 +1022,8 @@ segmentation that is manually produced by a human.
 
 But, even this comparison is not an easy task. How do we define how "close" an
 automated segmentation is to a ground truth?  We'll illustrate one method, the
-*variation of information* or VI (Meila, 2005). This is defined as the answer
+*variation of information* or {abbr}`VI (Variation of Information)` {cite}`meilua2003comparing`.
+This is defined as the answer
 to the following question: on average, for a random pixel, if we are given its
 segment ID in one segmentation, how much more *information* do we need to
 determine its ID in the other segmentation?
