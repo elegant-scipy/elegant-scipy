@@ -277,7 +277,7 @@ efficiently represent sparse matrices.
 
 ## `scipy.sparse` data formats
 
-We covered the internal data format of NumPy arrays in Chapter 1.
+We covered the internal data format of NumPy arrays in {doc}`Chapter 1 <ch1>`.
 We hope you agree that it's a fairly intuitive, and, in some sense, inevitable
 format to hold n-dimensional array data.
 For sparse matrices, there are actually a wide array of possible formats, and
