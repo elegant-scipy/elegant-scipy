@@ -630,10 +630,9 @@ plt.imshow(image);
 As a test operation, we'll be rotating the image by 30 degrees. We begin
 by defining the transformation matrix, $H$ which, when multiplied with a
 coordinate from the input image, $[r, c, 1]$, will give us the
-corresponding coordinate in the output, $[r', c', 1]$. (Note: we are using
-[homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates),
-which have a 1 appended to them and which give greater flexibility when
-defining linear transforms.)
+corresponding coordinate in the output, $[r', c', 1]$[^homog].
+
+[^homog]: Note: we are using [homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates), which have a 1 appended to them and which give greater flexibility when defining linear transforms.
 
 ```python
 angle = 30
