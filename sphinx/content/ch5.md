@@ -127,11 +127,19 @@ So, for example, since there are 4 true positives (where `pred` and `gt` are bot
 
 Generally:
 
+% TODO: Add `(key)=`-style reference targeting to $$-enclosed math
 $$C_{i, j} = \sum_k{\mathbb{I}(p_k = i) \mathbb{I}(g_k = j)}$$
 
+% TODO: Update with explicit xrefs
 Here's an intuitive, but inefficient way of building the above:
 
-```python
+```{code-block} python
+---
+name: code:naive_confusion
+caption: |
+    Simple implementation of a function for computing the confusion matrix
+    for a binary classifier.
+---
 def confusion_matrix(pred, gt):
     cont = np.zeros((2, 2))
     for i in [0, 1]:
@@ -217,7 +225,7 @@ That's 5 categories, which we'll label 0 to 4.
 The confusion matrix will now be 5-by-5, with matches counted on the diagonal,
 and errors counted on the off-diagonal entries.
 
-The definition of the `confusion_matrix` function, above, doesn't extend well
+The definition of the `confusion_matrix` function in {numref}`code:naive_confusion` doesn't extend well
 to this larger matrix, because now we must have *twenty-five* passes though the
 result and ground truth arrays.
 This problem only grows as we add more email categories, such as social media
