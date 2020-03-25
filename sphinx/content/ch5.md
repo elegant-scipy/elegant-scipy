@@ -283,8 +283,9 @@ format to hold n-dimensional array data.
 For sparse matrices, there are actually a wide array of possible formats, and
 the "right" format depends on the problem you want to solve.
 We'll cover the two most commonly-used formats, but for a complete list, see the
-comparison table later in the chapter, as well as the online documentation for
-`scipy.sparse`.
+% TODO: explicit xref to comparison table
+comparison table later in the chapter, as well as 
+{py:mod}`the online documentation for scipy.sparse <scipy.sparse>`.
 
 ### COO (COOrdinate) format
 
@@ -479,6 +480,7 @@ are often related to functional regions of the brain [^Newman]!
 [^Newman]: Newman MEJ (2006). Modularity and community structure in networks.
            PNAS 103(23):8577-8582. DOI:10.1073/pnas.0601602103
 
+% TODO: convert table format
 <div class="landscape">
 <table style="font-size: 50%;">
 <colgroup>
