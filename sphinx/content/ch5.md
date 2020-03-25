@@ -679,7 +679,12 @@ $Q_{12}$, $Q_{21}$, $Q_{22}$.
 
 Let's look at the function that builds our sparse operator:
 
-```python
+```{code-block} python
+---
+name: code:homography
+caption: |
+    Implementation of linear transformation with sparse matrices.
+---
 from itertools import product
 
 def homography(tf, image_shape):
@@ -871,7 +876,7 @@ a look at the out-of-the-box use that inspired this chapter.
 ## Back to contingency tables
 
 You might recall that we are trying to quickly build a sparse, joint
-probability matrix using SciPy's sparse formats. We know that the COO format
+probability matrix using SciPy's sparse formats. We know that the {abbr}`COO` format
 stores sparse data as three arrays, containing the row and column coordinates
 of nonzero entries, as well as their values. But we can use a little known
 feature of COO to obtain our matrix extremely quickly.
@@ -901,7 +906,13 @@ The ones will get summed together and count the number of times that label $i$
 in `pred` occurs together with label $j$ in `gt` at position $i, j$ in the
 matrix! Let's try it out:
 
-```python
+```{code-block} python
+---
+name: code:sparse_confusion
+caption: |
+    A function for building a sparse confusion matrix leveraging the 
+    implicit summing of repeat values in the {abbr}`COO` sparse format.
+---
 from scipy import sparse
 
 def confusion_matrix(pred, gt):
