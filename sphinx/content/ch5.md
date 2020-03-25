@@ -1133,8 +1133,13 @@ By observing many days, we can build a *contingency matrix*, just like the
 ones in the classification examples, measuring the month of a day and whether
 it rained.
 We're not going to travel to LA to do this (fun though it would be), and
-instead we use the historical table below, roughly eyeballed from
+instead we use the historical data in {numref}`tab:LA`, roughly eyeballed from
 [WeatherSpark](https://weatherspark.com/averages/30699/Los-Angeles-California-United-States):
+
+```{table} Approximate probablility of rain or shine for a given day in each month of the year in LA
+---
+name: tab:LA
+---
 
 | Month | P(rain)  | P(shine) |
 | -----:| -------- | -------- |
@@ -1150,6 +1155,7 @@ instead we use the historical table below, roughly eyeballed from
 |10|0.15|0.85|
 |11|0.18|0.82|
 |12|0.23|0.77|
+```
 
 The conditional entropy of rain given month is then:
 
