@@ -403,7 +403,7 @@ print(s2_coo1.toarray())
 Unfortunately, although the COO format is intuitive, it's not very optimized to
 use the minimum amount of memory, or to traverse the array as quickly as
 possible during computations.
-(Remember from Chapter 1, *data locality* is very important to efficient
+(Remember from {ref}`Chapter 1 <sec:why_arrays>`, *data locality* is very important to efficient
 computation!)
 % TODO: Reference to exercise
 However, you can look at your COO representation above to help you identify

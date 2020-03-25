@@ -255,6 +255,7 @@ If we store MRI values over time, we might need a 4D NumPy array.
 For now, we'll stick to 2D data.
 Later chapters will introduce higher-dimensional data and will teach you to write code that works for data of any number of dimensions.
 
+(sec:why_arrays)=
 ### Why Use ndarrays Instead of Python Lists?
 
 Arrays are fast because they enable *vectorized* operations, written in the low-level language C, that act on the whole array.
