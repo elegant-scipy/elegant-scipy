@@ -4,7 +4,7 @@
 >
 > — Morpheus, *The Matrix*
 
-Just like Chapter 4, which dealt with the Fast Fourier Transform, this chapter
+Just like {doc}`Chapter 4 <ch4>`, which dealt with the {abbr}`FFT`, this chapter
 will feature an elegant *method*. We
 want to highlight the packages available in SciPy to do linear algebra, which forms
 the basis of much scientific computing.
