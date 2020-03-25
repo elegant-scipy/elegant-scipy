@@ -115,8 +115,9 @@ Conversely, at positions where both values are 1, the predictor has correctly id
 
 Then, there are two kinds of errors.
 If we let a spam message (where `gt` is 1) through to the user's inbox (`pred` is 0), we've made a *false negative* error.
-If we predict a legitimate message (`gt` is 0) to be spam (`pred` is 1), we've made a *false positive* prediction.
-(An email from the director of my scientific institute once landed in my spam folder. The reason? His announcement of a postdoc talk competition started with "You could win &#36;500!")
+If we predict a legitimate message (`gt` is 0) to be spam (`pred` is 1), we've made a *false positive* prediction[^spam].
+
+[^spam]: An email from the director of my scientific institute once landed in my spam folder. The reason? His announcement of a postdoc talk competition started with "You could win \$500!"
 
 If we want to measure how well we are doing, we have to count the above kinds of errors using a *contingency matrix*.
 (This is also sometimes called a confusion matrix. The name is apt.)
