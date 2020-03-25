@@ -350,7 +350,12 @@ implement a sequence of mathematical equations).
 
 **Exercise:** write out the COO representation of the following matrix:
 
-```python
+```{code-block} python
+---
+name: code:dense_example
+caption: |
+    Example of a dense matrix.
+---
 s2 = np.array([[0, 0, 6, 0, 0],
                [1, 2, 0, 4, 5],
                [0, 1, 0, 0, 0],
@@ -443,9 +448,10 @@ So:
 indptr = [0, 1, 5, 6, 7, 9]
 ```
 
-Let's use these hand-computed arrays to build a CSR matrix in SciPy.
-We can check our work by comparing the `.A` output from our COO and
-CSR representations to the numpy array `s2` that we defined earlier.
+Let's use these hand-computed arrays to build a {abbr}`CSR` matrix in SciPy.
+We can check our work by comparing the `.A` output from our {abbr}`COO` and
+{abbr}`CSR` representations to the numpy array `s2` that we defined 
+in {numref}`code:dense_example`.
 
 ```python
 data = np.array([6, 1, 2, 4, 5, 1, 9, 6, 7])
