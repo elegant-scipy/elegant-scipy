@@ -289,7 +289,7 @@ comparison table later in the chapter, as well as
 
 ### COO (COOrdinate) format
 
-Perhaps the most intuitive is the coordinate, or COO, format.
+Perhaps the most intuitive is the coordinate, or {abbr}`COO (Coordinate)`, format.
 This uses three 1D arrays to represent a 2D matrix $A$.
 Each of these arrays has length equal to the number of nonzero values in $A$,
 and together they list (i, j, value) coordinates of every entry that is not
@@ -405,20 +405,21 @@ use the minimum amount of memory, or to traverse the array as quickly as
 possible during computations.
 (Remember from Chapter 1, *data locality* is very important to efficient
 computation!)
+% TODO: Reference to exercise
 However, you can look at your COO representation above to help you identify
 redundant information:
 Notice all those repeated `1`s?
 
 ### CSR (Compressed Sparse Row) format
 
-If we use COO to enumerate the nonzero entries row-by-row, rather than in
+If we use {abbr}`COO` to enumerate the nonzero entries row-by-row, rather than in
 arbitrary order (which the format allows), we end up with many consecutive,
 repeated values in the `row` array.
 These can be compressed by indicating the *indices* in `col` where the next row
 starts, rather than repeatedly writing the row index.
-This is the basis for the *compressed sparse row* or *CSR* format.
+This is the basis for the *compressed sparse row* or {abbr}`CSR (Compressed Sparse Row)` format.
 
-Let's work through the example above. In CSR format, the `col` and `data`
+Let's work through the example above. In {abbr}`CSR` format, the `col` and `data`
 arrays are unchanged (but `col` is renamed to `indices`). However, the `row`
 array, instead of indicating the rows, indicates *where* in `col` each row
 begins, and is renamed to `indptr`, for "index pointer".
