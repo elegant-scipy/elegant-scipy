@@ -935,7 +935,7 @@ It works!
 
 <!-- exercise begin -->
 
-**Exercise:** Remember from Chapter 1 that NumPy has built-in tools for
+**Exercise:** Remember from {ref}`Chapter 1 <sec:broadcasting>` that NumPy has built-in tools for
 repeating arrays using *broadcasting*. How can you reduce the memory footprint
 required for the contingency matrix computation?
 

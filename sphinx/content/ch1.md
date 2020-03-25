@@ -364,6 +364,7 @@ Both of these operations are simple and, we hope, intuitive examples of vectoriz
 NumPy also makes them very fast, much faster than iterating over the arrays manually.
 (Feel free to play with this yourself using the `%timeit` IPython magic we saw earlier.)
 
+(sec:broadcasting)=
 ### Broadcasting
 
 One of the most powerful and often misunderstood features of ndarrays is broadcasting.
