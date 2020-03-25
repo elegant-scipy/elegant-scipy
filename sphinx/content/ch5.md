@@ -644,8 +644,8 @@ H = np.array([[c, -s,  0],
               [0,  0,  1]])
 ```
 
-You can verify that this works by multiplying H with the point (1, 0). A
-30-degree counterclockwise rotation around the origin (0, 0) should take us
+You can verify that this works by multiplying H with the point $(1, 0)$. A
+30-degree counterclockwise rotation around the origin $(0, 0)$ should take us
 to point $(\frac{\sqrt{3}}{2}, \frac{1}{2})$:
 
 ```python
