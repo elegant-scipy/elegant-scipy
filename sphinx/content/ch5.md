@@ -1601,7 +1601,7 @@ Clearly, we need a way to automate this.
 
 We can see that the higher threshold seems to producing a better segmentation.
 But we have a ground truth, so we can actually put a number to this!
-Using all our sparse matrix skills, we can calculate the *variation of information* or VI for each segmentation.
+Using all our sparse matrix skills, we can calculate the {abbr}`VI` for each segmentation.
 
 
 ```python
@@ -1656,7 +1656,7 @@ probably start noticing opportunities to use them all the time... And you'll
 know how.
 
 One particular situation where sparse matrices come extremely handy is in
-sparse linear algebra. Read on to the next chapter to find out more!
+sparse linear algebra. Read on to the {doc}`next chapter <ch6>` to find out more!
 
 ```{bibliography} references.bib
 ```
