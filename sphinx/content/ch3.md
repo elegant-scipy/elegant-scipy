@@ -843,6 +843,7 @@ abstraction, and how to easily manipulate and analyse them using Python and
 NetworkX. Now, we move on to a particular kind of graph used in image
 processing and computer vision.
 
+(sec:rag)=
 ## Region adjacency graphs
 
 A Region Adjacency Graph ({abbr}`RAG`) is a representation of an image that is useful
