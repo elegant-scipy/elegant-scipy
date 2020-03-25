@@ -1502,9 +1502,17 @@ plt.imshow(color.label2rgb(human_seg, tiger));
 <!-- caption text="Human segmentation of the tiger image, overlaid" -->
 
 
-Now, let's grab our image segmentation code from chapter 3, and see how well a Python does at recognizing a tiger!
+Now, let's grab our image segmentation code from {doc}`Chapter 3 <ch3>`,
+and see how well a Python does at recognizing a tiger!
+We'll re-define the important functions to complete our segmentation task
+in {numref}`code:ch5rag` for convenience:
 
-```python
+```{code-block} python
+---
+name: code:ch5rag
+caption: |
+    Borrowing our segmentation code from {doc}`Chapter 3 <ch3>`.
+---
 # Draw a region adjacency graph (RAG) - all code from Ch3
 import networkx as nx
 import numpy as np
