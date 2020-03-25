@@ -1000,7 +1000,7 @@ print(seg.ravel())
 print(gt.ravel())
 ```
 
-Then, like above, the contingency matrix is given by:
+Then, as we showed in {numref}`code:sparse_confusion`, the contingency matrix is given by:
 
 ```python
 cont = sparse.coo_matrix((np.ones(seg.size),
@@ -1009,7 +1009,7 @@ print(cont)
 ```
 
 Some indices appear more than once, but we can use the summing feature of the
-COO format to confirm that this represents the matrix we want:
+{abbr}`COO` format to confirm that this represents the matrix we want:
 
 ```python
 print(cont.toarray())
@@ -1017,7 +1017,7 @@ print(cont.toarray())
 
 How do we convert this table into a measure of how well `seg` represents `gt`?
 Segmentation is a hard problem, so it's important to measure how well a
-segmentation algorithm is doing, by comparing its output to a "ground truth"
+segmentation algorithm is doing by comparing its output to a "ground truth"
 segmentation that is manually produced by a human.
 
 But, even this comparison is not an easy task. How do we define how "close" an
