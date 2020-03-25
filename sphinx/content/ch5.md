@@ -473,6 +473,7 @@ one can think of the entire web as a large, sparse, $N \times N$ matrix.
 Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
 By normalizing this matrix and solving for its dominant eigenvector,
 one obtains the so-called PageRank—one of the numbers Google uses to
+%TODO: Explicit forward ref to ch. 6
 order your search results. (You can read more about this in the next chapter.)
 
 As another example, we can represent the human brain as a large $m \times m$
@@ -482,10 +483,7 @@ correlations can be calculated and entered into a matrix $C_{ij}$.
 Thresholding this matrix produces a sparse matrix of ones and zeros. 
 The eigenvector corresponding to the second-smallest eigenvalue of this matrix
 partitions the $m$ brain areas into subgroups, which, it turns out,
-are often related to functional regions of the brain [^Newman]!
-
-[^Newman]: Newman MEJ (2006). Modularity and community structure in networks.
-           PNAS 103(23):8577-8582. DOI:10.1073/pnas.0601602103
+are often related to functional regions of the brain{cite}`newman2004finding`!
 
 % TODO: convert table format
 <div class="landscape">
@@ -1608,6 +1606,7 @@ plt.imshow(color.label2rgb(auto_seg, tiger));
 ```
 <!-- caption text="Optimal tiger segmentation based on the VI curve" -->
 
+
 <!-- exercise begin -->
 
 **Exercise:** Segmentation in practice
@@ -1626,3 +1625,6 @@ One particular situation where sparse matrices come extremely handy is in
 sparse linear algebra. Read on to the next chapter to find out more!
 
 [^bsds]: P. Arbelaez, M. Maire, C. Fowlkes and J. Malik. IEEE TPAMI, Vol. 33, No. 5, pp. 898-916, May 2011.
+
+```{bibliography} references.bib
+```
