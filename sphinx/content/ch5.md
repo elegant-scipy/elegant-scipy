@@ -53,38 +53,39 @@ def variation_of_information(x, y):
     return float(hygx + hxgy)
 ```
 
-> **Python 3.5 pro-tip! {.callout}**
->
-> The `@` symbols in the above paragraph represent the *matrix multiplication*
-> operator, and were introduced in Python 3.5 in 2015. This is one of the most
-> compelling arguments to use Python 3 for scientific programmers: they enable
-> the programming of linear algebra algorithms using code that remains very
-> close to the original mathematics. Compare the above:
->
-> `hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)`
->
-> with the equivalent Python 2 code:
->
-> `hygx = px.dot(xlog1x(Px_inv.dot(Pxy)).sum(axis=1))`
->
-> By using the `@` operator to stay closer to mathematical notation, we
-> can avoid implementation errors and produce code that is much easier to read.
->
-> Actually, SciPy's authors knew this long before the `@` operator was
-> introduced, and actually altered the meaning of the
-> `*` operator when the inputs are SciPy matrices. Available in Python
-> 2.7, it lets us produce nice, readable code like the above:
->
-> `hygx = -px * xlog(Px_inv * Pxy).sum(axis=1)`
->
-> But there is a huge catch: this code will behave differently when `px` or
-> `Px_inv` are SciPy matrices than when they are not! If `Px_inv` and `Pxy` are
-> NumPy arrays, `*` produces the element-wise multiplication, while if they are
-> SciPy matrices, it produces the matrix product! As you can imagine, this is
-> the source of a great many errors, and much of the SciPy community has
-> abandoned this use in favor of the uglier but unambiguous `.dot` method.
->
-> Python 3.5's `@` operator gives us the best of both worlds!
+```{tip} **Python 3.5 pro-tip!**
+
+The `@` symbols in the above paragraph represent the *matrix multiplication*
+operator, and were introduced in Python 3.5 in 2015. This is one of the most
+compelling arguments to use Python 3 for scientific programmers: they enable
+the programming of linear algebra algorithms using code that remains very
+close to the original mathematics. Compare the above:
+
+`hygx = px @ xlog1x(Px_inv @ Pxy).sum(axis=1)`
+
+with the equivalent Python 2 code:
+
+`hygx = px.dot(xlog1x(Px_inv.dot(Pxy)).sum(axis=1))`
+
+By using the `@` operator to stay closer to mathematical notation, we
+can avoid implementation errors and produce code that is much easier to read.
+
+Actually, SciPy's authors knew this long before the `@` operator was
+introduced, and actually altered the meaning of the
+`*` operator when the inputs are SciPy matrices. Available in Python
+2.7, it lets us produce nice, readable code like the above:
+
+`hygx = -px * xlog(Px_inv * Pxy).sum(axis=1)`
+
+But there is a huge catch: this code will behave differently when `px` or
+`Px_inv` are SciPy matrices than when they are not! If `Px_inv` and `Pxy` are
+NumPy arrays, `*` produces the element-wise multiplication, while if they are
+SciPy matrices, it produces the matrix product! As you can imagine, this is
+the source of a great many errors, and much of the SciPy community has
+abandoned this use in favor of the uglier but unambiguous `.dot` method.
+
+Python 3.5's `@` operator gives us the best of both worlds!
+```
 
 ## Contingency tables
 
