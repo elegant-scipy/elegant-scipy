@@ -154,6 +154,7 @@ We can check that this gives use the right counts:
 confusion_matrix(pred, gt)
 ```
 
+% TODO: HANDLE EXERCISES
 <!-- exercise begin -->
 **Exercise:** Why did we call this inefficient?
 
@@ -274,7 +275,7 @@ the 0 entries of the contingency matrix is increasingly wasteful.
 Instead, we can use the `sparse` module of SciPy, which contains objects to
 efficiently represent sparse matrices.
 
-## scipy.sparse data formats
+## `scipy.sparse` data formats
 
 We covered the internal data format of NumPy arrays in Chapter 1.
 We hope you agree that it's a fairly intuitive, and, in some sense, inevitable
