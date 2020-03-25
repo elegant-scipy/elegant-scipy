@@ -665,13 +665,17 @@ print(H @ H @ H @ point)
 Now, we will build a function that defines a "sparse operator". The goal of
 the sparse operator is to take all pixels of the output image, figure out where
 they came from in the input image, and do the appropriate (bi-linear)
-interpolation (see figure below) to calculate their values. It does this using just
+interpolation (see {numref}`fig:bilinear`) to calculate their values. It does this using just
 matrix multiplication on the image values, and thus is extremely fast.
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg"/>
-<!-- caption text="Diagram explaining bilinear interpolation. The value at
-point $P$ is estimated as a weighted sum of the values at $Q_{11}$, $Q_{12}$,
-$Q_{21}$, $Q_{22}$." -->
+```{figure} https://upload.wikimedia.org/wikipedia/commons/e/ea/BilinearInterpolation.svg
+---
+name: fig:bilinear
+---
+Diagram explaining bilinear interpolation. The value at
+point $P$ is estimated as a weighted sum of the values at $Q_{11}$,
+$Q_{12}$, $Q_{21}$, $Q_{22}$.
+```
 
 Let's look at the function that builds our sparse operator:
 
