@@ -15,14 +15,21 @@ In addition to helping solve these "canonical" sparse matrix problems, `sparse` 
 One such problem is the comparison of image segmentations.
 (Review {doc}`Chapter 3 <ch3>` for a definition of segmentation.)
 
-The code sample motivating this chapter uses sparse matrices twice: First, we
+The code sample motivating this chapter in {numref}`code:voi` uses sparse matrices twice: First, we
 use code nominated by Andreas Mueller to compute a *contingency matrix* that
 counts the correspondence of labels between two segmentations. Then, with
 suggestions from Jaime Fernández del Río and Warren Weckesser, we use that
 contingency matrix to compute the *variation of information*, which measures
 the differences between segmentations.
 
-```python
+```{code-block} python
+---
+name: code:voi
+caption: |
+    An implementation of a function for computing the 
+    *variation of information* that makes use of sparse matrices under the
+    hood.
+---
 def variation_of_information(x, y):
     # compute contingency matrix, aka joint probability matrix
     n = x.size
