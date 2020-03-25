@@ -13,7 +13,7 @@ Instead, we can use SciPy's `sparse` module to solve these efficiently, examinin
 In addition to helping solve these "canonical" sparse matrix problems, `sparse` can be used for problems that are not obviously related to sparse matrices.
 
 One such problem is the comparison of image segmentations.
-(Review chapter 3 for a definition of segmentation.)
+(Review {doc}`Chapter 3 <ch3>` for a definition of segmentation.)
 
 The code sample motivating this chapter uses sparse matrices twice: First, we
 use code nominated by Andreas Mueller to compute a *contingency matrix* that
