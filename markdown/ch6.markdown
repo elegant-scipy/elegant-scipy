@@ -467,7 +467,7 @@ if x[vc2_index] < 0:
 Now it's just a matter of drawing the nodes and the edges. We color them
 according to the type stored in `neuron_types`, using the appealing and
 functional "colorblind"
-[colorbrewer palette](http://chrisalbon.com/python/seaborn_color_palettes.html):
+[colorbrewer palette](https://chrisalbon.com/python/data_visualization/seaborn_color_palettes/):
 
 ```python
 from matplotlib.colors import ListedColormap
