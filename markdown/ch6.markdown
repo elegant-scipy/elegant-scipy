@@ -591,7 +591,7 @@ nodes, this is feasible. However, for larger graphs, it would fail.
 For example, one might want to analyse the relationships between libraries
 listed on the Python Package Index, or PyPI, which contains over one hundred thousand packages.
 Holding the Laplacian matrix for this graph would take 
-up $8 \left(100 \times 10^3\right)^2 = 8 \times 10^10$ bytes, or 80GB,
+up $8 \left(100 \times 10^3\right)^2 = 8 \times 10^{10}$ bytes, or 80GB,
 of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
 and, say, two temporary matrices used during calculations, you climb up to
 480GB, beyond the reach of most desktop computers.
