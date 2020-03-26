@@ -660,9 +660,9 @@ Ls = Ds - Cs
 ```
 
 Now we want to get the processing depth. Remember that getting the
-pseudo-inverse of the Laplacian matrix is out of the question, because it will
+pseudoinverse of the Laplacian matrix is out of the question, because it will
 be a dense matrix (the inverse of a sparse matrix is not generally sparse
-itself). However, we were actually using the pseudo-inverse to compute a
+itself). However, we were actually using the pseudoinverse to compute a
 vector $z$ that would satisfy $L z = b$,
 where $b = C \odot \textrm{sign}\left(A - A^T\right) \mathbf{1}$.
 (You can see this in the supplementary material for Varshney *et al*.) With
