@@ -445,6 +445,7 @@ its second-smallest eigenvalue, normalized by the degrees:
 val, Vec = linalg.eig(Q)
 ```
 
+% TODO: Use intersphinx for a ref somehow?
 Note from the documentation of `numpy.linalg.eig`:
 
 > "The eigenvalues are not necessarily ordered."
@@ -465,9 +466,11 @@ Now we can find the eigenvector we need to compute the affinity coordinates:
 x = Dinv2 @ Vec[:, 1]
 ```
 
-(The reasons for using this vector are too long to explain here, but appear in
+```{admonition} Aside
+The reasons for using this vector are too long to explain here, but appear in
 the paper's supplementary material, linked above. The short version is that
-choosing this vector minimizes the total length of the links between neurons.)
+choosing this vector minimizes the total length of the links between neurons.
+```
 
 There is one small kink that we must address before proceeding: eigenvectors
 are only defined up to a multiplicative constant. This follows simply from the
