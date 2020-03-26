@@ -698,15 +698,16 @@ Ls = Ds - Cs
 ```
 
 Now we want to get the *processing depth*. Remember that getting the
-pseudo-inverse of the Laplacian matrix is out of the question, because it will
+pseudoinverse of the Laplacian matrix is out of the question, because it will
 be a dense matrix (the inverse of a sparse matrix is not generally sparse
-itself). However, we were actually using the pseudo-inverse to compute a
+itself). However, we were actually using the pseudoinverse to compute a
 vector $z$ that would satisfy $L z = b$,
 where $b = C \odot \textrm{sign}\left(A - A^T\right) \mathbf{1}$.
-(You can see this in the supplementary material for Varshney *et al*.) With
+(You can see this in the [supplementary material][worm-sup] for Varshney *et al*.) With
 dense matrices, we can simply use $z = L^+b$. With sparse ones, though, we can
-use one of the *solvers* (see sidebox, "Solvers") in `sparse.linalg.isolve` to get the `z` vector after
-providing `L` and `b`, no inversion required!
+% TODO - add link to callout
+use one of the *solvers* (see sidebox, "Solvers") in `sparse.linalg.isolve`
+to get the `z` vector after providing `L` and `b`, no inversion required!
 
 ```python
 b = Cs.multiply((As - As.T).sign()).sum(axis=1)
@@ -716,7 +717,7 @@ z, error = sparse.linalg.isolve.cg(Ls, b, maxiter=10000)
 Finally, we must find the eigenvectors of $Q$, the degree-normalized Laplacian,
 corresponding to its second and third smallest eigenvalues.
 
-You might recall from Chapter 5 that the numerical data in sparse matrices is
+You might recall from {doc}`Chapter 5 <ch5>` that the numerical data in sparse matrices is
 in the `.data` attribute. We use that to invert the degrees matrix:
 
 ```python
