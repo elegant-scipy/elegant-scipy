@@ -808,7 +808,7 @@ page? This probability is called the PageRank.
 Since Google's rise, researchers have been applying PageRank to all sorts of
 networks. We'll use an example by Stefano Allesina and Mercedes Pascual,
 which they
-[published](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000494i)
+[published](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000494)
 in PLoS Computational Biology. They thought to apply the method in ecological
 *food webs*, networks that link species to those that they eat.
 
