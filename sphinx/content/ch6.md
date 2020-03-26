@@ -99,7 +99,7 @@ relation to $M$ because $Mv$ simply changes the size of the vector, without
 changing its direction. As we will soon see, eigenvectors have many useful
 properties — sometimes seeming even magical!
 
-As an example, a 3x3 rotation matrix $R$, when multiplied by any
+As an example, a $3\times3$ rotation matrix $R$, when multiplied by any
 3-dimensional vector $p$, rotates it $30^\circ$ degrees around the z-axis.  $R$
 will rotate all vectors except for those that lie *on* the z-axis.  For those,
 we'll see no effect, or $Rp = p$, i.e. $Rp = \lambda p$ with
