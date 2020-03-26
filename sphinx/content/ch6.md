@@ -483,8 +483,8 @@ arbitrary whether a software package returns $v$ or $-v$ when asked for the
 eigenvectors of $M$. In order to make sure we reproduce the layout from the
 Varshney *et al.* paper, we must make sure that the vector is pointing in the
 same direction as theirs, rather than the opposite direction. We do this by
-choosing an arbitrary neuron from their Figure 2, and checking the sign of `x`
-at that position. We then reverse it if it doesn't match its sign in Figure 2
+choosing an arbitrary neuron from their [Figure 2][worm_fig2], and checking the sign of `x`
+at that position. We then reverse it if it doesn't match its sign in [Figure 2][worm_fig2]
 of the paper.
 
 ```python
