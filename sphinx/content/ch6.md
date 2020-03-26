@@ -422,9 +422,12 @@ b = np.sum(C * np.sign(A - A.T), axis=1)
 z = linalg.pinv(L) @ b
 ```
 
-(Note the use of the `@` symbol, which was introduced in Python 3.5 to denote
+%TODO: Add xref to previous callout on '@' operator
+```{attention}
+Note the use of the `@` symbol, which was introduced in Python 3.5 to denote
 matrix multiplication. As we noted in the preface and in Chapter 5, in previous
-versions of Python, you would need to use the function `np.dot`.)
+versions of Python, you would need to use the function `np.dot`.
+```
 
 In order to obtain the degree-normalized Laplacian, $Q$, we need the inverse
 square root of the $D$ matrix:
