@@ -750,8 +750,12 @@ if y[asjl_index] < 0:
     y = -y
 ```
 
-(Note that the eigenvector corresponding to the smallest eigenvalue is always a
-vector of all ones, which we're not interested in.)
+```{note}
+The eigenvector corresponding to the smallest eigenvalue is always a
+vector of all ones, which we're not interested in.
+```
+
+%TODO: xref to generated figures
 We can now reproduce the above plots!
 
 ```python
