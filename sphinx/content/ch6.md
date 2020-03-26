@@ -105,17 +105,18 @@ will rotate all vectors except for those that lie *on* the z-axis.  For those,
 we'll see no effect, or $Rp = p$, i.e. $Rp = \lambda p$ with
 eigenvalue $\lambda = 1$.
 
+% TODO: Exercises
 <!-- exercise begin -->
 
 **Exercise:** Consider the rotation matrix
 
-$
+$$
 R = \begin{bmatrix}
   \cos \theta &  -\sin \theta & 0 \\
   \sin \theta & \cos \theta & 0\\
   0 & 0 & 1\\
 \end{bmatrix}
-$
+$$
 
 When $R$ is multiplied with a 3-dimensional column-vector $p =
 \left[ x\, y\, z \right]^T$, the resulting vector $R p$ is rotated
