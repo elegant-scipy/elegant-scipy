@@ -49,7 +49,7 @@ on context to keep scalars and vectors straight.
 We discussed graphs in {ref}`Chapter 3 <sec:nxgraphs>`, where we represented image regions as
 nodes, connected by edges between them. But we used a rather simple method of
 analysis: we *thresholded* the graph, removing all edges above some value.
-Thresholding works in simple cases, but can easily fail, because all you need
+Thresholding works in simple cases, but all you need
 is one value to fall on the wrong side of the threshold for the approach
 to fail.
 
@@ -83,9 +83,9 @@ as the *degree matrix*, $D$, which
 contains the degree of each node along the diagonal and zero everywhere else,
 minus the adjacency matrix $A$:
 
-$
+$$
 L = D - A
-$
+$$
 
 We definitely can't fit all of the linear algebra theory needed to understand
 the properties of this matrix, but suffice it to say: it has some *great*
