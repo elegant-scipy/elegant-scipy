@@ -281,6 +281,17 @@ the eigenvalues and eigenvectors:
 val, Vec = np.linalg.eigh(L)
 ```
 
+````{tip}
+When dealing with *real symmetric* or *conjugate symmetric* matrix, 
+`np.linalg.eigh` is generally preferred over `np.linalg.eig` as it uses a
+faster algorithm under-the-hood that exploits the symmetry of the matrix.
+```{warning}
+`np.linalg.eigh` **does not** check that the matrix you give it is indeed
+symmetric. If you are not sure that the matrix is symmetric, it's safer to
+use the more general `np.linalg.eig`.
+```
+````
+
 You can verify that the values returned satisfy the definition of eigenvalues
 and eigenvectors. For example, one of the eigenvalues is 3:
 
