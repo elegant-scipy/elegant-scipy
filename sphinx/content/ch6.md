@@ -496,9 +496,15 @@ if x[vc2_index] < 0:
 Now it's just a matter of drawing the nodes and the edges. We color them
 according to the type stored in `neuron_types`, using the appealing and
 functional "colorblind"
-[colorbrewer palette](http://chrisalbon.com/python/seaborn_color_palettes.html):
+[colorbrewer palette](https://chrisalbon.com/python/data_visualization/seaborn_color_palettes/):
 
-```python
+```{code-block} python
+---
+name: code:wormbrain_viz
+caption: |
+    A function for visualizing the connectome given info about the neurons
+    and their connectivity matrix.
+---
 from matplotlib.colors import ListedColormap
 from matplotlib.collections import LineCollection
 
@@ -563,8 +569,7 @@ def plot_connectome(x_coords, y_coords, conn_matrix, *,
     plt.show()
 ```
 
-Now, let's use that function to plot the neurons:
-
+Now, let's use the function from {numref}`code:wormbrain_viz` to plot the neurons:
 
 ```python
 plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
