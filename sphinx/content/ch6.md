@@ -194,11 +194,17 @@ associated with the vector $\left[0, 0, 1\right]^T$.
 
 Back to the Laplacian. A common problem in network analysis is visualization.
 How do you draw nodes and edges in such a way that you don't get a complete
-mess such as this one?
+mess like {numref}`fig:busy_graph`
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png"/>
-<!-- caption text="Visualization of wikipedia structure. Created by Chris Davis and released under CC-BY-SA-3.0 (https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License)." -->
+```{figure} https://upload.wikimedia.org/wikipedia/commons/9/90/Visualization_of_wiki_structure_using_prefuse_visualization_package.png
+---
+name: fig:busy_graph
+---
+Visualization of wikipedia structure. Created by Chris Davis and released under
+[CC-BY-SA-3.0][cc3].
+```
 
+[cc3]: https://commons.wikimedia.org/wiki/GNU_Free_Documentation_License
 
 One way is to put nodes that share many edges close together. It turns out
 that this can be done by using the second-smallest eigenvalue of the Laplacian
