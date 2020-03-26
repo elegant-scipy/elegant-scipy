@@ -626,7 +626,7 @@ For example, one might want to analyse the relationships between libraries
 listed on the Python Package Index, or [PyPI](https://pypi.org/),
 which contains over one hundred thousand packages.
 Holding the Laplacian matrix for this graph would take 
-up $8 \left(100 \times 10^3\right)^2 = 8 \times 10^10$ bytes, or 80GB,
+up $8 \left(100 \times 10^3\right)^2 = 8 \times 10^{10}$ bytes, or 80GB,
 of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
 and, say, two temporary matrices used during calculations, you climb up to
 480GB, beyond the reach of most desktop computers.
@@ -642,16 +642,19 @@ However, we know that the dependency and reference graphs are *sparse*:
 packages usually depend on just a few other packages, not on the whole of PyPI.
 And papers and books usually only reference a few others, too. So we can hold
 the above matrices using the sparse data structures from `scipy.sparse` (see
-Chapter 5), and use the linear algebra functions in `scipy.sparse.linalg` to
+{doc}`Chapter 5 <ch5>`), and use the linear algebra functions in `scipy.sparse.linalg` to
 compute the values we need.
 
 Try to explore the documentation in `scipy.sparse.linalg` to come up with a
 sparse version of the above computation.
 
-Hint: the pseudoinverse of a sparse matrix is, in general, not sparse, so you
+```{hint}
+The pseudoinverse of a sparse matrix is, in general, not sparse, so you
 can't use it here. Similarly, you can't get all the eigenvectors of a sparse
 matrix, because they would together make up a dense matrix.
+```
 
+% TODO: What's the solutions chapter and how to link to it
 You'll find parts of the solution below (and of course in the solutions
 chapter), but we highly recommend that you try it out on your own.
 
@@ -694,7 +697,7 @@ Getting the Laplacian is straightforward:
 Ls = Ds - Cs
 ```
 
-Now we want to get the processing depth. Remember that getting the
+Now we want to get the *processing depth*. Remember that getting the
 pseudo-inverse of the Laplacian matrix is out of the question, because it will
 be a dense matrix (the inverse of a sparse matrix is not generally sparse
 itself). However, we were actually using the pseudo-inverse to compute a
