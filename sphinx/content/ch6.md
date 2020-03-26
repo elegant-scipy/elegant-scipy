@@ -961,11 +961,14 @@ $$
 
 and
 
-$$
+```{math}
+---
+label: damped_pr
+---
 (\boldsymbol{I} - dM)\boldsymbol{r} = \frac{1-d}{n} \boldsymbol{1}
-$$
+```
 
-We can solve this equation using `scipy.sparse.linalg`'s direct
+We can solve equation {eq}`damped_pr` using `scipy.sparse.linalg`'s direct
 solver, `spsolve`. Depending on the structure and size of a linear algebra
 problem, though, it might be more efficient to use an iterative solver. See
 the [`scipy.sparse.linalg` documentation](http://docs.scipy.org/doc/scipy/reference/sparse.linalg.html#solving-linear-problems)
