@@ -344,12 +344,13 @@ Let's demonstrate this process in a real-world example by laying out the brain c
 [Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
 from the
 [Varshney *et al* paper](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
-that we introduced in Chapter 3. (Information on
-how to do this is in the
-[supplementary material](http://journals.plos.org/ploscompbiol/article/asset?unique&id=info:doi/10.1371/journal.pcbi.1001066.s001)
-for the paper.) To obtain their
-layout of the worm brain neurons, they used a related matrix, the
+that we introduced in Chapter 3[^wormrepro]. 
+To obtain their layout of the worm brain neurons, they used a related matrix, the
 *degree-normalized Laplacian*.
+
+[^wormrepro]: Information on how to do this is in the [supplementary material][worm-sup] for the paper.
+
+[worm-sup]: http://journals.plos.org/ploscompbiol/article/asset?unique&id=info:doi/10.1371/journal.pcbi.1001066.s001
 
 Because the order of the neurons is important in this analysis, we will use a
 preprocessed dataset, rather than clutter this chapter with data cleaning. We
