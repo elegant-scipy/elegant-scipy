@@ -756,7 +756,7 @@ vector of all ones, which we're not interested in.
 ```
 
 %TODO: xref to generated figures
-We can now reproduce the above plots!
+We can now use {numref}`code:wormbrain_viz` to reproduce the above plots!
 
 ```python
 plot_connectome(x, z, C, labels=neuron_ids, types=neuron_types,
