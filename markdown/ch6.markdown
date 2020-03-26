@@ -49,7 +49,7 @@ on context to keep scalars and vectors straight.
 We discussed graphs in chapter 3, where we represented image regions as
 nodes, connected by edges between them. But we used a rather simple method of
 analysis: we *thresholded* the graph, removing all edges above some value.
-Thresholding works in simple cases, but can easily fail, because all you need
+Thresholding works in simple cases, but all you need
 is one value to fall on the wrong side of the threshold for the approach
 to fail.
 
