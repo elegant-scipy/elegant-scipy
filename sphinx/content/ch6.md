@@ -341,12 +341,14 @@ nx.draw(g, pos=layout, with_labels=True, node_color=colors)
 ## Laplacians with brain data
 
 Let's demonstrate this process in a real-world example by laying out the brain cells in a worm, as shown in
-[Figure 2](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
+[Figure 2][worm_fig2]
 from the
 [Varshney *et al* paper](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066)
 that we introduced in Chapter 3[^wormrepro]. 
 To obtain their layout of the worm brain neurons, they used a related matrix, the
 *degree-normalized Laplacian*.
+
+[worm_fig2]: http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066
 
 [^wormrepro]: Information on how to do this is in the [supplementary material][worm-sup] for the paper.
 
@@ -354,8 +356,7 @@ To obtain their layout of the worm brain neurons, they used a related matrix, th
 
 Because the order of the neurons is important in this analysis, we will use a
 preprocessed dataset, rather than clutter this chapter with data cleaning. We
-got the original data from Lav Varshney's
-[website](http://www.ifp.illinois.edu/~varshney/elegans),
+got the original data from Lav Varshney's website,
 and the processed data is in our `data/` directory.
 
 First, let's load the data. There are four components:
@@ -407,7 +408,7 @@ Now, we can get the Laplacian just like before:
 L = D - C
 ```
 
-The vertical coordinates in Fig 2 are given by arranging nodes such that, on
+The vertical coordinates in [Fig 2][worm_fig2] are given by arranging nodes such that, on
 average, neurons are as close as possible to "just above" their downstream
 neighbors. Varshney _et al_ call this measure "processing depth," and it's
 obtained by solving a linear equation involving the Laplacian. We use
