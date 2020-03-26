@@ -22,7 +22,7 @@ Applications*. Introductory is all you need though — we hope to convey the pow
 of linear algebra while keeping the operations relatively simple!
 
 As an aside, we will break Python notation convention in order to match linear
-algebra conventions: in Python, variables names should usually begin with a
+algebra conventions: in Python, variable names should usually begin with a
 lower case letter. However, in linear algebra, matrices are denoted by
 a capital letter, while vectors and scalar values are lowercase. Since we're
 going to be dealing with quite a few matrices and vectors, following the
@@ -46,7 +46,7 @@ on context to keep scalars and vectors straight.
 
 ## Laplacian matrix of a graph
 
-We discussed graphs in chapter 3, where we represented image regions as
+We discussed graphs in {ref}`Chapter 3 <sec:nxgraphs>`, where we represented image regions as
 nodes, connected by edges between them. But we used a rather simple method of
 analysis: we *thresholded* the graph, removing all edges above some value.
 Thresholding works in simple cases, but can easily fail, because all you need

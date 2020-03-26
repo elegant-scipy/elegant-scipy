@@ -641,6 +641,7 @@ plt.imshow(sobel_mag, cmap='viridis');
 
 <!-- exercise end -->
 
+(sec:nxgraphs)=
 ## Graphs and the NetworkX library
 
 Graphs are a natural representation for an astonishing variety of data. Pages
