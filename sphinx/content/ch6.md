@@ -249,8 +249,10 @@ nx.draw(g, pos=layout,
 
 You can see that the nodes fall naturally into two groups, 0, 1, 2 and 3, 4, 5.
 Can the Fiedler vector tell us this? First, we must compute the degree matrix
-and the Laplacian. We first get the degrees by summing along either axis of $A$.
-(Either axis works because $A$ is symmetric.)
+and the Laplacian. We first get the degrees by summing along either axis[^axis]
+of $A$.
+
+[^axis]: Either axis works because $A$ is symmetric.
 
 ```python
 d = np.sum(A, axis=0)
