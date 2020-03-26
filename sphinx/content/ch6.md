@@ -468,7 +468,7 @@ x = Dinv2 @ Vec[:, 1]
 
 ```{admonition} Aside
 The reasons for using this vector are too long to explain here, but appear in
-the paper's supplementary material, linked above. The short version is that
+the paper's [supplementary material][worm-sup]. The short version is that
 choosing this vector minimizes the total length of the links between neurons.
 ```
 
