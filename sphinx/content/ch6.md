@@ -971,6 +971,7 @@ label: damped_pr
 We can solve equation {eq}`damped_pr` using `scipy.sparse.linalg`'s direct
 solver, `spsolve`. Depending on the structure and size of a linear algebra
 problem, though, it might be more efficient to use an iterative solver. See
+% TODO: Replace with intersphinx
 the [`scipy.sparse.linalg` documentation](http://docs.scipy.org/doc/scipy/reference/sparse.linalg.html#solving-linear-problems)
 for more information on this.
 
@@ -1047,7 +1048,12 @@ vector!
 
 SciPy makes this very efficient with its sparse matrix module:
 
-```python
+```{code-block} python
+---
+name: code:power_method
+caption: |
+    Simple implementation of the *power method* for determining PageRank
+---
 def power(Trans, damping=0.85, max_iter=10**5):
     n = Trans.shape[0]
     r0 = np.full(n, 1/n)
@@ -1062,7 +1068,7 @@ def power(Trans, damping=0.85, max_iter=10**5):
 
 <!-- exercise begin -->
 
-**Exercise:** In the above iteration, note that `Trans` is *not*
+**Exercise:** In {numref}`code:power_method`, note that `Trans` is *not*
 column-stochastic, so the $r$ vector gets shrunk at each iteration. In order to
 make the matrix stochastic, we have to replace every zero-column by a column of
 all $1/n$. This is too expensive, but computing the iteration is cheaper. How
