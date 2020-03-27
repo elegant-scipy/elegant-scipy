@@ -99,6 +99,7 @@ correct alignment.
 
 ### An example: computing optimal image shift
 
+% TODO: Set up xref to ch.3 code block output
 You'll remember our astronaut — Eileen Collins — from chapter 3.
 We will be shifting this image by 50 pixels to the right then comparing it back
 to the original until we

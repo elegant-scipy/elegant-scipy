@@ -132,6 +132,7 @@ represent the spatial positions of the image, while the final dimension represen
 color channels, typically the three primary additive colors of red, green, and blue.
 To show what we can do with these dimensions, let's play with this photo of astronaut Eileen Collins:
 
+% TODO: xref the *output* of this code block (i.e. the image) to ch. 7
 ```python
 url_astronaut = ('https://raw.githubusercontent.com/scikit-image/scikit-image/'
                  'master/skimage/data/astronaut.png')
