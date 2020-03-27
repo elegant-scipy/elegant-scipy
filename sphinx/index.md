@@ -11,4 +11,5 @@ content/ch3.md
 content/ch4.md
 content/ch5.md
 content/ch6.md
+content/ch7.md
 ```
