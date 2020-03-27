@@ -324,10 +324,10 @@ As you can see, at the highest level of the pyramid, that bump at a shift of
 about -325 disappears. We can therefore get an approximate alignment at that
 level, then pop down to the lower levels to refine that alignment.
 
-## Image registration with `optimize`
+## Image registration with `scipy.optimize`
 
 Let's automate that, and try with a "real" alignment, with three parameters:
-rotation, translation in the row dimension, and translation in the
+rotation and translation in the row dimension; and translation in the
 column dimension. This is called a "*rigid* registration" because there are no
 deformations of any kind (scaling, skew, or other stretching). The object is
 considered solid and moved around (including rotation) until a match is found.
