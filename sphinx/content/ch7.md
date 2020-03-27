@@ -52,15 +52,19 @@ attempt to address the issue[^linesearch].
                 confidence.  If not, we lower our confidence and
                 search a wider area.
 
-<img src="../figures/generated/optimization_comparison.png"/>
-<!-- caption text="Comparison of optimization pathways taken by different
+```{figure} ../../figures/generated/optimization_comparison.png
+---
+name: fig:opt_paths
+---
+Comparison of optimization pathways taken by different
 optimization algorithms on the Rosenbrock function (top). Powell's method
 performs a line search along the first dimension before doing gradient descent.
 The conjugate gradient (CG) method, on the other hand, performs gradient
-descent from the starting point." -->
+descent from the starting point.
+```
 
 There are many different optimization algorithms to choose from (see
-figure).  You get to choose whether your cost function takes a scalar
+{numref}`fig:opt_paths`).  You get to choose whether your cost function takes a scalar
 or a vector as input (i.e., do you have one or multiple parameters to
 optimize?).  There are those that require the cost function gradient
 to be given and those that automatically estimate it.  Some only
