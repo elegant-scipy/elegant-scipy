@@ -37,9 +37,10 @@ you are in the lowest valley, or whether this valley just seems low because it i
 surrounded by particularly tall mountains?  In optimization parlance: how
 do you know whether you are trapped in a *local
 minimum*?  Most optimization algorithms make some
-attempt to address the issue[^line_search].
+attempt to address the issue[^linesearch].
 
-[^line_search]: Optimization algorithms handle this issue in various
+% TODO: Footnotes with underscores in the name, multiline footnotes
+[^linesearch]: Optimization algorithms handle this issue in various
                 ways, but two common approaches are line searches and
                 trust regions.  With a *line search*, you try to find
                 the cost function minimum along a specific dimension,
