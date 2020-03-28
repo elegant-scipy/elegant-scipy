@@ -666,8 +666,7 @@ color will create a large correlation between the shades of the different
 component channels, and a correspondingly large {abbr}`NMI` value. In a sense, NMI
 measures how easy it would be to predict a pixel value of one image given the
 value of the corresponding pixel in the other. It was defined in the paper
-"Studholme, C., Hill, D.L.G., Hawkes, D.J., *An Overlap Invariant Entropy Measure
-of 3D Medical Image Alignment*, Patt. Rec. 32, 71–86 (1999)":
+{cite}`An Overlap Invariant Entropy Measure of 3D Medical Image Alignment <studholme1999overlap>`
 
 $$I(X, Y) = \frac{H(X) + H(Y)}{H(X, Y)},$$
 
