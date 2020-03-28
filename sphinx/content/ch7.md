@@ -453,13 +453,14 @@ for ax in (ax0, ax1, ax2):
 
 Even though we started closer to the original image, we failed to
 recover the correct rotation. This is because optimization techniques can get
+%TODO: explicit xref to image showing minima in shift MSE example
 stuck in local minima, little bumps on the road to success, as we saw above
 with the shift-only alignment. They can therefore be quite sensitive to the
 starting parameters.
 
 ## Avoiding local minima with basin hopping
 
-A 1997 algorithm devised by David Wales and Jonathan Doyle [^basinhop], called
+A 1997 algorithm devised by David Wales and Jonathan Doyle {cite}`wales1997global`, called
 *basin-hopping*, attempts to avoid local minima by trying an optimization from
 some initial parameters, then moving away from the found local minimum in a
 random direction, and optimizing again. By choosing an appropriate step size
@@ -470,12 +471,6 @@ simple gradient-based optimization methods.
 We leave it as an exercise to incorporate SciPy's implementation of basin-hopping
 into our alignment function. You'll need it for later parts of the chapter, so
 feel free to peek at the solution at the end of the book if you're stuck.
-
-[^basinhop]: David J. Wales and Jonathan P.K. Doyle (1997). Global Optimization
-             by Basin-Hopping and the Lowest Energy Structures of Lennard-Jones
-             Clusters Containing up to 110 Atoms.
-             **Journal of Physical Chemistry 101(28):5111–5116**
-             DOI: 10.1021/jp970984n
 
 <!-- exercise begin -->
 
@@ -753,3 +748,6 @@ We've illustrated the two key concepts in function optimization in this
 chapter: understanding local minima and how to avoid them, and choosing the
 right function to optimize to achieve a particular objective. Solving these
 allows you to apply optimization to a wide array of scientific problems!
+
+```{bibliography} references.bib
+```
