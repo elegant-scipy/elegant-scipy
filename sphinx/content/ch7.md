@@ -470,6 +470,7 @@ simple gradient-based optimization methods.
 
 We leave it as an exercise to incorporate SciPy's implementation of basin-hopping
 into our alignment function. You'll need it for later parts of the chapter, so
+% TODO: handle explicit reference to where/how solutions are presented
 feel free to peek at the solution at the end of the book if you're stuck.
 
 <!-- exercise begin -->
@@ -477,9 +478,11 @@ feel free to peek at the solution at the end of the book if you're stuck.
 **Exercise:** Try modifying the `align` function to use
 `scipy.optimize.basinhopping`, which has explicit strategies to avoid local minima.
 
-*Hint:* limit using basin-hopping to just the top levels of the pyramid, as it is
+```{hint}
+Limit using basin-hopping to just the top levels of the pyramid, as it is
 a slower optimization approach, and could take rather long to run at full image
 resolution.
+```
 
 <!-- solution begin -->
 
