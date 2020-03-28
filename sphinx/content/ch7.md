@@ -125,7 +125,7 @@ axes[1].set_title('Shifted');
 For the optimization algorithm to do its work, we need some way of
 defining "dissimilarity"—i.e., the cost function.  The easiest way to do this is to
 simply calculate the average of the squared differences, often called the
-*mean squared error*, or MSE.
+*mean squared error*, or {abbr}`MSE (mean squared error)`.
 
 ```python
 import numpy as np
@@ -174,13 +174,13 @@ res = optimize.minimize(astronaut_shift_error, 0, args=(shifted,),
 print(f'The optimal shift for correction is: {res.x}')
 ```
 
-It worked! We shifted it by +50 pixels, and, thanks to our MSE measure, SciPy's
+It worked! We shifted it by +50 pixels, and, thanks to our {abbr}`MSE` measure, SciPy's
 `optimize.minimize` function has given us the correct amount of shift (-50) to
 get it back to its original state.
 
 It turns out, however, that this was a particularly easy optimization problem,
 which brings us to the principal difficulty of this kind of
-alignment: sometimes, the MSE has to get worse before it gets better.
+alignment: sometimes, the {abbr}`MSE` has to get worse before it gets better.
 
 Let's look again at shifting images, starting with the unmodified image:
 
@@ -204,10 +204,10 @@ ax.set_ylabel('MSE');
 <!-- caption text="Mean squared error as a function of shift from the original
 image" -->
 
-Starting at zero shift, have a look at the MSE value as the shift becomes
+Starting at zero shift, have a look at the {abbr}`MSE` value as the shift becomes
 increasingly negative: it increases consistently until around -300
 pixels of shift, where it starts to decrease again! Only slightly, but it
-decreases nonetheless. The MSE bottoms out at around -400, before it
+decreases nonetheless. The {abbr}`MSE` bottoms out at around -400, before it
 increases again. This is called a *local minimum*.
 Because optimization methods only have access to "nearby"
 values of the cost function, if the function improves by moving in the "wrong"
@@ -332,6 +332,7 @@ column dimension. This is called a "*rigid* registration" because there are no
 deformations of any kind (scaling, skew, or other stretching). The object is
 considered solid and moved around (including rotation) until a match is found.
 
+% TODO: intersphinx scikit-image
 To simplify the code, we'll use the scikit-image *transform* module to compute
 the shift and rotation of the image. SciPy's `optimize` requires a vector of
 parameters as input. We first make a
@@ -356,7 +357,7 @@ axes[1].set_title('Rotated');
 ```
 <!-- caption text="Another transformation: rotation" -->
 
-Next, we need a cost function. This is just MSE, but SciPy requires a specific
+Next, we need a cost function. This is just {abbr}`MSE`, but SciPy requires a specific
 format: the first argument needs to be the *parameter vector*, which it is
 optimizing. Subsequent arguments can be passed through the `args` keyword as a
 tuple, but must remain fixed: only the parameter vector can be optimized. In
@@ -568,7 +569,7 @@ before color photography had been invented. He did this by taking three
 different monochrome pictures of a scene, each with a different color filter
 placed in front of the lens.
 
-Aligning bright pixels together, as the MSE implicitly does, won't work in
+Aligning bright pixels together, as the {abbr}`MSE` implicitly does, won't work in
 this case. Take, for example, these three pictures of a stained glass window
 in the Church of Saint John the Theologian, taken from the [Library of Congress
 Prokudin-Gorskii Collection](http://www.loc.gov/pictures/item/prk2000000263/):
