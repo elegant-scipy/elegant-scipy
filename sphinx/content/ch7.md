@@ -689,7 +689,13 @@ See {ref}`Chapter 5 <sec:entropy_intro>` for a more in-depth discussion of entro
 
 In Python code, this becomes:
 
-```python
+```{code-block} python
+---
+name: code:nmi
+caption: |
+    Implementation of a function for computing the {abbr}`NMI` using
+    `scipy.stats`
+---
 from scipy.stats import entropy
 
 def normalized_mutual_information(A, B):
