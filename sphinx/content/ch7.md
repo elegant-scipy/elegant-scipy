@@ -775,7 +775,7 @@ information" -->
 What a glorious image! Realize that this artifact was created before color
 photography existed! Notice God's pearly white robes, John's white beard,
 and the white pages of the book held by Prochorus, his scribe — all of which
-were missing from the MSE-based alignment, but look wonderfully clear using NMI.
+were missing from the MSE-based alignment, but look wonderfully clear using {abbr}`NMI`.
 Notice also the realistic gold of the candlesticks in the foreground.
 
 We've illustrated the two key concepts in function optimization in this
