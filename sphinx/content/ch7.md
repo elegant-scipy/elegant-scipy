@@ -658,11 +658,12 @@ with some bright green spots.
 
 {numref}`code:mse_color_align` clearly illustrates the limitations of the
 {abbr}`MSE` as a cost function for the color-alignment optimization task.
-We turn instead to a measure called *normalized mutual information* (NMI),
+We turn instead to a measure called *normalized mutual information* 
+({abbr}`NMI (normalized mutual information)`),
 which measures correlations between the different brightness bands of the
 different images. When the images are perfectly aligned, any object of uniform
 color will create a large correlation between the shades of the different
-component channels, and a correspondingly large NMI value. In a sense, NMI
+component channels, and a correspondingly large {abbr}`NMI` value. In a sense, NMI
 measures how easy it would be to predict a pixel value of one image given the
 value of the corresponding pixel in the other. It was defined in the paper
 "Studholme, C., Hill, D.L.G., Hawkes, D.J., *An Overlap Invariant Entropy Measure
