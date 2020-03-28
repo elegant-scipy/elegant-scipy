@@ -363,7 +363,13 @@ optimizing. Subsequent arguments can be passed through the `args` keyword as a
 tuple, but must remain fixed: only the parameter vector can be optimized. In
 our case, this is just the rotation angle and the two translation parameters:
 
-```python
+```{code-block} python
+---
+name: code:cost_mse
+caption: |
+    The {abbr}`MSE` wrapped into a function of the form expected by 
+    `scipy.optimize`.
+---
 def cost_mse(param, reference_image, target_image):
     transformation = make_rigid_transform(param)
     transformed = transform.warp(target_image, transformation, order=3)
@@ -730,7 +736,8 @@ def normalized_mutual_information(A, B):
     return (H_A + H_B) / H_AB
 ```
 
-Now we define a *cost function* to optimize, as we defined `cost_mse` above:
+Now we define a *cost function* to optimize, as we defined `cost_mse`
+in {numref}`code:cost_mse`:
 
 ```python
 def cost_nmi(param, reference_image, target_image):
