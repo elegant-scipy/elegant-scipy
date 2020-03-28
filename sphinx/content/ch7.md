@@ -496,7 +496,13 @@ resolution.
 Powell's method for the lower levels, because basin-hopping is too
 computationally expensive to run at full resolution:
 
-```python
+```{code-block} python
+---
+name: code:basinhop
+caption: |
+    An optimizer for image alignment uitilizing a Gaussian pyramid approach
+    with basin-hopping.
+---
 def align(reference, target, cost=cost_mse, nlevels=7, method='Powell'):
     pyramid_ref = gaussian_pyramid(reference, levels=nlevels)
     pyramid_tgt = gaussian_pyramid(target, levels=nlevels)
@@ -746,7 +752,8 @@ def cost_nmi(param, reference_image, target_image):
     return -normalized_mutual_information(reference_image, transformed)
 ```
 
-Finally, we use this with our basinhopping-optimizing aligner:
+Finally, we use this with 
+{ref}`our basinhopping-optimizing aligner <code:basinhop>`:
 
 ```python
 print('*** Aligning blue to green ***')
