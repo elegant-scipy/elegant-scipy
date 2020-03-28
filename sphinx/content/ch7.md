@@ -677,10 +677,11 @@ where $H(X)$ is the *entropy* of $X$, and $H(X, Y)$ is the joint
 entropy of $X$ and $Y$. The numerator describes the entropy of the
 two images, seen separately, and the denominator the total entropy if
 they are observed together. Values can vary between 1 (maximally
-aligned) and 2 (minimally aligned)[^mi_calc]. See Chapter 5 for a
-more in-depth discussion of entropy.
+aligned) and 2 (minimally aligned)[^nmicalc]. 
+See {ref}`Chapter 5 <sec:entropy_intro>` for a more in-depth discussion of entropy.
 
-[^mi_calc]: A quick handwavy explanation is that entropy is calculated
+% TODO: multiline fn + _ in name
+[^nmicalc]: A quick handwavy explanation is that entropy is calculated
             from the histogram of the quantity under consideration.
             If $X = Y$, then the joint histogram $(X, Y)$ is diagonal,
             and that diagonal is the same as that of either $X$ or

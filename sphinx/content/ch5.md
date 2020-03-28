@@ -1033,6 +1033,7 @@ ID in one tells you the segment ID in the other, with no additional information.
 But as the segmentations become more different, knowing an ID in one doesn't tell
 you the ID in the other without more information.
 
+(sec:entropy_intro)=
 ## Information theory in brief
 
 In order to answer this question, we'll need a quick primer on information
