@@ -623,7 +623,12 @@ way that we aligned the astronaut image above, using the MSE. We use one color
 channel, green, as the reference image, and align the blue and red channels to
 that.
 
-```python
+```{code-block} python
+---
+name: code:mse_color_align
+caption: |
+    Aligning the three color channels using the {abbr}`MSE`.
+---
 print('*** Aligning blue to green ***')
 tf = align(green, blue)
 cblue = transform.warp(blue, tf, order=3)
@@ -651,6 +656,8 @@ spots of blue don't coincide with the green channel. That means that the MSE
 will be lower when the channels are *mis*-aligned so that blue patches overlap
 with some bright green spots.
 
+{numref}`code:mse_color_align` clearly illustrates the limitations of the
+{abbr}`MSE` as a cost function for the color-alignment optimization task.
 We turn instead to a measure called *normalized mutual information* (NMI),
 which measures correlations between the different brightness bands of the
 different images. When the images are perfectly aligned, any object of uniform
