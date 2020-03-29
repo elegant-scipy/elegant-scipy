@@ -316,9 +316,10 @@ In contrast, here we are only loading lines from disk one at a time, and maintai
 You might want to review chapters 1 and 2 for information about DNA and genomics.
 Briefly, your genetic information, the blueprint for making *you*, is encoded as a sequence of chemical *bases* in your *genome*.
 These are really, really tiny, so you can't just look in a microscope and read them.
-You also can't read a long string of them: errors accumulate and the readout becomes unusable.
-(New technology is changing this, but here we will focus on short-read sequencing data, the most common today.)
+You also can't read a long string of them: errors accumulate and the readout becomes unusable[^newtech].
 Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases long), and then assemble those like an enormous puzzle of 30 million pieces.
+
+[^newtech]: New technology is changing this, but here we will focus on short-read sequencing data, the most common today.
 
 Before performing assembly, it is vital to perform read correction.
 During DNA sequencing some bases are incorrectly read out, and must be fixed, or they will mess up the assembly.
