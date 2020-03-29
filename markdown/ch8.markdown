@@ -418,7 +418,7 @@ Normally in Python if you don't give a function all of its required arguments th
 In contrast, a curried function can just take *some* of those arguments.
 If the curried function doesn't get enough arguments, it returns a new function that takes the leftover arguments.
 Once that second function is called with the remaining arguments, it can perform the original task.
-Another word for currying is partial evaluation.
+Another term for currying is partial evaluation.
 In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
 
 So, while the function call `map(np.log, numbers_list)` applies the `np.log`
