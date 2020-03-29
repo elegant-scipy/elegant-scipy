@@ -376,7 +376,13 @@ Now we have the required information to convert a stream of lines from a FASTA f
 
 Here's how you would do this in pure Python, using nothing but built-ins:
 
-```python
+```{code-block} python
+---
+name: code:kmer_processing
+caption: |
+    Pure Python approach to $k$-mer processing as outlined in the above 
+    list.
+---
 def is_sequence(line):
     line = line.rstrip()  # remove '\n' at end of line
     return len(line) > 0 and not line.startswith('>')
@@ -431,7 +437,7 @@ integer_histogram(counts_arr, xlim=(-1, 250))
 Notice the nice distribution of $k$-mer frequencies, along with a big bump of $k$-mers (at the left of the plot) that appear only once.
 Such low frequency $k$-mers are likely to be errors.
 
-But, with the code above, we are actually doing a bit too much work.
+However, we are actually doing a bit too much work in {numref}`code:kmer_processing`.
 A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end.
 Toolz has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
 
