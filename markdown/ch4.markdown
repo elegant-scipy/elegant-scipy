@@ -386,7 +386,7 @@ calculations—a great improvement!  However, the classical Cooley-Tukey
 algorithm implemented in FFTPACK (and used by SciPy) recursively breaks up the transform
 into smaller (prime-sized) pieces and only shows this improvement for
 "smooth" input lengths (an input length is considered smooth when its
-largest prime factor is small).  For large-prime-sized pieces, the
+largest prime factor is small).  For large prime-sized pieces, the
 Bluestein or Rader algorithms can be used in conjunction with the
 Cooley-Tukey algorithm, but this optimization is not implemented in
 FFTPACK.[^fast]
@@ -434,7 +434,7 @@ ax1.set_xlabel('Length of input');
 ```
 <!-- caption text="FFT execution time vs smoothness for different input lengths" -->
 
-The intuition is that, for smooth inputs, the FFT can be broken up
+The intuition is that, for smooth numbers, the FFT can be broken up
 into many small pieces. After performing the FFT on the first piece,
 those results can be reused in subsequent computations.  This explains
 why we chose a length of 1024 for our audio slices earlier—it has a
