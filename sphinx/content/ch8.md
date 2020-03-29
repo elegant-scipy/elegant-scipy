@@ -570,16 +570,21 @@ decorator, which is used to create a curried function.
 ```
 
 As a reminder, `map` is a built-in function.
-From the [docs](https://docs.python.org/3.4/library/functions.html#map):
+From the [docs](https://docs.python.org/3/library/functions.html#map):
 
 > map(function, iterable, ...)
 > Return an iterator that applies function to every item of iterable, yielding the results.
 
-A curried version of `map` is particularly handy when working in a Toolz pipe.
+A curried version of `map` is particularly handy when working in a Toolz `pipe`.
 You can just pass a function to `c.map` and then stream in the iterator later using `tz.pipe`.
 Take another look at our function for reading in the genome to see how this works in practice.
 
-```python
+```{code-block} python
+---
+name: code:curried_genome
+caption: |
+    The `genome` function we originally defined in {numref}`ch8_example`.
+---
 def genome(file_pattern):
     """Stream a genome, letter by letter, from a list of FASTA filenames."""
     return tz.pipe(file_pattern, glob, sorted,  # Filenames
