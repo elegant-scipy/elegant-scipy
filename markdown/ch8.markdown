@@ -57,7 +57,7 @@ We load the full matrix into memory (1), then make a copy with 1 added to each v
 That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance in memory.
 For any kind of "big data" operation, this approach won't work.
 
-Python's creators knew this, and created the "yield" keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
+Python's creators knew this, and created the `yield` keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
 "Yield" is a rather nice name for it: the function *yields* control to the next function, waiting to resume processing the data until all the downstream steps have processed that data point.
 
 ## Streaming with `yield`
@@ -296,7 +296,8 @@ This is possible because reads are so abundant that we can afford to toss out er
 This is also an example in which streaming is *essential*.
 As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.
 
-DNA sequence data is commonly represented in FASTA format.
+DNA sequence data is commonly represented in 
+[FASTA format](https://en.wikipedia.org/wiki/FASTA_format).
 This is a plaintext format, consisting of one or many DNA sequences per file, each with a name and the actual sequence.
 
 A sample FASTA file:
@@ -417,7 +418,7 @@ Normally in Python if you don't give a function all of its required arguments th
 In contrast, a curried function can just take *some* of those arguments.
 If the curried function doesn't get enough arguments, it returns a new function that takes the leftover arguments.
 Once that second function is called with the remaining arguments, it can perform the original task.
-Another word for currying is partial evaluation.
+Another term for currying is partial evaluation.
 In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
 
 So, while the function call `map(np.log, numbers_list)` applies the `np.log`
@@ -491,7 +492,7 @@ add_partial(5)
 To summarize what we did, `add` is now a curried function, so it can take one of the arguments and returns another function, `add_partial`, which “remembers” that argument.
 
 In fact, all of the Toolz functions are also available as curried functions in the `toolz.curried` namespace.
-Toolz also includes curried version of some handy higher order Python functions like `map`, `filter` and `reduce`.
+Toolz also includes curried version of some handy higher-order Python functions like `map`, `filter` and `reduce`.
 We will import the `curried` namespace as `c` so our code doesn't get too cluttered.
 So for example the curried version of `map` will be `c.map`.
 Note, that the curried functions (e.g. `c.map`) are different from the `@curry` decorator, which is used to create a curried function.
@@ -502,7 +503,7 @@ c.map
 ```
 
 As a reminder, `map` is a built-in function.
-From the [docs](https://docs.python.org/3.4/library/functions.html#map):
+From the [docs](https://docs.python.org/3/library/functions.html#map):
 
 > map(function, iterable, ...)
 > Return an iterator that applies function to every item of iterable, yielding the results.
@@ -669,7 +670,7 @@ datasets.
 Back to our original code example.
 What is a Markov model, and why is it useful?
 
-In general, a Markov model assumes that the probability of the system moving to a given state, is only dependent on the state that it was in just previously.
+In general, a Markov model assumes that the probability of the system moving to a given state is only dependent on the state that it was in just previously.
 For example if it is sunny right now, there is a high probability that it will be sunny tomorrow.
 The fact that it was raining yesterday is irrelevant.
 In this theory, all the information required to predict the future is encoded in the current state of things.
