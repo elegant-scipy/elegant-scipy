@@ -911,8 +911,10 @@ have to keep a decompressed version on your hard drive. The Drosophila genome,
 for example, takes less than a third of the space on disk when compressed with
 gzip. And yes, unzipping can be streamed, too!
 
-*Hint:* The `gzip` package, part of Python's standard library, allows you
+```{hint}
+The `gzip` package, part of Python's standard library, allows you
 to open `.gz` files as if they were normal files.
+```
 
 <!-- solution begin -->
 
@@ -963,7 +965,7 @@ line, as `tarfile` returns them as bytes, not as text.
 <!-- exercise end -->
 
 We hope to have shown you at least a hint that streaming in Python can be easy
-when you use a few abstractions, like the ones Toolz provides.
+when you use a few abstractions, like the ones `Toolz` provides.
 
 Streaming can make you more productive, because big data takes linearly longer
 than small data. In batch analysis, big data can take forever to run, because
