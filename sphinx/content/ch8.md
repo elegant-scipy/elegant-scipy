@@ -782,8 +782,8 @@ DNA, by whether it is in lower case (repetitive) or upper case
 (non-repetitive). We can use this information when we build the Markov model.
 
 We want to encode the Markov model as a NumPy array, so we will make
-dictionaries to index from letters to indices in [0, 7] (`LDICT` for "letters
-dictionary"), and from pairs of letters to 2D indices in ([0, 7], [0, 7])
+dictionaries to index from letters to indices $\in [0, 7]$ (called`LDICT` for
+"letters dictionary"), and from pairs of letters to 2D indices $\in ([0, 7], [0, 7])$
 (`PDICT` or "pairs dictionary"):
 
 ```python
