@@ -645,7 +645,7 @@ integer_histogram(counts, xlim=(-1, 250), lw=2)
 <!-- exercise begin -->
 
 **Exercise:**
-The scikit-learn library has an IncrementalPCA class, which allows you to run
+The `scikit-learn` library has an `IncrementalPCA` class, which allows you to run
 principal components analysis on a dataset without loading the full dataset
 into memory.
 But you need to chunk your data yourself, which makes the code a bit awkward to
@@ -657,10 +657,12 @@ dataset, which is in `data/iris.csv`. (You can also access it from the
 you can color the points with the species number, found in
 `data/iris-target.csv`.
 
-*Hint:* The `IncrementalPCA` class is in `sklearn.decomposition`, and
+```{hint}
+The `IncrementalPCA` class is in `sklearn.decomposition`, and
 requires a *batch size* greater than 1 to train the model. Look at the
 `toolz.curried.partition` function for how to create a stream of batches from a
 stream of data points.
+```
 
 <!-- solution begin -->
 
