@@ -140,7 +140,13 @@ database on a supercomputer.
 
 To clarify the flow of control when using streaming-style functions, it's useful to make *verbose* versions of the functions, which print out a message with each operation.
 
-```python
+```{code-block} python
+---
+name: code:verbose
+caption: |
+    Some *verbose* versions of functions to help visualize a streaming-style
+    implementation of our example from {numref}`code:nostream`.
+---
 import numpy as np
 
 def tsv_line_to_array(line):
