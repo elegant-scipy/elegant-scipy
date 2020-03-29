@@ -217,7 +217,14 @@ so we're going to use a fly genome instead (it's about 1/20 the size).
 Over the course of the chapter we'll actually augment the example a little bit to start from compressed data (who wants to keep an uncompressed dataset on their hard drive?).
 This modification is almost *trivial*, which speaks to the elegance of his example.
 
-```python
+```{code-block} python
+---
+name: ch8_example
+caption: |
+    Summary of the code example for Chapter 8. Using a streaming approach via
+    `toolz` to create a Markov model for an organism's genome.
+linenos:
+---
 import toolz as tz
 from toolz import curried as c
 from glob import glob
@@ -275,7 +282,7 @@ model = tz.pipe(dm, genome, c.take(10**7), markov)
 # the take step can just be removed if you have ~5-10 mins to wait.
 ```
 
-There's a *lot* going on in that example, so we are going to unpack it little by little.
+There's a *lot* going on in {numref}`ch8_example`, so we are going to unpack it little by little.
 We'll actually run the example at the end of the chapter.
 
 The first thing to note is how many functions come from the [Toolz library](http://toolz.readthedocs.org/en/latest/).
