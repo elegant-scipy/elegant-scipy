@@ -470,9 +470,11 @@ Earlier, we briefly used a *curried* version of the `map` function, which
 applies a given function to each element in a sequence. Now that we've mixed a
 few more curried calls in there, it's time share with you what it means!
 Currying is not named after the spice blend (though it does spice up your code).
-It is named for Haskell Curry, the mathematician who invented the concept.
+It is named for [Haskell Curry][hc], the mathematician who invented the concept.
 Haskell Curry is also the namesake of the Haskell programming language — in which
 *all* functions are curried!
+
+[hc]: https://en.wikipedia.org/wiki/Haskell_Curry
 
 "Currying" means *partially* evaluating a function and returning another, "smaller" function.
 Normally in Python if you don't give a function all of its required arguments then it will throw a fit.
