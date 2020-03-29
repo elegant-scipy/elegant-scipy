@@ -503,7 +503,7 @@ c.map
 ```
 
 As a reminder, `map` is a built-in function.
-From the [docs](https://docs.python.org/3.4/library/functions.html#map):
+From the [docs](https://docs.python.org/3/library/functions.html#map):
 
 > map(function, iterable, ...)
 > Return an iterator that applies function to every item of iterable, yielding the results.
