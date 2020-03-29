@@ -492,7 +492,7 @@ add_partial(5)
 To summarize what we did, `add` is now a curried function, so it can take one of the arguments and returns another function, `add_partial`, which “remembers” that argument.
 
 In fact, all of the Toolz functions are also available as curried functions in the `toolz.curried` namespace.
-Toolz also includes curried version of some handy higher order Python functions like `map`, `filter` and `reduce`.
+Toolz also includes curried version of some handy higher-order Python functions like `map`, `filter` and `reduce`.
 We will import the `curried` namespace as `c` so our code doesn't get too cluttered.
 So for example the curried version of `map` will be `c.map`.
 Note, that the curried functions (e.g. `c.map`) are different from the `@curry` decorator, which is used to create a curried function.
