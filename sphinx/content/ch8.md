@@ -351,7 +351,8 @@ This is the basis for $k$-mer error correction:
 This is also an example in which streaming is *essential*.
 As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.
 
-DNA sequence data is commonly represented in FASTA format.
+DNA sequence data is commonly represented in
+[FASTA](https://en.wikipedia.org/wiki/FASTA_format) format.
 This is a plaintext format, consisting of one or many DNA sequences per file, each with a name and the actual sequence.
 
 A sample FASTA file:
