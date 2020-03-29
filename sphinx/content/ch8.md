@@ -786,12 +786,6 @@ dictionaries to index from letters to indices $\in [0, 7]$ (called`LDICT` for
 "letters dictionary"), and from pairs of letters to 2D indices $\in ([0, 7], [0, 7])$
 (`PDICT` or "pairs dictionary"):
 
-```{note}
-NumPy is capable of handling non-numeric data of type `str` e.g., but it is
-generally wise to convert to numerical data wherever possible as *Num*Py 
-is generally geared towards *Num*erical operations.
-```
-
 ```python
 import itertools as it
 
