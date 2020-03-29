@@ -86,7 +86,14 @@ Here's one way to think about it: for every processing function that would norma
 
 Here's an example where we take the log of each element in a list, using either a standard data-copying method or a streaming method:
 
-```python
+```{code-block} python
+---
+name: code:yield_comp
+caption: |
+    Functions for computing the log of all elements in a sequence. The
+    *standard* way using a `list`, and the *streaming* way, using
+    the `yield` keyword.
+---
 def log_all_standard(input):
     output = []
     for elem in input:
