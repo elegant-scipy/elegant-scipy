@@ -75,7 +75,7 @@ For any kind of "big data" operation, this approach won't work.
               or *reducing operations* because the reduce data 
               (potentially along an axis) down to a scalar value.
 
-Python's creators knew this, and created the "yield" keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
+Python's creators knew this, and created the `yield` keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
 "Yield" is a rather nice name for it: the function *yields* control to the next function, waiting to resume processing the data until all the downstream steps have processed that data point.
 
 ## Streaming with `yield`
