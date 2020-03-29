@@ -749,7 +749,7 @@ datasets.
 Back to our original code example.
 What is a Markov model, and why is it useful?
 
-In general, a Markov model assumes that the probability of the system moving to a given state, is only dependent on the state that it was in just previously.
+In general, a Markov model assumes that the probability of the system moving to a given state is only dependent on the state that it was in just previously.
 For example if it is sunny right now, there is a high probability that it will be sunny tomorrow.
 The fact that it was raining yesterday is irrelevant.
 In this theory, all the information required to predict the future is encoded in the current state of things.
@@ -770,9 +770,11 @@ Angeles or London, assuming you have a previously trained model.
 
 In this chapter, we'll cover just the model building, for now.
 
-- You can download the *Drosophila melanogaster* (fruit fly) genome file dm6.fa.gz from
-http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/.
+```{important}
+You can download the *Drosophila melanogaster* (fruit fly) genome file `dm6.fa.gz` from
+<http://hgdownload.cse.ucsc.edu/goldenPath/dm6/bigZips/>.
 You will need to unzip it using: `gzip -d dm6.fa.gz`
+```
 
 In the genome data, genetic sequence, which consists of the letters A, C, G,
 and T, is encoded as belonging to *repetitive elements*, a specific class of
