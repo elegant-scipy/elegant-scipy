@@ -296,7 +296,8 @@ This is possible because reads are so abundant that we can afford to toss out er
 This is also an example in which streaming is *essential*.
 As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.
 
-DNA sequence data is commonly represented in FASTA format.
+DNA sequence data is commonly represented in 
+[FASTA format](https://en.wikipedia.org/wiki/FASTA_format).
 This is a plaintext format, consisting of one or many DNA sequences per file, each with a name and the actual sequence.
 
 A sample FASTA file:
