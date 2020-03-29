@@ -341,9 +341,12 @@ This is called the *coverage* of that region.
 If a read has an error in it, there is a high probability that the $k$-mers overlapping the error will be unique or close to unique in the genome.
 Think of the equivalent in English: if you were to take reads from Shakespeare, and one read was "to be or nob to be", the 6-mer "nob to" will appear rarely or not at all, whereas "not to" will be very frequent.
 
-This is the basis for $k$-mer error correction: split the reads into $k$-mers, count the occurrence of each $k$-mer, and use some logic to replace rare $k$-mers in reads with similar common ones.
-(Or, alternatively, discard reads with erroneous $k$-mers.
-This is possible because reads are so abundant that we can afford to toss out erroneous data.)
+This is the basis for $k$-mer error correction: 
+ 1. Split the reads into $k$-mers.
+ 2. Count the occurrence of each $k$-mer.
+ 3. Use some logic to replace rare $k$-mers in reads with similar common ones[^tosserrors].
+
+[^tosserrors]: Or, alternatively, discard reads with erroneous $k$-mers. This is possible because reads are so abundant that we can afford to toss out erroneous data.
 
 This is also an example in which streaming is *essential*.
 As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.
