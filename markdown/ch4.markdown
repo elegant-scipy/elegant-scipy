@@ -797,13 +797,10 @@ lobes ($\beta$ typically between 5 and 10) [^choosing_a_window].
                       application, as illustrated in the main text, by
                       adjusting the parameter $\beta$.
 
-Applying the Kaiser window here, we see that the sidelobes have been
-drastically reduced, at the cost of a slight widening in the main lobe.
-
 <!--
 *For online notebook, use something like:*
 
-```
+#```
 # @interact(beta=(0, 20.))
 # def window(beta):
 #    x = np.kaiser(1000, beta)
@@ -812,17 +809,24 @@ drastically reduced, at the cost of a slight widening in the main lobe.
 #    axes[1].plot(fftpack.fftshift(np.abs(np.fft.fft(x, 10000))))
 #    axes[1].set_xlim(2*2480, 2*2520)
 #    plt.show()
-```
+#```
 -->
 
 The effect of windowing our previous example is noticeable:
 
 ```python
 win = np.kaiser(len(t), 5)
-X_win = fftpack.fft(x * win)
+x_win = x * win
 
-plt.plot(fftpack.fftfreq(len(t)), np.abs(X_win))
-plt.ylim(0, 190);
+X_win = fftpack.fft(x_win)
+
+f, (ax0, ax1) = plt.subplots(2, 1)
+
+ax0.plot(x_win)
+ax0.set_ylim(-1.1, 1.1)
+
+ax1.plot(fftpack.fftfreq(len(t)), np.abs(X_win))
+ax1.set_ylim(0, 190);
 ```
 <!-- caption text="Spectrum of a windowed signal (magnitude)" -->
 
