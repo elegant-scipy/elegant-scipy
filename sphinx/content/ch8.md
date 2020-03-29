@@ -311,7 +311,7 @@ Much easier to understand!
 This strategy also has an advantage over {ref}`the original NumPy implementation <code:nostream>`: if we scale our data to millions or billions of rows, our computer might struggle to hold all the data in memory.
 In contrast, here we are only loading lines from disk one at a time, and maintaining only a single line's worth of data.
 
-## k-mer counting and error correction
+## $k$-mer counting and error correction
 
 You might want to review chapters 1 and 2 for information about DNA and genomics.
 Briefly, your genetic information, the blueprint for making *you*, is encoded as a sequence of chemical *bases* in your *genome*.
@@ -332,17 +332,17 @@ This takes $N^2$ operations, or $9 \times 10^{14}$ for a 30 million read dataset
 (And these are not cheap operations.)
 
 There is another way.
-[Pavel Pevzner and others](http://www.pnas.org/content/98/17/9748.full) realized that reads could be broken down into smaller, overlapping *k-mers*, substrings of length k, which can then be stored in a hash table (a dictionary, in Python).
-This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of k-mers, which can only be as large as the genome itself — usually 1-2 orders of magnitude smaller than the reads.
+[Pavel Pevzner and others](http://www.pnas.org/content/98/17/9748.full) realized that reads could be broken down into smaller, overlapping $k$*-mers*, substrings of length $k$, which can then be stored in a hash table (a dictionary, in Python).
+This has tons of advantages, but the main one is that instead of computing on the total number of reads, which can be arbitrarily large, we can compute on the total number of $k$-mers, which can only be as large as the genome itself — usually 1-2 orders of magnitude smaller than the reads.
 
-If we choose a value for k that is large enough to ensure any k-mer appears only once in the genome, the number of times a k-mer appears is exactly the number of reads that originate from that part of the genome.
+If we choose a value for $k$ that is large enough to ensure any $k$-mer appears only once in the genome, the number of times a $k$-mer appears is exactly the number of reads that originate from that part of the genome.
 This is called the *coverage* of that region.
 
-If a read has an error in it, there is a high probability that the k-mers overlapping the error will be unique or close to unique in the genome.
+If a read has an error in it, there is a high probability that the $k$-mers overlapping the error will be unique or close to unique in the genome.
 Think of the equivalent in English: if you were to take reads from Shakespeare, and one read was "to be or nob to be", the 6-mer "nob to" will appear rarely or not at all, whereas "not to" will be very frequent.
 
-This is the basis for k-mer error correction: split the reads into k-mers, count the occurrence of each k-mer, and use some logic to replace rare k-mers in reads with similar common ones.
-(Or, alternatively, discard reads with erroneous k-mers.
+This is the basis for $k$-mer error correction: split the reads into $k$-mers, count the occurrence of each $k$-mer, and use some logic to replace rare $k$-mers in reads with similar common ones.
+(Or, alternatively, discard reads with erroneous $k$-mers.
 This is possible because reads are so abundant that we can afford to toss out erroneous data.)
 
 This is also an example in which streaming is *essential*.
@@ -364,11 +364,11 @@ A sample FASTA file:
     GACTAAAACTGGTTC
 ```
 
-Now we have the required information to convert a stream of lines from a FASTA file to a count of k-mers:
+Now we have the required information to convert a stream of lines from a FASTA file to a count of $k$-mers:
 
 - filter lines so that only sequence lines are used
-- for each sequence line, produce a stream of k-mers
-- add each k-mer to a dictionary counter
+- for each sequence line, produce a stream of $k$-mers
+- add each $k$-mer to a dictionary counter
 
 Here's how you would do this in pure Python, using nothing but built-ins:
 
@@ -396,8 +396,8 @@ with open('data/sample.fasta') as fin:
     counts = kmer_counter(kmers)
 ```
 
-This totally works and is streaming, so reads are loaded from disk one at a time and piped through the k-mer converter and to the k-mer counter.
-We can then plot a histogram of the counts, and confirm that there are indeed two well-separated populations of correct and erroneous k-mers:
+This totally works and is streaming, so reads are loaded from disk one at a time and piped through the $k$-mer converter and to the $k$-mer counter.
+We can then plot a histogram of the counts, and confirm that there are indeed two well-separated populations of correct and erroneous $k$-mers:
 
 ```python
 # Make plots appear inline, set custom plotting style
@@ -422,23 +422,23 @@ def integer_histogram(counts, normed=True, xlim=[], ylim=[],
 counts_arr = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts_arr, xlim=(-1, 250))
 ```
-<!-- caption text="Histogram of k-mer counts" -->
+<!-- caption text="Histogram of $k$-mer counts" -->
 
-Notice the nice distribution of k-mer frequencies, along with a big bump of k-mers (at the left of the plot) that appear only once.
-Such low frequency k-mers are likely to be errors.
+Notice the nice distribution of $k$-mer frequencies, along with a big bump of $k$-mers (at the left of the plot) that appear only once.
+Such low frequency $k$-mers are likely to be errors.
 
 But, with the code above, we are actually doing a bit too much work.
 A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end.
 Toolz has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
 
-For example, the *sliding window* function is exactly what we need to make k-mers:
+For example, the *sliding window* function is exactly what we need to make $k$-mers:
 
 ```python
 print(tz.sliding_window.__doc__)
 ```
 
 Additionally, the *frequencies* function counts the appearance of individual items in a data stream.
-Together with pipe, we can now count k-mers in a single function call:
+Together with pipe, we can now count $k$-mers in a single function call:
 
 ```python
 from toolz import curried as c
@@ -578,9 +578,9 @@ def genome(file_pattern):
                    c.filter(is_nucleotide))
 ```
 
-## Back to counting k-mers
+## Back to counting $k$-mers
 
-Okay, so now we've got our heads around curried, let's get back to our k-mer counting code.
+Okay, so now we've got our heads around curried, let's get back to our $k$-mer counting code.
 Here's that code again that used those curried functions:
 
 ```python
@@ -595,13 +595,13 @@ counts = tz.pipe('data/sample.fasta', open,
                  tz.frequencies)
 ```
 
-We can now observe the frequency of different k-mers:
+We can now observe the frequency of different $k$-mers:
 
 ```python
 counts = np.fromiter(counts.values(), dtype=int, count=len(counts))
 integer_histogram(counts, xlim=(-1, 250), lw=2)
 ```
-<!-- caption text="Histogram of k-mer counts" -->
+<!-- caption text="Histogram of $k$-mer counts" -->
 
 > **Tips for working with streams {.callout}**
 >  - Convert "list of list" to "long list" with `tz.concat`
