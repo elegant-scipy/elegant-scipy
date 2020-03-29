@@ -439,16 +439,16 @@ Such low frequency $k$-mers are likely to be errors.
 
 However, we are actually doing a bit too much work in {numref}`code:kmer_processing`.
 A lot of the functionality we wrote in for loops and yields is actually *stream manipulation*: transforming a stream of data into a different kind of data, and accumulating it at the end.
-Toolz has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
+`Toolz` has a lot of stream manipulation primitives that make it easy to write the above in just one function call; and, once you know the names of the transforming functions, it also becomes easier to visualize what is happening to your data stream at each point.
 
-For example, the *sliding window* function is exactly what we need to make $k$-mers:
+For example, the `sliding_window` function is exactly what we need to make $k$-mers:
 
 ```python
 print(tz.sliding_window.__doc__)
 ```
 
-Additionally, the *frequencies* function counts the appearance of individual items in a data stream.
-Together with pipe, we can now count $k$-mers in a single function call:
+Additionally, the `frequencies` function counts the appearance of individual items in a data stream.
+Together with `pipe`, we can now count $k$-mers in a single function call:
 
 ```python
 from toolz import curried as c
