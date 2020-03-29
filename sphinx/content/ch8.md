@@ -15,7 +15,7 @@ streaming concepts to enable you to handle much larger datasets than can fit
 in your computer's RAM.
 
 You have probably already done some streaming, perhaps without thinking about it in these terms.
-The simplest form is probably iterating through lines in a files, processing each line without ever reading the entire file into memory.
+The simplest form is probably iterating through lines in a file, processing each line without ever reading the entire file into memory.
 For example a loop like this to calculate the mean of each row and sum them:
 
 ```python
@@ -44,7 +44,14 @@ Let us clarify what we mean by "streaming" and why you might want to do it.
 Suppose you have some data in a text file, and you want to compute the column-wise average of $\log(x+1)$ of the values.
 The common way to do this would be to use NumPy to load the values, compute the log function for all values in the full matrix, and then take the mean over the 1st axis:
 
-```python
+```{code-block} python
+---
+name: code:nostream
+caption: |
+    Naive approach to applying column-wise averaging to data from file (after
+    applying other basic mathematical operations).
+linenos:
+---
 import numpy as np
 expr = np.loadtxt('data/expr.tsv')
 logexpr = np.log(expr + 1)
@@ -53,9 +60,20 @@ np.mean(logexpr, axis=0)
 
 This works, and it follows a reassuringly familiar input-output model of computation.
 But it's a pretty inefficient way to go about it!
-We load the full matrix into memory (1), then make a copy with 1 added to each value (2), then make another copy to compute the log (3), before finally passing it on to `np.mean`.
+Let's breakdown {numref}`code:nostream` by what's happening under the hood:
+ - **line 2**: We load the full 2D array into memory
+ - **line 3**: An internal copy of `expr` is made to add 1 to each value
+ - **line 3**: *Another* internal copy is made to compute the `log` for every 
+   value
+ - **line 4**: Finally, the array is passed to `np.mean` to perform a *reduction*[^reduction]
+   on the array
+
 That's three instances of the data array, to perform an operation that doesn't require keeping even *one* instance in memory.
 For any kind of "big data" operation, this approach won't work.
+
+[^reduction]: Operations like `mean` and `sum` are sometimes referred to as *reductions*
+              or *reducing operations* because the reduce data 
+              (potentially along an axis) down to a scalar value.
 
 Python's creators knew this, and created the "yield" keyword, which enables a function to process just one "sip" of the data, pass the result on to the next process, and *let the chain of processing complete* for that one piece of data before moving on to the next one.
 "Yield" is a rather nice name for it: the function *yields* control to the next function, waiting to resume processing the data until all the downstream steps have processed that data point.
