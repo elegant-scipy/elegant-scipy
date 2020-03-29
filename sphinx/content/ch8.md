@@ -481,12 +481,12 @@ Normally in Python if you don't give a function all of its required arguments th
 In contrast, a curried function can just take *some* of those arguments.
 If the curried function doesn't get enough arguments, it returns a new function that takes the leftover arguments.
 Once that second function is called with the remaining arguments, it can perform the original task.
-Another word for currying is partial evaluation.
+Another term for currying is partial evaluation.
 In functional programming, currying is a way to produce a function that can wait for the rest of the arguments to show up later.
 
 So, while the function call `map(np.log, numbers_list)` applies the `np.log`
 function to all of the numbers in `numbers_list` (returning a sequence of the
-logged numbers), the call `toolz.curried.map(np.log)` returns a *function* that
+$\log$-ed numbers), the call `toolz.curried.map(np.log)` returns a *function* that
 takes in a sequence of numbers and returns a sequence of logged numbers.
 
 It turns out that having a function that already knows about some of the arguments is perfect for streaming!
@@ -539,7 +539,7 @@ add2(5)
 
 Now, that worked, but `add_curried` was a hard function to read.
 Future us will probably have trouble remembering how we wrote that code.
-Luckily, Toolz has the, well, tools to help us out.
+Luckily, `Toolz` has the, well, tools to help us out.
 
 ```python
 import toolz as tz
