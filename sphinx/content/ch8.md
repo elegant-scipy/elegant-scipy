@@ -289,11 +289,12 @@ The first thing to note is how many functions come from the [Toolz library](http
 For example from Toolz we've used, `pipe`, `sliding_window`, `frequencies`, and a curried version of `map` (more on this later).
 That's because Toolz is written specifically to take advantage of Python's iterators, and easily manipulate streams.
 
+% TODO: intersphinx toolz.pipe
 Let's start with `pipe`.
 This function is simply syntactic sugar to make nested function calls easier to read.
 This is important because that pattern becomes increasingly common when dealing with iterators.
 
-As a simple example, let's rewrite our running mean using `pipe`:
+As a simple example, let's rewrite {ref}`our running mean <code:verbose>` using `pipe`:
 
 ```python
 import toolz as tz
@@ -307,7 +308,7 @@ mean = tz.pipe(filename, readtsv, add1, log, running_mean)
 What was originally multiple lines, or an unwieldy mess of parentheses, is now a clean description of the sequential transformations of the input data.
 Much easier to understand!
 
-This strategy also has an advantage over the original NumPy implementation: if we scale our data to millions or billions of rows, our computer might struggle to hold all the data in memory.
+This strategy also has an advantage over {ref}`the original NumPy implementation <code:nostream>`: if we scale our data to millions or billions of rows, our computer might struggle to hold all the data in memory.
 In contrast, here we are only loading lines from disk one at a time, and maintaining only a single line's worth of data.
 
 ## k-mer counting and error correction
