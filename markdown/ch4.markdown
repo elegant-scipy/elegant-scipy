@@ -351,7 +351,7 @@ This is complemented by the following functions in NumPy:
    ``np.kaiser``: Tapered windowing functions.
 
 It is also used to perform fast convolutions of large inputs by
-``scipy.signal.fftconvolve`.
+`scipy.signal.fftconvolve`.
 
 SciPy wraps the Fortran FFTPACK library—it is not the fastest out
 there, but unlike packages such as FFTW, it has a permissive free
@@ -365,7 +365,7 @@ How come?  Well, you have $N$
 1, 2 \pi f \times 3, ..., 2 \pi f \times (N - 1)$), and you want to see how
 strongly your signal corresponds to each.  Starting with the first,
 you take the dot product with the signal (which, in itself, entails $N$
-multiplication operations).  Repeating this operation$N$times, once
+multiplication operations).  Repeating this operation $N$ times, once
 for each sinusoid, then gives $N^2$ operations.
 
 [^big_O]: In computer science, the computational cost of an algorithm
@@ -386,7 +386,7 @@ calculations—a great improvement!  However, the classical Cooley-Tukey
 algorithm implemented in FFTPACK (and used by SciPy) recursively breaks up the transform
 into smaller (prime-sized) pieces and only shows this improvement for
 "smooth" input lengths (an input length is considered smooth when its
-largest prime factor is small).  For large prime sized pieces, the
+largest prime factor is small).  For large prime-sized pieces, the
 Bluestein or Rader algorithms can be used in conjunction with the
 Cooley-Tukey algorithm, but this optimization is not implemented in
 FFTPACK.[^fast]
@@ -434,7 +434,7 @@ ax1.set_xlabel('Length of input');
 ```
 <!-- caption text="FFT execution time vs smoothness for different input lengths" -->
 
-The intuition is that, for smooth numbers, the FFT can be broken up
+The intuition is that, for smooth input lengths, the FFT can be broken up
 into many small pieces. After performing the FFT on the first piece,
 those results can be reused in subsequent computations.  This explains
 why we chose a length of 1024 for our audio slices earlier—it has a
@@ -468,8 +468,8 @@ Fourier transforms" for further explanation of frequencies).  E.g., when we do t
 Fourier transform of a signal of all ones, an input that has no
 variation and therefore only has the slowest, constant Fourier
 component (also known as the "DC" or Direct Current component—just
-electronics jargon for "mean of the signal"), appearing as the first
-entry:
+electronics jargon for "mean of the signal"), we see this DC component 
+appearing as the first entry:
 
 ```python
 from scipy import fftpack
@@ -525,12 +525,12 @@ the `fftshift` function.
 > **Discrete Fourier transforms {.callout}**
 >
 > The Discrete Fourier Transform (DFT) converts a sequence of $N$
-> equally spaced real or complex samples $x_{0,}x_{1,\ldots x_{N-1}}$ of
+> equally spaced real or complex samples $x_{0},x_{1},\ldots, x_{N-1}$ of
 > a function $x(t)$ of time (or another variable, depending on the
 > application) into a sequence of $N$ complex numbers $X_{k}$ by the
 > summation
 >
-> $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots
+> $$X_{k}=\sum_{n=0}^{N-1}x_{n}e^{-j2\pi kn/N},\;k=0,1,\ldots,
 > N-1.$$
 >
 > With the numbers $X_{k}$ known, the inverse DFT *exactly* recovers the
@@ -545,7 +545,7 @@ the `fftshift` function.
 >
 > $$x(t)=\sum_{n=-\infty}^{\infty}c_{n}e^{jn\omega_{0}t},$$
 >
-> the DFT is a *finite *series with $N$ terms defined at the equally
+> the DFT is a *finite* series with $N$ terms defined at the equally
 > spaced discrete instances of the *angle* $(\omega_{0}t_{n})=2\pi\frac{k}{N}$
 > in the interval $[0,2\pi)$,
 > i.e. *including* $0$  and *excluding* $2\pi$.
@@ -1040,7 +1040,7 @@ v_sim = np.sum(M * signals, axis=1)
 
 ```
 
-Above, we generate a synthetic signal, $v_{single}$, received when
+Above, we generate a synthetic signal, $v_\mathrm{single}$, received when
 looking at a single target (see figure below).  By counting the number
 of cycles seen in a given time period, we can compute the frequency of
 the signal and thus the distance to the target.
@@ -1071,8 +1071,8 @@ m.
 ![Receiver output signals: (a) single simulated target
  (b) five simulated targets (c) actual radar data](../figures/generated/radar_time_signals.png)
 
-The real world radar data is read from a NumPy-format ``.npz`` file (a
-light-weight, cross platform and cross-version compatible storage
+The real-world radar data is read from a NumPy-format ``.npz`` file (a
+light-weight, cross-platform and cross-version compatible storage
 format).  These files can be saved with the ``np.savez`` or
 ``np.savez_compressed`` functions.  Note that SciPy's ``io`` submodule
 can also easily read other formats, such as MATLAB(R) and NetCDF
@@ -1174,7 +1174,7 @@ with plt.style.context('style/thinner.mplstyle'):
 
 Suddenly, the information makes sense!
 
-The plot for $|V_{0}|$ clearly shows a target at component 67, and
+The plot for $|V_\mathrm{single}|$ clearly shows a target at component 67, and
 for $|V_\mathrm{sim}|$ shows the targets that produced the signal that was
 uninterpretable in the time domain. The real radar
 signal, $|V_\mathrm{actual}|$ shows a large number of targets between
