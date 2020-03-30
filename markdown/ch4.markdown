@@ -434,7 +434,7 @@ ax1.set_xlabel('Length of input');
 ```
 <!-- caption text="FFT execution time vs smoothness for different input lengths" -->
 
-The intuition is that, for smooth numbers, the FFT can be broken up
+The intuition is that, for smooth input lengths, the FFT can be broken up
 into many small pieces. After performing the FFT on the first piece,
 those results can be reused in subsequent computations.  This explains
 why we chose a length of 1024 for our audio slices earlier—it has a
