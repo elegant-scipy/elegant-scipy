@@ -22,7 +22,7 @@ Applications*. Introductory is all you need though — we hope to convey the pow
 of linear algebra while keeping the operations relatively simple!
 
 As an aside, we will break Python notation convention in order to match linear
-algebra conventions: in Python, variables names should usually begin with a
+algebra conventions: in Python, variable names should usually begin with a
 lower case letter. However, in linear algebra, matrices are denoted by
 a capital letter, while vectors and scalar values are lowercase. Since we're
 going to be dealing with quite a few matrices and vectors, following the
@@ -49,7 +49,7 @@ on context to keep scalars and vectors straight.
 We discussed graphs in chapter 3, where we represented image regions as
 nodes, connected by edges between them. But we used a rather simple method of
 analysis: we *thresholded* the graph, removing all edges above some value.
-Thresholding works in simple cases, but can easily fail, because all you need
+Thresholding works in simple cases, but all you need
 is one value to fall on the wrong side of the threshold for the approach
 to fail.
 
@@ -333,8 +333,7 @@ layout of the worm brain neurons, they used a related matrix, the
 
 Because the order of the neurons is important in this analysis, we will use a
 preprocessed dataset, rather than clutter this chapter with data cleaning. We
-got the original data from Lav Varshney's
-[website](http://www.ifp.illinois.edu/~varshney/elegans),
+got the original data from [Lav Varshney's GitHub](https://github.com/lrvarshney/elegans),
 and the processed data is in our `data/` directory.
 
 First, let's load the data. There are four components:
@@ -468,7 +467,7 @@ if x[vc2_index] < 0:
 Now it's just a matter of drawing the nodes and the edges. We color them
 according to the type stored in `neuron_types`, using the appealing and
 functional "colorblind"
-[colorbrewer palette](http://chrisalbon.com/python/seaborn_color_palettes.html):
+[colorbrewer palette](https://chrisalbon.com/python/data_visualization/seaborn_color_palettes/):
 
 ```python
 from matplotlib.colors import ListedColormap
@@ -592,7 +591,7 @@ nodes, this is feasible. However, for larger graphs, it would fail.
 For example, one might want to analyse the relationships between libraries
 listed on the Python Package Index, or PyPI, which contains over one hundred thousand packages.
 Holding the Laplacian matrix for this graph would take 
-up $8 \left(100 \times 10^3\right)^2 = 8 \times 10^10$ bytes, or 80GB,
+up $8 \left(100 \times 10^3\right)^2 = 8 \times 10^{10}$ bytes, or 80GB,
 of RAM. If you add to that the adjacency, symmetric adjacency, pseudoinverse,
 and, say, two temporary matrices used during calculations, you climb up to
 480GB, beyond the reach of most desktop computers.
@@ -661,9 +660,9 @@ Ls = Ds - Cs
 ```
 
 Now we want to get the processing depth. Remember that getting the
-pseudo-inverse of the Laplacian matrix is out of the question, because it will
+pseudoinverse of the Laplacian matrix is out of the question, because it will
 be a dense matrix (the inverse of a sparse matrix is not generally sparse
-itself). However, we were actually using the pseudo-inverse to compute a
+itself). However, we were actually using the pseudoinverse to compute a
 vector $z$ that would satisfy $L z = b$,
 where $b = C \odot \textrm{sign}\left(A - A^T\right) \mathbf{1}$.
 (You can see this in the supplementary material for Varshney *et al*.) With
@@ -809,7 +808,7 @@ page? This probability is called the PageRank.
 Since Google's rise, researchers have been applying PageRank to all sorts of
 networks. We'll use an example by Stefano Allesina and Mercedes Pascual,
 which they
-[published](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000494i)
+[published](http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000494)
 in PLoS Computational Biology. They thought to apply the method in ecological
 *food webs*, networks that link species to those that they eat.
 
