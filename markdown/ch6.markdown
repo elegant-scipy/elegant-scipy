@@ -333,7 +333,7 @@ layout of the worm brain neurons, they used a related matrix, the
 
 Because the order of the neurons is important in this analysis, we will use a
 preprocessed dataset, rather than clutter this chapter with data cleaning. We
-got the original data from Lav Varshney's website,
+got the original data from [Lav Varshney's GitHub](https://github.com/lrvarshney/elegans),
 and the processed data is in our `data/` directory.
 
 First, let's load the data. There are four components:
