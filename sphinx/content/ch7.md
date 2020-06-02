@@ -39,7 +39,6 @@ do you know whether you are trapped in a *local
 minimum*?  Most optimization algorithms make some
 attempt to address the issue[^linesearch].
 
-% TODO: Footnotes with underscores in the name, multiline footnotes
 [^linesearch]: Optimization algorithms handle this issue in various
                 ways, but two common approaches are line searches and
                 trust regions.  With a *line search*, you try to find
@@ -692,7 +691,6 @@ they are observed together. Values can vary between 1 (maximally
 aligned) and 2 (minimally aligned)[^nmicalc]. 
 See {ref}`Chapter 5 <sec:entropy_intro>` for a more in-depth discussion of entropy.
 
-% TODO: multiline fn + _ in name
 [^nmicalc]: A quick handwavy explanation is that entropy is calculated
             from the histogram of the quantity under consideration.
             If $X = Y$, then the joint histogram $(X, Y)$ is diagonal,

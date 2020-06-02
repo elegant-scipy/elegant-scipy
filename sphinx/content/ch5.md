@@ -117,7 +117,9 @@ Then, there are two kinds of errors.
 If we let a spam message (where `gt` is 1) through to the user's inbox (`pred` is 0), we've made a *false negative* error.
 If we predict a legitimate message (`gt` is 0) to be spam (`pred` is 1), we've made a *false positive* prediction[^spam].
 
-[^spam]: An email from the director of my scientific institute once landed in my spam folder. The reason? His announcement of a postdoc talk competition started with "You could win \$500!"
+[^spam]: An email from the director of my scientific institute once landed in
+my spam folder. The reason? His announcement of a postdoc talk competition
+started with "You could win \$500!"
 
 If we want to measure how well we are doing, we have to count the above kinds of errors using a *contingency matrix*.
 (This is also sometimes called a confusion matrix. The name is apt.)
@@ -632,7 +634,10 @@ by defining the transformation matrix, $H$ which, when multiplied with a
 coordinate from the input image, $[r, c, 1]$, will give us the
 corresponding coordinate in the output, $[r', c', 1]$[^homog].
 
-[^homog]: Note: we are using [homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates), which have a 1 appended to them and which give greater flexibility when defining linear transforms.
+[^homog]: Note: we are using 
+[homogeneous coordinates](https://en.wikipedia.org/wiki/Homogeneous_coordinates),
+which have a 1 appended to them and which give greater flexibility when
+defining linear transforms.
 
 ```python
 angle = 30

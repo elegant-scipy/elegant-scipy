@@ -62,8 +62,9 @@ ax.set_ylabel('Signal amplitude');
 ```
 <!-- caption text="A simple periodic function in time" -->
 
-% TODO: Change to multiline when supported
-[^discrete]: The discrete Fourier transform operates on sampled data, in contrast to the standard Fourier transform which is defined for continuous functions.
+[^discrete]: The discrete Fourier transform operates on sampled data,
+in contrast to the standard Fourier transform which is defined for continuous
+functions.
 
 Our wave in equation {math:numref}`eqn:simple_sin` can be thought of as a repeating signal of
 *frequency* 10 Hertz (it repeats once every $\frac{1}{10}$ seconds—a length of
@@ -196,7 +197,6 @@ turns it into a spectrum—a set of frequencies with corresponding
 (complex[^complex]) values.  The spectrum does not contain any information about
 time! [^time]
 
-% TODO: Need multi-line footnote support for this
 [^complex]: The Fourier transform essentially tells us how to combine
             a set of sinusoids of varying frequency to form the input
             signal.  The spectrum consists of complex numbers—one for
@@ -319,7 +319,6 @@ The only differences are that SciPy returns the spectrum magnitude
 squared (which turns measured voltage into measured energy), and
 multiplies it by some normalization factors[^scaling].
 
-%TODO: Again, multiline footnotes
 [^scaling]: SciPy goes to some effort to preserve the energy in the
             spectrum.  Therefore, when taking only half the components
             (for N even), it multiplies the remaining components,
@@ -342,7 +341,6 @@ Fourier, after whom the transform is named, first claimed that
 *arbitrary* periodic [^periodic] functions can be expressed as a sum of
 trigonometric functions.
 
-%TODO: ML footnote
 [^periodic]: The period can, in fact, also be infinite!  The general
              continuous Fourier transform provides for this
              possibility.  Discrete Fourier transforms are generally
@@ -585,7 +583,9 @@ usually give a faithful reconstruction of $x(t)$. If $x(t)$ is *not*
 limited as such, the inverse DFT can, in general, not be used to
 reconstruct $x(t)$ by interpolation[^nyqvist].
 
-[^nyqvist]: Note that this limit does not imply that there are *no* methods that can do such a reconstruction—see, e.g., compressed sensing, or finite rate of innovation sampling.
+[^nyqvist]: Note that this limit does not imply that there are *no* methods
+that can do such a reconstruction—see, e.g., compressed sensing, or finite
+rate of innovation sampling.
 
 The function $e^{j2\pi k/N}=\left(e^{j2\pi/N}\right)^{k}=w^{k}$ takes on
 discrete values between $0$ and $2\pi\frac{N-1}{N}$ on the unit circle in

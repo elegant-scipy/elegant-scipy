@@ -319,7 +319,8 @@ These are really, really tiny, so you can't just look in a microscope and read t
 You also can't read a long string of them: errors accumulate and the readout becomes unusable[^newtech].
 Luckily, every one of your cells has an identical copy of your genome, so what we can do is shred those copies into tiny segments (about 100 bases long), and then assemble those like an enormous puzzle of 30 million pieces.
 
-[^newtech]: New technology is changing this, but here we will focus on short-read sequencing data, the most common today.
+[^newtech]: New technology is changing this, but here we will focus on
+short-read sequencing data, the most common today.
 
 Before performing assembly, it is vital to perform read correction.
 During DNA sequencing some bases are incorrectly read out, and must be fixed, or they will mess up the assembly.
@@ -346,7 +347,9 @@ This is the basis for $k$-mer error correction:
  2. Count the occurrence of each $k$-mer.
  3. Use some logic to replace rare $k$-mers in reads with similar common ones[^tosserrors].
 
-[^tosserrors]: Or, alternatively, discard reads with erroneous $k$-mers. This is possible because reads are so abundant that we can afford to toss out erroneous data.
+[^tosserrors]: Or, alternatively, discard reads with erroneous $k$-mers. This
+is possible because reads are so abundant that we can afford to toss out
+erroneous data.
 
 This is also an example in which streaming is *essential*.
 As mentioned before, the number of reads can be enormous, so we don't want to store them in memory.

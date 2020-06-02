@@ -679,7 +679,8 @@ connections between them are all known. This has resulted in the fantastic
 [Openworm project](http://openworm.org), which we encourage you to read more
 about.
 
-[^synapses]: *Synapses* are the chemical connections through which neurons communicate.
+[^synapses]: *Synapses* are the chemical connections through which neurons
+communicate.
 
 You can download the neuronal dataset in Excel format from the WormAtlas
 database [here][conndata].
@@ -708,7 +709,8 @@ conn_edges = [(n1, n2, {'weight': s})
               if t.startswith('S')]
 ```
 
-[^conntypes]: See the [WormAtlas page][conndata] for a description of the different connection types
+[^conntypes]: See the [WormAtlas page][conndata] for a description of the
+different connection types
 
 We use `weight` in a dictionary above because it is a special keyword for
 edge properties in NetworkX. We then build the graph using NetworkX's

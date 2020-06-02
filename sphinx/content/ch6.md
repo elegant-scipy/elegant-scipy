@@ -350,7 +350,8 @@ To obtain their layout of the worm brain neurons, they used a related matrix, th
 
 [worm_fig2]: http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1001066
 
-[^wormrepro]: Information on how to do this is in the [supplementary material][worm-sup] for the paper.
+[^wormrepro]: Information on how to do this is in the 
+[supplementary material][worm-sup] for the paper.
 
 [worm-sup]: http://journals.plos.org/ploscompbiol/article/asset?unique&id=info:doi/10.1371/journal.pcbi.1001066.s001
 
