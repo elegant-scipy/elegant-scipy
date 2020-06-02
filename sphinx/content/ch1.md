@@ -384,7 +384,6 @@ y = np.reshape(y, (1, len(y)))
 print(y)
 ```
 
-%TODO: FIGURE OUT FOOTNOTES
 Two shapes are compatible when, for each dimension, either is equal to
 1 (one) or they match one another[^more_dimensions].
 
@@ -850,39 +849,38 @@ def binned_boxplot(x, y, *,  # check out this Python 3 exclusive! (*see tip box)
     return ax
 ```
 
-%TODO: FIND/MAKE SPHINX EXTENSIONS FOR PRODUCING CALLOUTS (E.G. "TIP")
-```{note}
-> **Python 3 Tip: using `*` to create keyword-only arguments {.callout}**
->
-> Since version 3.0 Python allows
-> ["keyword-only" arguments](https://www.python.org/dev/peps/pep-3102/).
-> These are arguments that you have to call using a keyword, rather than relying
-> on position alone.
-> For example, you can call the `binned_boxplot` we just wrote like so:
->
->     >>> binned_boxplot(x, y, xlabel='my x label', ylabel='my y label')
->
-> but not this, which would have been valid Python 2, but raises an error in
-> Python 3:
->
->     >>> binned_boxplot(x, y, 'my x label', 'my y label')
->
->     ---------------------------------------------------------------------------
->     TypeError                                 Traceback (most recent call last)
->     <ipython-input-58-7a118d2d5750in <module>()
->         1 x_vals = [1, 2, 3, 4, 5]
->         2 y_vals = [1, 2, 3, 4, 5]
->     ----3 binned_boxplot(x, y, 'my x label', 'my y label')
->
->     TypeError: binned_boxplot() takes 2 positional arguments but 4 were given
->
-> The idea is to prevent you from accidentally doing something like this:
->
->     binned_boxplot(x, y, 'my y label')
->
-> which would give you your y label on the x-axis, and is a common error for
-> signatures with many optional parameters that don't have an obvious ordering.
-```
+````{admonition} Python3 Tip
+**Using `*` to create keyword-only arguments**
+
+Since version 3.0 Python allows
+["keyword-only" arguments](https://www.python.org/dev/peps/pep-3102/).
+These are arguments that you have to call using a keyword, rather than relying
+on position alone.
+For example, you can call the `binned_boxplot` we just wrote like so:
+
+    >>> binned_boxplot(x, y, xlabel='my x label', ylabel='my y label')
+
+but not this, which would have been valid Python 2, but raises an error in
+Python 3:
+
+    >>> binned_boxplot(x, y, 'my x label', 'my y label')
+
+    ---------------------------------------------------------------------------
+    TypeError                                 Traceback (most recent call last)
+    <ipython-input-58-7a118d2d5750in <module>()
+        1 x_vals = [1, 2, 3, 4, 5]
+        2 y_vals = [1, 2, 3, 4, 5]
+    ----3 binned_boxplot(x, y, 'my x label', 'my y label')
+
+    TypeError: binned_boxplot() takes 2 positional arguments but 4 were given
+
+The idea is to prevent you from accidentally doing something like this:
+
+    binned_boxplot(x, y, 'my y label')
+
+which would give you your y label on the x-axis, and is a common error for
+signatures with many optional parameters that don't have an obvious ordering.
+````
 
 We now compute the gene lengths and counts:
 
@@ -1193,9 +1191,9 @@ with plt.style.context('style/thinner.mplstyle'):
 ```
 
 You can see that the mean expression counts have flattened quite a bit,
-especially for genes larger than about 3,000 base pairs.
-%TODO: MOVE TO FOOTNOTE
-(Smaller genes still appear to have low expression — these may be too small for
+especially for genes larger than about 3,000 base pairs[^gene_expr]
+
+[^gene_expr]: Smaller genes still appear to have low expression — these may be too small for
 the statistical power of the RPKM method.)
 
 RPKM normalization can be useful to compare the expression profile of different genes.
