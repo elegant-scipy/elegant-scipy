@@ -99,6 +99,7 @@ Together, the functions defined in {numref}`code:ch2-intro` and
 2. Arrays allow the expression of many numerical operations at once.
    In the  first line of 
    %TODO - FIGURE OUT HOW TO SPECIFY LITERALS WITHIN A ROLE
+   %NOTE - fix inbound in MyST-Parser#152
    {ref}`quantile_norm_log <code:log-qnorm>`, we add one and take the
    logarithm for every value in `X` in a single call. This is called
    {ref}`*vectorization* <sec:vectorization>`.
@@ -339,10 +340,9 @@ sequential merging of clusters:
 This sequence of merges forms a *merge tree*.
 By cutting the tree at a specific height, we can get a finer or coarser clustering of observations.
 
-The `linkage` function in `scipy.cluster.hierarchy` performs a hierarchical clustering of the rows of a matrix, using a particular metric (for example, Euclidean distance, Manhattan distance, or others) and a particular linkage method, the distance between two clusters (for example, the average distance between all the observations in a pair of clusters).
+The {func}`~scipy.cluster.hierarchy.linkage` function in `scipy.cluster.hierarchy` performs a hierarchical clustering of the rows of a matrix, using a particular metric (for example, Euclidean distance, Manhattan distance, or others) and a particular linkage method, the distance between two clusters (for example, the average distance between all the observations in a pair of clusters).
 
 It returns the merge tree as a "linkage matrix," which contains each merge operation along with the distance computed for the merge and the number of observations in the resulting cluster. From the `linkage` documentation:
-%TODO - USE AUTODOC FEATURES FOR THIS?
 
 > A cluster with an index less than $n$ corresponds to one of
 > the $n$ original observations. The distance between
@@ -394,8 +394,7 @@ Simple: we just call `linkage` for the input matrix and also for the *transpose*
 Next, we define a function to visualize the output of that clustering.
 We are going to rearrange the rows and columns of the input data so that similar rows are together and similar columns are together.
 And we are additionally going to show the merge tree for both rows and columns, displaying which observations belong together for each.
-%TODO: AUTODOC ETC. FOR DENDROGRAM
-The merge trees are presented as dendrograms, with the branch-lengths indicating how similar the observations are to each other (shorter = more similar).
+The merge trees are presented as {func}`dendrograms <scipy.cluster.hierarchy.dendrogram>`, with the branch-lengths indicating how similar the observations are to each other (shorter = more similar).
 
 ```{admonition} Word of Warning
 There is a fair bit of hard-coding of parameters going on here.
