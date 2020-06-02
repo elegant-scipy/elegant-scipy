@@ -1,3 +1,4 @@
 # For myst/sphinx build chain
 git+https://github.com/ExecutableBookProject/MyST-Parser.git#egg=myst-parser[sphinx]
 sphinxcontrib-bibtex
+sphinx-book-theme
