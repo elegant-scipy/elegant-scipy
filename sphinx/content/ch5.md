@@ -480,8 +480,8 @@ one can think of the entire web as a large, sparse, $N \times N$ matrix.
 Each entry $X_{ij}$ indicates whether web page $i$ links to page $j$.
 By normalizing this matrix and solving for its dominant eigenvector,
 one obtains the so-called PageRank—one of the numbers Google uses to
-%TODO: Explicit forward ref to ch. 6
-order your search results. (You can read more about this in the next chapter.)
+order your search results. (You can read more about this in 
+{doc}`the next chapter <ch6>`.)
 
 As another example, we can represent the human brain as a large $m \times m$
 graph, where there are $m$ nodes (positions) in which you
