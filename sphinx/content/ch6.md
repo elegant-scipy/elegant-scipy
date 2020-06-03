@@ -105,7 +105,6 @@ will rotate all vectors except for those that lie *on* the z-axis.  For those,
 we'll see no effect, or $Rp = p$, i.e. $Rp = \lambda p$ with
 eigenvalue $\lambda = 1$.
 
-% TODO: Exercises
 <!-- exercise begin -->
 
 **Exercise:** Consider the rotation matrix
@@ -376,10 +375,9 @@ b = np.sum(C * np.sign(A - A.T), axis=1)
 z = linalg.pinv(L) @ b
 ```
 
-%TODO: Add xref to previous callout on '@' operator
 ```{attention}
 Note the use of the `@` symbol, which was introduced in Python 3.5 to denote
-matrix multiplication. As we noted in the preface and in Chapter 5, in previous
+matrix multiplication. As we noted {ref}`previously <adm:matmul>`, in previous
 versions of Python, you would need to use the function `np.dot`.
 ```
 

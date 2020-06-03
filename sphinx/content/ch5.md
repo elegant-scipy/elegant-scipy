@@ -53,6 +53,8 @@ def variation_of_information(x, y):
     return float(hygx + hxgy)
 ```
 
+(adm:matmul)=
+
 ```{tip} **Python 3.5 pro-tip!**
 
 The `@` symbols in the above paragraph represent the *matrix multiplication*
