@@ -129,11 +129,16 @@ So, for example, since there are 4 true positives (where `pred` and `gt` are bot
 
 Generally:
 
-% TODO: Add `(key)=`-style reference targeting to $$-enclosed math
-$$C_{i, j} = \sum_k{\mathbb{I}(p_k = i) \mathbb{I}(g_k = j)}$$
 
-% TODO: Update with explicit xrefs
-Here's an intuitive, but inefficient way of building the above:
+```{math}
+---
+label: eq:confusion
+---
+C_{i, j} = \sum_k{\mathbb{I}(p_k = i) \mathbb{I}(g_k = j)}
+```
+
+Here's an intuitive, but inefficient way of implementing equation 
+{math:numref}`eq:confusion`:
 
 ```{code-block} python
 ---
