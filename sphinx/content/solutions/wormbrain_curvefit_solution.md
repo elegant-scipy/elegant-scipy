@@ -1,3 +1,7 @@
+---
+:orphan:
+---
+
 **Solution:** Let's look at the start of the docstring for `curve_fit`:
 
 %TODO - possible to embed docstring directly, e.g. with include directive?
