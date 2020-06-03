@@ -397,8 +397,7 @@ its second-smallest eigenvalue, normalized by the degrees:
 val, Vec = linalg.eig(Q)
 ```
 
-% TODO: Use intersphinx for a ref somehow?
-Note from the documentation of `numpy.linalg.eig`:
+Note from the documentation of {func}`numpy.linalg.eig`:
 
 > "The eigenvalues are not necessarily ordered."
 
