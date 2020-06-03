@@ -331,8 +331,7 @@ column dimension. This is called a "*rigid* registration" because there are no
 deformations of any kind (scaling, skew, or other stretching). The object is
 considered solid and moved around (including rotation) until a match is found.
 
-% TODO: intersphinx scikit-image
-To simplify the code, we'll use the scikit-image *transform* module to compute
+To simplify the code, we'll use the {mod}`skimage.transform` module to compute
 the shift and rotation of the image. SciPy's `optimize` requires a vector of
 parameters as input. We first make a
 function that will take such a vector and produce a rigid transformation with

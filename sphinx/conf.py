@@ -27,6 +27,7 @@ numfig=True
 intersphinx_mapping = {
     'numpy' : ('https://numpy.org/doc/stable', None),
     'scipy' : ('https://docs.scipy.org/doc/scipy/reference', None),
+    'scikit-image' : ('https://scikit-image.org/docs/stable', None),
 }
 
 # Add any paths that contain templates here, relative to this directory.
