@@ -596,7 +596,7 @@ the above matrices using the sparse data structures from `scipy.sparse` (see
 {doc}`Chapter 5 <ch5>`), and use the linear algebra functions in `scipy.sparse.linalg` to
 compute the values we need.
 
-Try to explore the documentation in `scipy.sparse.linalg` to come up with a
+Try to explore the documentation in {mod}`scipy.sparse.linalg` to come up with a
 sparse version of the above computation.
 
 ```{hint}
@@ -922,9 +922,7 @@ label: damped_pr
 We can solve equation {eq}`damped_pr` using `scipy.sparse.linalg`'s direct
 solver, `spsolve`. Depending on the structure and size of a linear algebra
 problem, though, it might be more efficient to use an iterative solver. See
-% TODO: Replace with intersphinx
-the [`scipy.sparse.linalg` documentation](http://docs.scipy.org/doc/scipy/reference/sparse.linalg.html#solving-linear-problems)
-for more information on this.
+the {mod}`scipy.sparse.linalg` documentation for more information on this.
 
 ```python
 from scipy.sparse.linalg import spsolve
