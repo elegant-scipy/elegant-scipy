@@ -98,11 +98,10 @@ zero, except for two entries.  Traditionally, we visualize the
 magnitude of the result as a *stem plot*, in which the height of each
 stem corresponds to the underlying value.
 
-%TODO: Forward reference to other sidebox
 ```{tip}
 We explain why you see positive and negative frequencies later on
-in the sidebox titled "Discrete Fourier transforms".  You may also
-refer to that section for a more in-depth overview of the underlying
+in the sidebox titled {ref}`Discrete Fourier transforms <adm:dft>`. You may
+also refer to that section for a more in-depth overview of the underlying
 mathematics.
 ```
 
@@ -380,7 +379,6 @@ software license.
 
 ## Choosing the length of the discrete Fourier transform (DFT)
 
-% TODO: Ensure that footnote keys can have underscores in them
 A naive calculation of the DFT takes $\mathcal{O}\left(N^2\right)$ operations [^big_O].
 How come?  Well, you have $N$
 (complex) sinusoids of different frequencies ($2 \pi f \times 0, 2 \pi f \times
@@ -486,9 +484,9 @@ another real-world problem: analyzing target detection in radar data.
 ### Frequencies and their ordering
 
 For historical reasons, most implementations return an array where
-% TODO: links to callouts here
-frequencies vary from low-to-high-to-low (see the box "Discrete
-Fourier transforms" for further explanation of frequencies).  E.g., when we do the real
+frequencies vary from low-to-high-to-low (see the box 
+{ref}`Discrete Fourier transforms <adm:dft>` for further explanation of
+frequencies).  E.g., when we do the real
 Fourier transform of a signal of all ones, an input that has no
 variation and therefore only has the slowest, constant Fourier
 component (also known as the "DC" or Direct Current component—just
@@ -545,6 +543,8 @@ won't dive too deeply into the concept of negative frequency, other
 than saying a real-world sine wave is produced by a combination of
 positive and negative frequencies).  We re-shuffle the spectrum using
 the `fftshift` function.
+
+(adm:dft)=
 
 ```{admonition} **Discrete Fourier transforms**
 
@@ -877,9 +877,9 @@ provide examples of various applications of the FFT. We will use actual
 data from an {abbr}`FMCW` radar to demonstrate one such an application: target
 detection.
 
-% TODO: Link to FMCW callout
-Roughly, an {abbr}`FMCW` radar works like this (see box "A
-simple FMCW radar system" and {numref}`fig:fmcw_block` for more detail):
+Roughly, an {abbr}`FMCW` radar works like this (see 
+{ref}`A simple FMCW radar system <adm:fmcw>` and {numref}`fig:fmcw_block` for
+more detail):
 
 A signal with changing frequency is generated.  This signal is
 transmitted by an antenna, after which it travels outwards, away from the
@@ -907,6 +907,8 @@ indication of how long it took the signal to reflect back to the radar
 (in other words, how far away the object is from us!).  We discard the
 other by applying a low-pass filter to the signal (i.e., a filter that
 discards any high frequencies).
+
+(adm:fmcw)=
 
 ````{admonition} **A simple FMCW radar system**
 
@@ -1336,8 +1338,8 @@ radar limits its ability to detect weak echoes. -->
 We're getting there, but in the spectrum of the simulated signal, we
 still cannot distinguish the peaks at 154 and 159 meters.  Who knows
 what we're missing in the real-world signal!  To sharpen the peaks,
-% TODO: Figure out this link syntax
-we'll return to our toolbox and make use of [*windowing*](sec:windowing).
+%TODO: emph in reference
+we'll return to our toolbox and make use of {ref}`*windowing* <sec:windowing>`.
 
 <!--
 
