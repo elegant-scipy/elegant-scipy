@@ -656,9 +656,9 @@ vector $z$ that would satisfy $L z = b$,
 where $b = C \odot \textrm{sign}\left(A - A^T\right) \mathbf{1}$.
 (You can see this in the [supplementary material][worm-sup] for Varshney *et al*.) With
 dense matrices, we can simply use $z = L^+b$. With sparse ones, though, we can
-% TODO - add link to callout
-use one of the *solvers* (see sidebox, "Solvers") in `sparse.linalg.isolve`
-to get the `z` vector after providing `L` and `b`, no inversion required!
+use one of the *solvers* (see sidebox, {ref}`Solvers <adm:solvers>`) in 
+`sparse.linalg.isolve` to get the `z` vector after providing `L` and `b`, no
+inversion required!
 
 ```python
 b = Cs.multiply((As - As.T).sign()).sum(axis=1)
@@ -727,6 +727,8 @@ matrices" -->
 <!-- solution end -->
 
 <!-- exercise end -->
+
+(adm:solvers)=
 
 ```{admonition} **Solvers**
 
