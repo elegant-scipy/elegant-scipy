@@ -242,7 +242,7 @@ array of length 100. Suppose that after 30ms the light signal is turned on, and
 30ms later, it is switched off. You end up with a signal like this:
 
 ```python
-sig = np.zeros(100, np.float) #
+sig = np.zeros(100, float) #
 sig[30:60] = 1  # signal = 1 during the period 30-60ms because light is observed
 fig, ax = plt.subplots()
 ax.plot(sig);
@@ -892,7 +892,7 @@ Segmentation is one of those problems that humans do trivially, all the time,
 without thinking, whereas computers have a hard time of it. To
 understand this difficulty, look at this image:
 
-![Face (Eileen Collins)](http://i.imgur.com/ky5qwIS.png)
+![Face (Eileen Collins)](../images/collins-face.png)
 
 While you see a face, a computer only sees a bunch of numbers:
 
@@ -951,13 +951,13 @@ to some more sophisticated rule.
 As a simple example, suppose you want to segment out the tiger in this
 picture, from the Berkeley Segmentation Dataset (BSDS):
 
-![BSDS-108073 tiger](http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg)
+![BSDS-108073 tiger](http://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/images/plain/normal/color/108073.jpg)
 
 A clustering algorithm, simple linear iterative clustering (SLIC) [^slic], can give
 us a decent starting point. It is available in the scikit-image library.
 
 ```python
-url = ('http://www.eecs.berkeley.edu/Research/Projects/CS/vision/'
+url = ('http://www2.eecs.berkeley.edu/Research/Projects/CS/vision/'
        'bsds/BSDS300/html/images/plain/normal/color/108073.jpg')
 tiger = io.imread(url)
 from skimage import segmentation
@@ -983,7 +983,7 @@ taste of what it looks like before we build one, we'll use the `show_rag` functi
 from scikit-image — indeed, the library that contains this chapter's code snippet!
 
 ```python
-from skimage.future import graph
+from skimage import graph
 
 g = graph.rag_mean_color(tiger, seg)
 graph.show_rag(seg, g, tiger);
@@ -1021,7 +1021,7 @@ def build_rag(labels, image):
             current_label = labels[row, col]
             if not current_label in g:
                 g.add_node(current_label)
-                g.node[current_label]['total color'] = np.zeros(3, dtype=np.float)
+                g.node[current_label]['total color'] = np.zeros(3, dtype=float)
                 g.node[current_label]['pixel count'] = 0
             if row < nrows - 1 and labels[row + 1, col] != current_label:
                 g.add_edge(current_label, labels[row + 1, col])
@@ -1046,7 +1046,7 @@ def build_rag_3d(labels, image):
                 current_label = labels[pln, row, col]
                 if not current_label in g:
                     g.add_node(current_label)
-                    g.node[current_label]['total color'] = np.zeros(3, dtype=np.float)
+                    g.node[current_label]['total color'] = np.zeros(3, dtype=float)
                     g.node[current_label]['pixel count'] = 0
                 if pln < nplns - 1 and labels[pln + 1, row, col] != current_label:
                     g.add_edge(current_label, labels[pln + 1, row, col])
@@ -1157,8 +1157,7 @@ And the beauty with which SciPy and NetworkX make it feasible.
 Many of these functions are available in the scikit-image library. If you
 are interested in image analysis, look it up!
 
-[^alvyraysmith]: A Pixel Is Not A Little Square. Alvy Ray Smith, 1995, Technical
-                 Memo. http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf
+[^alvyraysmith]: A Pixel Is Not A Little Square. Alvy Ray Smith, 1995, Technical Memo. http://alvyray.com/Memos/CG/Microsoft/6_pixel.pdf
 
 [^coins-source]: http://www.brooklynmuseum.org/opencollection/archives/image/15641/image
 
@@ -1170,7 +1169,7 @@ are interested in image analysis, look it up!
 
 [^bwcdoc]: https://networkx.github.io/documentation/latest/reference/algorithms/generated/networkx.algorithms.centrality.betweenness_centrality.html
 
-[^bsdstiger]: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
+[^bsdstiger]: http://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/BSDS300/html/dataset/images/color/108073.html
 
 [^slic]: http://ivrg.epfl.ch/research/superpixels
 
