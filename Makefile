@@ -55,7 +55,7 @@ $(FIGURES)/%.png: script/%.py $(FIGURES)
 # %.html: How to build an HTML file from its corresponding IPython
 #     notebook.
 $(BUILD_HTML)/%.html: $(BUILD_NB)/%.ipynb $(BUILD_HTML)/custom.css build_dirs
-	jupyter nbconvert --to html $< --stdout > $@
+	jupyter nbconvert --to html --template classic $< --stdout > $@
 	tools/html_image_embedder.py $@ > $@.embed && mv $@.embed $@
 
 $(BUILD_HTMLBOOK)/%.html: $(BUILD_NB)/%.ipynb
